@@ -55,6 +55,9 @@ class Binnedage(models.Model):
     idbinnedage = models.IntegerField(primary_key=True, editable=False)
     binnedage = models.CharField(max_length=10, blank=True)
 
+    def __unicode__(self):
+        return self.binnedage
+
     class Meta:
         managed = False
         db_table = 'binnedage'
@@ -289,6 +292,9 @@ class Celllinestatus(models.Model):
     idcelllinestatus = models.IntegerField(primary_key=True, editable=False)
     celllinestatus = models.CharField(max_length=40, blank=True)
 
+    def __unicode__(self):
+        return self.celllinestatus
+
     class Meta:
         managed = False
         db_table = 'celllinestatus'
@@ -311,6 +317,9 @@ class Celltype(models.Model):
     idcelltype = models.IntegerField(primary_key=True, editable=False)
     celltype = models.CharField(max_length=60, blank=True)
 
+    def __unicode__(self):
+        return self.celltype
+
     class Meta:
         managed = False
         db_table = 'celltype'
@@ -328,6 +337,9 @@ class City(models.Model):
 class Clinicaltreatmentb4Donation(models.Model):
     idclininicaltreatmentb4donation = models.IntegerField(primary_key=True, editable=False)
     clininicaltreatmentb4donation = models.CharField(max_length=90, blank=True)
+
+    def __unicode__(self):
+        return self.clininicaltreatmentb4donation
 
     class Meta:
         managed = False
@@ -387,6 +399,9 @@ class Depositor(models.Model):
     organization = models.IntegerField(blank=True, null=True)
     depositorstatus = models.IntegerField(blank=True, null=True)
     depositorregistrationdate = models.CharField(max_length=40)
+
+    def __unicode__(self):
+        return u'%s-%s-%s' % (self.organization, self.depositorstatus, self.depositorregistrationdate)
 
     class Meta:
         managed = False
@@ -468,6 +483,9 @@ class Donor(models.Model):
     phenotype = models.ForeignKey('Phenotype', db_column='phenotype', blank=True, null=True)
     otherclinicalinformation = models.CharField(max_length=200, blank=True)
 
+    def __unicode__(self):
+        return u'%s-%s-%s' % (self.provider, self.age, self.gender)
+
     class Meta:
         managed = False
         db_table = 'donor'
@@ -497,6 +515,9 @@ class Ebisckeyword(models.Model):
 class Gender(models.Model):
     idgender = models.IntegerField(db_column='idGender', primary_key=True, editable=False)  # Field name made lowercase.
     gender = models.CharField(db_column='Gender', max_length=20, blank=True)  # Field name made lowercase.
+
+    def __unicode__(self):
+        return self.gender
 
     class Meta:
         managed = False
@@ -694,6 +715,9 @@ class Surfacecoatingmatrix(models.Model):
 class Tissuesource(models.Model):
     idtissuesource = models.IntegerField(primary_key=True, editable=False)
     tissuesource = models.CharField(max_length=90, blank=True)
+
+    def __unicode__(self):
+        return self.tissuesource
 
     class Meta:
         managed = False

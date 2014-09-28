@@ -34,7 +34,8 @@ admin.site.register(Binnedage, BinnedageAdmin)
 
 
 class CelllineAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('biosamplesid', 'celllinedepositor', 'celllinename', 'celllinecollection', 'celllinecelltype', 'celllinedepositorsname', 'celllinestatus', 'celllinedonor', 'celllinetissuesource')
+    list_filter = ('celllinestatus',)
 
 admin.site.register(Cellline, CelllineAdmin)
 
