@@ -11,7 +11,8 @@ DESTDIR = '/var/projects/%s' % SLUG
 env.hosts = ['www@django.two.sevenpastnine.com']
 env.port = 65022
 env.forward_agent = True
-env.shell = '/usr/local/bin/bash -l -c'
+# env.shell = '/usr/local/bin/bash -l -c'
+env.shell = '/bin/sh -c'
 env.activate = 'source /usr/local/virtualenv/django-%s/bin/activate' % DJANGO
 
 
