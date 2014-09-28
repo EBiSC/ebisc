@@ -30,10 +30,9 @@ def deploy(option=None):
 
     with virtualenv():
         run('git pull origin')
-        run('bower install')
-        run('./manage.py collectstatic --noinput')
-        run('./manage.py compress')
-        run('touch %s/wsgi.py' % SLUG)
+        # run('bower install')
+        # run('./manage.py collectstatic --noinput')
+        # run('./manage.py compress')
         run('touch etc/conf/staging.uwsgi.ini')
 
 
