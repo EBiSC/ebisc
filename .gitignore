@@ -1,0 +1,10 @@
+.DS_Store
+
+*.pyc
+
+*/settings/__init__.py
+*/static/bower_components
+
+lib
+var/static
+var/media
