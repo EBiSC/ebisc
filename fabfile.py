@@ -33,7 +33,7 @@ def deploy(option=None):
         run('git pull origin')
         # run('bower install')
         run('./manage.py collectstatic --noinput')
-        # run('./manage.py compress')
+        run('./manage.py compress')
         run('touch etc/conf/staging.uwsgi.ini')
 
 
