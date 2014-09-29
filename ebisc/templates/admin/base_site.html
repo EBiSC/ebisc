@@ -5,13 +5,47 @@
 {% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
 {% block extrastyle %}
+<link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Dosis:500,700">
+<link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans">
 {% compress css %}
 <link type="text/less" rel="stylesheet" href="{{ STATIC_URL }}styles/admin.less">
 {% endcompress %}
 {% endblock %}
 
 {% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+<a class="logo" href="/admin/"><img src="{{ STATIC_URL }}images/logo.png" width="180" height="110"></a>
+
+<ul id="superfish-1" class="menu sf-menu sf-main-menu sf-horizontal sf-style-none sf-total-items-8 sf-parent-items-1 sf-single-items-7 superfish-processed sf-js-enabled">
+    <li class="first odd sf-item-1 sf-depth-1 sf-no-children"><a href="http://development1.douglasconnect.com/" class="sf-depth-1">Home</a></li>
+    <li class="middle even sf-item-2 sf-depth-1 sf-no-children"><a href="http://development1.douglasconnect.com/cell-lines" class="sf-depth-1">Cell Lines</a></li>
+    <li class="middle even sf-item-2 sf-depth-1 sf-no-children"><a href="http://development1.douglasconnect.com/services" class="sf-depth-1">Services</a></li>
+    <li class="middle even sf-item-4 sf-depth-1 sf-no-children"><a href="http://development1.douglasconnect.com/community" class="sf-depth-1">Community</a></li>
+    <li class="middle odd sf-item-5 sf-depth-1 sf-no-children"><a href="http://development1.douglasconnect.com/library" class="sf-depth-1">Library</a></li>
+    <li class="middle even sf-item-6 sf-depth-1 sf-no-children"><a href="http://development1.douglasconnect.com/register/registration-form" class="sf-depth-1">Register</a></li>
+    <li class="middle odd sf-item-7 sf-depth-1 sf-no-children"><a href="http://development1.douglasconnect.com/about" class="sf-depth-1">About</a></li>
+    <li class="last even sf-item-8 sf-depth-1 sf-no-children"><a href="http://development1.douglasconnect.com/contacts" class="sf-depth-1">Contacts</a></li>
+</ul>
 {% endblock %}
 
 {% block nav-global %}{% endblock %}
+
+{% block footer %}
+<div class="footer">
+    <div class="copy">
+        <div><span class="sitename">EBiSC</span> © 2014 | <a href="http://development1.douglasconnect.com/privacy-policy">Privacy Policy</a></div>
+    </div>
+
+    <div class="contact">
+        <div class="address">Babraham Research Campus<br>Cambridge<br>United Kingdom</div>
+        <div class="phone">Telephone: +41 79 559 6035<br>FAX: +41 61 889 9898</div>
+    </div>
+        
+    <div class="follow">
+        <a href="https://twitter.com/" class="twitter" title="Follow EBiSC on Twitter"></a>
+        <a href="http://www.facebook.com/" class="facebook" title="Follow EBiSC on Facebook"></a>
+        <a href="https://plus.google.com/" class="google" title="Follow EBiSC on Google +"></a>
+        <a href="/rss.xml" class="rss" title="Follow EBiSC on RSS"></a>
+    </div>
+</div>
+
+{% endblock %}

@@ -28,7 +28,7 @@ class CelllineDeseaseInline(admin.TabularInline):
 
 
 class CelllineAdmin(admin.ModelAdmin):
-    list_display = ('biosamplesid', 'disease_name', 'celllinename', 'celllinecollection', 'celllinecelltype', 'celllinedepositorsname', 'celllinestatus', 'celllinedonor', 'celllinetissuesource')
+    list_display = ('biosamplesid', 'disease_name', 'celllinename', 'celllinecelltype', 'celllinedepositorsname', 'celllinestatus', 'celllinedonor')
     list_filter = ('celllinestatus', 'disease__celllinedisease')
     search_fields = ('celllinename', 'disease__celllinedisease__disease')
     inlines = [CelllineDeseaseInline]

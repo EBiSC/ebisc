@@ -1,3 +1,191 @@
+@green: #BDD332;
+@background-grey: #f2f2f2;
+@blue: #279ad6;
+@red: #A8050D;
+
+html {
+    background: darken(@background-grey, 10%);
+}
+
 a:link {
-    color: green;
+    color: darken(@green, 10%);
+}
+
+a:visited {
+    color: darken(@green, 10%);
+}
+
+#header {
+
+    #user-tools {
+        width: 100%;
+        background-color: #222;
+        padding-top: 7px;
+        padding-bottom: 8px;
+        padding-right: 40px;
+    }
+
+    #branding {
+
+        clear: both;
+
+        width: 100%;
+        padding: 15px 40px 10px 40px;
+
+        background-color: white;
+
+        .logo {
+            float: left;
+        }
+
+        .menu {
+            float: left;
+
+            font-family: Dosis, sans-serif;
+
+            margin-top: 75px;
+
+            li {
+                display: inline-block;
+
+                font-size: 18px;
+                font-style: normal;
+                font-variant: normal;
+                font-weight: 500;
+
+                text-transform: uppercase;
+
+                a {
+                    color: black;
+
+                    padding: 13px 16px;
+                    border-radius: 8px;
+
+                    &:hover {
+                        color: white;
+                        background-color: @green;
+                    }
+                }
+            }
+        }
+    }
+}
+
+div.breadcrumbs {
+    padding-left: 40px;
+    background: @background-grey;
+}
+
+#content {
+    margin-top: 20px;
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+.row1 {
+    background-color: @background-grey;
+}
+
+.module h2, .module caption, .inline-group h2 {
+    background: lighten(desaturate(@blue, 20%), 10%);
+}
+
+.dashboard #content {
+    width: 1020px;
+}
+
+#recent-actions-module {
+    display: none;
+}
+
+.aligned label {
+    width: 12em;
+}
+
+.submit-row {
+    background: @background-grey;
+}
+
+.footer {
+
+    height: 100px;
+
+    margin-top: 50px;
+    padding: 50px 40px 0 40px;
+
+    background: darken(@background-grey, 10%);
+
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+
+    .copy {
+        float: left;
+
+        text-transform: uppercase;
+
+        .sitename {
+            font-size: 24px;
+            color: @red;
+        }
+
+        a {
+            color: @red;
+        }
+    }
+
+    .contact {
+        float: left;
+
+        margin-top: 5px;
+        margin-left: 200px;
+
+        color: #A0A0A0;
+
+        > div {
+            float: left;
+        }
+
+        .address {
+            background: url("/static/images/contact-1.png") no-repeat;
+            padding-left: 30px;
+            margin-right: 60px;
+        }
+
+        .phone {
+            background: url("/static/images/contact-2.png") no-repeat;
+            padding-left: 30px;
+        }
+
+    }
+
+    .follow {
+        float: right;
+
+        a {
+            width: 30px;
+            height: 30px;
+            display: inline-block;
+            margin-right: 5px;
+
+            &:hover {
+                background-position: 0 -29px;
+            }
+        }
+
+        .twitter {
+            background: url("/static/images/twitter.png") no-repeat;
+        }
+
+        .facebook {
+            background: url("/static/images/facebook.png") no-repeat;
+        }
+
+        .google {
+            background: url("/static/images/google.png") no-repeat;
+        }
+
+        .rss {
+            background: url("/static/images/rss.png") no-repeat;
+        }
+    }
 }
