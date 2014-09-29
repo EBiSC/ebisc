@@ -6,4 +6,5 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 )
 
-admin.site.site_header = 'EBiSC administration'
+admin.site.site_header = u'EBiSC administration'
+admin.site.index_title = u'EBiSC administration'
