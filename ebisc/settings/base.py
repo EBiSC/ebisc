@@ -22,6 +22,9 @@ SECRET_KEY = '@!7ju$b1*1c5!dihak)cw3ao1ema&2quw3s*9l#&8^v8ob%gw1'
 # Application definition
 
 INSTALLED_APPS = (
+    # 'django_admin_bootstrapped.bootstrap3',
+    # 'django_admin_bootstrapped',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -29,6 +32,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'compressor',
+
+    'ebisc',
     'ebisc.demo',
 )
 
@@ -71,9 +77,31 @@ USE_L10N = True
 USE_TZ = True
 
 # -----------------------------------------------------------------------------
+# Templating
+
+TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates/'),)
+
+# -----------------------------------------------------------------------------
 # Static files and media
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, '../var/static/')
+
+STATICFILES_FINDERS = (
+    'compressor.finders.CompressorFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
+
+# -----------------------------------------------------------------------------
+# Django static assets compressor
+
+COMPRESS_PRECOMPILERS = (
+    ('text/less', 'lessc {infile} {outfile}'),
+    ('text/coffeescript', 'coffee --compile --stdio'),
+)
+
+COMPRESS_CSS_FILTERS = (
+    'compressor.filters.cssmin.CSSMinFilter',
+)
 
 # -----------------------------------------------------------------------------

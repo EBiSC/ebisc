@@ -1,0 +1,17 @@
+{% extends "admin/base.html" %}
+
+{% load compress %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrastyle %}
+{% compress css %}
+<link type="text/less" rel="stylesheet" href="{{ STATIC_URL }}styles/admin.less">
+{% endcompress %}
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
