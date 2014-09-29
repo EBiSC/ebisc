@@ -23,10 +23,15 @@ class BinnedageAdmin(admin.ModelAdmin):
     pass
 
 
+class CelllineDeseaseInline(admin.TabularInline):
+    model = Celllinedisease
+
+
 class CelllineAdmin(admin.ModelAdmin):
     list_display = ('biosamplesid', 'disease_name', 'celllinename', 'celllinecollection', 'celllinecelltype', 'celllinedepositorsname', 'celllinestatus', 'celllinedonor', 'celllinetissuesource')
     list_filter = ('celllinestatus', 'disease__celllinedisease')
     search_fields = ('celllinename', 'disease__celllinedisease__disease')
+    inlines = [CelllineDeseaseInline]
 
     def disease_name(self, obj):
         return ', '.join([x.celllinedisease.disease for x in obj.disease.all()])
