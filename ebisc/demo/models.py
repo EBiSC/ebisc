@@ -79,6 +79,9 @@ class Cellline(models.Model):
     celllinetissuedate = models.IntegerField(blank=True, null=True)
     celllinetissuetreatment = models.ForeignKey('Clinicaltreatmentb4Donation', db_column='celllinetissuetreatment', blank=True, null=True)
 
+    def __unicode__(self):
+        return self.celllinename
+
     class Meta:
         managed = False
         db_table = 'cellline'
@@ -161,8 +164,8 @@ class Celllinederivation(models.Model):
 
 
 class Celllinedisease(models.Model):
-    idcelllinedisease = models.IntegerField(primary_key=True, editable=False)
-    cellline = models.ForeignKey(Cellline, db_column='cellline', unique=True)
+    idcelllinedisease = models.IntegerField(primary_key=True)
+    cellline = models.ForeignKey(Cellline, db_column='cellline', unique=True, related_name='disease')
     celllinedisease = models.ForeignKey('Disease', db_column='celllinedisease', blank=True, null=True)
     celllinediseasestage = models.ForeignKey('Diseasestage', db_column='celllinediseasestage', blank=True, null=True)
 
@@ -431,7 +434,11 @@ class Disease(models.Model):
     icdcode = models.CharField(unique=True, max_length=20, blank=True)
     disease = models.CharField(max_length=90, blank=True)
 
+    def __unicode__(self):
+        return self.disease
+
     class Meta:
+        ordering = ['disease']
         managed = False
         db_table = 'disease'
 
