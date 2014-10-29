@@ -1,20 +1,23 @@
+import os
 import datetime
 from contextlib import contextmanager as context
 
-from fabric.api import *
+from fabric.api import env, task, local, cd, run, prefix, get, settings
+from fabric.contrib.project import rsync_project
 
 SLUG = 'ebisc'
-DJANGO = '1.7'
 STORAGE = 'var/media/'
 DESTDIR = '/var/projects/%s' % SLUG
 
 env.hosts = ['www@django.two.sevenpastnine.com']
 env.port = 65022
 env.forward_agent = True
-# env.shell = '/usr/local/bin/bash -l -c'
 env.shell = '/bin/sh -c'
-env.activate = '. /usr/local/virtualenv/django-%s/bin/activate' % DJANGO
+env.activate = '. %s/var/virtualenv/bin/activate' % DESTDIR
 
+
+# -----------------------------------------------------------------------------
+# Virtualenv
 
 @context
 def virtualenv():
@@ -35,7 +38,7 @@ def deploy(option=None):
         run('pip install -r requirements.txt')
         run('./manage.py collectstatic --noinput')
         run('./manage.py compress')
-        run('touch etc/conf/staging.uwsgi.ini')
+        run('touch etc/staging.uwsgi.ini')
 
 
 # -----------------------------------------------------------------------------
@@ -53,12 +56,11 @@ def sync(kind=None):
 
 
 def sync_media():
-    local('rsync -avH %s:%s/%s %s' % (env.host_string, DESTDIR, STORAGE, STORAGE))
+    rsync_project(os.path.join(DESTDIR, STORAGE), STORAGE, upload=False)
 
 
 def sync_db():
-
-    fn = '%s-%s.sql.bz2' % (SLUG, str(datetime.datetime.now()).replace(' ', '-'))
+    fn = '%s-%s.sql.gz' % (SLUG, str(datetime.datetime.now()).replace(' ', '-'))
 
     run('pg_dump -h db %s | bzip2 -c > %s' % (SLUG, fn))
     get(fn, fn)
@@ -71,5 +73,6 @@ def sync_db():
 
     local('bunzip2 -c %s | psql -f - %s' % (fn, SLUG))
     local('rm %s' % fn)
+
 
 # -----------------------------------------------------------------------------
