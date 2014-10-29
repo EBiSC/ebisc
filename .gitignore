@@ -5,6 +5,6 @@
 */settings/__init__.py
 */static/bower_components
 
-lib
 var/static
 var/media
+var/virtualenv/

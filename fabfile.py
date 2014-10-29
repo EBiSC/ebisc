@@ -32,6 +32,7 @@ def deploy(option=None):
     with virtualenv():
         run('git pull origin')
         # run('bower install')
+        run('pip -r requirements.txt')
         run('./manage.py collectstatic --noinput')
         run('./manage.py compress')
         run('touch etc/conf/staging.uwsgi.ini')
