@@ -1,0 +1,2 @@
+(function(){$(document).ready(function(){return $(".collapsible-menu-toggle").each(function(e,t){var n,r;return n=$(t),r=$("#"+n.data("target")),n.on("click",function(e){return e.preventDefault(),r.slideToggle(function(){return r.is(":hidden")?r.removeAttr("style"):void 0})})})})}).call(this);
+//# sourceMappingURL=maps/main.js.map

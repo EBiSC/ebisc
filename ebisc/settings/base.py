@@ -26,6 +26,7 @@ ADMINS = (
 INSTALLED_APPS = (
     'ebisc',
     'ebisc.site',
+    'ebisc.celllines',
 
     'cms',
 

@@ -10,7 +10,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'ebisc',
-    }
+    },
+    # 'source': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'ebisc',
+    # }
 }
 
 # -----------------------------------------------------------------------------

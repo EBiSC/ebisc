@@ -14,3 +14,12 @@
     bower install
 
 In one shell run `./manage.py runserver` and then in the other `gulp watch`.
+
+
+## ORM
+
+CREATE DATABASE ebisc;
+CREATE USER 'joh'@'localhost';
+GRANT ALL ON ebisc.* TO 'joh'@'localhost';
+mysql ebisc < schema.sql
+./manage.py inspectdb --database source > ebisc/celllines/models-inspectd.py
