@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+{% load static cms %}
+
+<html lang="sl">
+
+<head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <meta name="viewport" content="initial-scale=1">
+    <link rel="stylesheet" type="text/sass" href="{% static 'styles/main.css' %}">
+</head>
+
+<body class="{% if document %}template-{{ document.template|slugify }}{% endif %}">
+
+    <header>
+        <div class="collapsible-menu">
+            <button id="main-navigation-menu-mobile-toggle" class="collapsible-menu-toggle" data-target="main-navigation-menu-items">MENU</button>
+            <nav role="navigation">
+                <ul id="main-navigation-menu-items" class="collapsible-menu-items">
+                    <li><a href="{% url 'site:document' document.node.ancestors.0.path %}">Domov</a></li>
+                    {% for node in document.node|menu:0 %}
+                    <li class="{% if document.node|is_descendant_of:node %}active{% endif %}"><a href="{% url 'site:document' node.path %}">{{ node.menu_title|default:node.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <article>{% block article %}{% endblock %}</article>
+
+    <footer><div class="organism-label">Footer</div></footer>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="{% static 'scripts/main.js' %}"></script>
+
+    {% block extra-scripts %}{% endblock %}
+</body>
+
+</html>

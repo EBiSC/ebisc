@@ -7,7 +7,7 @@ from fabric.contrib.project import rsync_project
 
 SLUG = 'ebisc'
 STORAGE = 'var/media/'
-DESTDIR = '/var/projects/%s' % SLUG
+DESTDIR = '/var/projects/%s/' % SLUG
 
 env.hosts = ['www@django.two.sevenpastnine.com']
 env.port = 65022
@@ -34,11 +34,10 @@ def deploy(option=None):
 
     with virtualenv():
         run('git pull origin')
-        # run('bower install')
+        run('bower install --production')
         run('pip install -r requirements.txt')
         run('./manage.py collectstatic --noinput')
-        run('./manage.py compress')
-        run('touch etc/staging.uwsgi.ini')
+        run('touch etc/conf/*.ini')
 
 
 # -----------------------------------------------------------------------------
@@ -62,7 +61,7 @@ def sync_media():
 def sync_db():
     fn = '%s-%s.sql.gz' % (SLUG, str(datetime.datetime.now()).replace(' ', '-'))
 
-    run('pg_dump -h db %s | bzip2 -c > %s' % (SLUG, fn))
+    run('pg_dump -h db %s | gzip -c > %s' % (SLUG, fn))
     get(fn, fn)
 
     with settings(warn_only=True):
@@ -71,7 +70,7 @@ def sync_db():
 
     run('rm %s' % fn)
 
-    local('bunzip2 -c %s | psql -f - %s' % (fn, SLUG))
+    local('gunzip -c %s | psql -f - %s' % (fn, SLUG))
     local('rm %s' % fn)
 
 

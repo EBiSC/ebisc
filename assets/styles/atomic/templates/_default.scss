@@ -1,0 +1,5 @@
+body.template-default {
+  article {
+    @include container();
+  }
+}

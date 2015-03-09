@@ -1,11 +1,7 @@
 from .base import *
 
-DEBUG = False
-TEMPLATE_DEBUG = False
-
-ALLOWED_HOSTS = ['ebisc.at.two.sevenpastnine.com']
-
-SERVER_EMAIL = 'EBiSC Staging <www@sevenpastnine.com>'
+DEBUG = True
+TEMPLATE_DEBUG = True
 
 # -----------------------------------------------------------------------------
 # Database
@@ -14,8 +10,6 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'ebisc',
-        'USER': 'www',
-        'HOST': 'db'
     }
 }
 

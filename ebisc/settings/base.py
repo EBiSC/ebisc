@@ -1,29 +1,35 @@
 """
-Django settings for ebisc project.
+Django settings for EBiSC project.
 
 For more information on this file, see
-https://docs.djangoproject.com/en/dev/topics/settings/
+https://docs.djangoproject.com/en/1.7/topics/settings/
 
 For the full list of settings and their values, see
-https://docs.djangoproject.com/en/dev/ref/settings/
+https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '@!7ju$b1*1c5!dihak)cw3ao1ema&2quw3s*9l#&8^v8ob%gw1'
 
+# -----------------------------------------------------------------------------
+# Admins & managers
+
+ADMINS = (
+    ('Joh Dokler', 'joh.dokler@gmail.com'),
+)
+
+# -----------------------------------------------------------------------------
 # Application definition
 
 INSTALLED_APPS = (
-    # 'django_admin_bootstrapped.bootstrap3',
-    # 'django_admin_bootstrapped',
+    'ebisc',
+    'ebisc.site',
+
+    'cms',
+
+    'django_cleanup',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -31,11 +37,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'compressor',
-
-    'ebisc',
-    'ebisc.demo',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -52,56 +53,32 @@ ROOT_URLCONF = 'ebisc.urls'
 
 WSGI_APPLICATION = 'ebisc.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/dev/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ebisc',
-    }
-}
-
+# -----------------------------------------------------------------------------
 # Internationalization
-# https://docs.djangoproject.com/en/dev/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'en'
 
 USE_I18N = True
-
 USE_L10N = True
 
+TIME_ZONE = 'Europe/Paris'
 USE_TZ = True
 
 # -----------------------------------------------------------------------------
-# Templating
-
-TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates/'),)
-
-# -----------------------------------------------------------------------------
-# Static files and media
+# Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, '../var/static/')
 
-STATICFILES_FINDERS = (
-    'compressor.finders.CompressorFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, '../var/media/')
 
 # -----------------------------------------------------------------------------
-# Django static assets compressor
+# CMS
 
-COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc {infile} {outfile}'),
-    ('text/coffeescript', 'coffee --compile --stdio'),
-)
-
-COMPRESS_CSS_FILTERS = (
-    'compressor.filters.cssmin.CSSMinFilter',
-)
+CMS_SITE_APP = 'ebisc.site'
+CMS_SITE_VIEW = 'site:document'
+CMS_SITE_NAME = 'EBiSC'
+CMS_SITE_BASE_URL = 'http://ebisc.at.two.sevenpastnine.com'
 
 # -----------------------------------------------------------------------------

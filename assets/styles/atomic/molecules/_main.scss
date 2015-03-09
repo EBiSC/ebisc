@@ -1,0 +1,27 @@
+.collapsible-menu {
+
+  button {
+    outline: none;
+  }
+
+  .collapsible-menu-toggle {
+    display: none;
+
+    @include breakpoint(map-get($breakpoints, small)) {
+      display: block;
+    }
+  }
+
+  .collapsible-menu-items {
+    li {
+      display: inline-block;
+    }
+
+    @include breakpoint(map-get($breakpoints, small)) {
+      display: none;
+      li {
+        display: block;
+      }
+    }
+  }
+}

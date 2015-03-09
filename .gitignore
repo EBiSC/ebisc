@@ -1,10 +1,9 @@
-.DS_Store
-
 *.pyc
 
-*/settings/__init__.py
-*/static/bower_components
+/*/settings/__init__.py
 
-var/static
-var/media
-var/virtualenv/
+/node_modules/
+/assets/components/
+
+/var/static/
+/var/virtualenv/
