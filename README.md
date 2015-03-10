@@ -41,3 +41,11 @@ mysql ebisc < schema.sql
 - Do we convert max_length=1000 fields to variable length char field TextField?
 
 - A lot of fields are optional - this does not look right!
+
+
+## Changes
+
+    Model: Celllinestatus
+    Before: celllinestatus = models.CharField(_(u'Cell line status'), max_length=20, blank=True)
+    After: celllinestatus = models.CharField(_(u'Cell line status'), max_length=50, blank=True)
+    Example: Hot Start cell line (not available)

@@ -9,14 +9,14 @@ from ..models import *
 
 '''
 + binnedage.txt'
-- cellline.txt'
-- celllinechecklist.txt'
-- celllinelab.txt'
-- celllineorganization.txt'
-- celllinestatus.txt'
-- celllineuse.txt'
-- celltype.txt'
-- country.txt'
+R cellline.txt'
+? celllinechecklist.txt'
+R celllinelab.txt'
+R celllineorganization.txt'
++ celllinestatus.txt'
+? celllineuse.txt'
++ celltype.txt'
++ country.txt'
 + culturesystem.txt'
 + disease.txt'
 ? diseasearea.txt'
@@ -43,31 +43,21 @@ FILES = [
         'model': Binnedage,
         'fields': {'id': 0, 'binnedage': 1}
     },
-    # {
-    #     'filename': '.txt',
-    #     'model': ,
-    #     'fields': {'id': 0, '': 1}
-    # },
-    # {
-    #     'filename': '.txt',
-    #     'model': ,
-    #     'fields': {'id': 0, '': 1}
-    # },
-    # {
-    #     'filename': '.txt',
-    #     'model': ,
-    #     'fields': {'id': 0, '': 1}
-    # },
-    # {
-    #     'filename': '.txt',
-    #     'model': ,
-    #     'fields': {'id': 0, '': 1}
-    # },
-    # {
-    #     'filename': '.txt',
-    #     'model': ,
-    #     'fields': {'id': 0, '': 1}
-    # },
+    {
+        'filename': 'celllinestatus.txt',
+        'model': Celllinestatus,
+        'fields': {'id': 0, 'celllinestatus': 1}
+    },
+    {
+        'filename': 'celltype.txt',
+        'model': Celltype,
+        'fields': {'id': 0, 'celltype': 1}
+    },
+    {
+        'filename': 'country.txt',
+        'model': Country,
+        'fields': {'id': 0, 'country': 1}
+    },
     {
         'filename': 'culturesystem.txt',
         'model': Culturesystem,
@@ -103,7 +93,6 @@ FILES = [
         'model': Reprogrammingmethod3,
         'fields': {'id': 0, 'reprogrammingmethod3': 1}
     },
-
 ]
 
 

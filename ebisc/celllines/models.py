@@ -583,15 +583,15 @@ class Celllinesnprslinks(models.Model):
 
 
 class Celllinestatus(models.Model):
-    celllinestatus = models.CharField(_(u'Cell line status'), max_length=20, blank=True)
+    celllinestatus = models.CharField(_(u'Cell line status'), max_length=50, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line status')
         verbose_name_plural = _(u'Cell line statuses')
-        ordering = []
+        ordering = ['celllinestatus']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.celllinestatus,)
 
 
 class Celllinestrfingerprinting(models.Model):
@@ -689,10 +689,10 @@ class Celltype(models.Model):
     class Meta:
         verbose_name = _(u'Cell type')
         verbose_name_plural = _(u'Cell types')
-        ordering = []
+        ordering = ['celltype']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.celltype,)
 
 
 class Clinicaltreatmentb4Donation(models.Model):
@@ -750,16 +750,16 @@ class Contacttype(models.Model):
 
 
 class Country(models.Model):
-    country = models.CharField(_(u'Country'), max_length=45, blank=True)
-    countrycode = models.CharField(_(u'Country code'), max_length=3)
+    country = models.CharField(_(u'Country'), max_length=45, unique=True)
+    countrycode = models.CharField(_(u'Country code'), max_length=3, unique=True, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Country')
         verbose_name_plural = _(u'Countries')
-        ordering = []
+        ordering = ['country']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.country,)
 
 
 class Culturemedium(models.Model):
