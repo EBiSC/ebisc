@@ -17,19 +17,19 @@ from ..models import *
 - celllineuse.txt'
 - celltype.txt'
 - country.txt'
-- culturesystem.txt'
++ culturesystem.txt'
 + disease.txt'
-- diseasearea.txt'
+? diseasearea.txt'
 - document.txt'
 - donor.txt'
-- gender.txt'
++ gender.txt'
 - organization.txt'
-- phenotype.txt'
-- phonecountrycode.txt'
-- reprogmethod1.txt'
-- reprogmethod2.txt'
-- reprogmethod3.txt'
-- treatmentbeforecollection.txt'
++ phenotype.txt'
++ phonecountrycode.txt'
++ reprogmethod1.txt'
++ reprogmethod2.txt'
++ reprogmethod3.txt'
+? treatmentbeforecollection.txt'
 '''
 
 FILES = [
@@ -68,6 +68,41 @@ FILES = [
     #     'model': ,
     #     'fields': {'id': 0, '': 1}
     # },
+    {
+        'filename': 'culturesystem.txt',
+        'model': Culturesystem,
+        'fields': {'id': 0, 'culturesystem': 1}
+    },
+    {
+        'filename': 'gender.txt',
+        'model': Gender,
+        'fields': {'id': 0, 'gender': 1}
+    },
+    {
+        'filename': 'phenotype.txt',
+        'model': Phenotype,
+        'fields': {'id': 0, 'phenotype': 1}
+    },
+    {
+        'filename': 'phonecountrycode.txt',
+        'model': Phonecountrycode,
+        'fields': {'id': 0, 'phonecountrycode': 1}
+    },
+    {
+        'filename': 'reprogmethod1.txt',
+        'model': Reprogrammingmethod1,
+        'fields': {'id': 0, 'reprogrammingmethod1': 1}
+    },
+    {
+        'filename': 'reprogmethod2.txt',
+        'model': Reprogrammingmethod2,
+        'fields': {'id': 0, 'reprogrammingmethod2': 1}
+    },
+    {
+        'filename': 'reprogmethod3.txt',
+        'model': Reprogrammingmethod3,
+        'fields': {'id': 0, 'reprogrammingmethod3': 1}
+    },
 
 ]
 

@@ -782,10 +782,10 @@ class Culturesystem(models.Model):
     class Meta:
         verbose_name = _(u'Culture system')
         verbose_name_plural = _(u'Culture systems')
-        ordering = []
+        ordering = ['culturesystem']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.culturesystem,)
 
 
 class Disease(models.Model):
@@ -910,10 +910,10 @@ class Gender(models.Model):
     class Meta:
         verbose_name = _(u'Gender')
         verbose_name_plural = _(u'Genders')
-        ordering = []
+        ordering = ['gender']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.gender,)
 
 
 class Germlayer(models.Model):
@@ -1080,22 +1080,22 @@ class Phenotype(models.Model):
     class Meta:
         verbose_name = _(u'Phenotype')
         verbose_name_plural = _(u'Phenotypes')
-        ordering = []
+        ordering = ['phenotype']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.phenotype,)
 
 
 class Phonecountrycode(models.Model):
-    phonecountrycode = models.DecimalField(max_digits=4, decimal_places=0, blank=True, null=True)
+    phonecountrycode = models.DecimalField(_(u'Phone country code'), max_digits=4, decimal_places=0, blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Phone country code')
         verbose_name_plural = _(u'Phone country codes')
-        ordering = []
+        ordering = ['phonecountrycode']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.phonecountrycode,)
 
 
 class Postcode(models.Model):
@@ -1153,10 +1153,10 @@ class Reprogrammingmethod1(models.Model):
     class Meta:
         verbose_name = _(u'Reprogramming method 1')
         verbose_name_plural = _(u'Reprogramming methods 1')
-        ordering = []
+        ordering = ['reprogrammingmethod1']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.reprogrammingmethod1,)
 
 
 class Reprogrammingmethod2(models.Model):
@@ -1165,10 +1165,10 @@ class Reprogrammingmethod2(models.Model):
     class Meta:
         verbose_name = _(u'Reprogramming method 2')
         verbose_name_plural = _(u'Reprogramming methods 2')
-        ordering = []
+        ordering = ['reprogrammingmethod2']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.reprogrammingmethod2,)
 
 
 class Reprogrammingmethod3(models.Model):
@@ -1177,10 +1177,10 @@ class Reprogrammingmethod3(models.Model):
     class Meta:
         verbose_name = _(u'Reprogramming method 3')
         verbose_name_plural = _(u'Reprogramming methods 3')
-        ordering = []
+        ordering = ['reprogrammingmethod3']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.reprogrammingmethod3,)
 
 
 class Strfplocus(models.Model):
