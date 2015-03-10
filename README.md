@@ -60,7 +60,7 @@ mysql ebisc < schema.sql
 
     Model: Celllinechecklist
     New:
-        checklistcellline = models.OneToOneField('Celline')
+        checklistcellline = models.OneToOneField(Cellline)
         morphologicalassessment = models.BooleanField(_(u'Morphological assessment'), default=False)
         facs = models.BooleanField(_(u'FACS'), default=False)
         ihc = models.BooleanField(_(u'IHC'), default=False)
