@@ -1044,10 +1044,10 @@ class Morphologymethod(models.Model):
 
 
 class Organization(models.Model):
-    organizationname = models.CharField(_(u'Organization name'), max_length=45, blank=True)
-    organizationshortname = models.CharField(_(u'Organization short name'), unique=True, max_length=6, blank=True)
+    organizationname = models.CharField(_(u'Organization name'), max_length=45, unique=True, null=True, blank=True)
+    organizationshortname = models.CharField(_(u'Organization short name'), unique=True, max_length=6, null=True, blank=True)
     organizationcontact = models.ForeignKey(Contact, blank=True, null=True)
-    organizationupdate = models.DateField(blank=True, null=True)
+    organizationupdate = models.DateField(_(u'Organization update'), blank=True, null=True)
     organizationupdatetype = models.ForeignKey(Lastupdatetype, blank=True, null=True)
     organizationupdatedby = models.ForeignKey('Useraccount', related_name='organizations', blank=True, null=True)
     organizationtype = models.ForeignKey('Orgtype', blank=True, null=True)
@@ -1055,10 +1055,10 @@ class Organization(models.Model):
     class Meta:
         verbose_name = _(u'Organization')
         verbose_name_plural = _(u'Organizations')
-        ordering = []
+        ordering = ['organizationname', 'organizationshortname']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u' - '.join([x for x in self.organizationshortname, self.organizationname if x])
 
 
 class Orgtype(models.Model):

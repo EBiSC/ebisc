@@ -10,9 +10,9 @@ from ..models import *
 '''
 + binnedage.txt'
 R cellline.txt'
-R celllinechecklist.txt'
-R celllinelab.txt'
-R celllineorganization.txt'
+R celllinechecklist.txt' (cellline)
+R celllinelab.txt' (cellline)
+R celllineorganization.txt' (cellline)
 + celllinestatus.txt'
 ? celllineuse.txt'
 + celltype.txt'
@@ -67,6 +67,11 @@ FILES = [
         'filename': 'gender.txt',
         'model': Gender,
         'fields': {'id': 0, 'gender': 1}
+    },
+    {
+        'filename': 'organization.txt',
+        'model': Organization,
+        'fields': {'id': 0, 'organizationshortname': 1}
     },
     {
         'filename': 'phenotype.txt',
