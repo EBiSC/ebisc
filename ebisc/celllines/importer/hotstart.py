@@ -21,9 +21,9 @@ R celllineorganization.txt' (cellline)
 + disease.txt'
 ? diseasearea.txt'
 R document.txt'
-R donor.txt'
++ donor.txt'
 + gender.txt'
-R organization.txt'
++ organization.txt'
 + phenotype.txt'
 + phonecountrycode.txt'
 + reprogmethod1.txt'
@@ -98,6 +98,14 @@ FILES = [
         'model': Reprogrammingmethod3,
         'fields': {'id': 0, 'reprogrammingmethod3': 1}
     },
+
+    # --- Related models ---
+
+    {
+        'filename': 'donor.txt',
+        'model': Donor,
+        'fields': {'id': 0, 'hescregdonorid': 1, 'gender': {'id': 3, 'model': Gender}, 'providerdonorid': 7}
+    },
 ]
 
 
@@ -118,7 +126,15 @@ def import_hotstart(basedir):
 
                 kwargs = {}
                 for key, value in f['fields'].items():
-                    kwargs[key] = line[value]
+
+                    if isinstance(value, dict):
+                        # foreign key value
+                        kwargs[key] = value['model'].objects.get(id=line[value['id']])
+
+                    else:
+                        # atomic value
+                        kwargs[key] = line[value]
+
                 logger.debug('  Args: %s' % kwargs)
 
                 obj = f['model'](**kwargs)

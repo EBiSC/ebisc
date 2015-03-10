@@ -866,7 +866,7 @@ class Documenttype(models.Model):
 
 
 class Donor(models.Model):
-    hescregdonorid = models.CharField(_(u'Hescreg donor id'), max_length=3, blank=True)
+    hescregdonorid = models.CharField(_(u'Hescreg donor ID'), max_length=3)
     age = models.ForeignKey(Binnedage, blank=True, null=True)
     gender = models.ForeignKey('Gender', blank=True, null=True)
     countryoforigin = models.ForeignKey(Country, blank=True, null=True)
@@ -886,10 +886,10 @@ class Donor(models.Model):
     class Meta:
         verbose_name = _(u'Donor')
         verbose_name_plural = _(u'Donors')
-        ordering = []
+        ordering = ['hescregdonorid']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.hescregdonorid,)
 
 
 class Ebisckeyword(models.Model):
@@ -958,11 +958,11 @@ class Germlayer(models.Model):
 
 
 class Hla(models.Model):
-    hla = models.CharField(_(u'Hla'), max_length=45, blank=True)
+    hla = models.CharField(_(u'HLA'), max_length=45, blank=True)
 
     class Meta:
-        verbose_name = _(u'Hla')
-        verbose_name_plural = _(u'Hla')
+        verbose_name = _(u'HLA')
+        verbose_name_plural = _(u'HLAs')
         ordering = []
 
     def __unicode__(self):

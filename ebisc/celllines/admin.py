@@ -304,7 +304,10 @@ admin.site.register(Documenttype, DocumenttypeAdmin)
 
 
 class DonorAdmin(admin.ModelAdmin):
-    pass
+
+    list_display = ['hescregdonorid', 'age', 'gender', 'countryoforigin', 'primarydisease', 'diseaseadditionalinfo', 'providerdonorid']
+    list_display_links = ['hescregdonorid']
+    list_filter = ['age', 'gender', 'countryoforigin']
 
 admin.site.register(Donor, DonorAdmin)
 
