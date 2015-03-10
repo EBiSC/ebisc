@@ -1213,11 +1213,11 @@ class Reprogrammingmethod3(models.Model):
 
 
 class Strfplocus(models.Model):
-    strfplocus = models.CharField(_(u'Str fp locus'), max_length=45, blank=True)
+    strfplocus = models.CharField(_(u'STR FP locus'), max_length=45, blank=True)
 
     class Meta:
-        verbose_name = _(u'Str fp locus')
-        verbose_name_plural = _(u'Str fp loci')
+        verbose_name = _(u'STR FP locus')
+        verbose_name_plural = _(u'STR FP loci')
         ordering = []
 
     def __unicode__(self):
