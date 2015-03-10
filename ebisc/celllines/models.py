@@ -161,6 +161,35 @@ class Celllinecharacterization(models.Model):
         return u'%s' % (self.id,)
 
 
+class Celllinechecklist(models.Model):
+
+    checklistcellline = models.OneToOneField('Celline')
+    morphologicalassessment = models.BooleanField(_(u'Morphological assessment'), default=False)
+    facs = models.BooleanField(_(u'FACS'), default=False)
+    ihc = models.BooleanField(_(u'IHC'), default=False)
+    pcrforreprofactorremoval = models.BooleanField(_(u'PCR for reprofactor removal'), default=False)
+    pcrforpluripotency = models.BooleanField(_(u'PCR for pluripotency'), default=False)
+    teratoma = models.BooleanField(_(u'Teratoma'), default=False)
+    invitrodifferentiation = models.BooleanField(_(u'Invitro differentiation'), default=False)
+    karyotype = models.BooleanField(_(u'Karyo type'), default=False)
+    cnvanalysis = models.BooleanField(_(u'CNV analysis'), default=False)
+    dnamethylation = models.BooleanField(_(u'DNA methylation'), default=False)
+    microbiologyinclmycoplasma = models.BooleanField(_(u'Micro biology inclmycoplasma'), default=False)
+    dnagenotyping = models.BooleanField(_(u'DNA genotyping'), default=False)
+    hlatyping = models.BooleanField(_(u'HLA typing'), default=False)
+    virustesting = models.BooleanField(_(u'Viru stesting'), default=False)
+    postthawviability = models.BooleanField(_(u'Post thawviability'), default=False)
+    checklistcomments = models.TextField('Checklist comments', null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line checklist')
+        verbose_name_plural = _(u'Cell line checklists')
+        ordering = ['checklistcellline']
+
+    def __unicode__(self):
+        return u'%s' % (self.checklistcellline,)
+
+
 class Celllinecollection(models.Model):
     celllinecollectiontotal = models.IntegerField(_(u'Cell line collection total'), blank=True, null=True)
     celllinecollectionupdate = models.DateField(blank=True, null=True)
