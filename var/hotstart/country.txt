@@ -1,0 +1,8 @@
+IDCOUNTRY,COUNTRY
+1,Austria
+2,Bahrain
+3,Belgium
+4,Germany
+5,UK 
+6,US
+0,Unknown

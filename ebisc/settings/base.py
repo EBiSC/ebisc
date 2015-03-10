@@ -83,3 +83,29 @@ CMS_SITE_NAME = 'EBiSC'
 CMS_SITE_BASE_URL = 'http://ebisc.at.two.sevenpastnine.com'
 
 # -----------------------------------------------------------------------------
+# Logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '%(levelname)-10s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'management.commands': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    }
+}
+
+# -----------------------------------------------------------------------------

@@ -1,0 +1,6 @@
+IDCULTURESYSTEM,CULTURESYSTEM
+0,Unknown
+1,Feeder-free
+2,Feeder (MEF)
+3,Feeder (HFF)
+4,Feeder

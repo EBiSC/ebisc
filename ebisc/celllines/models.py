@@ -56,10 +56,10 @@ class Binnedage(models.Model):
     class Meta:
         verbose_name = _(u'Binned age')
         verbose_name_plural = _(u'Binned ages')
-        ordering = []
+        ordering = ['id']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.binnedage,)
 
 
 class Cellline(models.Model):
@@ -789,16 +789,16 @@ class Culturesystem(models.Model):
 
 
 class Disease(models.Model):
-    icdcode = models.CharField(_(u'Icd code'), unique=True, max_length=10, blank=True)
+    icdcode = models.CharField(_(u'ICD code'), max_length=10, unique=True, null=True, blank=True)
     disease = models.CharField(_(u'Disease'), max_length=45, blank=True)
 
     class Meta:
         verbose_name = _(u'Disease')
         verbose_name_plural = _(u'Diseases')
-        ordering = []
+        ordering = ['disease']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.disease,)
 
 
 class Document(models.Model):
