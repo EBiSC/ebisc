@@ -31,6 +31,8 @@ INSTALLED_APPS = (
     'cms',
 
     'django_cleanup',
+    'grappelli.dashboard',
+    'grappelli',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -73,6 +75,23 @@ STATIC_ROOT = os.path.join(BASE_DIR, '../var/static/')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '../var/media/')
+
+# -----------------------------------------------------------------------------
+# Templating
+
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as DEFAULT_TEMPLATE_CONTEXT_PROCESSORS
+
+TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_TEMPLATE_CONTEXT_PROCESSORS + (
+    'django.core.context_processors.request',
+)
+
+# -----------------------------------------------------------------------------
+# Admin
+
+from django.utils.translation import ugettext_lazy as _
+
+GRAPPELLI_ADMIN_TITLE = _(u'EBiSC Administration')
+GRAPPELLI_INDEX_DASHBOARD = 'ebisc.dashboard.CustomIndexDashboard'
 
 # -----------------------------------------------------------------------------
 # CMS
