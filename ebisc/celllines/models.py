@@ -20,10 +20,10 @@ class Aliquotstatus(models.Model):
     class Meta:
         verbose_name = _(u'Aliquot status')
         verbose_name_plural = _(u'Aliquot statuses')
-        ordering = []
+        ordering = ['aliquotstatus']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.aliquotstatus,)
 
 
 class Approveduse(models.Model):
@@ -32,10 +32,10 @@ class Approveduse(models.Model):
     class Meta:
         verbose_name = _(u'Approved use')
         verbose_name_plural = _(u'Approved uses')
-        ordering = []
+        ordering = ['approveduse']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.approveduse,)
 
 
 class Batchstatus(models.Model):
@@ -44,10 +44,10 @@ class Batchstatus(models.Model):
     class Meta:
         verbose_name = _(u'Batch status')
         verbose_name_plural = _(u'Batch statuses')
-        ordering = []
+        ordering = ['batchstatus']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.batchstatus,)
 
 
 class Binnedage(models.Model):
@@ -63,18 +63,18 @@ class Binnedage(models.Model):
 
 
 class Cellline(models.Model):
-    biosamplesid = models.CharField(_(u'Biosamples id'), unique=True, max_length=12)
+    biosamplesid = models.CharField(_(u'Biosamples ID'), unique=True, max_length=12)
     celllinename = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
     celllinedonor = models.ForeignKey('Donor', blank=True, null=True)
     celllineprimarydisease = models.ForeignKey('Disease', blank=True, null=True)
-    celllinediseaseaddinfo = models.CharField(_(u'Cell line disease add info'), max_length=100, blank=True)
+    celllinediseaseaddinfo = models.CharField(_(u'Cell line disease info'), max_length=100, null=True, blank=True)
     celllinestatus = models.ForeignKey('Celllinestatus', blank=True, null=True)
     celllinecelltype = models.ForeignKey('Celltype', blank=True, null=True)
     celllinecollection = models.ForeignKey('Celllinecollection', blank=True, null=True)
     celllinetissuesource = models.ForeignKey('Tissuesource', blank=True, null=True)
-    celllinetissuetreatment = models.ForeignKey('Clinicaltreatmentb4Donation', blank=True, null=True)
+    celllinetissuetreatment = models.ForeignKey('Clinicaltreatmentb4donation', blank=True, null=True)
     celllinetissuedate = models.DateField(blank=True, null=True)
-    celllinenamesynonyms = models.TextField(_(u'Cell line name synonyms'), null=True, blank=True)
+    celllinenamesynonyms = models.CharField(_(u'Cell line name synonyms'), max_length=500, null=True, blank=True)
     depositorscelllineuri = models.CharField(_(u'Depositors cell line uri'), max_length=45, blank=True)
     celllinecomments = models.TextField(_(u'Cell line comments'), null=True, blank=True)
     celllineupdate = models.DateField(blank=True, null=True)
@@ -85,10 +85,10 @@ class Cellline(models.Model):
     class Meta:
         verbose_name = _(u'Cell line')
         verbose_name_plural = _(u'Cell lines')
-        ordering = []
+        ordering = ['biosamplesid']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.biosamplesid,)
 
 
 class Celllinealiquot(models.Model):
@@ -192,14 +192,14 @@ class Celllinechecklist(models.Model):
 
 class Celllinecollection(models.Model):
     celllinecollectiontotal = models.IntegerField(_(u'Cell line collection total'), blank=True, null=True)
-    celllinecollectionupdate = models.DateField(blank=True, null=True)
+    celllinecollectionupdate = models.DateField(_(u'Updated'), blank=True, null=True)
     celllinecollectionupdatetype = models.IntegerField(_(u'Cell line collection update type'), blank=True, null=True)
-    celllinecollectionupdatedby = models.CharField(_(u'Cell line collection updated by'), max_length=45, blank=True)
+    celllinecollectionupdatedby = models.CharField(_(u'Cell line collection updated by'), max_length=45, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line collection')
         verbose_name_plural = _(u'Cell line collections')
-        ordering = []
+        ordering = ['id']
 
     def __unicode__(self):
         return u'%s' % (self.id,)
@@ -452,10 +452,11 @@ class Celllinekaryotype(models.Model):
 
 
 class Celllinelab(models.Model):
-    labcellline = models.ForeignKey(Cellline, blank=True, null=True)
+    labcellline = models.OneToOneField(Cellline, blank=True, null=True)
     cryodate = models.DateField(blank=True, null=True)
     expansioninprogress = models.IntegerField(_(u'Expansion in progress'), blank=True, null=True)
     funder = models.CharField(_(u'Funder'), max_length=45, blank=True)
+    mutagene = models.CharField(_(u'Mutagene'), max_length=100, blank=True)
     reprogrammingmethod1 = models.ForeignKey('Reprogrammingmethod1', blank=True, null=True)
     reprogrammingmethod2 = models.ForeignKey('Reprogrammingmethod2', blank=True, null=True)
     reprogrammingmethod3 = models.ForeignKey('Reprogrammingmethod3', blank=True, null=True)
@@ -516,7 +517,7 @@ class Celllinemarker(models.Model):
 
 
 class Celllineorganization(models.Model):
-    orgcellline = models.ForeignKey(Cellline, blank=True, null=True)
+    orgcellline = models.OneToOneField(Cellline, blank=True, null=True)
     organization = models.ForeignKey('Organization', blank=True, null=True)
     celllineorgtype = models.ForeignKey('Celllineorgtype', blank=True, null=True)
     orgstatus = models.IntegerField(_(u'Org status'), blank=True, null=True)
@@ -537,10 +538,10 @@ class Celllineorgtype(models.Model):
     class Meta:
         verbose_name = _(u'Cell line org type')
         verbose_name_plural = _(u'Cell line org types')
-        ordering = []
+        ordering = ['celllineorgtype']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.celllineorgtype,)
 
 
 class Celllinepublication(models.Model):
@@ -724,16 +725,16 @@ class Celltype(models.Model):
         return u'%s' % (self.celltype,)
 
 
-class Clinicaltreatmentb4Donation(models.Model):
-    clininicaltreatmentb4donation = models.CharField(_(u'Clininical treatment b4 donation'), max_length=45, blank=True)
+class Clinicaltreatmentb4donation(models.Model):
+    clinicaltreatmentb4donation = models.CharField(_(u'Clininical treatment b4 donation'), max_length=45, blank=True)
 
     class Meta:
         verbose_name = _(u'Clininical treatment b4 donation')
         verbose_name_plural = _(u'Clininical treatment b4 donations')
-        ordering = []
+        ordering = ['clinicaltreatmentb4donation']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.clinicaltreatmentb4donation,)
 
 
 class Contact(models.Model):
@@ -744,15 +745,15 @@ class Contact(models.Model):
     city = models.CharField(_(u'City'), max_length=45, blank=True)
     street = models.CharField(_(u'Street'), max_length=45, blank=True)
     buildingnumber = models.CharField(_(u'Building number'), max_length=20, blank=True)
-    suiteoraptordept = models.CharField(_(u'Suite or apt or dept'), max_length=10, blank=True)
+    suiteoraptordept = models.CharField(_(u'Suite or apt or dept'), max_length=10, null=True, blank=True)
     officephonecountrycode = models.ForeignKey('Phonecountrycode', related_name='contacts_officephonecountrycode', blank=True, null=True)
-    officephone = models.CharField(_(u'Office phone'), max_length=20, blank=True)
+    officephone = models.CharField(_(u'Office phone'), max_length=20, null=True, blank=True)
     faxcountrycode = models.ForeignKey('Phonecountrycode', related_name='contacts_faxcountrycode', blank=True, null=True)
-    fax = models.CharField(_(u'Fax'), max_length=20, blank=True)
+    fax = models.CharField(_(u'Fax'), max_length=20, null=True, blank=True)
     mobilecountrycode = models.ForeignKey('Phonecountrycode', related_name='contacts_mobilecountrycode', blank=True, null=True)
-    mobilephone = models.CharField(_(u'Mobile phone'), max_length=20, blank=True)
-    website = models.CharField(_(u'Website'), max_length=45, blank=True)
-    emailaddress = models.CharField(_(u'Email address'), max_length=45, blank=True)
+    mobilephone = models.CharField(_(u'Mobile phone'), max_length=20, null=True, blank=True)
+    website = models.CharField(_(u'Website'), max_length=45, null=True, blank=True)
+    emailaddress = models.CharField(_(u'Email address'), max_length=45, null=True, blank=True)
     contactupdate = models.DateField(blank=True, null=True)
     contactupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
     contactupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
@@ -772,10 +773,10 @@ class Contacttype(models.Model):
     class Meta:
         verbose_name = _(u'Contact type')
         verbose_name_plural = _(u'Contact types')
-        ordering = []
+        ordering = ['contacttype']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.contacttype,)
 
 
 class Country(models.Model):
@@ -799,10 +800,10 @@ class Culturemedium(models.Model):
     class Meta:
         verbose_name = _(u'Culture medium')
         verbose_name_plural = _(u'Culture mediums')
-        ordering = []
+        ordering = ['culturemediumbase']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.culturemediumbase,)
 
 
 class Culturesystem(models.Model):
@@ -847,10 +848,10 @@ class Document(models.Model):
     class Meta:
         verbose_name = _(u'Document')
         verbose_name_plural = _(u'Documents')
-        ordering = []
+        ordering = ['title']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.title,)
 
 
 class Documenttype(models.Model):
@@ -859,10 +860,10 @@ class Documenttype(models.Model):
     class Meta:
         verbose_name = _(u'Document type')
         verbose_name_plural = _(u'Document types')
-        ordering = []
+        ordering = ['documenttype']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.documenttype,)
 
 
 class Donor(models.Model):
@@ -903,10 +904,10 @@ class Ebisckeyword(models.Model):
     class Meta:
         verbose_name = _(u'Ebisc keyword')
         verbose_name_plural = _(u'Ebisc keywords')
-        ordering = []
+        ordering = ['cellline', 'document', 'ebisckeyword']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s - %s - %s' % (self.cellline, self.document, self.ebisckeyword)
 
 
 class Enzymatically(models.Model):
@@ -915,10 +916,10 @@ class Enzymatically(models.Model):
     class Meta:
         verbose_name = _(u'Enzymatically')
         verbose_name_plural = _(u'Enzymatically')
-        ordering = []
+        ordering = ['enzymatically']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.enzymatically,)
 
 
 class Enzymefree(models.Model):
@@ -927,10 +928,10 @@ class Enzymefree(models.Model):
     class Meta:
         verbose_name = _(u'Enzyme free')
         verbose_name_plural = _(u'Enzyme free')
-        ordering = []
+        ordering = ['enzymefree']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.enzymefree,)
 
 
 class Gender(models.Model):
@@ -951,10 +952,10 @@ class Germlayer(models.Model):
     class Meta:
         verbose_name = _(u'Germ layer')
         verbose_name_plural = _(u'Germ layers')
-        ordering = []
+        ordering = ['germlayer']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.germlayer,)
 
 
 class Hla(models.Model):
@@ -963,10 +964,10 @@ class Hla(models.Model):
     class Meta:
         verbose_name = _(u'HLA')
         verbose_name_plural = _(u'HLAs')
-        ordering = []
+        ordering = ['hla']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.hla,)
 
 
 class Karyotypemethod(models.Model):
@@ -975,10 +976,10 @@ class Karyotypemethod(models.Model):
     class Meta:
         verbose_name = _(u'Karyotype method')
         verbose_name_plural = _(u'Karyotype methods')
-        ordering = []
+        ordering = ['karyotypemethod']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.karyotypemethod,)
 
 
 class Keyword(models.Model):
@@ -987,10 +988,10 @@ class Keyword(models.Model):
     class Meta:
         verbose_name = _(u'Keyword')
         verbose_name_plural = _(u'Keywords')
-        ordering = []
+        ordering = ['keyword']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.keyword,)
 
 
 class Lastupdatetype(models.Model):
@@ -999,10 +1000,10 @@ class Lastupdatetype(models.Model):
     class Meta:
         verbose_name = _(u'Last update type')
         verbose_name_plural = _(u'Last update types')
-        ordering = []
+        ordering = ['lastupdatetype']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.lastupdatetype,)
 
 
 class Marker(models.Model):
@@ -1011,10 +1012,10 @@ class Marker(models.Model):
     class Meta:
         verbose_name = _(u'Marker')
         verbose_name_plural = _(u'Markers')
-        ordering = []
+        ordering = ['marker']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.marker,)
 
 
 class Molecule(models.Model):
@@ -1025,10 +1026,10 @@ class Molecule(models.Model):
     class Meta:
         verbose_name = _(u'Molecule')
         verbose_name_plural = _(u'Molecules')
-        ordering = []
+        ordering = ['moleculename']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.moleculename,)
 
 
 class Morphologymethod(models.Model):
@@ -1037,10 +1038,10 @@ class Morphologymethod(models.Model):
     class Meta:
         verbose_name = _(u'Morphology method')
         verbose_name_plural = _(u'Morphology methods')
-        ordering = []
+        ordering = ['morphologymethod']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.morphologymethod,)
 
 
 class Organization(models.Model):
@@ -1067,10 +1068,10 @@ class Orgtype(models.Model):
     class Meta:
         verbose_name = _(u'Organization type')
         verbose_name_plural = _(u'Organization types')
-        ordering = []
+        ordering = ['orgtype']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.orgtype,)
 
 
 class Passagemethod(models.Model):
@@ -1079,10 +1080,10 @@ class Passagemethod(models.Model):
     class Meta:
         verbose_name = _(u'Passage method')
         verbose_name_plural = _(u'Passage methods')
-        ordering = []
+        ordering = ['passagemethod']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.passagemethod,)
 
 
 class Person(models.Model):
@@ -1097,10 +1098,10 @@ class Person(models.Model):
     class Meta:
         verbose_name = _(u'Person')
         verbose_name_plural = _(u'Persons')
-        ordering = []
+        ordering = ['personlastname', 'personfirstname']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s %s' % (self.personlastname, self.personfirstname)
 
 
 class Phenotype(models.Model):
@@ -1134,10 +1135,10 @@ class Postcode(models.Model):
     class Meta:
         verbose_name = _(u'Postcode')
         verbose_name_plural = _(u'Postcodes')
-        ordering = []
+        ordering = ['postcode', 'district']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s %s' % (self.postcode, self.district)
 
 
 class Primarycelldevelopmentalstage(models.Model):
@@ -1146,10 +1147,10 @@ class Primarycelldevelopmentalstage(models.Model):
     class Meta:
         verbose_name = _(u'Primary cell developmental stage')
         verbose_name_plural = _(u'Primary cell developmental stages')
-        ordering = []
+        ordering = ['primarycelldevelopmentalstage']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.primarycelldevelopmentalstage,)
 
 
 class Proteinsource(models.Model):
@@ -1158,10 +1159,10 @@ class Proteinsource(models.Model):
     class Meta:
         verbose_name = _(u'Protein source')
         verbose_name_plural = _(u'Protein sources')
-        ordering = []
+        ordering = ['proteinsource']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.proteinsource,)
 
 
 class Publisher(models.Model):
@@ -1170,10 +1171,10 @@ class Publisher(models.Model):
     class Meta:
         verbose_name = _(u'Publisher')
         verbose_name_plural = _(u'Publishers')
-        ordering = []
+        ordering = ['publisher']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.publisher,)
 
 
 class Reprogrammingmethod1(models.Model):
@@ -1218,10 +1219,10 @@ class Strfplocus(models.Model):
     class Meta:
         verbose_name = _(u'STR FP locus')
         verbose_name_plural = _(u'STR FP loci')
-        ordering = []
+        ordering = ['strfplocus']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.strfplocus,)
 
 
 class Surfacecoating(models.Model):
@@ -1230,10 +1231,10 @@ class Surfacecoating(models.Model):
     class Meta:
         verbose_name = _(u'Surface coating')
         verbose_name_plural = _(u'Surface coatings')
-        ordering = []
+        ordering = ['surfacecoating']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.surfacecoating,)
 
 
 class Tissuesource(models.Model):
@@ -1242,10 +1243,10 @@ class Tissuesource(models.Model):
     class Meta:
         verbose_name = _(u'Tissue source')
         verbose_name_plural = _(u'Tissue sources')
-        ordering = []
+        ordering = ['tissuesource']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.tissuesource,)
 
 
 class Transposon(models.Model):
@@ -1254,10 +1255,10 @@ class Transposon(models.Model):
     class Meta:
         verbose_name = _(u'Transposon')
         verbose_name_plural = _(u'Transposons')
-        ordering = []
+        ordering = ['transposon']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.transposon,)
 
 
 class Units(models.Model):
@@ -1266,10 +1267,10 @@ class Units(models.Model):
     class Meta:
         verbose_name = _(u'Units')
         verbose_name_plural = _(u'Units')
-        ordering = []
+        ordering = ['units']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.units,)
 
 
 class Useraccount(models.Model):
@@ -1285,10 +1286,10 @@ class Useraccount(models.Model):
     class Meta:
         verbose_name = _(u'User account')
         verbose_name_plural = _(u'User accounts')
-        ordering = []
+        ordering = ['username']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.username,)
 
 
 class Useraccounttype(models.Model):
@@ -1297,10 +1298,10 @@ class Useraccounttype(models.Model):
     class Meta:
         verbose_name = _(u'User account type')
         verbose_name_plural = _(u'User account types')
-        ordering = []
+        ordering = ['useraccounttype']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.useraccounttype,)
 
 
 class Vector(models.Model):
@@ -1309,10 +1310,10 @@ class Vector(models.Model):
     class Meta:
         verbose_name = _(u'Vector')
         verbose_name_plural = _(u'Vectors')
-        ordering = []
+        ordering = ['vector']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.vector,)
 
 
 class Vectorfreereprogramfactor(models.Model):
@@ -1322,10 +1323,10 @@ class Vectorfreereprogramfactor(models.Model):
     class Meta:
         verbose_name = _(u'Vector free reprogram factor')
         verbose_name_plural = _(u'Vector free reprogram factors')
-        ordering = []
+        ordering = ['vectorfreereprogramfactor']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.vectorfreereprogramfactor,)
 
 
 class Vectortype(models.Model):
@@ -1334,10 +1335,10 @@ class Vectortype(models.Model):
     class Meta:
         verbose_name = _(u'Vector type')
         verbose_name_plural = _(u'Vector types')
-        ordering = []
+        ordering = ['vectortype']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.vectortype,)
 
 
 class Virus(models.Model):
@@ -1346,7 +1347,7 @@ class Virus(models.Model):
     class Meta:
         verbose_name = _(u'Virus')
         verbose_name_plural = _(u'Viruses')
-        ordering = []
+        ordering = ['virus']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.virus,)

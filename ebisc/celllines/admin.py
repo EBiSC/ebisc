@@ -33,8 +33,31 @@ class BinnedageAdmin(admin.ModelAdmin):
 admin.site.register(Binnedage, BinnedageAdmin)
 
 
+class CelllinechecklistInline(admin.StackedInline):
+    model = Celllinechecklist
+    min_num = 1
+    max_num = 1
+    extra = 0
+
+
+class CelllinelabInline(admin.StackedInline):
+    model = Celllinelab
+    min_num = 1
+    max_num = 1
+    extra = 0
+
+
+class CelllineorganizationInline(admin.StackedInline):
+    model = Celllineorganization
+    min_num = 1
+    max_num = 1
+    extra = 0
+
+
 class CelllineAdmin(admin.ModelAdmin):
-    pass
+
+    list_display = ['biosamplesid', 'celllinename', 'celllinedonor', 'celllineprimarydisease', 'celllinediseaseaddinfo', 'celllinestatus', 'celllinecelltype', 'celllinecollection', 'celllinetissuesource', 'celllinetissuetreatment', 'celllinetissuedate', 'celllinenamesynonyms', 'depositorscelllineuri', 'celllinecomments', 'celllineupdate', 'celllineupdatetype', 'celllineupdatedby', 'celllineecaccurl']
+    inlines = [CelllinelabInline, CelllineorganizationInline, CelllinechecklistInline]
 
 admin.site.register(Cellline, CelllineAdmin)
 
@@ -172,7 +195,8 @@ admin.site.register(Celllinemarker, CelllinemarkerAdmin)
 
 
 class CelllineorganizationAdmin(admin.ModelAdmin):
-    pass
+
+    list_display = ['orgcellline', 'organization', 'celllineorgtype', 'orgstatus', 'orgregistrationdate']
 
 admin.site.register(Celllineorganization, CelllineorganizationAdmin)
 
@@ -249,10 +273,10 @@ class CelltypeAdmin(admin.ModelAdmin):
 admin.site.register(Celltype, CelltypeAdmin)
 
 
-class Clinicaltreatmentb4DonationAdmin(admin.ModelAdmin):
+class Clinicaltreatmentb4donationAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(Clinicaltreatmentb4Donation, Clinicaltreatmentb4DonationAdmin)
+admin.site.register(Clinicaltreatmentb4donation, Clinicaltreatmentb4donationAdmin)
 
 
 class ContactAdmin(admin.ModelAdmin):

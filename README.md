@@ -77,3 +77,5 @@ mysql ebisc < schema.sql
         virustesting = models.BooleanField(_(u'Viru stesting'), default=False)
         postthawviability = models.BooleanField(_(u'Post thawviability'), default=False)
         checklistcomments = models.TextField('Checklist comments', null=True, blank=True)
+
+clininicaltreatmentb4donation -> clinicaltreatmentb4donation
