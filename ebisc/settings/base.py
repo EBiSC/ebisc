@@ -30,6 +30,7 @@ INSTALLED_APPS = (
 
     'cms',
 
+    'tastypie',
     'django_cleanup',
     'grappelli.dashboard',
     'grappelli',
@@ -92,6 +93,11 @@ from django.utils.translation import ugettext_lazy as _
 
 GRAPPELLI_ADMIN_TITLE = _(u'Administration')
 GRAPPELLI_INDEX_DASHBOARD = 'ebisc.dashboard.CustomIndexDashboard'
+
+# -----------------------------------------------------------------------------
+# Tastypie
+
+TASTYPIE_ALLOW_MISSING_SLASH = True
 
 # -----------------------------------------------------------------------------
 # CMS

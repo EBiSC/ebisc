@@ -16,6 +16,9 @@ urlpatterns = patterns('',
     # CMS
     url(r'^cms/', include('cms.urls')),
 
+    # API
+    url(r'^api/', include('ebisc.api.urls')),
+
     # Site
     url(r'', include('ebisc.site.urls', namespace='site')),
 )

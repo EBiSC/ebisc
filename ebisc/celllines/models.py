@@ -141,7 +141,7 @@ class Celllinebatch(models.Model):
 
 
 class Celllinecharacterization(models.Model):
-    characterizationcellline = models.ForeignKey(Cellline, blank=True, null=True)
+    characterizationcellline = models.OneToOneField(Cellline, blank=True, null=True)
     certificateofanalysispassage = models.CharField(_(u'Certificate of analysis passage'), max_length=5, blank=True)
     hiv1screening = models.IntegerField(_(u'Hiv1 screening'), blank=True, null=True)
     hiv2screening = models.IntegerField(_(u'Hiv2 screening'), blank=True, null=True)
@@ -162,7 +162,6 @@ class Celllinecharacterization(models.Model):
 
 
 class Celllinechecklist(models.Model):
-
     checklistcellline = models.OneToOneField(Cellline)
     morphologicalassessment = models.BooleanField(_(u'Morphological assessment'), default=False)
     facs = models.BooleanField(_(u'FACS'), default=False)
@@ -222,7 +221,7 @@ class Celllinecomments(models.Model):
 
 
 class Celllinecultureconditions(models.Model):
-    cultureconditionscellline = models.ForeignKey(Cellline, blank=True, null=True)
+    cultureconditionscellline = models.OneToOneField(Cellline, blank=True, null=True)
     surfacecoating = models.ForeignKey('Surfacecoating', blank=True, null=True)
     feedercelltype = models.CharField(_(u'Feeder cell type'), max_length=45, blank=True)
     feedercellid = models.CharField(_(u'Feeder cell id'), max_length=45, blank=True)
@@ -264,7 +263,7 @@ class Celllineculturesupplements(models.Model):
 
 
 class Celllinederivation(models.Model):
-    derivationcellline = models.ForeignKey(Cellline, blank=True, null=True)
+    derivationcellline = models.OneToOneField(Cellline, blank=True, null=True)
     primarycelltypename = models.CharField(_(u'Primary cell type name'), max_length=45, blank=True)
     primarycelltypecellfinderid = models.CharField(_(u'Primary cell type cell finder id'), max_length=45, blank=True)
     primarycelldevelopmentalstage = models.ForeignKey('Primarycelldevelopmentalstage', blank=True, null=True)
@@ -478,7 +477,7 @@ class Celllinelab(models.Model):
 
 
 class Celllinelegal(models.Model):
-    legalcellline = models.ForeignKey(Cellline, blank=True, null=True)
+    legalcellline = models.OneToOneField(Cellline, blank=True, null=True)
     q1donorconsent = models.IntegerField(_(u'Q1 donor consent'), blank=True, null=True)
     q2donortrace = models.IntegerField(_(u'Q2 donor trace'), blank=True, null=True)
     q3irbapproval = models.IntegerField(_(u'Q3 irb approval'), blank=True, null=True)
@@ -643,7 +642,7 @@ class Celllinestrfingerprinting(models.Model):
 
 
 class Celllinevalue(models.Model):
-    valuecellline = models.ForeignKey(Cellline, blank=True, null=True)
+    valuecellline = models.OneToOneField(Cellline, blank=True, null=True)
     potentialuse = models.CharField(_(u'Potential use'), max_length=100, blank=True)
     valuetosociety = models.CharField(_(u'Value to society'), max_length=100, blank=True)
     valuetoresearch = models.CharField(_(u'Value to research'), max_length=100, blank=True)
