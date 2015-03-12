@@ -33,8 +33,29 @@ class BinnedageAdmin(admin.ModelAdmin):
 admin.site.register(Binnedage, BinnedageAdmin)
 
 
+class CelllinecharacterizationInline(admin.StackedInline):
+    model = Celllinecharacterization
+    min_num = 1
+    max_num = 1
+    extra = 0
+
+
 class CelllinechecklistInline(admin.StackedInline):
     model = Celllinechecklist
+    min_num = 1
+    max_num = 1
+    extra = 0
+
+
+class CelllinecultureconditionsInline(admin.StackedInline):
+    model = Celllinecultureconditions
+    min_num = 1
+    max_num = 1
+    extra = 0
+
+
+class CelllinederivationInline(admin.StackedInline):
+    model = Celllinederivation
     min_num = 1
     max_num = 1
     extra = 0
@@ -47,8 +68,15 @@ class CelllinelabInline(admin.StackedInline):
     extra = 0
 
 
-class CelllineorganizationInline(admin.StackedInline):
-    model = Celllineorganization
+class CelllinelegalInline(admin.StackedInline):
+    model = Celllinelegal
+    min_num = 1
+    max_num = 1
+    extra = 0
+
+
+class CelllinevalueInline(admin.StackedInline):
+    model = Celllinevalue
     min_num = 1
     max_num = 1
     extra = 0
@@ -56,8 +84,10 @@ class CelllineorganizationInline(admin.StackedInline):
 
 class CelllineAdmin(admin.ModelAdmin):
 
-    list_display = ['biosamplesid', 'celllinename', 'celllinedonor', 'celllineprimarydisease', 'celllinediseaseaddinfo', 'celllinestatus', 'celllinecelltype', 'celllinecollection', 'celllinetissuesource', 'celllinetissuetreatment', 'celllinetissuedate', 'celllinenamesynonyms', 'depositorscelllineuri', 'celllinecomments', 'celllineupdate', 'celllineupdatetype', 'celllineupdatedby', 'celllineecaccurl']
-    inlines = [CelllinelabInline, CelllineorganizationInline, CelllinechecklistInline]
+    list_display = ['biosamplesid', 'celllinename', 'celllinedonor', 'celllineprimarydisease', 'celllinestatus', 'celllinecelltype', 'celllinecollection', 'celllinetissuesource', 'celllinetissuetreatment', 'celllinetissuedate', 'celllinenamesynonyms', 'celllineupdate', 'celllineupdatetype', 'celllineupdatedby', 'celllineecaccurl']
+    inlines = (CelllinecharacterizationInline, CelllinechecklistInline, CelllinecultureconditionsInline, CelllinederivationInline, CelllinelabInline, CelllinelegalInline, CelllinevalueInline)
+
+    list_filter = ('celllinestatus', 'celllineprimarydisease', 'celllinetissuesource', 'celllinecelltype')
 
 admin.site.register(Cellline, CelllineAdmin)
 
@@ -80,12 +110,6 @@ class CelllinebatchAdmin(admin.ModelAdmin):
 admin.site.register(Celllinebatch, CelllinebatchAdmin)
 
 
-class CelllinecharacterizationAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinecharacterization, CelllinecharacterizationAdmin)
-
-
 class CelllinecollectionAdmin(admin.ModelAdmin):
     pass
 
@@ -98,22 +122,10 @@ class CelllinecommentsAdmin(admin.ModelAdmin):
 admin.site.register(Celllinecomments, CelllinecommentsAdmin)
 
 
-class CelllinecultureconditionsAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinecultureconditions, CelllinecultureconditionsAdmin)
-
-
 class CelllineculturesupplementsAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Celllineculturesupplements, CelllineculturesupplementsAdmin)
-
-
-class CelllinederivationAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinederivation, CelllinederivationAdmin)
 
 
 class CelllinediffpotencyAdmin(admin.ModelAdmin):
@@ -176,18 +188,6 @@ class CelllinekaryotypeAdmin(admin.ModelAdmin):
 admin.site.register(Celllinekaryotype, CelllinekaryotypeAdmin)
 
 
-class CelllinelabAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinelab, CelllinelabAdmin)
-
-
-class CelllinelegalAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinelegal, CelllinelegalAdmin)
-
-
 class CelllinemarkerAdmin(admin.ModelAdmin):
     pass
 
@@ -241,12 +241,6 @@ class CelllinestrfingerprintingAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Celllinestrfingerprinting, CelllinestrfingerprintingAdmin)
-
-
-class CelllinevalueAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinevalue, CelllinevalueAdmin)
 
 
 class CelllinevectorAdmin(admin.ModelAdmin):

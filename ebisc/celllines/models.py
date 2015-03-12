@@ -75,12 +75,12 @@ class Cellline(models.Model):
     celllinetissuetreatment = models.ForeignKey('Clinicaltreatmentb4donation', blank=True, null=True)
     celllinetissuedate = models.DateField(blank=True, null=True)
     celllinenamesynonyms = models.CharField(_(u'Cell line name synonyms'), max_length=500, null=True, blank=True)
-    depositorscelllineuri = models.CharField(_(u'Depositors cell line uri'), max_length=45, blank=True)
+    depositorscelllineuri = models.CharField(_(u'Depositors cell line URI'), max_length=45, blank=True)
     celllinecomments = models.TextField(_(u'Cell line comments'), null=True, blank=True)
     celllineupdate = models.DateField(blank=True, null=True)
     celllineupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
     celllineupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
-    celllineecaccurl = models.URLField(_(u'Cell line ecacc url'), blank=True, null=True)
+    celllineecaccurl = models.URLField(_(u'Cell line ECACC URL'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line')
@@ -202,7 +202,7 @@ class Celllinecollection(models.Model):
         ordering = ['id']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return u'%s' % (self.celllinecollectiontotal,)
 
 
 class Celllinecomments(models.Model):
