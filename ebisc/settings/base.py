@@ -91,7 +91,7 @@ TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_TEMPLATE_CONTEXT_PROCESSORS + (
 
 from django.utils.translation import ugettext_lazy as _
 
-GRAPPELLI_ADMIN_TITLE = _(u'Administration')
+GRAPPELLI_ADMIN_TITLE = _(u'EBiSC Administration')
 GRAPPELLI_INDEX_DASHBOARD = 'ebisc.dashboard.CustomIndexDashboard'
 
 # -----------------------------------------------------------------------------

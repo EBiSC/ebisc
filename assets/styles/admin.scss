@@ -16,6 +16,23 @@ body {
   }
 }
 
+// Login
+
+body.grp-login .grp-module-login h1 {
+  background: $color-background-gray !important;
+  border-color: $color-border;
+
+  span.grp-admin-title {
+    padding: 20px 10px;
+    color: $text-color;
+    font-weight: normal;
+
+    a {
+      color: $text-color;
+    }
+  }
+}
+
 // Header
 
 header#grp-header #grp-navigation {

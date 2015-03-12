@@ -3,6 +3,16 @@ body {
   body a {
     color: #004e93; }
 
+body.grp-login .grp-module-login h1 {
+  background: #eeeeee !important;
+  border-color: #cccccc; }
+  body.grp-login .grp-module-login h1 span.grp-admin-title {
+    padding: 20px 10px;
+    color: #444444;
+    font-weight: normal; }
+    body.grp-login .grp-module-login h1 span.grp-admin-title a {
+      color: #444444; }
+
 header#grp-header #grp-navigation {
   background: none;
   background-image: url('/static/images/background.jpg');
