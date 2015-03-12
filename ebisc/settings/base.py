@@ -80,7 +80,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '../var/media/')
 CMS_SITE_APP = 'ebisc.site'
 CMS_SITE_VIEW = 'site:document'
 CMS_SITE_NAME = 'EBiSC'
-CMS_SITE_BASE_URL = 'http://ebisc.at.two.sevenpastnine.com'
+CMS_SITE_BASE_URL = 'http://ebisc.douglasconnect.com'
 
 # -----------------------------------------------------------------------------
 # Logging
