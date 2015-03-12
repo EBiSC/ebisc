@@ -38,6 +38,7 @@ class CelllinecharacterizationInline(admin.StackedInline):
     min_num = 1
     max_num = 1
     extra = 0
+    inline_classes = ('grp-collapse grp-open',)
 
 
 class CelllinechecklistInline(admin.StackedInline):
@@ -45,6 +46,7 @@ class CelllinechecklistInline(admin.StackedInline):
     min_num = 1
     max_num = 1
     extra = 0
+    inline_classes = ('grp-collapse grp-open',)
 
 
 class CelllinecultureconditionsInline(admin.StackedInline):
@@ -52,6 +54,7 @@ class CelllinecultureconditionsInline(admin.StackedInline):
     min_num = 1
     max_num = 1
     extra = 0
+    inline_classes = ('grp-collapse grp-open',)
 
 
 class CelllinederivationInline(admin.StackedInline):
@@ -59,6 +62,7 @@ class CelllinederivationInline(admin.StackedInline):
     min_num = 1
     max_num = 1
     extra = 0
+    inline_classes = ('grp-collapse grp-open',)
 
 
 class CelllinelabInline(admin.StackedInline):
@@ -66,6 +70,7 @@ class CelllinelabInline(admin.StackedInline):
     min_num = 1
     max_num = 1
     extra = 0
+    inline_classes = ('grp-collapse grp-open',)
 
 
 class CelllinelegalInline(admin.StackedInline):
@@ -73,6 +78,7 @@ class CelllinelegalInline(admin.StackedInline):
     min_num = 1
     max_num = 1
     extra = 0
+    inline_classes = ('grp-collapse grp-open',)
 
 
 class CelllinevalueInline(admin.StackedInline):
@@ -80,6 +86,7 @@ class CelllinevalueInline(admin.StackedInline):
     min_num = 1
     max_num = 1
     extra = 0
+    inline_classes = ('grp-collapse grp-open',)
 
 
 class CelllineAdmin(admin.ModelAdmin):

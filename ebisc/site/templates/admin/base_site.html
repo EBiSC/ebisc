@@ -1,0 +1,11 @@
+{% extends "admin/base.html" %}
+
+{% load static %}
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{% static "styles/admin.css" %}">
+{% endblock %}
+
+{% block branding %}
+<div id="grp-branding"><img class="logo" src="{% static 'images/EBiSC-logo-admin.png' %}" alt="EBiSC"></div>
+{% endblock %}

@@ -19,6 +19,7 @@ DJANGO = '127.0.0.1:8000'
 
 STYLES =
     main: 'assets/styles/main.scss'
+    admin: 'assets/styles/admin.scss'
 
 processStyles = (src) ->
     gulp.src src
@@ -33,6 +34,7 @@ processStyles = (src) ->
 
 gulp.task 'styles', [], () ->
     processStyles STYLES.main
+    processStyles STYLES.admin
 
 # -----------------------------------------------------------------------------
 # Scripts
