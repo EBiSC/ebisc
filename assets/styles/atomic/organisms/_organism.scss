@@ -1,8 +1,8 @@
 @mixin organism {
   @include container;
 
-  border: solid 1px gray;
-  margin-top: 20px;
+  background-color: $color-content-background;
+  padding: $container-padding;
 
   .organism-label {
     min-height: 200px;

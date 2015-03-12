@@ -1,4 +1,4 @@
-$color-placeholder: #f5f5f5;
+// Mixins
 
 @mixin centered {
   display: flex;
@@ -10,4 +10,11 @@ $color-placeholder: #f5f5f5;
   @include centered;
   font-size: 3rem;
   background-color: $color-placeholder;
+}
+
+
+img,
+picture {
+  margin: 0;
+  max-width: 100%;
 }

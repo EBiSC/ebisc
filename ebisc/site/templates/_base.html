@@ -14,14 +14,15 @@
 <body class="{% if document %}template-{{ document.template|slugify }}{% endif %}">
 
     <header>
+        <a href="{% url 'site:document' document.node.ancestors.0.path %}"><img class="logo" src="{% static 'images/EBiSC-logo.png' %}" alt="EBiSC"></a>
         <div class="collapsible-menu">
             <button id="main-navigation-menu-mobile-toggle" class="collapsible-menu-toggle" data-target="main-navigation-menu-items">MENU</button>
             <nav role="navigation">
                 <ul id="main-navigation-menu-items" class="collapsible-menu-items">
-                    <li><a href="{% url 'site:document' document.node.ancestors.0.path %}">Domov</a></li>
                     {% for node in document.node|menu:0 %}
                     <li class="{% if document.node|is_descendant_of:node %}active{% endif %}"><a href="{% url 'site:document' node.path %}">{{ node.menu_title|default:node.title }}</a></li>
                     {% endfor %}
+                    <li><a href="" class="login">Login</a></li>
                 </ul>
             </nav>
         </div>
@@ -29,7 +30,7 @@
 
     <article>{% block article %}{% endblock %}</article>
 
-    <footer><div class="organism-label">Footer</div></footer>
+    <footer>&copy; EBiSC European Bank for induced pluripotent Stem Cells 2015</footer>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="{% static 'scripts/main.js' %}"></script>

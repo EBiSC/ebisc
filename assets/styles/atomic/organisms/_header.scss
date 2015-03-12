@@ -1,3 +1,19 @@
 header {
-  @include organism();
+  @include organism;
+
+  .logo {
+  }
+
+  .collapsible-menu {
+    margin-top: 14px;
+    float: right;
+
+    .collapsible-menu-items
+    {
+      li a
+      {
+        padding: 3px 0px 3px 40px;
+      }
+    }
+  }
 }

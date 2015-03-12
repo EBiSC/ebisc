@@ -1,6 +1,6 @@
 @import 'vendor/susy';
 @import 'vendor/bourbon';
-@import 'vendor/bitters';
+// @import 'vendor/bitters';
 @import 'vendor/breakpoint';
 
 @import 'base/variables';
@@ -9,10 +9,14 @@
 @import 'layout/grid';
 
 @import 'atomic/atoms/main';
+@import 'atomic/atoms/buttons';
+@import 'atomic/atoms/typography';
 @import 'atomic/molecules/main';
 @import 'atomic/organisms/organism';
-@import 'atomic/organisms/footer';
+@import 'atomic/organisms/body';
+@import 'atomic/organisms/article';
 @import 'atomic/organisms/header';
+@import 'atomic/organisms/footer';
 
 @import 'atomic/templates/default';
 @import 'atomic/templates/grid';

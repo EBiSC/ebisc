@@ -1,4 +1,8 @@
 footer {
-  @include organism();
+  @include container();
+
   margin-bottom: 20px;
+  padding: $container-padding;
+
+  font-size: $font-size-small;
 }
