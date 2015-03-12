@@ -65,21 +65,21 @@ class Binnedage(models.Model):
 class Cellline(models.Model):
     biosamplesid = models.CharField(_(u'Biosamples ID'), unique=True, max_length=12)
     celllinename = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
-    celllinedonor = models.ForeignKey('Donor', blank=True, null=True)
-    celllineprimarydisease = models.ForeignKey('Disease', blank=True, null=True)
+    celllinedonor = models.ForeignKey('Donor', verbose_name=_(u'Donor'), blank=True, null=True)
+    celllineprimarydisease = models.ForeignKey('Disease', verbose_name=_(u'Disease'), blank=True, null=True)
     celllinediseaseaddinfo = models.CharField(_(u'Cell line disease info'), max_length=100, null=True, blank=True)
-    celllinestatus = models.ForeignKey('Celllinestatus', blank=True, null=True)
-    celllinecelltype = models.ForeignKey('Celltype', blank=True, null=True)
-    celllinecollection = models.ForeignKey('Celllinecollection', blank=True, null=True)
-    celllinetissuesource = models.ForeignKey('Tissuesource', blank=True, null=True)
-    celllinetissuetreatment = models.ForeignKey('Clinicaltreatmentb4donation', blank=True, null=True)
+    celllinestatus = models.ForeignKey('Celllinestatus', verbose_name=_(u'Cell line status'), blank=True, null=True)
+    celllinecelltype = models.ForeignKey('Celltype', verbose_name=_(u'Cell type'), blank=True, null=True)
+    celllinecollection = models.ForeignKey('Celllinecollection', verbose_name=_(u'Cell line collection'), blank=True, null=True)
+    celllinetissuesource = models.ForeignKey('Tissuesource', verbose_name=_(u'Tissuesource'), blank=True, null=True)
+    celllinetissuetreatment = models.ForeignKey('Clinicaltreatmentb4donation', verbose_name=_(u'Clinicaltreatmentb4donation'), blank=True, null=True)
     celllinetissuedate = models.DateField(blank=True, null=True)
     celllinenamesynonyms = models.CharField(_(u'Cell line name synonyms'), max_length=500, null=True, blank=True)
     depositorscelllineuri = models.CharField(_(u'Depositors cell line URI'), max_length=45, blank=True)
     celllinecomments = models.TextField(_(u'Cell line comments'), null=True, blank=True)
     celllineupdate = models.DateField(blank=True, null=True)
-    celllineupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllineupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllineupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllineupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
     celllineecaccurl = models.URLField(_(u'Cell line ECACC URL'), blank=True, null=True)
 
     class Meta:
@@ -92,10 +92,10 @@ class Cellline(models.Model):
 
 
 class Celllinealiquot(models.Model):
-    aliquotcellline = models.ForeignKey(Cellline, blank=True, null=True)
-    aliquotstatus = models.ForeignKey(Aliquotstatus, blank=True, null=True)
+    aliquotcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), blank=True, null=True)
+    aliquotstatus = models.ForeignKey('Aliquotstatus', verbose_name=_(u'Aliquotstatus'), blank=True, null=True)
     aliquotstatusdate = models.CharField(_(u'Aliquot status date'), max_length=20, blank=True)
-    aliquotupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    aliquotupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line aliquot')
@@ -107,14 +107,14 @@ class Celllinealiquot(models.Model):
 
 
 class Celllineannotation(models.Model):
-    annotationcellline = models.ForeignKey(Cellline, blank=True, null=True)
+    annotationcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), blank=True, null=True)
     celllineannotationsource = models.CharField(_(u'Cell line annotation source'), max_length=45, blank=True)
     celllineannotationsourceid = models.CharField(_(u'Cell line annotation source id'), max_length=45, blank=True)
     celllineannotationsourceversion = models.CharField(_(u'Cell line annotation source version'), max_length=45, blank=True)
     celllineannotation = models.TextField(_(u'Cell line annotation'), null=True, blank=True)
-    celllineannotationupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
+    celllineannotationupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
     celllineannotationupdate = models.DateField(blank=True, null=True)
-    celllineannotationupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllineannotationupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line annotation')
@@ -126,10 +126,10 @@ class Celllineannotation(models.Model):
 
 
 class Celllinebatch(models.Model):
-    batchcellline = models.ForeignKey(Cellline, blank=True, null=True)
-    batchstatus = models.ForeignKey(Batchstatus, blank=True, null=True)
+    batchcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), blank=True, null=True)
+    batchstatus = models.ForeignKey('Batchstatus', verbose_name=_(u'Batchstatus'), blank=True, null=True)
     batchstatusdate = models.CharField(_(u'Batch status date'), max_length=20, blank=True)
-    batchstatusupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    batchstatusupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line batch')
@@ -149,8 +149,8 @@ class Celllinecharacterization(models.Model):
     hepititusc = models.IntegerField(_(u'Hepititus c'), blank=True, null=True)
     mycoplasma = models.IntegerField(_(u'Mycoplasma'), blank=True, null=True)
     celllinecharacterizationupdate = models.DateField(blank=True, null=True)
-    celllinecharacterizationupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinecharacterizationupdateby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinecharacterizationupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinecharacterizationupdateby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line characterization')
@@ -222,18 +222,18 @@ class Celllinecomments(models.Model):
 
 class Celllinecultureconditions(models.Model):
     cultureconditionscellline = models.OneToOneField(Cellline, blank=True, null=True)
-    surfacecoating = models.ForeignKey('Surfacecoating', blank=True, null=True)
+    surfacecoating = models.ForeignKey('Surfacecoating', verbose_name=_(u'Surfacecoating'), blank=True, null=True)
     feedercelltype = models.CharField(_(u'Feeder cell type'), max_length=45, blank=True)
     feedercellid = models.CharField(_(u'Feeder cell id'), max_length=45, blank=True)
-    passagemethod = models.ForeignKey('Passagemethod', blank=True, null=True)
-    enzymatically = models.ForeignKey('Enzymatically', blank=True, null=True)
-    enzymefree = models.ForeignKey('Enzymefree', blank=True, null=True)
+    passagemethod = models.ForeignKey('Passagemethod', verbose_name=_(u'Passagemethod'), blank=True, null=True)
+    enzymatically = models.ForeignKey('Enzymatically', verbose_name=_(u'Enzymatically'), blank=True, null=True)
+    enzymefree = models.ForeignKey('Enzymefree', verbose_name=_(u'Enzymefree'), blank=True, null=True)
     o2concentration = models.IntegerField(_(u'O2 concentration'), blank=True, null=True)
     co2concentration = models.IntegerField(_(u'Co2 concentration'), blank=True, null=True)
-    culturemedium = models.ForeignKey('Culturemedium', blank=True, null=True)
+    culturemedium = models.ForeignKey('Culturemedium', verbose_name=_(u'Culturemedium'), blank=True, null=True)
     celllinecultureconditionsupdate = models.DateField(blank=True, null=True)
-    celllinecultureconditionsupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinecultureconditionsupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinecultureconditionsupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinecultureconditionsupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line culture conditions')
@@ -245,13 +245,13 @@ class Celllinecultureconditions(models.Model):
 
 
 class Celllineculturesupplements(models.Model):
-    celllinecultureconditions = models.ForeignKey(Celllinecultureconditions, blank=True, null=True)
+    celllinecultureconditions = models.ForeignKey('Celllinecultureconditions', verbose_name=_(u'Celllinecultureconditions'), blank=True, null=True)
     supplement = models.CharField(_(u'Supplement'), max_length=45, blank=True)
     supplementamount = models.CharField(_(u'Supplement amount'), max_length=45, blank=True)
-    supplementamountunit = models.ForeignKey('Units', blank=True, null=True)
+    supplementamountunit = models.ForeignKey('Units', verbose_name=_(u'Units'), blank=True, null=True)
     celllineculturesupplementsupdated = models.DateField(blank=True, null=True)
-    celllineculturesupplementsupdatedtype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllineculturesupplementsupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllineculturesupplementsupdatedtype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllineculturesupplementsupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line culture supplements')
@@ -266,14 +266,14 @@ class Celllinederivation(models.Model):
     derivationcellline = models.OneToOneField(Cellline, blank=True, null=True)
     primarycelltypename = models.CharField(_(u'Primary cell type name'), max_length=45, blank=True)
     primarycelltypecellfinderid = models.CharField(_(u'Primary cell type cell finder id'), max_length=45, blank=True)
-    primarycelldevelopmentalstage = models.ForeignKey('Primarycelldevelopmentalstage', blank=True, null=True)
+    primarycelldevelopmentalstage = models.ForeignKey('Primarycelldevelopmentalstage', verbose_name=_(u'Primarycelldevelopmentalstage'), blank=True, null=True)
     selectioncriteriaforclones = models.TextField(_(u'Selection criteria for clones'), null=True, blank=True)
     xenofreeconditions = models.CharField(_(u'Xeno free conditions'), max_length=4, blank=True)
     derivedundergmp = models.CharField(_(u'Derived under gmp'), max_length=4, blank=True)
     availableasclinicalgrade = models.CharField(_(u'Available as clinical grade'), max_length=4, blank=True)
     celllinederivationupdated = models.DateField(blank=True, null=True)
-    celllinederivationupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinederivationupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinederivationupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinederivationupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line derivation')
@@ -285,12 +285,12 @@ class Celllinederivation(models.Model):
 
 
 class Celllinediffpotency(models.Model):
-    diffpotencycellline = models.ForeignKey(Cellline, blank=True, null=True)
+    diffpotencycellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), blank=True, null=True)
     passagenumber = models.CharField(_(u'Passage number'), max_length=5, blank=True)
-    germlayer = models.ForeignKey('Germlayer', blank=True, null=True)
+    germlayer = models.ForeignKey('Germlayer', verbose_name=_(u'Germlayer'), blank=True, null=True)
     celllinediffpotencyupdated = models.DateField(blank=True, null=True)
-    celllinediffpotencyupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinediffpotencyupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinediffpotencyupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinediffpotencyupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line diff potency')
@@ -302,11 +302,11 @@ class Celllinediffpotency(models.Model):
 
 
 class Celllinediffpotencymarker(models.Model):
-    celllinediffpotency = models.ForeignKey(Celllinediffpotency, blank=True, null=True)
-    morphologymethod = models.ForeignKey('Morphologymethod', blank=True, null=True)
+    celllinediffpotency = models.ForeignKey('Celllinediffpotency', verbose_name=_(u'Celllinediffpotency'), blank=True, null=True)
+    morphologymethod = models.ForeignKey('Morphologymethod', verbose_name=_(u'Morphologymethod'), blank=True, null=True)
     celllinediffpotencymarkerupdate = models.DateField(blank=True, null=True)
-    celllinediffpotencymarkerupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinediffpotencymarkerupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinediffpotencymarkerupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinediffpotencymarkerupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line diff potency marker')
@@ -319,10 +319,10 @@ class Celllinediffpotencymarker(models.Model):
 
 class Celllinediffpotencymolecule(models.Model):
     celllinediffpotencymarker = models.IntegerField(_(u'Cell line diff potency marker'), blank=True, null=True)
-    diffpotencymolecule = models.ForeignKey('Molecule', blank=True, null=True)
+    diffpotencymolecule = models.ForeignKey('Molecule', verbose_name=_(u'Molecule'), blank=True, null=True)
     diffpotencymoleculeupdate = models.DateField(blank=True, null=True)
-    diffpotencymoleculeupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    diffpotencymoleculeupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    diffpotencymoleculeupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    diffpotencymoleculeupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line diff potency molecule')
@@ -334,11 +334,11 @@ class Celllinediffpotencymolecule(models.Model):
 
 
 class Celllinegenemutations(models.Model):
-    genemutationscellline = models.ForeignKey(Cellline, blank=True, null=True)
+    genemutationscellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), blank=True, null=True)
     weblink = models.CharField(_(u'Weblink'), max_length=100, blank=True)
     celllinegenemutationsupdate = models.DateField(blank=True, null=True)
-    celllinegenemutationsupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinegenemutationsupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinegenemutationsupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinegenemutationsupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line gene mutations')
@@ -350,11 +350,11 @@ class Celllinegenemutations(models.Model):
 
 
 class Celllinegenemutationsmolecule(models.Model):
-    celllinegenemutations = models.ForeignKey(Celllinegenemutations, blank=True, null=True)
-    genemutationsmolecule = models.ForeignKey('Molecule', blank=True, null=True)
+    celllinegenemutations = models.ForeignKey('Celllinegenemutations', verbose_name=_(u'Celllinegenemutations'), blank=True, null=True)
+    genemutationsmolecule = models.ForeignKey('Molecule', verbose_name=_(u'Molecule'), blank=True, null=True)
     celllinegenemutationsmoleculeupdate = models.DateField(blank=True, null=True)
-    celllinegenemutationsmoleculeupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinegenemutationsmoleculeupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinegenemutationsmoleculeupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinegenemutationsmoleculeupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line gene mutations molecule')
@@ -366,11 +366,11 @@ class Celllinegenemutationsmolecule(models.Model):
 
 
 class Celllinegeneticmod(models.Model):
-    geneticmodcellline = models.ForeignKey(Cellline, blank=True, null=True)
+    geneticmodcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), blank=True, null=True)
     celllinegeneticmod = models.CharField(_(u'Cell line genetic mod'), max_length=45, blank=True)
     celllinegeneticmodupdate = models.DateField(blank=True, null=True)
-    celllinegeneticmodupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinegeneticmodupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinegeneticmodupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinegeneticmodupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line genetic mod')
@@ -382,11 +382,11 @@ class Celllinegeneticmod(models.Model):
 
 
 class Celllinegenomeseq(models.Model):
-    genomeseqcellline = models.ForeignKey(Cellline, blank=True, null=True)
+    genomeseqcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), blank=True, null=True)
     celllinegenomeseqlink = models.CharField(_(u'Cell line genome seq link'), max_length=45, blank=True)
     celllinegenomesequpdate = models.DateField(blank=True, null=True)
-    celllinegenomesequpdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinegenomesequpdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinegenomesequpdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinegenomesequpdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line genome seqence')
@@ -398,11 +398,11 @@ class Celllinegenomeseq(models.Model):
 
 
 class Celllinegenotypingother(models.Model):
-    genometypothercellline = models.ForeignKey(Cellline, blank=True, null=True)
+    genometypothercellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), blank=True, null=True)
     celllinegenotypingother = models.TextField(_(u'Cell line geno typing other'), null=True, blank=True)
     celllinegenotypingotherupdate = models.DateField(blank=True, null=True)
-    celllinegenotypingotherupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinegenotypingotherupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinegenotypingotherupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinegenotypingotherupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line genotyping other')
@@ -414,14 +414,14 @@ class Celllinegenotypingother(models.Model):
 
 
 class Celllinehlatyping(models.Model):
-    hlatypingcellline = models.ForeignKey(Cellline, blank=True, null=True)
+    hlatypingcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), blank=True, null=True)
     celllinehlaclass = models.IntegerField(_(u'Cell line hla class'), blank=True, null=True)
-    celllinehla = models.ForeignKey('Hla', blank=True, null=True)
+    celllinehla = models.ForeignKey('Hla', verbose_name=_(u'Hla'), blank=True, null=True)
     celllinehlaallele1 = models.CharField(_(u'Cell line hla all ele1'), max_length=45, blank=True)
     celllinehlaallele2 = models.CharField(_(u'Cell line hla all ele2'), max_length=45, blank=True)
     celllinehlatypingupdate = models.DateField(blank=True, null=True)
-    celllinehlatypingupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinehlatypingupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinehlatypingupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinehlatypingupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line hla typing')
@@ -433,13 +433,13 @@ class Celllinehlatyping(models.Model):
 
 
 class Celllinekaryotype(models.Model):
-    karyotypecellline = models.ForeignKey(Cellline, blank=True, null=True)
+    karyotypecellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), blank=True, null=True)
     passagenumber = models.CharField(_(u'Passage number'), max_length=5, blank=True)
     karyotype = models.CharField(_(u'Karyotype'), max_length=45, blank=True)
-    karyotypemethod = models.ForeignKey('Karyotypemethod', blank=True, null=True)
+    karyotypemethod = models.ForeignKey('Karyotypemethod', verbose_name=_(u'Karyotypemethod'), blank=True, null=True)
     celllinekaryotypeupdate = models.DateField(blank=True, null=True)
-    celllinekaryotypeupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinekaryotypeupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinekaryotypeupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinekaryotypeupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line karyotype')
@@ -456,16 +456,16 @@ class Celllinelab(models.Model):
     expansioninprogress = models.IntegerField(_(u'Expansion in progress'), blank=True, null=True)
     funder = models.CharField(_(u'Funder'), max_length=45, blank=True)
     mutagene = models.CharField(_(u'Mutagene'), max_length=100, blank=True)
-    reprogrammingmethod1 = models.ForeignKey('Reprogrammingmethod1', blank=True, null=True)
-    reprogrammingmethod2 = models.ForeignKey('Reprogrammingmethod2', blank=True, null=True)
-    reprogrammingmethod3 = models.ForeignKey('Reprogrammingmethod3', blank=True, null=True)
+    reprogrammingmethod1 = models.ForeignKey('Reprogrammingmethod1', verbose_name=_(u'Reprogrammingmethod1'), blank=True, null=True)
+    reprogrammingmethod2 = models.ForeignKey('Reprogrammingmethod2', verbose_name=_(u'Reprogrammingmethod2'), blank=True, null=True)
+    reprogrammingmethod3 = models.ForeignKey('Reprogrammingmethod3', verbose_name=_(u'Reprogrammingmethod3'), blank=True, null=True)
     clonenumber = models.IntegerField(_(u'Clone number'), blank=True, null=True)
     passagenumber = models.CharField(_(u'Passage number'), max_length=5, blank=True)
-    culturesystem = models.ForeignKey('Culturesystem', blank=True, null=True)
+    culturesystem = models.ForeignKey('Culturesystem', verbose_name=_(u'Culturesystem'), blank=True, null=True)
     culturesystemcomment = models.CharField(_(u'Culture system comment'), max_length=45, blank=True)
     celllinelabupdate = models.DateField(blank=True, null=True)
-    celllinelabupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinelabupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinelabupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinelabupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line lab')
@@ -481,16 +481,16 @@ class Celllinelegal(models.Model):
     q1donorconsent = models.IntegerField(_(u'Q1 donor consent'), blank=True, null=True)
     q2donortrace = models.IntegerField(_(u'Q2 donor trace'), blank=True, null=True)
     q3irbapproval = models.IntegerField(_(u'Q3 irb approval'), blank=True, null=True)
-    q4approveduse = models.ForeignKey(Approveduse, blank=True, null=True)
+    q4approveduse = models.ForeignKey('Approveduse', verbose_name=_(u'Approveduse'), blank=True, null=True)
     q5informedconsentreference = models.CharField(_(u'Q5 informed consent reference'), max_length=20, blank=True)
     q6restrictions = models.TextField(_(u'Q6 restrictions'), null=True, blank=True)
     q7iprestrictions = models.TextField(_(u'Q7 ip restrictions'), null=True, blank=True)
-    q8jurisdiction = models.ForeignKey('Country', blank=True, null=True)
+    q8jurisdiction = models.ForeignKey('Country', verbose_name=_(u'Country'), blank=True, null=True)
     q9applicablelegislationandregulation = models.TextField(_(u'Q9 applicable legislation and regulation'), null=True, blank=True)
     q10managedaccess = models.TextField(_(u'Q10 managed access'), null=True, blank=True)
     celllinelegalupdate = models.DateField(blank=True, null=True)
-    celllinelegalupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinelegalupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinelegalupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinelegalupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line legal')
@@ -502,9 +502,9 @@ class Celllinelegal(models.Model):
 
 
 class Celllinemarker(models.Model):
-    markercellline = models.ForeignKey(Cellline, unique=True)
-    morphologymethod = models.ForeignKey('Morphologymethod', blank=True, null=True)
-    celllinemarker = models.ForeignKey('Marker', blank=True, null=True)
+    markercellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), unique=True)
+    morphologymethod = models.ForeignKey('Morphologymethod', verbose_name=_(u'Morphologymethod'), blank=True, null=True)
+    celllinemarker = models.ForeignKey('Marker', verbose_name=_(u'Marker'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line marker')
@@ -517,8 +517,8 @@ class Celllinemarker(models.Model):
 
 class Celllineorganization(models.Model):
     orgcellline = models.OneToOneField(Cellline, blank=True, null=True)
-    organization = models.ForeignKey('Organization', blank=True, null=True)
-    celllineorgtype = models.ForeignKey('Celllineorgtype', blank=True, null=True)
+    organization = models.ForeignKey('Organization', verbose_name=_(u'Organization'), blank=True, null=True)
+    celllineorgtype = models.ForeignKey('Celllineorgtype', verbose_name=_(u'Celllineorgtype'), blank=True, null=True)
     orgstatus = models.IntegerField(_(u'Org status'), blank=True, null=True)
     orgregistrationdate = models.DateField(blank=True, null=True)
 
@@ -544,13 +544,13 @@ class Celllineorgtype(models.Model):
 
 
 class Celllinepublication(models.Model):
-    publicationcellline = models.ForeignKey(Cellline, blank=True, null=True)
+    publicationcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), blank=True, null=True)
     pubmedreference = models.CharField(_(u'Pubmed reference'), max_length=45, blank=True)
     celllinepublicationdoiurl = models.URLField(_(u'Cell line publication doi url'), blank=True, null=True)
-    celllinepublisher = models.ForeignKey('Publisher', blank=True, null=True)
+    celllinepublisher = models.ForeignKey('Publisher', verbose_name=_(u'Publisher'), blank=True, null=True)
     celllinepublicationupdate = models.DateField(blank=True, null=True)
-    celllinepublicationupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinepublicationupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinepublicationupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinepublicationupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line publication')
@@ -562,11 +562,11 @@ class Celllinepublication(models.Model):
 
 
 class Celllinesnp(models.Model):
-    snpcellline = models.ForeignKey(Cellline, blank=True, null=True)
+    snpcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), blank=True, null=True)
     weblink = models.CharField(_(u'Weblink'), max_length=45, blank=True)
     celllinesnpupdate = models.DateField(blank=True, null=True)
-    celllinesnpupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinesnpupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinesnpupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinesnpupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line snp')
@@ -578,12 +578,12 @@ class Celllinesnp(models.Model):
 
 
 class Celllinesnpdetails(models.Model):
-    celllinesnp = models.ForeignKey(Celllinesnp, blank=True, null=True)
+    celllinesnp = models.ForeignKey('Celllinesnp', verbose_name=_(u'Celllinesnp'), blank=True, null=True)
     celllinesnpgene = models.CharField(_(u'Cell line snp gene'), max_length=45, blank=True)
     celllinesnpchromosomalposition = models.CharField(_(u'Cell line snp chromosomal position'), max_length=45, blank=True)
     celllinesnpdetailsupdate = models.DateField(blank=True, null=True)
-    celllinesnpdetailsupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinesnpdetailsupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinesnpdetailsupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinesnpdetailsupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line snp details')
@@ -595,12 +595,12 @@ class Celllinesnpdetails(models.Model):
 
 
 class Celllinesnprslinks(models.Model):
-    celllinesnp = models.ForeignKey(Celllinesnp, blank=True, null=True)
+    celllinesnp = models.ForeignKey('Celllinesnp', verbose_name=_(u'Celllinesnp'), blank=True, null=True)
     rsnumber = models.CharField(_(u'Rs number'), max_length=45, blank=True)
     rslink = models.CharField(_(u'Rs link'), max_length=100, blank=True)
     celllinesnprslinksupdate = models.DateField(blank=True, null=True)
-    celllinesnprslinksupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinesnprslinksupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinesnprslinksupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinesnprslinksupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line snp Rs links')
@@ -624,13 +624,13 @@ class Celllinestatus(models.Model):
 
 
 class Celllinestrfingerprinting(models.Model):
-    strfpcellline = models.ForeignKey(Cellline, blank=True, null=True)
-    locus = models.ForeignKey('Strfplocus', blank=True, null=True)
+    strfpcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), blank=True, null=True)
+    locus = models.ForeignKey('Strfplocus', verbose_name=_(u'Strfplocus'), blank=True, null=True)
     allele1 = models.CharField(_(u'All ele1'), max_length=45, blank=True)
     allele2 = models.CharField(_(u'All ele2'), max_length=45, blank=True)
     celllinestrfpupdate = models.DateField(blank=True, null=True)
-    celllinestrfpupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinestrfpupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinestrfpupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinestrfpupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line str finger printing')
@@ -648,8 +648,8 @@ class Celllinevalue(models.Model):
     valuetoresearch = models.CharField(_(u'Value to research'), max_length=100, blank=True)
     othervalue = models.CharField(_(u'Other value'), max_length=100, blank=True)
     celllinevalueupdate = models.DateField(blank=True, null=True)
-    celllinevalueupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinevalueupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinevalueupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinevalueupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line value')
@@ -661,15 +661,15 @@ class Celllinevalue(models.Model):
 
 
 class Celllinevector(models.Model):
-    vectorcellline = models.ForeignKey(Cellline, blank=True, null=True)
-    vectortype = models.ForeignKey('Vectortype', blank=True, null=True)
-    vector = models.ForeignKey('Vector', blank=True, null=True)
+    vectorcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), blank=True, null=True)
+    vectortype = models.ForeignKey('Vectortype', verbose_name=_(u'Vectortype'), blank=True, null=True)
+    vector = models.ForeignKey('Vector', verbose_name=_(u'Vector'), blank=True, null=True)
     vectorexcisable = models.CharField(_(u'Vector excisable'), max_length=4, blank=True)
-    virus = models.ForeignKey('Virus', blank=True, null=True)
-    transposon = models.ForeignKey('Transposon', blank=True, null=True)
+    virus = models.ForeignKey('Virus', verbose_name=_(u'Virus'), blank=True, null=True)
+    transposon = models.ForeignKey('Transposon', verbose_name=_(u'Transposon'), blank=True, null=True)
     celllinevectorupdate = models.DateField(blank=True, null=True)
-    celllinevectorupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinevectorupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinevectorupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinevectorupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line vector')
@@ -681,11 +681,11 @@ class Celllinevector(models.Model):
 
 
 class Celllinevectorfreereprogramming(models.Model):
-    vectorfreecellline = models.ForeignKey(Cellline, blank=True, null=True)
-    vectorfreereprogrammingfactor = models.ForeignKey('Vectorfreereprogramfactor', blank=True, null=True)
+    vectorfreecellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), blank=True, null=True)
+    vectorfreereprogrammingfactor = models.ForeignKey('Vectorfreereprogramfactor', verbose_name=_(u'Vectorfreereprogramfactor'), blank=True, null=True)
     celllinevectorfreereprogupate = models.DateField(blank=True, null=True)
-    celllinevectorfreereprogupatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinevectorfreereprogupatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinevectorfreereprogupatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinevectorfreereprogupatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line vector free reprogramming')
@@ -697,11 +697,11 @@ class Celllinevectorfreereprogramming(models.Model):
 
 
 class Celllinevectormolecule(models.Model):
-    celllinevector = models.ForeignKey(Celllinevector, blank=True, null=True)
-    molecule = models.ForeignKey('Molecule', blank=True, null=True)
+    celllinevector = models.ForeignKey('Celllinevector', verbose_name=_(u'Celllinevector'), blank=True, null=True)
+    molecule = models.ForeignKey('Molecule', verbose_name=_(u'Molecule'), blank=True, null=True)
     celllinevectormoleculeupdate = models.DateField(blank=True, null=True)
-    celllinevectormoleculeupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    celllinevectormoleculeupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    celllinevectormoleculeupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    celllinevectormoleculeupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line vector molecule')
@@ -737,25 +737,25 @@ class Clinicaltreatmentb4donation(models.Model):
 
 
 class Contact(models.Model):
-    contacttype = models.ForeignKey('Contacttype', blank=True, null=True)
-    country = models.ForeignKey('Country', db_column='country')
-    postcode = models.ForeignKey('Postcode', db_column='postcode')
+    contacttype = models.ForeignKey('Contacttype', verbose_name=_(u'Contacttype'), blank=True, null=True)
+    country = models.ForeignKey('Country', verbose_name=_(u'Country'), db_column='country')
+    postcode = models.ForeignKey('Postcode', verbose_name=_(u'Postcode'), db_column='postcode')
     statecounty = models.IntegerField(_(u'State county'), blank=True, null=True)
     city = models.CharField(_(u'City'), max_length=45, blank=True)
     street = models.CharField(_(u'Street'), max_length=45, blank=True)
     buildingnumber = models.CharField(_(u'Building number'), max_length=20, blank=True)
     suiteoraptordept = models.CharField(_(u'Suite or apt or dept'), max_length=10, null=True, blank=True)
-    officephonecountrycode = models.ForeignKey('Phonecountrycode', related_name='contacts_officephonecountrycode', blank=True, null=True)
+    officephonecountrycode = models.ForeignKey('Phonecountrycode', verbose_name=_(u'Phonecountrycode'), related_name='contacts_officephonecountrycode', blank=True, null=True)
     officephone = models.CharField(_(u'Office phone'), max_length=20, null=True, blank=True)
-    faxcountrycode = models.ForeignKey('Phonecountrycode', related_name='contacts_faxcountrycode', blank=True, null=True)
+    faxcountrycode = models.ForeignKey('Phonecountrycode', verbose_name=_(u'Phonecountrycode'), related_name='contacts_faxcountrycode', blank=True, null=True)
     fax = models.CharField(_(u'Fax'), max_length=20, null=True, blank=True)
-    mobilecountrycode = models.ForeignKey('Phonecountrycode', related_name='contacts_mobilecountrycode', blank=True, null=True)
+    mobilecountrycode = models.ForeignKey('Phonecountrycode', verbose_name=_(u'Phonecountrycode'), related_name='contacts_mobilecountrycode', blank=True, null=True)
     mobilephone = models.CharField(_(u'Mobile phone'), max_length=20, null=True, blank=True)
     website = models.CharField(_(u'Website'), max_length=45, null=True, blank=True)
     emailaddress = models.CharField(_(u'Email address'), max_length=45, null=True, blank=True)
     contactupdate = models.DateField(blank=True, null=True)
-    contactupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    contactupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    contactupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    contactupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Contact')
@@ -793,7 +793,7 @@ class Country(models.Model):
 
 class Culturemedium(models.Model):
     culturemediumbase = models.CharField(_(u'Culture medium base'), max_length=45, blank=True)
-    proteinsource = models.ForeignKey('Proteinsource', blank=True, null=True)
+    proteinsource = models.ForeignKey('Proteinsource', verbose_name=_(u'Proteinsource'), blank=True, null=True)
     serumconcentration = models.IntegerField(_(u'Serum concentration'), blank=True, null=True)
 
     class Meta:
@@ -834,7 +834,7 @@ class Document(models.Model):
     cellline = models.IntegerField(_(u'Cell line'), blank=True, null=True)
     title = models.CharField(_(u'Title'), max_length=45, blank=True)
     abstract = models.TextField(_(u'Abstract'), null=True, blank=True)
-    documenttype = models.ForeignKey('Documenttype', blank=True, null=True)
+    documenttype = models.ForeignKey('Documenttype', verbose_name=_(u'Documenttype'), blank=True, null=True)
     documentdepositor = models.IntegerField(_(u'Document depositor'), blank=True, null=True)
     authors = models.TextField(_(u'Authors'), null=True, blank=True)
     owner = models.IntegerField(_(u'Owner'), blank=True, null=True)
@@ -867,21 +867,21 @@ class Documenttype(models.Model):
 
 class Donor(models.Model):
     hescregdonorid = models.CharField(_(u'Hescreg donor ID'), max_length=3)
-    age = models.ForeignKey(Binnedage, blank=True, null=True)
-    gender = models.ForeignKey('Gender', blank=True, null=True)
-    countryoforigin = models.ForeignKey(Country, blank=True, null=True)
-    primarydisease = models.ForeignKey(Disease, blank=True, null=True)
+    age = models.ForeignKey('Binnedage', verbose_name=_(u'Binnedage'), blank=True, null=True)
+    gender = models.ForeignKey('Gender', verbose_name=_(u'Gender'), blank=True, null=True)
+    countryoforigin = models.ForeignKey('Country', verbose_name=_(u'Country'), blank=True, null=True)
+    primarydisease = models.ForeignKey('Disease', verbose_name=_(u'Disease'), blank=True, null=True)
     diseaseadditionalinfo = models.CharField(_(u'Disease additional info'), max_length=45, blank=True)
-    othercelllinefromdonor = models.ForeignKey(Cellline, related_name='celllines_othercelllinefromdonor', blank=True, null=True)
-    parentcellline = models.ForeignKey(Cellline, related_name='celllines_parentcellline', blank=True, null=True)
+    othercelllinefromdonor = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), related_name='celllines_othercelllinefromdonor', blank=True, null=True)
+    parentcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), related_name='celllines_parentcellline', blank=True, null=True)
     providerdonorid = models.CharField(_(u'Provider donor id'), max_length=45, blank=True)
     cellabnormalkaryotype = models.CharField(_(u'Cell abnormal karyotype'), max_length=45, blank=True)
     donorabnormalkaryotype = models.CharField(_(u'Donor abnormal karyotype'), max_length=45, blank=True)
     otherclinicalinformation = models.CharField(_(u'Other clinical information'), max_length=100, blank=True)
-    phenotype = models.ForeignKey('Phenotype', blank=True, null=True)
+    phenotype = models.ForeignKey('Phenotype', verbose_name=_(u'Phenotype'), blank=True, null=True)
     donorupdate = models.DateField(blank=True, null=True)
-    donorupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    donorupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    donorupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    donorupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Donor')
@@ -893,12 +893,12 @@ class Donor(models.Model):
 
 
 class Ebisckeyword(models.Model):
-    cellline = models.ForeignKey(Cellline, blank=True, null=True)
-    document = models.ForeignKey(Document, blank=True, null=True)
-    ebisckeyword = models.ForeignKey('Keyword', blank=True, null=True)
+    cellline = models.ForeignKey('Cellline', verbose_name=_(u'Cellline'), blank=True, null=True)
+    document = models.ForeignKey('Document', verbose_name=_(u'Document'), blank=True, null=True)
+    ebisckeyword = models.ForeignKey('Keyword', verbose_name=_(u'Keyword'), blank=True, null=True)
     ebisckeywordupdate = models.DateField(blank=True, null=True)
-    ebisckeywordupdatetype = models.ForeignKey('Lastupdatetype', blank=True, null=True)
-    ebisckeywordupdatedby = models.ForeignKey('Useraccount', blank=True, null=True)
+    ebisckeywordupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    ebisckeywordupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Ebisc keyword')
@@ -1046,11 +1046,11 @@ class Morphologymethod(models.Model):
 class Organization(models.Model):
     organizationname = models.CharField(_(u'Organization name'), max_length=45, unique=True, null=True, blank=True)
     organizationshortname = models.CharField(_(u'Organization short name'), unique=True, max_length=6, null=True, blank=True)
-    organizationcontact = models.ForeignKey(Contact, blank=True, null=True)
+    organizationcontact = models.ForeignKey('Contact', verbose_name=_(u'Contact'), blank=True, null=True)
     organizationupdate = models.DateField(_(u'Organization update'), blank=True, null=True)
-    organizationupdatetype = models.ForeignKey(Lastupdatetype, blank=True, null=True)
-    organizationupdatedby = models.ForeignKey('Useraccount', related_name='organizations', blank=True, null=True)
-    organizationtype = models.ForeignKey('Orgtype', blank=True, null=True)
+    organizationupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    organizationupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), related_name='organizations', blank=True, null=True)
+    organizationtype = models.ForeignKey('Orgtype', verbose_name=_(u'Orgtype'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Organization')
@@ -1089,10 +1089,10 @@ class Person(models.Model):
     organization = models.IntegerField(_(u'Organization'), blank=True, null=True)
     personlastname = models.CharField(_(u'Person last name'), max_length=20, blank=True)
     personfirstname = models.CharField(_(u'Person first name'), max_length=45, blank=True)
-    personcontact = models.ForeignKey(Contact, blank=True, null=True)
+    personcontact = models.ForeignKey('Contact', verbose_name=_(u'Contact'), blank=True, null=True)
     personupdate = models.DateField(blank=True, null=True)
-    personupdatetype = models.ForeignKey(Lastupdatetype, blank=True, null=True)
-    personupdatedby = models.ForeignKey('Useraccount', related_name='people', blank=True, null=True)
+    personupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    personupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'Useraccount'), related_name='people', blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Person')
@@ -1274,13 +1274,13 @@ class Units(models.Model):
 
 class Useraccount(models.Model):
     username = models.CharField(_(u'Username'), max_length=45, blank=True)
-    useraccounttype = models.ForeignKey('Useraccounttype', blank=True, null=True)
-    person = models.ForeignKey(Person, blank=True, null=True)
-    organization = models.ForeignKey(Organization, blank=True, null=True)
-    accesslevel = models.ForeignKey(Accesslevel, blank=True, null=True)
+    useraccounttype = models.ForeignKey('Useraccounttype', verbose_name=_(u'Useraccounttype'), blank=True, null=True)
+    person = models.ForeignKey('Person', verbose_name=_(u'Person'), blank=True, null=True)
+    organization = models.ForeignKey('Organization', verbose_name=_(u'Organization'), blank=True, null=True)
+    accesslevel = models.ForeignKey('Accesslevel', verbose_name=_(u'Accesslevel'), blank=True, null=True)
     useraccountupdate = models.DateField(blank=True, null=True)
-    useraccountupdatetype = models.ForeignKey(Lastupdatetype, blank=True, null=True)
-    useraccountupdatedby = models.ForeignKey('self', blank=True, null=True)
+    useraccountupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Lastupdatetype'), blank=True, null=True)
+    useraccountupdatedby = models.ForeignKey('self', verbose_name=_(u'self'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'User account')
