@@ -15,6 +15,7 @@ class CustomIndexDashboard(Dashboard):
             models=('django.contrib.*',),
         ))
 
+        # Cell lines
         self.children.append(modules.Group(
             _('EBiSC'),
             column=1,
@@ -65,7 +66,36 @@ class CustomIndexDashboard(Dashboard):
             ]
         ))
 
-        # append another link list module for "support".
+        # API
+        self.children.append(modules.Group(
+            _('API'),
+            column=2,
+            collapsible=False,
+            children=[
+                modules.LinkList(
+                    _('Version: v1'),
+                    children=[
+                        {
+                            'title': _('ECACC JSON'),
+                            'url': '/api/v1/ecacc?format=json',
+                            'external': False,
+                        },
+                        {
+                            'title': _('ECACC XML'),
+                            'url': '/api/v1/ecacc?format=xml',
+                            'external': False,
+                        },
+                        {
+                            'title': _('ECACC Schema'),
+                            'url': '/api/v1/ecacc/schema?format=json',
+                            'external': False,
+                        },
+                    ]
+                )
+            ]
+        ))
+
+        # Links
         self.children.append(modules.LinkList(
             _('Links'),
             column=2,
