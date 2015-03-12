@@ -177,7 +177,7 @@ class Celllinechecklist(models.Model):
     microbiologyinclmycoplasma = models.BooleanField(_(u'Micro biology inclmycoplasma'), default=False)
     dnagenotyping = models.BooleanField(_(u'DNA genotyping'), default=False)
     hlatyping = models.BooleanField(_(u'HLA typing'), default=False)
-    virustesting = models.BooleanField(_(u'Viru stesting'), default=False)
+    virustesting = models.BooleanField(_(u'Virus testing'), default=False)
     postthawviability = models.BooleanField(_(u'Post thawviability'), default=False)
     checklistcomments = models.TextField('Checklist comments', null=True, blank=True)
 
