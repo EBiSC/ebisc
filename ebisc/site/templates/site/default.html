@@ -25,9 +25,6 @@
     <thead>
         <tr>            
             <th>
-                <a href="">Status</a>
-            </th>            
-            <th>
                 <a href="">Biosamples ID</a>
             </th>
             <th>
@@ -48,17 +45,13 @@
             <th>
                 <a href="">Sold</a>
             </th>            
+            <th>
+                <a href="">Status</a>
+            </th>            
         </tr>
     </thead>
     <tbody>
         <tr class="status-pending">
-            <td class="status">
-                <select>
-                    <option value="">Pending</option>
-                    <option value="">Accepted</option>
-                    <option value="">Rejected</option>
-                </select>
-            </td>
             <td><a href="./">SAMEA2590892</a></td>
             <td>UKBi006-A</td>
             <td>Cernunnos (XLF) Deficiency syndrome</td>
@@ -66,20 +59,6 @@
             <td>Institut für Rekonstruktive Neurobiologie</td>
             <td class="number">/</td>
             <td class="number">/</td>
-        </tr>
-        <tr class="status-accepted">
-            <td class="status">
-                <span>Accepted</span>
-            </td>
-            <td><a href="./">SAMEA2590985</a></td>
-            <td>UKBi006-A</td>
-            <td>Retinitis pigmentosa</td>
-            <td>Jan 22, 2015</td>
-            <td>Institut für Rekonstruktive Neurobiologie</td>
-            <td class="number">50</td>
-            <td class="number">0</td>
-        </tr>
-        <tr class="status-pending">
             <td class="status">
                 <select>
                     <option value="">Pending</option>
@@ -87,6 +66,20 @@
                     <option value="">Rejected</option>
                 </select>
             </td>
+        </tr>
+        <tr class="status-accepted">
+            <td><a href="./">SAMEA2590985</a></td>
+            <td>UKBi006-A</td>
+            <td>Retinitis pigmentosa</td>
+            <td>Jan 22, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">50</td>
+            <td class="number">0</td>
+            <td class="status">
+                <span>Accepted</span>
+            </td>
+        </tr>
+        <tr class="status-pending">
             <td><a href="./">SAMEA2591001</a></td>
             <td>UKBi002-A</td>
             <td>Control</td>
@@ -94,11 +87,15 @@
             <td>Institut für Rekonstruktive Neurobiologie</td>
             <td class="number">/</td>
             <td class="number">/</td>
+            <td class="status">
+                <select>
+                    <option value="">Pending</option>
+                    <option value="">Accepted</option>
+                    <option value="">Rejected</option>
+                </select>
+            </td>
         </tr>
         <tr class="status-accepted">
-            <td class="status">
-                <span>Accepted</span>
-            </td>
             <td><a href="./">SAMEA2614016</a></td>
             <td>UKBi001-A</td>
             <td>CPVT-1</td>
@@ -106,14 +103,11 @@
             <td>Institut für Rekonstruktive Neurobiologie</td>
             <td class="number">29</td>
             <td class="number">11</td>
+            <td class="status">
+                <span>Accepted</span>
+            </td>
         </tr>
         <tr class="status-rejected">
-            <td class="status">
-                <select>
-                    <option value="">Rejected</option>
-                    <option value="">Accepted</option>
-                </select>
-            </td>
             <td><a href="./">SAMEA2614075</a></td>
             <td>UKBi003-A</td>
             <td>Machado-Joseph</td>
@@ -121,11 +115,14 @@
             <td>Institut für Rekonstruktive Neurobiologie</td>
             <td class="number">/</td>
             <td class="number">/</td>
+            <td class="status">
+                <select>
+                    <option value="">Rejected</option>
+                    <option value="">Accepted</option>
+                </select>
+            </td>
         </tr>
         <tr class="status-accepted">
-            <td class="status">
-                <span>Accepted</span>
-            </td>
             <td><a href="./">SAMEA2614016</a></td>
             <td>UKBi001-A</td>
             <td>Control</td>
@@ -133,11 +130,11 @@
             <td>Institut für Rekonstruktive Neurobiologie</td>
             <td class="number">48</td>
             <td class="number">2</td>
-        </tr>
-        <tr class="status-accepted">
             <td class="status">
                 <span>Accepted</span>
             </td>
+        </tr>
+        <tr class="status-accepted">
             <td><a href="./">SAMEA2614016</a></td>
             <td>UKBi001-A</td>
             <td>Machado-Joseph</td>
@@ -145,14 +142,11 @@
             <td>Institut für Rekonstruktive Neurobiologie</td>
             <td class="number">45</td>
             <td class="number">5</td>
+            <td class="status">
+                <span>Accepted</span>
+            </td>
         </tr>
         <tr class="status-rejected">
-            <td class="status">
-                <select>
-                    <option value="">Rejected</option>
-                    <option value="">Accepted</option>
-                </select>
-            </td>
             <td><a href="./">SAMEA2614075</a></td>
             <td>UKBi003-A</td>
             <td>Machado-Joseph</td>
@@ -160,6 +154,12 @@
             <td>Institut für Rekonstruktive Neurobiologie</td>
             <td class="number">/</td>
             <td class="number">/</td>
+            <td class="status">
+                <select>
+                    <option value="">Rejected</option>
+                    <option value="">Accepted</option>
+                </select>
+            </td>
         </tr>
     </tbody>
 </table>

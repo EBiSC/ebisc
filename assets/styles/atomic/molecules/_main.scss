@@ -87,6 +87,7 @@ table.dashboard {
           background-color: white;
           color: $color-red-light;
           border-color: lighten($color-red-light, 30%);
+          border: $base-border;
         }
       }
     }
