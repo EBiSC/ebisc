@@ -29,3 +29,90 @@
     }
   }
 }
+
+.card {
+  background-color: white;
+  border: $base-border;
+  padding: 18px;
+
+  .title
+  {
+    font-weight: bold;
+    font-size: $font-size-large;
+    margin-bottom: 10px;
+  }
+}
+
+table.dashboard {
+  width: 100%;
+  font-size: $font-size-small;
+
+  tr:hover {
+      background-color: lighten($color-blue-dark, 65%);
+  }
+
+  td, th {
+    border: solid 1px $base-border-color;
+    padding: 10px;
+    vertical-align: top;
+  }
+
+  th {
+    background-color: darken($color-table-background, 40%);
+    color: white;
+    text-align: left;
+
+    a {
+      color: white;
+    }
+  }
+
+  tr {
+    &:nth-child(even) {
+      background-color: $color-table-background;
+    }    
+
+    &.status-pending {
+      .status {
+        color: yellow;
+      }
+    }
+    &.status-accepted {
+      .status {
+        color: darken($color-green, 10%);
+      }
+    }
+    &.status-rejected {
+      .status {
+        color: lighten($color-red-light, 0%);
+      }
+    }
+  }
+}
+
+table.data {
+  width: 100%;
+
+  th {
+    text-align: left;
+    padding-bottom: 20px;
+
+    h2 {
+      margin-bottom: 0px;
+      padding-bottom: 5px;
+      padding-top: 20px;
+      border-bottom: $base-border;
+    }
+  }
+
+  td {
+    padding: 3px 10px 3px 0px;
+
+    &.label {
+      width: 1%;
+      white-space: nowrap;
+      text-align: right;
+      color: $dark-gray;
+    }
+  }
+}

@@ -8,6 +8,247 @@
 
 {% block article-content %}
 {{ document.content.content|default_if_none:""|cmstags:document|safe }}
+
+<h1>Cell Lines <small>Executive dashboard</small></h1>
+
+<table class="dashboard">
+    <thead>
+        <tr>            
+            <th>
+                <a href="">Biosamples ID</a>
+            </th>
+            <th>
+                <a href="">Cell line name</a>
+            </th>
+            <th>
+                <a href="">Cell line name synonims</a>
+            </th>
+            <th>
+                <a href="">Date of Registration</a>
+            </th>            
+            <th>
+                <a href="">Depositor</a>
+            </th>            
+            <th>
+                <a href="">Status</a>
+            </th>            
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="status-pending">
+            <td><a href="./">SAMEA2590892</a></td>
+            <td>UKBi006-A</td>
+            <td>LB-35-r1</td>
+            <td>Feb 31, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="status">
+                <select>
+                    <option value="">Pending</option>
+                    <option value="">Accepted</option>
+                    <option value="">Rejected</option>
+                </select>
+            </td>
+        </tr>
+        <tr class="status-accepted">
+            <td><a href="./">SAMEA2590985</a></td>
+            <td>UKBi006-A</td>
+            <td>LB-34-r1</td>
+            <td>Jan 22, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="status">
+                Accepted
+            </td>
+        </tr>
+        <tr class="status-pending">
+            <td><a href="./">SAMEA2591001</a></td>
+            <td>UKBi002-A</td>
+            <td>LB-36-r2</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="status">
+                <select>
+                    <option value="">Pending</option>
+                    <option value="">Accepted</option>
+                    <option value="">Rejected</option>
+                </select>
+            </td>
+        </tr>
+        <tr class="status-accepted">
+            <td><a href="./">SAMEA2614016</a></td>
+            <td>UKBi001-A</td>
+            <td>LB-29-r2</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="status">
+                Accepted
+            </td>
+        </tr>
+        <tr class="status-rejected">
+            <td><a href="./">SAMEA2614075</a></td>
+            <td>UKBi003-A</td>
+            <td>LB-32-r9</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="status">
+                <select>
+                    <option value="">Rejected</option>
+                    <option value="">Accepted</option>
+                </select>
+            </td>
+        </tr>
+        <tr class="status-accepted">
+            <td><a href="./">SAMEA2614016</a></td>
+            <td>UKBi001-A</td>
+            <td>LB-29-r2</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="status">
+                Accepted
+            </td>
+        </tr>
+        <tr class="status-accepted">
+            <td><a href="./">SAMEA2614016</a></td>
+            <td>UKBi001-A</td>
+            <td>LB-29-r2</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="status">
+                Accepted
+            </td>
+        </tr>
+        <tr class="status-rejected">
+            <td><a href="./">SAMEA2614075</a></td>
+            <td>UKBi003-A</td>
+            <td>LB-32-r9</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="status">
+                <select>
+                    <option value="">Rejected</option>
+                    <option value="">Accepted</option>
+                </select>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<div class="card actions">
+    <div class="title">Set status:</div>
+    <form action="">
+        <input type="checkbox"> Accepted
+        <input type="checkbox"> Rejected
+    </form>
+</div>
+
+<table class="data">
+    <tr>
+        <th colspan="2"><h2>General Information</h2></th>
+    </tr>
+    <tr>
+        <td class="label">Biosamples ID:</td><td>SAMEA2590892</td>
+    </tr>
+    <tr>
+        <td class="label">Cell line name:</td><td>UKBi006-A</td>
+    </tr>
+    <tr>
+        <td class="label">Cell line name synonyms:</td><td>LB-35-r1</td>
+    </tr>
+    <tr>
+        <td class="label">Donor:</td><td>A02</td>
+    </tr>
+    <tr>
+        <td class="label">Disease:</td><td>Control</td>
+    </tr>
+    <tr>
+        <td class="label">Cell line disease info:</td><td></td>
+    </tr>
+    <tr>
+        <td class="label">Cell line status:</td><td>Available</td>
+    </tr>
+    <tr>
+        <td class="label">Cell type:</td><td>Dermal Fibroblasts</td>
+    </tr>
+    <tr>
+        <td class="label">Tissue source:</td><td>Dermal Fibroblasts</td>
+    </tr>
+    <tr>
+        <td class="label">Cell line collection:</td><td></td>
+    </tr>
+    <tr>
+        <td class="label">Clinical treatment B4 donation:</td><td></td>
+    </tr>
+    <tr>
+        <td class="label">Cellline tissue date:</td><td></td>
+    </tr>
+    <tr>
+        <td class="label">Depositors cell line URI:</td><td></td>
+    </tr>
+    <tr>
+        <td class="label">Cell line comments:</td><td></td>
+    </tr>
+    <tr>
+        <td class="label">Cell line update:</td><td></td>
+    </tr>
+    <tr>
+        <td class="label">Last update type:</td><td></td>
+    </tr>
+    <tr>
+        <td class="label">Cell line user account:</td><td></td>
+    </tr>
+    <tr>
+        <td class="label">Cell line ECACC URL:</td><td></td>
+    </tr>
+
+    <tr>
+        <th colspan="2"><h2>Derivation</h2></th>
+    </tr>
+    <tr>
+        <td class="label">Primary cell type name:</td><td></td>
+    </tr>
+    <tr>
+        <td class="label">Primary cell type cell finder id:</td><td></td>
+    </tr>
+    <tr>
+        <td class="label">Primary cell developmental stage:</td><td></td>
+    </tr>
+    <tr>
+        <td class="label">Selection criteria for clones:</td><td></td>
+    </tr>
+    <tr>
+        <td class="label">Xeno free conditions:</td><td></td>
+    </tr>
+    <tr>
+        <td class="label">Derived under gmp:</td><td></td>
+    </tr>
+    <tr>
+        <td class="label">Available as clinical grade:</td><td></td>
+    </tr>
+
+    <tr>
+        <th colspan="2"><h2>Culture Conditions</h2></th>
+    </tr>
+
+    <tr>
+        <th colspan="2"><h2>Characterization</h2></th>
+    </tr>
+
+    <tr>
+        <th colspan="2"><h2>Cell line labs</h2></th>
+    </tr>
+
+    <tr>
+        <th colspan="2"><h2>Cell line legal</h2></th>
+    </tr>
+
+    <tr>
+        <th colspan="2"><h2>Cell line values</h2></th>
+    </tr>
+
+</table>
+    
+
 {% endblock %}
 
 {% endblock %}
