@@ -11,17 +11,30 @@
 
 <h1>Cell Lines <small>Executive dashboard</small></h1>
 
+<p style="margin-bottom: 2em"><i>Funkciji dashboarda: odobravanje/zavračanje submitanih cellinov + pregled nakupov (povezava z ECACC? - zaenkrat spustimo?)</i></p>
+
+<p><i>Funkcionalnosti:
+<ul style="margin-bottom: 2em">
+    <li>Sortable po stolpcih.</li>
+    <li>Naj bi bil tudi search. Filtri? (predlagam, da to dvoje narediva za tem, ko bova naredila toisto za browsanje cell linov)</li>
+    <li>Ni podatka kateri vse cellini naj se kažejo v prvem pogledu, piše samo to, da morajo biti organizirani po datumu (zadnjih 50 + show more button ?).</li>
+</ul>
+</i></p>
+
 <table class="dashboard">
     <thead>
         <tr>            
             <th>
+                <a href="">Status</a>
+            </th>            
+            <th>
                 <a href="">Biosamples ID</a>
             </th>
             <th>
-                <a href="">Cell line name</a>
+                <a href="">Cell line Name</a>
             </th>
             <th>
-                <a href="">Cell line name synonims</a>
+                <a href="">Disease</a>
             </th>
             <th>
                 <a href="">Date of Registration</a>
@@ -30,41 +43,43 @@
                 <a href="">Depositor</a>
             </th>            
             <th>
-                <a href="">Status</a>
+                <a href="">QTY</a>
+            </th>            
+            <th>
+                <a href="">Sold</a>
             </th>            
         </tr>
     </thead>
     <tbody>
         <tr class="status-pending">
+            <td class="status">
+                <select>
+                    <option value="">Pending</option>
+                    <option value="">Accepted</option>
+                    <option value="">Rejected</option>
+                </select>
+            </td>
             <td><a href="./">SAMEA2590892</a></td>
             <td>UKBi006-A</td>
-            <td>LB-35-r1</td>
+            <td>Cernunnos (XLF) Deficiency syndrome</td>
             <td>Feb 31, 2015</td>
             <td>Institut für Rekonstruktive Neurobiologie</td>
-            <td class="status">
-                <select>
-                    <option value="">Pending</option>
-                    <option value="">Accepted</option>
-                    <option value="">Rejected</option>
-                </select>
-            </td>
+            <td class="number">/</td>
+            <td class="number">/</td>
         </tr>
         <tr class="status-accepted">
+            <td class="status">
+                <span>Accepted</span>
+            </td>
             <td><a href="./">SAMEA2590985</a></td>
             <td>UKBi006-A</td>
-            <td>LB-34-r1</td>
+            <td>Retinitis pigmentosa</td>
             <td>Jan 22, 2015</td>
             <td>Institut für Rekonstruktive Neurobiologie</td>
-            <td class="status">
-                Accepted
-            </td>
+            <td class="number">50</td>
+            <td class="number">0</td>
         </tr>
         <tr class="status-pending">
-            <td><a href="./">SAMEA2591001</a></td>
-            <td>UKBi002-A</td>
-            <td>LB-36-r2</td>
-            <td>Jan 21, 2015</td>
-            <td>Institut für Rekonstruktive Neurobiologie</td>
             <td class="status">
                 <select>
                     <option value="">Pending</option>
@@ -72,67 +87,86 @@
                     <option value="">Rejected</option>
                 </select>
             </td>
+            <td><a href="./">SAMEA2591001</a></td>
+            <td>UKBi002-A</td>
+            <td>Control</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">/</td>
+            <td class="number">/</td>
         </tr>
         <tr class="status-accepted">
+            <td class="status">
+                <span>Accepted</span>
+            </td>
             <td><a href="./">SAMEA2614016</a></td>
             <td>UKBi001-A</td>
-            <td>LB-29-r2</td>
+            <td>CPVT-1</td>
             <td>Jan 21, 2015</td>
             <td>Institut für Rekonstruktive Neurobiologie</td>
-            <td class="status">
-                Accepted
-            </td>
+            <td class="number">29</td>
+            <td class="number">11</td>
         </tr>
         <tr class="status-rejected">
-            <td><a href="./">SAMEA2614075</a></td>
-            <td>UKBi003-A</td>
-            <td>LB-32-r9</td>
-            <td>Jan 21, 2015</td>
-            <td>Institut für Rekonstruktive Neurobiologie</td>
             <td class="status">
                 <select>
                     <option value="">Rejected</option>
                     <option value="">Accepted</option>
                 </select>
             </td>
-        </tr>
-        <tr class="status-accepted">
-            <td><a href="./">SAMEA2614016</a></td>
-            <td>UKBi001-A</td>
-            <td>LB-29-r2</td>
-            <td>Jan 21, 2015</td>
-            <td>Institut für Rekonstruktive Neurobiologie</td>
-            <td class="status">
-                Accepted
-            </td>
-        </tr>
-        <tr class="status-accepted">
-            <td><a href="./">SAMEA2614016</a></td>
-            <td>UKBi001-A</td>
-            <td>LB-29-r2</td>
-            <td>Jan 21, 2015</td>
-            <td>Institut für Rekonstruktive Neurobiologie</td>
-            <td class="status">
-                Accepted
-            </td>
-        </tr>
-        <tr class="status-rejected">
             <td><a href="./">SAMEA2614075</a></td>
             <td>UKBi003-A</td>
-            <td>LB-32-r9</td>
+            <td>Machado-Joseph</td>
             <td>Jan 21, 2015</td>
             <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">/</td>
+            <td class="number">/</td>
+        </tr>
+        <tr class="status-accepted">
+            <td class="status">
+                <span>Accepted</span>
+            </td>
+            <td><a href="./">SAMEA2614016</a></td>
+            <td>UKBi001-A</td>
+            <td>Control</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">48</td>
+            <td class="number">2</td>
+        </tr>
+        <tr class="status-accepted">
+            <td class="status">
+                <span>Accepted</span>
+            </td>
+            <td><a href="./">SAMEA2614016</a></td>
+            <td>UKBi001-A</td>
+            <td>Machado-Joseph</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">45</td>
+            <td class="number">5</td>
+        </tr>
+        <tr class="status-rejected">
             <td class="status">
                 <select>
                     <option value="">Rejected</option>
                     <option value="">Accepted</option>
                 </select>
             </td>
+            <td><a href="./">SAMEA2614075</a></td>
+            <td>UKBi003-A</td>
+            <td>Machado-Joseph</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">/</td>
+            <td class="number">/</td>
         </tr>
     </tbody>
 </table>
 
 <hr>
+
+<p style="margin-bottom: 2em"><i>Stran enega cell lina:</i></p>
 
 <div class="card actions">
     <div class="title">Set status:</div>

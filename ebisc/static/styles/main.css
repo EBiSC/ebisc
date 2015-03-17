@@ -102,6 +102,8 @@ select {
 
 table {
   border-collapse: collapse; }
+  table td.number {
+    text-align: right; }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
@@ -168,8 +170,24 @@ hr {
 table.dashboard {
   width: 100%;
   font-size: 0.8em; }
+  table.dashboard tr:nth-child(even) {
+    background-color: #eaeaea; }
   table.dashboard tr:hover {
     background-color: #dff0ff; }
+  table.dashboard tr .status {
+    white-space: nowrap; }
+  table.dashboard tr.status-pending .status select {
+    background-color: white;
+    border: 1px solid #dddddd; }
+  table.dashboard tr.status-accepted .status span {
+    background-color: #bdd332;
+    padding: 2px 22px 2px 10px; }
+  table.dashboard tr.status-rejected .status select {
+    background-color: #e32719;
+    color: white;
+    background-color: white;
+    color: #e32719;
+    border-color: #f5a6a0; }
   table.dashboard td, table.dashboard th {
     border: solid 1px #dddddd;
     padding: 10px;
@@ -180,14 +198,8 @@ table.dashboard {
     text-align: left; }
     table.dashboard th a {
       color: white; }
-  table.dashboard tr:nth-child(even) {
-    background-color: #eaeaea; }
-  table.dashboard tr.status-pending .status {
-    color: yellow; }
-  table.dashboard tr.status-accepted .status {
-    color: #9aad25; }
-  table.dashboard tr.status-rejected .status {
-    color: #e32719; }
+  table.dashboard select {
+    display: inline-block; }
 
 table.data {
   width: 100%; }
