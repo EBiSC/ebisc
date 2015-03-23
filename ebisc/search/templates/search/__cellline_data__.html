@@ -1,19 +1,3 @@
-{% extends 'base.html' %}
-
-{% block title %}{{ cellline.celllinename }}{% endblock %}
-
-{% block article %}
-
-<h1>Executive dashboard <small>{{ cellline.biosamplesid }}</small></h1>
-
-<div class="card actions">
-    <div class="title">Set status:</div>
-    <form action="">
-        <input type="checkbox"> Accepted
-        <input type="checkbox"> Rejected
-    </form>
-</div>
-
 <table class="data">
 
     <tr><th colspan="2"><h2>General Information</h2></th></tr>
@@ -57,5 +41,3 @@
     <tr><th colspan="2"><h2>Cell line values</h2></th></tr>
 
 </table>
-
-{% endblock %}

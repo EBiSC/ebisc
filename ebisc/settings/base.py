@@ -27,6 +27,7 @@ INSTALLED_APPS = (
     'ebisc',
     'ebisc.site',
     'ebisc.celllines',
+    'ebisc.search',
     'ebisc.executive',
 
     'cms',

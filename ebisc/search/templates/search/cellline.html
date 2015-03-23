@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Cell line {{ cellline.celllinename }}{% endblock %}
+
+{% block article %}
+
+<h1>Cell line {{ cellline.celllinename }}</small></h1>
+
+{% include 'search/__cellline_data__.html' %}
+
+{% endblock %}

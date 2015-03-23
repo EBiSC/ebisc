@@ -1,22 +1,12 @@
 {% extends 'base.html' %}
 
-{% load cms %}
+{% load i18n %}
+
+{% block title %}Cell line search{% endblock %}
 
 {% block article %}
 
-
-<ul>
-    <li><a href="exec-dash/">Executive dashboard</a></li>
-    <li><a href="search/">Cell line search</a></li>
-    <li><a href="depositors/">Depositors</a></li>
-</ul>
-
-{% if document.content.title.title %}<h1>{{ document.content.title.title }}{% if document.content.title.subtitle %} <small>{{ document.content.title.subtitle }}</small>{% endif %}</h1>{% endif %}
-
-{% block article-content %}
-{{ document.content.content|default_if_none:""|cmstags:document|safe }}
-
-<h1>Cell Lines <small>Executive dashboard</small></h1>
+<h1>Cell line search</h1>
 
 <div class="search-filters">
     <div class="search-form">
@@ -77,8 +67,36 @@
         </div>
     </div>
 </div>
-    
 
-{% endblock %}
+<table class="dashboard">
+
+    <thead>
+        <tr>            
+            <th><a href="?sort=biosamplesID">Biosamples ID</a></th>
+            <th><a href="?sort=cellLineName">Cell line Name</a></th>
+            <th><a href="?sort=disease">Disease</a></th>
+            <th><a href="?sort=registrationDate">Date of Registration</a></th>            
+            <th><a href="?sort=depositor">Depositor</a></th>            
+            <th><a href="?sort=quantity">QTY</a></th>            
+            <th><a href="?sort=sold">Sold</a></th>            
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for cellline in celllines %}
+        <tr class="accepted-{{ cellline.celllineaccepted }}">
+            <td><a href="{% url 'search:cellline' cellline.biosamplesid %}">{{ cellline.biosamplesid }}</a></td>
+            <td>{{ cellline.celllinename }}</td>
+            <td>{{ cellline.celllineprimarydisease }}</td>
+            <td>{{ cellline.registration_name }}</td>
+            <td>{{ cellline.celllineorganization.organization }}</td>
+            <td class="number {{ cellline.quantity|default:'empty' }}">{{ cellline.quantity|default:'-' }}</td>
+            <td class="number {{ cellline.sold|default:'empty' }}">{{ cellline.sold|default:'-' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+
 
 {% endblock %}

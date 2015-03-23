@@ -19,8 +19,11 @@ urlpatterns = patterns('',
     # API
     url(r'^api/', include('ebisc.api.urls')),
 
-    # Executive
+    # Executive dashboard
     url(r'^exec-dash/', include('ebisc.executive.urls', namespace='executive')),
+
+    # Cell line search
+    url(r'^search/', include('ebisc.search.urls', namespace='search')),
 
     # Site
     url(r'', include('ebisc.site.urls', namespace='site')),
@@ -31,9 +34,6 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + ur
 '''
 /login/
 /logout/
-
-/exec-dash/
-/exec-dash/id/
 
 /search/
 /search/id/
