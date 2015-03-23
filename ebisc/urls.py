@@ -19,8 +19,25 @@ urlpatterns = patterns('',
     # API
     url(r'^api/', include('ebisc.api.urls')),
 
+    # Executive
+    url(r'^exec-dash/', include('ebisc.executive.urls', namespace='executive')),
+
     # Site
     url(r'', include('ebisc.site.urls', namespace='site')),
 )
 
 urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + urlpatterns
+
+'''
+/login/
+/logout/
+
+/exec-dash/
+/exec-dash/id/
+
+/search/
+/search/id/
+
+/depositor/
+/depositor/id/
+'''

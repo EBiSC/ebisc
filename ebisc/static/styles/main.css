@@ -268,15 +268,15 @@ table.dashboard {
     background-color: #eaeaea; }
   table.dashboard tr:hover {
     background-color: #dff0ff; }
-  table.dashboard tr .status {
+  table.dashboard tr .accepted {
     white-space: nowrap; }
-  table.dashboard tr.status-pending .status select {
+  table.dashboard tr.accepted-pending .accepted select {
     background-color: white;
     border: 1px solid #dddddd; }
-  table.dashboard tr.status-accepted .status span {
+  table.dashboard tr.accepted-accepted .accepted span {
     background-color: #bdd332;
     padding: 2px 22px 2px 10px; }
-  table.dashboard tr.status-rejected .status select {
+  table.dashboard tr.accepted-rejected .accepted select {
     background-color: #e32719;
     color: white;
     background-color: white;

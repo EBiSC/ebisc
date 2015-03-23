@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+
+{% block title %}Executive Dashboard{% endblock %}
+
+{% block article %}
+
+<h1>Executive dashboard <small>Cell Lines</small></h1>
+
+<table class="dashboard">
+
+    <thead>
+        <tr>            
+            <th>
+                <a href="">Biosamples ID</a>
+            </th>
+            <th>
+                <a href="">Cell line Name</a>
+            </th>
+            <th>
+                <a href="">Disease</a>
+            </th>
+            <th>
+                <a href="">Date of Registration</a>
+            </th>            
+            <th>
+                <a href="">Depositor</a>
+            </th>            
+            <th>
+                <a href="">QTY</a>
+            </th>            
+            <th>
+                <a href="">Sold</a>
+            </th>            
+            <th>
+                <a href="">Accepted</a>
+            </th>            
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for cellline in celllines %}
+        <tr class="accepted-{{ cellline.celllineaccepted }}">
+            <td><a href="{% url 'executive:cellline' cellline.biosamplesid %}">{{ cellline.biosamplesid }}</a></td>
+            <td>{{ cellline.celllinename }}</td>
+            <td>{{ cellline.celllineprimarydisease }}</td>
+            <td>{{ cellline.registration_name }}</td>
+            <td>{{ cellline.celllineorganization.organization }}</td>
+            <td>{{ cellline.quantity }}</td>
+            <td>{{ cellline.sold }}</td>
+            <td class="accepted">
+                {% if cellline.celllineaccepted == 'accepted' %}
+                <span>{{ cellline.get_celllineaccepted_display }}</span>
+                {% else %}
+                <form method="post" action="{% url 'executive:accept' cellline.biosamplesid %}">
+                    {% csrf_token %}
+                    {% if cellline.celllineaccepted == 'pending' %}
+                    <select name="action">
+                        {% for choice in cellline.ACCEPTED_CHOICES %}
+                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                        {% endfor %}
+                    </select>
+                    {% elif cellline.celllineaccepted == 'rejected' %}
+                    <select name="action">
+                        <option value="rejected">{% trans 'Rejected' %}</option>
+                        <option value="accepted">{% trans 'Accepted' %}</option>
+                    </select>
+                    {% endif %}
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+
+{% endblock %}
+
+{% block extra-scripts %}
+<script>
+    $(document).ready(function () {
+        $('.dashboard .accepted select').change(function (e) {
+            this.form.submit();
+        });
+    });
+</script>
+{% endblock %}
+
