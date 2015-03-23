@@ -4,6 +4,58 @@
 
 {% block article %}
 
-<h1>Executive dashboard <small>{{ cellline.biosamplesid }} / {{ cellline.celllinename }}</small></h1>
+<h1>Executive dashboard <small>{{ cellline.biosamplesid }}</small></h1>
+
+<div class="card actions">
+    <div class="title">Set status:</div>
+    <form action="">
+        <input type="checkbox"> Accepted
+        <input type="checkbox"> Rejected
+    </form>
+</div>
+
+<table class="data">
+
+    <tr><th colspan="2"><h2>General Information</h2></th></tr>
+    <tr><td class="label">Biosamples ID:</td><td>{{ cellline.biosamplesid }}</td></tr>
+    <tr><td class="label">Cell line name:</td><td>{{ cellline.celllinename }}</td></tr>
+    <tr><td class="label">Cell line name synonyms:</td><td>{{ cellline. }}</td></tr>
+    <tr><td class="label">Donor:</td><td>{{ cellline. }}</td></tr>
+    <tr><td class="label">Disease:</td><td>{{ cellline. }}</td></tr>
+    <tr><td class="label">Cell line disease info:</td><td>{{ cellline. }}</td></tr>
+    <tr><td class="label">Cell line status:</td><td>{{ cellline. }}</td></tr>
+    <tr><td class="label">Cell type:</td><td>{{ cellline. }}</td></tr>
+    <tr><td class="label">Tissue source:</td><td>{{ cellline. }}</td></tr>
+    <tr><td class="label">Cell line collection:</td><td>{{ cellline. }}</td></tr>
+    <tr><td class="label">Clinical treatment B4 donation:</td><td>{{ cellline. }}</td></tr>
+    <tr><td class="label">Cellline tissue date:</td><td>{{ cellline. }}</td></tr>
+    <tr><td class="label">Depositors cell line URI:</td><td>{{ cellline. }}</td></tr>
+    <tr><td class="label">Cell line comments:</td><td>{{ cellline. }}</td></tr>
+    <tr><td class="label">Cell line update:</td><td>{{ cellline. }}</td></tr>
+    <tr><td class="label">Last update type:</td><td>{{ cellline. }}</td></tr>
+    <tr><td class="label">Cell line user account:</td><td>{{ cellline. }}</td></tr>
+    <tr><td class="label">Cell line ECACC URL:</td><td>{{ cellline. }}</td></tr>
+
+    <tr><th colspan="2"><h2>Derivation</h2></th></tr>
+
+    <tr><td class="label">Primary cell type name:</td><td></td></tr>
+    <tr><td class="label">Primary cell type cell finder id:</td><td></td></tr>
+    <tr><td class="label">Primary cell developmental stage:</td><td></td></tr>
+    <tr><td class="label">Selection criteria for clones:</td><td></td></tr>
+    <tr><td class="label">Xeno free conditions:</td><td></td></tr>
+    <tr><td class="label">Derived under gmp:</td><td></td></tr>
+    <tr><td class="label">Available as clinical grade:</td><td></td></tr>
+
+    <tr><th colspan="2"><h2>Culture Conditions</h2></th></tr>
+
+    <tr><th colspan="2"><h2>Characterization</h2></th></tr>
+
+    <tr><th colspan="2"><h2>Cell line labs</h2></th></tr>
+
+    <tr><th colspan="2"><h2>Cell line legal</h2></th></tr>
+
+    <tr><th colspan="2"><h2>Cell line values</h2></th></tr>
+
+</table>
 
 {% endblock %}
