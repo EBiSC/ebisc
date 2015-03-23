@@ -22,7 +22,13 @@
                     {% for node in document.node|menu:0 %}
                     <li class="{% if document.node|is_descendant_of:node %}active{% endif %}"><a href="{% url 'site:document' node.path %}">{{ node.menu_title|default:node.title }}</a></li>
                     {% endfor %}
-                    <li><a href="" class="login"><!-- {{ request.user }} -->Login</a></li>
+                    <li>
+                        {% if user.is_authenticated %}
+                        {{ user.get_short_name }} | <a href="{% url 'logout' %}">Log out</a>
+                        {% else %}
+                        <a href="{% url 'login' %}">Log in</a>
+                        {% endif %}
+                    </li>
                 </ul>
             </nav>
         </div>

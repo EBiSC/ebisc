@@ -492,8 +492,6 @@ header {
   header .collapsible-menu {
     margin-top: 14px;
     float: right; }
-    header .collapsible-menu .collapsible-menu-items li a {
-      padding: 3px 0px 3px 40px; }
 
 .messages {
   max-width: 1170px;

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Cell line {{ cellline.celllinename }}{% endblock %}
+
+{% block article %}
+
+<h1>Executive dashboard <small>Cell line {{ cellline.celllinename }}</small></h1>
+
+<div class="card actions">
+    <div class="title">Set status:</div>
+    <form action="">
+        <input type="checkbox"> Accepted
+        <input type="checkbox"> Rejected
+    </form>
+</div>
+
+{% include 'search/__cellline_data__.html' %}
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% load cms %}
+
+{% block article %}
+
+<ul>
+    <li><a href="search/">Cell line search</a></li>
+    <li><a href="exec-dash/">Executive dashboard</a></li>
+</ul>
+
+{% if document.content.title.title %}<h1>{{ document.content.title.title }}{% if document.content.title.subtitle %} <small>{{ document.content.title.subtitle }}</small>{% endif %}</h1>{% endif %}
+
+{% block article-content %}
+{{ document.content.content|default_if_none:""|cmstags:document|safe }}
+{% endblock %}
+
+{% endblock %}

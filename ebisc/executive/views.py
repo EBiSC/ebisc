@@ -4,10 +4,12 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.utils.html import format_html
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.decorators import login_required
 
 from ebisc.celllines.models import Cellline
 
 
+@login_required
 def dashboard(request):
 
     paginator = Paginator(Cellline.objects.all(), 20)
@@ -38,6 +40,7 @@ def cellline(request, biosamples_id):
     })
 
 
+@login_required
 @require_POST
 def accept(request, biosamples_id):
 

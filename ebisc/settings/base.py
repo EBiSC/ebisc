@@ -97,6 +97,12 @@ GRAPPELLI_ADMIN_TITLE = _(u'EBiSC Administration')
 GRAPPELLI_INDEX_DASHBOARD = 'ebisc.dashboard.CustomIndexDashboard'
 
 # -----------------------------------------------------------------------------
+# Authentication
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+
+# -----------------------------------------------------------------------------
 # Tastypie
 
 TASTYPIE_ALLOW_MISSING_SLASH = True
