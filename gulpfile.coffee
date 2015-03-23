@@ -40,7 +40,10 @@ gulp.task 'styles', [], () ->
 # Scripts
 
 SCRIPTS =
-    main: 'assets/scripts/components/collapsible-menu.coffee'
+    main: [
+        'assets/scripts/components/dropdown.coffee'
+        'assets/scripts/components/collapsible-menu.coffee'
+    ]
 
 processScripts = (src, target) ->
     console.log "#{PROJECT}/static/scripts/#{target}"

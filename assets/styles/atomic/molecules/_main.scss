@@ -1,3 +1,5 @@
+// Menu
+
 .collapsible-menu {
 
   button {
@@ -30,6 +32,8 @@
   }
 }
 
+// Cards
+
 .card {
   background-color: white;
   border: $base-border;
@@ -42,6 +46,34 @@
     margin-bottom: 10px;
   }
 }
+
+// Forms
+
+.search {
+  @include clearfix;
+  width: 100%;
+
+  input {
+    float: left;
+    margin: 0;
+  }
+
+  input[type="text"] {
+    max-width: 60%;
+    margin-right: 8px;
+  }
+}
+
+// Filters
+
+.filter-group {
+  .filter {
+    display: inline-block;
+    width: 200px;
+  }
+}
+
+// Tables
 
 table.dashboard {
   width: 100%;
