@@ -18,6 +18,70 @@
 
 <h1>Cell Lines <small>Executive dashboard</small></h1>
 
+<div class="search-filters">
+    <div class="search-form">
+        <form action="" class="search">
+            <input type="text" placeholder="Enter keywords">
+            <input type="submit" value="Search">
+        </form>        
+    </div>
+    <div class="filter-group">
+        <div class="filter dropdown">
+            <div class="dropdown-container">
+                <div class="dropdown-button">Accepted status</div>
+                <ul class="dropdown-menu dropdown-select">
+                  <li>Pending</li>
+                  <li>Accepted</li>
+                  <li>Rejected</li>
+                </ul>                
+            </div>
+        </div>
+        <div class="filter dropdown">
+            <div class="dropdown-container">
+                <div class="dropdown-button">Depositor</div>
+                <ul class="dropdown-menu dropdown-select">
+                    <li>BION - BION</li>
+                    <li>ES - ES</li>
+                    <li>HUB - HUB</li>
+                    <li>RC - RC</li>
+                    <li>UKB - UKB</li>
+                    <li>UKK - UKK</li>
+                    <li>UNEW - UNEW</li>
+                </ul>                
+            </div>
+        </div>
+        <div class="filter dropdown two-col">
+            <div class="dropdown-container">
+                <div class="dropdown-button">Disease</div>
+                <ul class="dropdown-menu dropdown-select">
+                    <li>Acquired aplastic anaemia</li>
+                    <li>Brugada Syndrome</li>
+                    <li>CPVT-1</li>
+                    <li>Cernunnos (XLF) Deficiency syndrome</li>
+                    <li>Control</li>
+                    <li>Creatine Transporter deficiency</li>
+                    <li>Epidermolysis Bullosa</li>
+                    <li>Familial Erythromelalgia</li>
+                    <li>Fanconi Anemia (FA)</li>
+                    <li>Gaucher Disease</li>
+                    <li>Hereditary spastic Paraplegia: SPG4</li>
+                    <li>Huntington's Disease</li>
+                    <li>Long QT Syndrome-3</li>
+                    <li>Machado-Joseph</li>
+                    <li>Parkinson's Disease</li>
+                    <li>Retinitis pigmentosa</li>
+                    <li>Spinal muscular atrophy (SMA)</li>
+                    <li>Unknown</li>
+                </ul>                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- 
+
 <p style="margin-bottom: 2em"><i>Funkciji dashboarda: odobravanje/zavračanje submitanih cellinov + pregled nakupov (povezava z ECACC? - zaenkrat spustimo?)</i></p>
 
 <p><i>Funkcionalnosti:
@@ -27,7 +91,7 @@
     <li>Ni podatka kateri vse cellini naj se kažejo v prvem pogledu, piše samo to, da morajo biti organizirani po datumu (zadnjih 50 + show more button ?).</li>
 </ul>
 </i></p>
-
+-->
 <table class="dashboard">
     <thead>
         <tr>            
@@ -168,9 +232,209 @@
                 </select>
             </td>
         </tr>
+        <tr class="status-accepted">
+            <td><a href="./">SAMEA2614016</a></td>
+            <td>UKBi001-A</td>
+            <td>CPVT-1</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">29</td>
+            <td class="number">11</td>
+            <td class="status">
+                <span>Accepted</span>
+            </td>
+        </tr>
+        <tr class="status-rejected">
+            <td><a href="./">SAMEA2614075</a></td>
+            <td>UKBi003-A</td>
+            <td>Machado-Joseph</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">/</td>
+            <td class="number">/</td>
+            <td class="status">
+                <select>
+                    <option value="">Rejected</option>
+                    <option value="">Accepted</option>
+                </select>
+            </td>
+        </tr>
+        <tr class="status-accepted">
+            <td><a href="./">SAMEA2614016</a></td>
+            <td>UKBi001-A</td>
+            <td>Control</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">48</td>
+            <td class="number">2</td>
+            <td class="status">
+                <span>Accepted</span>
+            </td>
+        </tr>
+        <tr class="status-accepted">
+            <td><a href="./">SAMEA2614016</a></td>
+            <td>UKBi001-A</td>
+            <td>Machado-Joseph</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">45</td>
+            <td class="number">5</td>
+            <td class="status">
+                <span>Accepted</span>
+            </td>
+        </tr>
+        <tr class="status-rejected">
+            <td><a href="./">SAMEA2614075</a></td>
+            <td>UKBi003-A</td>
+            <td>Machado-Joseph</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">/</td>
+            <td class="number">/</td>
+            <td class="status">
+                <select>
+                    <option value="">Rejected</option>
+                    <option value="">Accepted</option>
+                </select>
+            </td>
+        </tr>
+        <tr class="status-accepted">
+            <td><a href="./">SAMEA2614016</a></td>
+            <td>UKBi001-A</td>
+            <td>CPVT-1</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">29</td>
+            <td class="number">11</td>
+            <td class="status">
+                <span>Accepted</span>
+            </td>
+        </tr>
+        <tr class="status-rejected">
+            <td><a href="./">SAMEA2614075</a></td>
+            <td>UKBi003-A</td>
+            <td>Machado-Joseph</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">/</td>
+            <td class="number">/</td>
+            <td class="status">
+                <select>
+                    <option value="">Rejected</option>
+                    <option value="">Accepted</option>
+                </select>
+            </td>
+        </tr>
+        <tr class="status-accepted">
+            <td><a href="./">SAMEA2614016</a></td>
+            <td>UKBi001-A</td>
+            <td>Control</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">48</td>
+            <td class="number">2</td>
+            <td class="status">
+                <span>Accepted</span>
+            </td>
+        </tr>
+        <tr class="status-accepted">
+            <td><a href="./">SAMEA2614016</a></td>
+            <td>UKBi001-A</td>
+            <td>Machado-Joseph</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">45</td>
+            <td class="number">5</td>
+            <td class="status">
+                <span>Accepted</span>
+            </td>
+        </tr>
+        <tr class="status-rejected">
+            <td><a href="./">SAMEA2614075</a></td>
+            <td>UKBi003-A</td>
+            <td>Machado-Joseph</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">/</td>
+            <td class="number">/</td>
+            <td class="status">
+                <select>
+                    <option value="">Rejected</option>
+                    <option value="">Accepted</option>
+                </select>
+            </td>
+        </tr>
+        <tr class="status-accepted">
+            <td><a href="./">SAMEA2614016</a></td>
+            <td>UKBi001-A</td>
+            <td>CPVT-1</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">29</td>
+            <td class="number">11</td>
+            <td class="status">
+                <span>Accepted</span>
+            </td>
+        </tr>
+        <tr class="status-rejected">
+            <td><a href="./">SAMEA2614075</a></td>
+            <td>UKBi003-A</td>
+            <td>Machado-Joseph</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">/</td>
+            <td class="number">/</td>
+            <td class="status">
+                <select>
+                    <option value="">Rejected</option>
+                    <option value="">Accepted</option>
+                </select>
+            </td>
+        </tr>
+        <tr class="status-accepted">
+            <td><a href="./">SAMEA2614016</a></td>
+            <td>UKBi001-A</td>
+            <td>Control</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">48</td>
+            <td class="number">2</td>
+            <td class="status">
+                <span>Accepted</span>
+            </td>
+        </tr>
+        <tr class="status-accepted">
+            <td><a href="./">SAMEA2614016</a></td>
+            <td>UKBi001-A</td>
+            <td>Machado-Joseph</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">45</td>
+            <td class="number">5</td>
+            <td class="status">
+                <span>Accepted</span>
+            </td>
+        </tr>
+        <tr class="status-rejected">
+            <td><a href="./">SAMEA2614075</a></td>
+            <td>UKBi003-A</td>
+            <td>Machado-Joseph</td>
+            <td>Jan 21, 2015</td>
+            <td>Institut für Rekonstruktive Neurobiologie</td>
+            <td class="number">/</td>
+            <td class="number">/</td>
+            <td class="status">
+                <select>
+                    <option value="">Rejected</option>
+                    <option value="">Accepted</option>
+                </select>
+            </td>
+        </tr>
     </tbody>
 </table>
 
+
+<!--
 <hr>
 
 <p style="margin-bottom: 2em"><i>Stran enega cell lina:</i></p>
@@ -288,6 +552,7 @@
     </tr>
 
 </table>
+ -->
     
 
 {% endblock %}
