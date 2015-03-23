@@ -48,7 +48,6 @@ table.dashboard {
   font-size: $font-size-small;
 
   tr {
-
     &:nth-child(even) {
       background-color: $color-table-background;
     }    
@@ -57,12 +56,12 @@ table.dashboard {
       background-color: lighten($color-blue-dark, 65%);
     }
 
-    .status {
+    .accepted {
       white-space: nowrap;
     }
 
-    &.status-pending {
-      .status {
+    &.accepted-pending {
+      .accepted {
         select {
           background-color: white;
           border: $base-border;
@@ -70,8 +69,8 @@ table.dashboard {
       }
     }
 
-    &.status-accepted {
-      .status {
+    &.accepted-accepted {
+      .accepted {
         span {
           background-color: $color-green;
           padding: 2px 22px 2px 10px;
@@ -79,8 +78,8 @@ table.dashboard {
       }
     }
 
-    &.status-rejected {
-      .status {
+    &.accepted-rejected {
+      .accepted {
         select {
           background-color: $color-red-light;
           color: white;

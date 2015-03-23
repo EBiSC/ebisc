@@ -6,7 +6,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Test</title>
+    <title>{% block full-title %}{% block title %}{% endblock %} | EBiSC{% endblock %}</title>
     <meta name="viewport" content="initial-scale=1">
     <link rel="stylesheet" type="text/sass" href="{% static 'styles/main.css' %}">
 </head>
@@ -14,7 +14,7 @@
 <body class="{% if document %}template-{{ document.template|slugify }}{% endif %}">
 
     <header>
-        <a href="{% url 'site:document' document.node.ancestors.0.path %}"><img class="logo" src="{% static 'images/EBiSC-logo.png' %}" alt="EBiSC"></a>
+        <a href="{% url 'site:document' document.node.ancestors.0.path %}"><img class="logo" src="{% static 'images/EBiSC-logo.png' %}" alt="EBiSC" width="131" height="80"></a>
         <div class="collapsible-menu">
             <button id="main-navigation-menu-mobile-toggle" class="collapsible-menu-toggle" data-target="main-navigation-menu-items">MENU</button>
             <nav role="navigation">
@@ -22,7 +22,7 @@
                     {% for node in document.node|menu:0 %}
                     <li class="{% if document.node|is_descendant_of:node %}active{% endif %}"><a href="{% url 'site:document' node.path %}">{{ node.menu_title|default:node.title }}</a></li>
                     {% endfor %}
-                    <li><a href="" class="login">Login</a></li>
+                    <li><a href="" class="login"><!-- {{ request.user }} -->Login</a></li>
                 </ul>
             </nav>
         </div>
