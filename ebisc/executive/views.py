@@ -1,17 +1,33 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.shortcuts import redirect
-from django.http import Http404
 from django.contrib import messages
 from django.utils.html import format_html
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from ebisc.celllines.models import Cellline
 
 
 def dashboard(request):
 
+    paginator = Paginator(Cellline.objects.all(), 20)
+
+    page = request.GET.get('page')
+
+    try:
+        celllines = paginator.page(page)
+    except PageNotAnInteger:
+        # if page is not an integer, deliver first page
+        page = 1
+        celllines = paginator.page(page)
+    except EmptyPage:
+        # if page is out of range, deliver first page
+        page = 1
+        celllines = paginator.page(page)
+
     return render(request, 'executive/dashboard.html', {
-        'celllines': Cellline.objects.all()
+        'page': int(page),
+        'celllines': celllines,
     })
 
 
@@ -44,7 +60,7 @@ def accept(request, biosamples_id):
         messages.success(request, format_html(u'Status for cell line <code>{0}</code> changed form <code>{1}</code> to <code>{2}</code>.', cellline.biosamplesid, cellline.celllineaccepted, action))
         cellline.celllineaccepted = 'rejected'
     else:
-        raise Http404
+        return redirect('executive:dashboard')
 
     cellline.save()
 

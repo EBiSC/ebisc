@@ -18,7 +18,9 @@
 @import 'atomic/atoms/typography';
 
 @import 'atomic/molecules/main';
+@import 'atomic/molecules/pagination';
 
+@import 'atomic/organisms/organism';
 @import 'atomic/organisms/search';
 @import 'atomic/organisms/body';
 @import 'atomic/organisms/article';

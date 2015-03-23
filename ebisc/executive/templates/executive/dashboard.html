@@ -60,6 +60,19 @@
 
 </table>
 
+<div class="pagination">
+    Page: 
+    <ul>
+        <li>
+            <ul>
+                {% for p in celllines.paginator.page_range %}
+                <li><a class="{% if p == page %}active{% endif %}" href="?page={{ p }}">{{ p }}</a></li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+</div>
+
 {% endblock %}
 
 {% block extra-scripts %}
