@@ -104,6 +104,8 @@ table {
   border-collapse: collapse; }
   table td.number {
     text-align: right; }
+  table td.empty {
+    text-align: center; }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
@@ -140,6 +142,84 @@ hr {
   border-right: none;
   border-top: none;
   margin: 1.5em 0; }
+
+.message-debug {
+  background-color: #e5edf8;
+  color: #244e87;
+  display: block;
+  margin-bottom: 0.75em;
+  padding: 0.75em;
+  text-align: center; }
+  .message-debug a {
+    color: #19375f;
+    text-decoration: underline; }
+    .message-debug a:focus, .message-debug a:hover {
+      color: #04080e; }
+
+.message-info {
+  background-color: #e5edf8;
+  color: #244e87;
+  display: block;
+  margin-bottom: 0.75em;
+  padding: 0.75em;
+  text-align: center; }
+  .message-info a {
+    color: #19375f;
+    text-decoration: underline; }
+    .message-info a:focus, .message-info a:hover {
+      color: #04080e; }
+
+.message-success {
+  background-color: #e6efc2;
+  color: #56651a;
+  display: block;
+  margin-bottom: 0.75em;
+  padding: 0.75em;
+  text-align: center; }
+  .message-success a {
+    color: #333c10;
+    text-decoration: underline; }
+    .message-success a:focus, .message-success a:hover {
+      color: black; }
+
+.message-warning {
+  background-color: #fff6bf;
+  color: #8c7800;
+  display: block;
+  margin-bottom: 0.75em;
+  padding: 0.75em;
+  text-align: center; }
+  .message-warning a {
+    color: #594c00;
+    text-decoration: underline; }
+    .message-warning a:focus, .message-warning a:hover {
+      color: black; }
+
+.message-error {
+  background-color: #fbe3e4;
+  color: #96151b;
+  display: block;
+  margin-bottom: 0.75em;
+  padding: 0.75em;
+  text-align: center; }
+  .message-error a {
+    color: #6a0f13;
+    text-decoration: underline; }
+    .message-error a:focus, .message-error a:hover {
+      color: #110203; }
+
+ul, ol {
+  list-style-type: none;
+  margin: 0;
+  padding: 0; }
+
+dl {
+  margin-bottom: 0.75em; }
+  dl dt {
+    font-weight: bold;
+    margin-top: 0.75em; }
+  dl dd {
+    margin: 0; }
 
 .collapsible-menu button {
   outline: none; }
@@ -278,6 +358,17 @@ header {
     float: right; }
     header .collapsible-menu .collapsible-menu-items li a {
       padding: 3px 0px 3px 40px; }
+
+.messages {
+  max-width: 1170px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  margin-bottom: 10px; }
+  .messages:after {
+    content: " ";
+    display: block;
+    clear: both; }
 
 footer {
   max-width: 1170px;

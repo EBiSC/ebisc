@@ -28,6 +28,14 @@
         </div>
     </header>
 
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="message-{{ message.level_tag }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
     <article>{% block article %}{% endblock %}</article>
 
     <footer>&copy; EBiSC European Bank for induced pluripotent Stem Cells</footer>
