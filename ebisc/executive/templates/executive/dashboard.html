@@ -12,30 +12,14 @@
 
     <thead>
         <tr>            
-            <th>
-                <a href="">Biosamples ID</a>
-            </th>
-            <th>
-                <a href="">Cell line Name</a>
-            </th>
-            <th>
-                <a href="">Disease</a>
-            </th>
-            <th>
-                <a href="">Date of Registration</a>
-            </th>            
-            <th>
-                <a href="">Depositor</a>
-            </th>            
-            <th>
-                <a href="">QTY</a>
-            </th>            
-            <th>
-                <a href="">Sold</a>
-            </th>            
-            <th>
-                <a href="">Accepted</a>
-            </th>            
+            <th><a href="?sort=biosamplesID">Biosamples ID</a></th>
+            <th><a href="?sort=cellLineName">Cell line Name</a></th>
+            <th><a href="?sort=disease">Disease</a></th>
+            <th><a href="?sort=registrationDate">Date of Registration</a></th>            
+            <th><a href="?sort=depositor">Depositor</a></th>            
+            <th><a href="?sort=quantity">QTY</a></th>            
+            <th><a href="?sort=sold">Sold</a></th>            
+            <th><a href="?sort=accepted">Accepted</a></th>            
         </tr>
     </thead>
 
@@ -47,8 +31,8 @@
             <td>{{ cellline.celllineprimarydisease }}</td>
             <td>{{ cellline.registration_name }}</td>
             <td>{{ cellline.celllineorganization.organization }}</td>
-            <td>{{ cellline.quantity }}</td>
-            <td>{{ cellline.sold }}</td>
+            <td class="number {{ cellline.quantity|default:'empty' }}">{{ cellline.quantity|default:'-' }}</td>
+            <td class="number {{ cellline.sold|default:'empty' }}">{{ cellline.sold|default:'-' }}</td>
             <td class="accepted">
                 {% if cellline.celllineaccepted == 'accepted' %}
                 <span>{{ cellline.get_celllineaccepted_display }}</span>
