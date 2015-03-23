@@ -1,12 +1,18 @@
 $base-spacing: 1.5em !default;
 
-$info-color: #e5edf8 !default;
-$success-color: #e6efc2 !default;
+// $info-color: #e5edf8 !default;
+// $success-color: #e6efc2 !default;
+// $warning-color: #fff6bf !default;
+// $error-color: #fbe3e4 !default;
+
+$info-color: lighten($color-blue-dark, 20%);
+$success-color: lighten($color-green, 20%);
 $warning-color: #fff6bf !default;
-$error-color: #fbe3e4 !default;
+$error-color: lighten($color-red-light, 20%);
 
 @mixin message($color) {
   background-color: $color;
+  border: solid 1px darken($color, 15%);
   color: darken($color, 60%);
   display: block;
   margin-bottom: $base-spacing / 2;

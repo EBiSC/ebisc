@@ -45,7 +45,8 @@ button, input[type="button"], input[type="reset"], input[type="submit"], button 
     padding: 0;
     margin: 0; }
   .dropdown li {
-    list-style: none; }
+    list-style: none;
+    position: relative; }
   .dropdown .dropdown-container {
     display: inline-block;
     position: relative; }
@@ -83,25 +84,40 @@ button, input[type="button"], input[type="reset"], input[type="submit"], button 
     display: none;
     overflow: show;
     position: absolute;
-    left: 0;
+    left: -15px;
     top: 40px;
-    width: 400px;
-    z-index: 99999; }
+    width: auto;
+    min-width: 230px;
+    z-index: 99999;
+    padding: 1em; }
     .dropdown .dropdown-menu:before {
       position: absolute;
       top: 0;
       right: 1em;
       bottom: 0;
-      left: 0;
+      left: 20px;
       color: #fff;
       content: "\25b2";
       font-size: 1.4em;
       pointer-events: none;
-      text-shadow: 0 -2px 2px rgba(0, 0, 0, 0.3);
-      top: -0.7em; }
+      text-shadow: 0 -1px 1px rgba(121, 121, 121, 0.2);
+      top: -1.1em; }
   .dropdown .dropdown-menu li {
     color: #333333;
-    padding: 0.5em; }
+    padding: 0.5em 1.6em;
+    white-space: nowrap; }
+    .dropdown .dropdown-menu li .checkbox {
+      position: absolute;
+      top: 10px;
+      left: 0px;
+      width: 1.1em;
+      height: 1.1em;
+      border: solid 1px #bdbdbd;
+      margin-right: 8px; }
+    .dropdown .dropdown-menu li:hover {
+      color: #009fee; }
+      .dropdown .dropdown-menu li:hover .checkbox {
+        border-color: #009fee; }
   .dropdown .show-menu {
     display: block; }
   .dropdown.two-col ul {
@@ -191,46 +207,50 @@ img, picture {
   max-width: 100%; }
 
 .message-debug {
-  background-color: #e5edf8;
-  color: #244e87;
+  background-color: #0084f9;
+  border: solid 1px #005cac;
+  color: black;
   display: block;
   margin-bottom: 0.75em;
   padding: 0.75em;
   text-align: center; }
   .message-debug a {
-    color: #19375f;
+    color: black;
     text-decoration: underline; }
     .message-debug a:focus, .message-debug a:hover {
-      color: #04080e; }
+      color: black; }
 
 .message-info {
-  background-color: #e5edf8;
-  color: #244e87;
+  background-color: #0084f9;
+  border: solid 1px #005cac;
+  color: black;
   display: block;
   margin-bottom: 0.75em;
   padding: 0.75em;
   text-align: center; }
   .message-info a {
-    color: #19375f;
+    color: black;
     text-decoration: underline; }
     .message-info a:focus, .message-info a:hover {
-      color: #04080e; }
+      color: black; }
 
 .message-success {
-  background-color: #e6efc2;
-  color: #56651a;
+  background-color: #d8e586;
+  border: solid 1px #c4d847;
+  color: #2a2f0a;
   display: block;
   margin-bottom: 0.75em;
   padding: 0.75em;
   text-align: center; }
   .message-success a {
-    color: #333c10;
+    color: #040501;
     text-decoration: underline; }
     .message-success a:focus, .message-success a:hover {
       color: black; }
 
 .message-warning {
   background-color: #fff6bf;
+  border: solid 1px #ffeb72;
   color: #8c7800;
   display: block;
   margin-bottom: 0.75em;
@@ -243,17 +263,18 @@ img, picture {
       color: black; }
 
 .message-error {
-  background-color: #fbe3e4;
-  color: #96151b;
+  background-color: #f07b72;
+  border: solid 1px #e83a2e;
+  color: #2b0705;
   display: block;
   margin-bottom: 0.75em;
   padding: 0.75em;
   text-align: center; }
   .message-error a {
-    color: #6a0f13;
+    color: black;
     text-decoration: underline; }
     .message-error a:focus, .message-error a:hover {
-      color: #110203; }
+      color: black; }
 
 table {
   border-collapse: collapse; }

@@ -20,9 +20,9 @@
             <div class="dropdown-container">
                 <div class="dropdown-button">Accepted status</div>
                 <ul class="dropdown-menu dropdown-select">
-                  <li>Pending</li>
-                  <li>Accepted</li>
-                  <li>Rejected</li>
+                  <li><div class="checkbox"></div>Pending</li>
+                  <li><div class="checkbox"></div>Accepted</li>
+                  <li><div class="checkbox"></div>Rejected</li>
                 </ul>                
             </div>
         </div>
@@ -30,13 +30,13 @@
             <div class="dropdown-container">
                 <div class="dropdown-button">Depositor</div>
                 <ul class="dropdown-menu dropdown-select">
-                    <li>BION - BION</li>
-                    <li>ES - ES</li>
-                    <li>HUB - HUB</li>
-                    <li>RC - RC</li>
-                    <li>UKB - UKB</li>
-                    <li>UKK - UKK</li>
-                    <li>UNEW - UNEW</li>
+                    <li><div class="checkbox"></div>BION - BION</li>
+                    <li><div class="checkbox"></div>ES - ES</li>
+                    <li><div class="checkbox"></div>HUB - HUB</li>
+                    <li><div class="checkbox"></div>RC - RC</li>
+                    <li><div class="checkbox"></div>UKB - UKB</li>
+                    <li><div class="checkbox"></div>UKK - UKK</li>
+                    <li><div class="checkbox"></div>UNEW - UNEW</li>
                 </ul>                
             </div>
         </div>
@@ -44,24 +44,24 @@
             <div class="dropdown-container">
                 <div class="dropdown-button">Disease</div>
                 <ul class="dropdown-menu dropdown-select">
-                    <li>Acquired aplastic anaemia</li>
-                    <li>Brugada Syndrome</li>
-                    <li>CPVT-1</li>
-                    <li>Cernunnos (XLF) Deficiency syndrome</li>
-                    <li>Control</li>
-                    <li>Creatine Transporter deficiency</li>
-                    <li>Epidermolysis Bullosa</li>
-                    <li>Familial Erythromelalgia</li>
-                    <li>Fanconi Anemia (FA)</li>
-                    <li>Gaucher Disease</li>
-                    <li>Hereditary spastic Paraplegia: SPG4</li>
-                    <li>Huntington's Disease</li>
-                    <li>Long QT Syndrome-3</li>
-                    <li>Machado-Joseph</li>
-                    <li>Parkinson's Disease</li>
-                    <li>Retinitis pigmentosa</li>
-                    <li>Spinal muscular atrophy (SMA)</li>
-                    <li>Unknown</li>
+                    <li><div class="checkbox"></div>Acquired aplastic anaemia</li>
+                    <li><div class="checkbox"></div>Brugada Syndrome</li>
+                    <li><div class="checkbox"></div>CPVT-1</li>
+                    <li><div class="checkbox"></div>Cernunnos (XLF) Deficiency syndrome</li>
+                    <li><div class="checkbox"></div>Control</li>
+                    <li><div class="checkbox"></div>Creatine Transporter deficiency</li>
+                    <li><div class="checkbox"></div>Epidermolysis Bullosa</li>
+                    <li><div class="checkbox"></div>Familial Erythromelalgia</li>
+                    <li><div class="checkbox"></div>Fanconi Anemia (FA)</li>
+                    <li><div class="checkbox"></div>Gaucher Disease</li>
+                    <li><div class="checkbox"></div>Hereditary spastic Paraplegia: SPG4</li>
+                    <li><div class="checkbox"></div>Huntington's Disease</li>
+                    <li><div class="checkbox"></div>Long QT Syndrome-3</li>
+                    <li><div class="checkbox"></div>Machado-Joseph</li>
+                    <li><div class="checkbox"></div>Parkinson's Disease</li>
+                    <li><div class="checkbox"></div>Retinitis pigmentosa</li>
+                    <li><div class="checkbox"></div>Spinal muscular atrophy (SMA)</li>
+                    <li><div class="checkbox"></div>Unknown</li>
                 </ul>                
             </div>
         </div>
@@ -77,8 +77,6 @@
             <th><a href="?sort=disease">Disease</a></th>
             <th><a href="?sort=registrationDate">Date of Registration</a></th>            
             <th><a href="?sort=depositor">Depositor</a></th>            
-            <th><a href="?sort=quantity">QTY</a></th>            
-            <th><a href="?sort=sold">Sold</a></th>            
         </tr>
     </thead>
 
@@ -90,8 +88,6 @@
             <td>{{ cellline.celllineprimarydisease }}</td>
             <td>{{ cellline.registration_name }}</td>
             <td>{{ cellline.celllineorganization.organization }}</td>
-            <td class="number {{ cellline.quantity|default:'empty' }}">{{ cellline.quantity|default:'-' }}</td>
-            <td class="number {{ cellline.sold|default:'empty' }}">{{ cellline.sold|default:'-' }}</td>
         </tr>
         {% endfor %}
     </tbody>
