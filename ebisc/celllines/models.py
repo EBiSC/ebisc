@@ -63,8 +63,18 @@ class Binnedage(models.Model):
 
 
 class Cellline(models.Model):
+
+    ACCEPTED_CHOICES = (
+        ('pending', _(u'Pending')),
+        ('accepted', _(u'Accepted')),
+        ('rejected', _(u'Rejected')),
+    )
+
+    celllineaccepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
+
     biosamplesid = models.CharField(_(u'Biosamples ID'), unique=True, max_length=12)
     celllinename = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
+
     celllinedonor = models.ForeignKey('Donor', verbose_name=_(u'Donor'), blank=True, null=True)
     celllineprimarydisease = models.ForeignKey('Disease', verbose_name=_(u'Disease'), blank=True, null=True)
     celllinediseaseaddinfo = models.CharField(_(u'Cell line disease info'), max_length=100, null=True, blank=True)
@@ -73,11 +83,11 @@ class Cellline(models.Model):
     celllinecollection = models.ForeignKey('Celllinecollection', verbose_name=_(u'Cell line collection'), blank=True, null=True)
     celllinetissuesource = models.ForeignKey('Tissuesource', verbose_name=_(u'Tissue source'), blank=True, null=True)
     celllinetissuetreatment = models.ForeignKey('Clinicaltreatmentb4donation', verbose_name=_(u'Clinical treatment B4 donation'), blank=True, null=True)
-    celllinetissuedate = models.DateField(blank=True, null=True)
+    celllinetissuedate = models.DateField(_(u'Cell line tissue date'), blank=True, null=True)
     celllinenamesynonyms = models.CharField(_(u'Cell line name synonyms'), max_length=500, null=True, blank=True)
     depositorscelllineuri = models.CharField(_(u'Depositors cell line URI'), max_length=45, blank=True)
     celllinecomments = models.TextField(_(u'Cell line comments'), null=True, blank=True)
-    celllineupdate = models.DateField(blank=True, null=True)
+    celllineupdate = models.DateField(_(u'Cell line updated'), blank=True, null=True)
     celllineupdatetype = models.ForeignKey('Lastupdatetype', verbose_name=_(u'Last update type'), blank=True, null=True)
     celllineupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'User account'), blank=True, null=True)
     celllineecaccurl = models.URLField(_(u'Cell line ECACC URL'), blank=True, null=True)
