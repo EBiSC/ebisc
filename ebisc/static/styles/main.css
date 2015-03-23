@@ -337,6 +337,11 @@ hr {
     max-width: 60%;
     margin-right: 8px; }
 
+.login input {
+  width: 20em; }
+.login label, .login button {
+  margin-top: 15px; }
+
 .filter-group .filter {
   display: inline-block;
   width: 200px; }
@@ -395,7 +400,7 @@ table.data {
       color: #797979; }
 
 .pagination {
-  margin-top: 1.5em; }
+  margin-top: 2.4em; }
   .pagination ul {
     margin: 0;
     padding: 0; }
@@ -421,14 +426,14 @@ table.data {
       border: 1px solid #dddddd;
       color: #333333;
       outline: none;
-      padding: 0.5em 1.25em; }
+      padding: 0.4em 1em; }
       .pagination ul li a:hover, .pagination ul li a:focus {
         background: white;
-        color: #477DCA; }
+        color: #004e93; }
       .pagination ul li a:active {
         background: #f7f7f7; }
       .pagination ul li a.active {
-        color: #477DCA;
+        color: #004e93;
         background: white; }
 
 .search-filters {

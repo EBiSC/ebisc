@@ -6,7 +6,7 @@
 
 <h1>Login</h1>
 
-<form method="post" action="{% url 'django.contrib.auth.views.login' %}">
+<form method="post" action="{% url 'django.contrib.auth.views.login' %}" class="login">
 
     {% csrf_token %}
 

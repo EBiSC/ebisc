@@ -1,15 +1,14 @@
 .pagination {  
 
-  $base-border-color: gainsboro !default;
-  $base-border-radius: 3px !default;
-  $base-accent-color: #477DCA !default;
-  $base-link-color: $base-accent-color !default;
-  $dark-gray: #333 !default;
-  $base-font-color: $dark-gray !default;
+  $base-border-color: $base-border-color;
+  $base-border-radius: $base-border-radius;
+  $base-accent-color: $action-color;
+  $base-link-color: $action-color;
+  $base-font-color: $base-font-color;
 
-  $padding: 0.5em;
+  $padding: 0.4em;
   
-  margin-top: 3 * $padding;
+  margin-top: 6 * $padding;
 
   ul {
     margin: 0;

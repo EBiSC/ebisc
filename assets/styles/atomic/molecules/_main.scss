@@ -64,6 +64,16 @@
   }
 }
 
+.login {
+  input {
+    width: 20em;
+  }
+
+  label, button {
+    margin-top: 15px;
+  }
+}
+
 // Filters
 
 .filter-group {
