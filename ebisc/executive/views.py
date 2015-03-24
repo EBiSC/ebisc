@@ -33,6 +33,7 @@ def dashboard(request):
     })
 
 
+@login_required
 def cellline(request, biosamples_id):
 
     return render(request, 'executive/cellline.html', {
