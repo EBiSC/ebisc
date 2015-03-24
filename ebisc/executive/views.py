@@ -96,10 +96,10 @@ def accept(request, biosamples_id):
     if action == 'pendng' and cellline.celllineaccepted == 'pending':
         pass
     elif action == 'accepted':
-        messages.success(request, format_html(u'Status for cell line <code>{0}</code> changed form <code>{1}</code> to <code>{2}</code>.', cellline.biosamplesid, cellline.celllineaccepted, action))
+        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.biosamplesid, cellline.celllineaccepted, action))
         cellline.celllineaccepted = 'accepted'
     elif action == 'rejected' and cellline.celllineaccepted == 'pending':
-        messages.success(request, format_html(u'Status for cell line <code>{0}</code> changed form <code>{1}</code> to <code>{2}</code>.', cellline.biosamplesid, cellline.celllineaccepted, action))
+        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.biosamplesid, cellline.celllineaccepted, action))
         cellline.celllineaccepted = 'rejected'
     else:
         return redirect_to
