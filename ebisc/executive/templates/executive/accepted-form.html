@@ -7,6 +7,8 @@
 <form class="accepted" method="post" action="{% url 'executive:accept' cellline.biosamplesid %}">
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ request.get_full_path }}">
+    <input type="hidden" name="name" value="{{ cellline.celllinename }}">
+    <input type="hidden" name="status" value="{{ cellline.celllineaccepted }}">
     {% if cellline.celllineaccepted == 'pending' %}
     <select name="action" class="pending">
         {% for choice in cellline.ACCEPTED_CHOICES %}

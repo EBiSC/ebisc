@@ -20,11 +20,5 @@
 {% endblock %}
 
 {% block extra-scripts %}
-<script>
-    $(document).ready(function () {
-        $('form.accepted select').change(function (e) {
-            this.form.submit();
-        });
-    });
-</script>
+{% include 'executive/accepted-script.html' %}
 {% endblock %}
