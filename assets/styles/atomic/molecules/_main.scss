@@ -74,6 +74,33 @@
   }
 }
 
+// Accepted status
+
+.accepted-status {
+  font-size: $font-size-small;
+  display: inline-block;
+
+  .accepted-label {
+    background-color: $color-green;
+    padding: 2px 22px 2px 10px;    
+  }
+
+  select {
+    font-size: $font-size-small;
+
+    &.pending {
+      background-color: white;
+      border: $base-border;    
+    }
+
+    &.rejected {
+      background-color: white;
+      color: $color-red-light;
+      border: $base-border;
+    }
+  }
+}
+
 // Filters
 
 .filter-group {
@@ -100,37 +127,6 @@ table.dashboard {
 
     .accepted {
       white-space: nowrap;
-    }
-
-    &.accepted-pending {
-      .accepted {
-        select {
-          background-color: white;
-          border: $base-border;
-        }
-      }
-    }
-
-    &.accepted-accepted {
-      .accepted {
-        span {
-          background-color: $color-green;
-          padding: 2px 22px 2px 10px;
-        }
-      }
-    }
-
-    &.accepted-rejected {
-      .accepted {
-        select {
-          background-color: $color-red-light;
-          color: white;
-          background-color: white;
-          color: $color-red-light;
-          border-color: lighten($color-red-light, 30%);
-          border: $base-border;
-        }
-      }
     }
   }
 

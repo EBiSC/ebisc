@@ -6,7 +6,12 @@
 
 <h1>Executive dashboard <small>Cell line {{ cellline.celllinename }}</small></h1>
 
-<div class="card actions">
+<div class="card">
+    {% if cellline.celllineaccepted == 'accepted' %}
+    Status:
+    {% else %}
+    Change status:
+    {% endif %}
     {% include 'executive/accepted-form.html' %}
 </div>
 
