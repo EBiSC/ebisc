@@ -1,0 +1,22 @@
+{% load i18n %}
+
+{% if cellline.celllineaccepted == 'accepted' %}
+<span>{{ cellline.get_celllineaccepted_display }}</span>
+{% else %}
+<form class="accepted" method="post" action="{% url 'executive:accept' cellline.biosamplesid %}">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+    {% if cellline.celllineaccepted == 'pending' %}
+    <select name="action">
+        {% for choice in cellline.ACCEPTED_CHOICES %}
+        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+        {% endfor %}
+    </select>
+    {% elif cellline.celllineaccepted == 'rejected' %}
+    <select name="action">
+        <option value="rejected">{% trans 'Rejected' %}</option>
+        <option value="accepted">{% trans 'Accepted' %}</option>
+    </select>
+    {% endif %}
+</form>
+{% endif %}

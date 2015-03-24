@@ -34,28 +34,7 @@
             <td>{{ cellline.celllineorganization.organization }}</td>
             <td class="number {{ cellline.quantity|default:'empty' }}">{{ cellline.quantity|default:'-' }}</td>
             <td class="number {{ cellline.sold|default:'empty' }}">{{ cellline.sold|default:'-' }}</td>
-            <td class="accepted">
-                {% if cellline.celllineaccepted == 'accepted' %}
-                <span>{{ cellline.get_celllineaccepted_display }}</span>
-                {% else %}
-                <form method="post" action="{% url 'executive:accept' cellline.biosamplesid %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                    {% if cellline.celllineaccepted == 'pending' %}
-                    <select name="action">
-                        {% for choice in cellline.ACCEPTED_CHOICES %}
-                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                        {% endfor %}
-                    </select>
-                    {% elif cellline.celllineaccepted == 'rejected' %}
-                    <select name="action">
-                        <option value="rejected">{% trans 'Rejected' %}</option>
-                        <option value="accepted">{% trans 'Accepted' %}</option>
-                    </select>
-                    {% endif %}
-                </form>
-                {% endif %}
-            </td>
+            <td class="accepted">{% include 'executive/accepted-form.html' %}</td>
         </tr>
         {% endfor %}
     </tbody>
