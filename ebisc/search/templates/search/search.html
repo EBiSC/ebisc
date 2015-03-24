@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 
-{% load i18n %}
+{% load i18n static %}
 
 {% block title %}Cell Line Search{% endblock %}
 
 {% block article %}
+
+<div id="content"></div>
 
 <h1>Cell Line Search</h1>
 
@@ -94,5 +96,8 @@
 
 </table>
 
+{% endblock %}
 
+{% block extra-scripts %}
+<script src="{% static 'scripts/search.js' %}"></script>
 {% endblock %}
