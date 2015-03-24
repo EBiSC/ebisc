@@ -91,6 +91,7 @@ def accept(request, biosamples_id):
     cellline = get_object_or_404(Cellline, biosamplesid=biosamples_id)
 
     action = request.POST.get('action', None)
+    redirect_to = redirect(request.POST.get('next', None) and request.POST.get('next') or 'executive:dashboard')
 
     if action == 'pendng' and cellline.celllineaccepted == 'pending':
         pass
@@ -101,8 +102,8 @@ def accept(request, biosamples_id):
         messages.success(request, format_html(u'Status for cell line <code>{0}</code> changed form <code>{1}</code> to <code>{2}</code>.', cellline.biosamplesid, cellline.celllineaccepted, action))
         cellline.celllineaccepted = 'rejected'
     else:
-        return redirect('executive:dashboard')
+        return redirect_to
 
     cellline.save()
 
-    return redirect('executive:dashboard')
+    return redirect_to

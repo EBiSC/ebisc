@@ -40,6 +40,7 @@
                 {% else %}
                 <form method="post" action="{% url 'executive:accept' cellline.biosamplesid %}">
                     {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
                     {% if cellline.celllineaccepted == 'pending' %}
                     <select name="action">
                         {% for choice in cellline.ACCEPTED_CHOICES %}
