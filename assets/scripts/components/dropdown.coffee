@@ -1,14 +1,14 @@
 $(document).ready ->
-  $(".dropdown-button").click ->
-    $(".dropdown-menu").toggleClass "show-menu"
-    $(".dropdown-menu > li").click ->
-      $(".dropdown-menu").removeClass "show-menu"
-      return
 
-    $(".dropdown-menu.dropdown-select > li").click ->
-      $(".dropdown-button").html $(this).html()
-      return
+    $('.dropdown-button').click ->
 
-    return
+        dropdownButton = $(@)
+        dropdownMenu = dropdownButton.next('.dropdown-menu')
 
-  return
+        dropdownMenu.toggleClass 'show-menu'
+
+        $('> li', dropdownMenu).click ->
+            dropdownMenu.removeClass 'show-menu'
+
+        $('> li', dropdownMenu).click ->
+            dropdownButton.html $('label', @).html()
