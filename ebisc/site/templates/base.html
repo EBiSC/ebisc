@@ -14,7 +14,16 @@
 <body class="{% if document %}template-{{ document.template|slugify }}{% endif %}">
 
     <header>
-        <a href="{% url 'site:document' document.node.ancestors.0.path %}"><img class="logo" src="{% static 'images/EBiSC-logo.png' %}" alt="EBiSC" width="131" height="80"></a>
+        <div class="logo">
+            <a href="{% url 'site:document' document.node.ancestors.0.path %}"><img src="{% static 'images/EBiSC-logo.png' %}" alt="EBiSC" width="131" height="80"></a>    
+        </div>
+        <div class="user-account">
+            {% if user.is_authenticated %}
+            {{ user.get_short_name }} | <a href="{% url 'logout' %}">Log out</a>
+            {% else %}
+            <a href="{% url 'login' %}">Log in</a>
+            {% endif %}            
+        </div>
         <div class="collapsible-menu">
             <button id="main-navigation-menu-mobile-toggle" class="collapsible-menu-toggle" data-target="main-navigation-menu-items">MENU</button>
             <nav role="navigation">
@@ -22,13 +31,8 @@
                     {% for node in document.node|menu:0 %}
                     <li class="{% if document.node|is_descendant_of:node %}active{% endif %}"><a href="{% url 'site:document' node.path %}">{{ node.menu_title|default:node.title }}</a></li>
                     {% endfor %}
-                    <li>
-                        {% if user.is_authenticated %}
-                        {{ user.get_short_name }} | <a href="{% url 'logout' %}">Log out</a>
-                        {% else %}
-                        <a href="{% url 'login' %}">Log in</a>
-                        {% endif %}
-                    </li>
+                    <li class="{% if document.node|is_descendant_of:'search:search' %}active{% endif %}"><a href="{% url 'search:search' %}">Cell Line Search</a></li>
+                    <li><a href="{% url 'executive:dashboard' %}">Executive Dashboard</a></li>
                 </ul>
             </nav>
         </div>

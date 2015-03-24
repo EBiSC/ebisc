@@ -2,11 +2,12 @@ header {
   @include organism;
 
   .logo {
+    display: inline-block;
   }
 
   .collapsible-menu {
-    margin-top: 14px;
-    float: right;
+    display: inline-block;
+    margin-left: 40px;
 
     .collapsible-menu-items
     {
@@ -14,5 +15,10 @@ header {
       {
       }
     }
+  }
+
+  .user-account {
+    float: right;
+    font-size: $font-size-small;
   }
 }

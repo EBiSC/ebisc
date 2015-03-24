@@ -17,6 +17,20 @@
   .collapsible-menu-items {
     li {
       display: inline-block;
+      margin-right: 25px;
+      font-size: $base-font-size * 0.9;
+
+      a {
+        color: $color-text;
+
+        &:hover {
+          color: $action-color;
+        }
+      }
+
+      &.active a {
+        color: $action-color;
+      }
     }
 
     @include breakpoint(map-get($breakpoints, small)) {
