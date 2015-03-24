@@ -148,6 +148,30 @@ table.dashboard {
     a {
       color: white;
     }
+
+    &.order-by {
+      a {
+        position: relative;
+
+        &:after
+        {
+            position: absolute;
+            content: "▼";
+            font-family: sans-serif;
+            font-size: $font-size-small;
+            top: 2px;
+            margin-left: 5px;
+        }
+      }
+
+      &.dsc {
+        a {
+          &:after {
+            content: "▲";
+          }
+        }
+      }
+    }
   }
 
   select {

@@ -11,15 +11,16 @@
 <table class="dashboard">
 
     <thead>
-        <tr>            
-            <th><a href="?sort=biosamplesID">Biosamples ID</a></th>
-            <th><a href="?sort=cellLineName">Cell line Name</a></th>
-            <th><a href="?sort=disease">Disease</a></th>
-            <th><a href="?sort=registrationDate">Date of Registration</a></th>            
-            <th><a href="?sort=depositor">Depositor</a></th>            
-            <th><a href="?sort=quantity">QTY</a></th>            
-            <th><a href="?sort=sold">Sold</a></th>            
-            <th><a href="?sort=accepted">Accepted</a></th>            
+        <tr>
+            {% for column in columns %}
+            <th{% if sort_column == column.0 %} class="order-by {{ sort_order }}"{% endif %}>
+                {% if column.2 %}
+                <a href="?sc={{ column.0 }}{% if sort_column == column.0 %}{% if sort_order == 'asc' %}&so=dsc{% endif %}{% endif %}">{{ column.1 }}</a>
+                {% else %}
+                {{ column.1 }}
+                {% endif %}
+            </th>
+            {% endfor %}
         </tr>
     </thead>
 
@@ -66,7 +67,7 @@
         <li>
             <ul>
                 {% for p in celllines.paginator.page_range %}
-                <li><a class="{% if p == page %}active{% endif %}" href="?page={{ p }}">{{ p }}</a></li>
+                <li><a class="{% if p == page %}active{% endif %}" href="?page={{ p }}{% if sort_column %}&sc={{ sort_column }}&so={{ sort_order }}{% endif %}">{{ p }}</a></li>
                 {% endfor %}
             </ul>
         </li>

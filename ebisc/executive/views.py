@@ -12,7 +12,39 @@ from ebisc.celllines.models import Cellline
 @login_required
 def dashboard(request):
 
-    paginator = Paginator(Cellline.objects.all(), 20)
+    '''Display a list of all cell lines. Provide paging and sorting.'''
+
+    COLUMNS = [
+        ('biosamplesID', 'Biosamples ID', 'biosamplesid'),
+        ('cellLineName', 'Cell line Name', 'celllinename'),
+        ('disease', 'Disease', 'celllineprimarydisease'),
+        ('registrationDate', 'Date of Registration', None),
+        ('depositor', 'Depositor', 'celllineorganization__organization'),
+        ('quantity', 'QTY', None),
+        ('sold', 'Sold', None),
+        ('accepted', 'Accepted', 'celllineaccepted'),
+    ]
+
+    SORT_COLUMNS = dict([(x[0], x[2]) for x in COLUMNS])
+
+    cellline_objects = Cellline.objects.all()
+
+    # Sorting
+
+    sort_column = request.GET.get('sc', None)
+    sort_order = request.GET.get('so', 'asc')
+
+    if sort_column in SORT_COLUMNS.keys() and SORT_COLUMNS[sort_column] is not None:
+        if sort_order == 'asc':
+            cellline_objects = cellline_objects.order_by(SORT_COLUMNS[sort_column])
+        else:
+            cellline_objects = cellline_objects.order_by('-' + SORT_COLUMNS[sort_column])
+    else:
+        sort_column = COLUMNS[0][0]
+
+    # Pagination
+
+    paginator = Paginator(cellline_objects, 20)
 
     page = request.GET.get('page')
 
@@ -28,6 +60,9 @@ def dashboard(request):
         celllines = paginator.page(page)
 
     return render(request, 'executive/dashboard.html', {
+        'columns': COLUMNS,
+        'sort_column': sort_column,
+        'sort_order': sort_order,
         'page': int(page),
         'celllines': celllines,
     })
@@ -35,6 +70,8 @@ def dashboard(request):
 
 @login_required
 def cellline(request, biosamples_id):
+
+    '''Display complete information for the selected cell line.'''
 
     return render(request, 'executive/cellline.html', {
         'cellline': get_object_or_404(Cellline, biosamplesid=biosamples_id)
