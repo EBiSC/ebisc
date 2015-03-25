@@ -2,8 +2,9 @@ Baobab = require 'baobab'
 ReactAddons = require 'react/addons'
 
 state = {
-    'celllines': undefined
+    'query': ''
     'facets': undefined
+    'celllines': []
 }
 
 options =
