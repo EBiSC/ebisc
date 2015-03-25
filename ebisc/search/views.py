@@ -13,6 +13,14 @@ def search(request):
 
 
 @login_required
+def search_develop(request):
+
+    return render(request, 'search/develop.html', {
+        # 'celllines': Cellline.objects.filter(celllineaccepted='accepted'),
+    })
+
+
+@login_required
 def cellline(request, biosamples_id):
 
     return render(request, 'search/cellline.html', {
