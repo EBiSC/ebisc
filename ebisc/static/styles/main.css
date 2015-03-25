@@ -207,6 +207,9 @@ img, picture {
   margin: 0;
   max-width: 100%; }
 
+a img {
+  border: none; }
+
 .message-debug {
   background-color: #0084f9;
   border: solid 1px #005cac;

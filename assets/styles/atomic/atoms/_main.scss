@@ -12,9 +12,12 @@
   background-color: $color-placeholder;
 }
 
-
 img,
 picture {
   margin: 0;
   max-width: 100%;
+}
+
+a img {
+  border: none;
 }
