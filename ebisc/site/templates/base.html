@@ -8,7 +8,7 @@
     <meta charset="utf-8">
     <title>{% block full-title %}{% block title %}{% endblock %} | EBiSC{% endblock %}</title>
     <meta name="viewport" content="initial-scale=1">
-    <link rel="stylesheet" type="text/sass" href="{% static 'styles/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/main.css' %}">
 </head>
 
 <body class="{% if document %}template-{{ document.template|slugify }}{% endif %}">
