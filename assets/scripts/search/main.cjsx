@@ -1,32 +1,33 @@
 React = require 'react'
 
-state = require './state'
+Elasticsearch = require 'elasticsearch'
 
-addAdmin = (name) ->
-    state.select('users', 'admin').push(name)
+State = require './state'
+Table = require './components/table'
+Search = require './components/search'
 
-addRegular = (name) ->
-    state.select('users', 'regular').push(name)
+'SAMEA2590892'
 
-MyComponent = React.createClass
+elastic = new Elasticsearch.Client
+    hosts: 'localhost:9200'
 
-    mixins: [state.mixin]
-    cursors:
-        admin: ['users', 'admin']
-        regular: ['users', 'regular']
+elastic.search
 
-    renderUser: (user, i) ->
-        <span key={i}>{user} </span>
+        index: 'ebisc'
+        type: 'cellline'
+        body:
+            size: 1000
+            query:
+                match_all: {}
 
-    handleClick: () ->
-        addAdmin 'a' + (@state.cursors.admin.length + 1).toString()
-        addRegular 'r' + (@state.cursors.regular.length + 1).toString()
+    .then (body) ->
+        console.log "Found #{body.hits.total} celllines"
+        console.log body
+        State.set('celllines', body.hits.hits)
 
-    render: () ->
-        <div>
-            <div>Admin: {@state.cursors.admin.map(@renderUser)}</div>
-            <div>Regular: {@state.cursors.regular.map(@renderUser)}</div>
-            <button onClick={@handleClick}>Click</button>
-        </div>
+    .error (error) ->
+        console.log error
 
-React.render <MyComponent />, document.getElementById('content')
+
+React.render <Search />, document.getElementById('search')
+React.render <Table />, document.getElementById('table')

@@ -106,6 +106,7 @@ class Cellline(models.Model):
             'celllineaccepted': self.celllineaccepted,
             'biosamplesid': self.biosamplesid,
             'celllinename': self.celllinename,
+            'celllineprimarydisease': self.celllineprimarydisease.disease,
         }
 
 
