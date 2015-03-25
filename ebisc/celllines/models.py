@@ -100,6 +100,14 @@ class Cellline(models.Model):
     def __unicode__(self):
         return u'%s' % (self.biosamplesid,)
 
+    def to_elastic(self):
+
+        return {
+            'celllineaccepted': self.celllineaccepted,
+            'biosamplesid': self.biosamplesid,
+            'celllinename': self.celllinename,
+        }
+
 
 class Celllinealiquot(models.Model):
     aliquotcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), blank=True, null=True)

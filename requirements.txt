@@ -5,3 +5,4 @@ git+https://github.com/joahim/cms.git@develop
 django-grappelli==2.6.3
 django-tastypie==0.12.1
 defusedxml==0.4.1
+elasticsearch==1.4.0

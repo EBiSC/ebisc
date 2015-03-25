@@ -49,33 +49,11 @@ mysql ebisc < schema.sql
 
 - [ ] Convert ForeignKey + Unique=True to OneToOne field or use embed (see questions)
 
+## Search
 
-## Changes
-
-    Model: Celllinestatus
-    Before: celllinestatus = models.CharField(_(u'Cell line status'), max_length=20, blank=True)
-    After: celllinestatus = models.CharField(_(u'Cell line status'), max_length=50, blank=True)
-    Example: Hot Start cell line (not available)
-
-
-    Model: Celllinechecklist
-    New:
-        checklistcellline = models.OneToOneField(Cellline)
-        morphologicalassessment = models.BooleanField(_(u'Morphological assessment'), default=False)
-        facs = models.BooleanField(_(u'FACS'), default=False)
-        ihc = models.BooleanField(_(u'IHC'), default=False)
-        pcrforreprofactorremoval = models.BooleanField(_(u'PCR for reprofactor removal'), default=False)
-        pcrforpluripotency = models.BooleanField(_(u'PCR for pluripotency'), default=False)
-        teratoma = models.BooleanField(_(u'Teratoma'), default=False)
-        invitrodifferentiation = models.BooleanField(_(u'Invitro differentiation'), default=False)
-        karyotype = models.BooleanField(_(u'Karyo type'), default=False)
-        cnvanalysis = models.BooleanField(_(u'CNV analysis'), default=False)
-        dnamethylation = models.BooleanField(_(u'DNA methylation'), default=False)
-        microbiologyinclmycoplasma = models.BooleanField(_(u'Micro biology inclmycoplasma'), default=False)
-        dnagenotyping = models.BooleanField(_(u'DNA genotyping'), default=False)
-        hlatyping = models.BooleanField(_(u'HLA typing'), default=False)
-        virustesting = models.BooleanField(_(u'Viru stesting'), default=False)
-        postthawviability = models.BooleanField(_(u'Post thawviability'), default=False)
-        checklistcomments = models.TextField('Checklist comments', null=True, blank=True)
-
-clininicaltreatmentb4donation -> clinicaltreatmentb4donation
+- Dump ORM data to ElasticSearch
+- Load data via ajax
+- Display data
+- Write update function
+- Write searching / filtering widgets
+- Connect widgets with update function
