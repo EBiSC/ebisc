@@ -6,7 +6,7 @@ Search = React.createClass
     mixins: [State.mixin]
 
     cursors:
-        query: ['query']
+        query: ['filter', 'query']
 
     render: () ->
         <input type="text" placeholder="Search" value={@cursors.query.get()} onChange={@handleChange} />

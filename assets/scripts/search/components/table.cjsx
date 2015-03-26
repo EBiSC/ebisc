@@ -9,7 +9,7 @@ Table = React.createClass
         celllines: ['celllines']
 
     render: () ->
-        <table>
+        <table className="listing">
             <thead>
                 <tr>
                     <th>Biosamples ID</th>

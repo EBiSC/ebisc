@@ -1,15 +1,19 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Elastic, React, Search, Table;
+var Elastic, Filter, React, Search, Table;
 
 React = window.React;
 
 Elastic = require('./elastic');
 
-Table = require('./components/table');
+Filter = require('./components/filter');
 
 Search = require('./components/search');
 
+Table = require('./components/table');
+
 Elastic.search();
+
+React.render(React.createElement(Filter, null), document.getElementById('filter'));
 
 React.render(React.createElement(Search, null), document.getElementById('search'));
 
@@ -17,7 +21,76 @@ React.render(React.createElement(Table, null), document.getElementById('table'))
 
 
 
-},{"./components/search":2,"./components/table":3,"./elastic":4}],2:[function(require,module,exports){
+},{"./components/filter":2,"./components/search":3,"./components/table":4,"./elastic":5}],2:[function(require,module,exports){
+var Facet, Facets, React, State, Term;
+
+React = window.React;
+
+State = require('../state');
+
+Term = React.createClass({
+  render: function() {
+    return React.createElement("li", {
+      "key": this.props.index,
+      "onClick": this.handleClick
+    }, React.createElement("div", {
+      "className": "checkbox"
+    }, this.props.item.name), React.createElement("label", null, _.capitalize(this.props.item.name)), React.createElement("div", null, this.props.item.checked && 'x' || 'o'));
+  },
+  handleClick: function(e) {
+    return this.props.cursor.set('checked', !this.props.cursor.get('checked'));
+  }
+});
+
+Facet = React.createClass({
+  render: function() {
+    var index, item;
+    return React.createElement("ul", null, (function() {
+      var i, len, ref, results;
+      ref = this.props.facet.items;
+      results = [];
+      for (index = i = 0, len = ref.length; i < len; index = ++i) {
+        item = ref[index];
+        results.push(React.createElement(Term, {
+          "index": index,
+          "item": item,
+          "cursor": this.props.cursor.select('items').select(index)
+        }));
+      }
+      return results;
+    }).call(this));
+  }
+});
+
+Facets = React.createClass({
+  mixins: [State.mixin],
+  cursors: {
+    facets: ['filter', 'facets']
+  },
+  render: function() {
+    var facet, index;
+    return React.createElement("ul", null, (function() {
+      var i, len, ref, results;
+      ref = this.state.cursors.facets;
+      results = [];
+      for (index = i = 0, len = ref.length; i < len; index = ++i) {
+        facet = ref[index];
+        results.push(React.createElement(Facet, {
+          "index": index,
+          "facet": facet,
+          "cursor": this.cursors.facets.select(index)
+        }));
+      }
+      return results;
+    }).call(this));
+  }
+});
+
+module.exports = Facets;
+
+
+
+},{"../state":6}],3:[function(require,module,exports){
 var React, Search, State;
 
 React = window.React;
@@ -27,7 +100,7 @@ State = require('../state');
 Search = React.createClass({
   mixins: [State.mixin],
   cursors: {
-    query: ['query']
+    query: ['filter', 'query']
   },
   render: function() {
     return React.createElement("input", {
@@ -46,7 +119,7 @@ module.exports = Search;
 
 
 
-},{"../state":5}],3:[function(require,module,exports){
+},{"../state":6}],4:[function(require,module,exports){
 var React, State, Table;
 
 React = window.React;
@@ -59,7 +132,9 @@ Table = React.createClass({
     celllines: ['celllines']
   },
   render: function() {
-    return React.createElement("table", null, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", null, "Biosamples ID"), React.createElement("th", null, "Cell line Name"), React.createElement("th", null, "Disease"), React.createElement("th", null, "Accepted"))), React.createElement("tbody", null, this.renderBody(this.state.cursors.celllines)));
+    return React.createElement("table", {
+      "className": "listing"
+    }, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", null, "Biosamples ID"), React.createElement("th", null, "Cell line Name"), React.createElement("th", null, "Disease"), React.createElement("th", null, "Accepted"))), React.createElement("tbody", null, this.renderBody(this.state.cursors.celllines)));
   },
   renderBody: function(celllines) {
     var cellline, i, len, results;
@@ -81,10 +156,10 @@ module.exports = Table;
 
 
 
-},{"../state":5}],4:[function(require,module,exports){
-var Elasticsearch, LoDash, State, elastic, search;
+},{"../state":6}],5:[function(require,module,exports){
+var Elasticsearch, State, _, buildFacetFilter, buildFacetFilters, buildQuery, buildQueryFilter, elastic, search;
 
-LoDash = window._;
+_ = window._;
 
 Elasticsearch = window.elasticsearch;
 
@@ -94,29 +169,142 @@ elastic = Elasticsearch.Client({
   hosts: 'localhost:9200'
 });
 
-search = function() {
-  var body, query;
-  query = State.select('query').get();
+buildFacetFilter = function(facet) {
+  var i, item, len, ref, results;
+  ref = facet.items;
+  results = [];
+  for (i = 0, len = ref.length; i < len; i++) {
+    item = ref[i];
+    if (item.checked) {
+      results.push(item.name);
+    }
+  }
+  return results;
+};
+
+buildFacetFilters = function() {
+  var facet, filters;
+  filters = _.object((function() {
+    var i, len, ref, results;
+    ref = State.select('filter', 'facets').get();
+    results = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      facet = ref[i];
+      if (buildFacetFilter(facet).length > 0) {
+        results.push([facet.name, buildFacetFilter(facet)]);
+      }
+    }
+    return results;
+  })());
+  if (_.size(filters)) {
+    return {
+      terms: filters
+    };
+  } else {
+    return null;
+  }
+};
+
+buildQueryFilter = function() {
+  var f, field, fields, i, len, parts, query, results, w, word, words;
+  query = State.select('filter', 'query').get();
   if (query) {
-    body = {
-      query: {
-        prefix: {
-          _all: query
+    words = (function() {
+      var i, len, ref, results;
+      ref = query.split(/\s+/);
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        w = ref[i];
+        if (w !== '') {
+          results.push(w.toLowerCase());
+        }
+      }
+      return results;
+    })();
+    fields = State.select('query_fields').get();
+    parts = (function() {
+      var i, len, results;
+      results = [];
+      for (i = 0, len = words.length; i < len; i++) {
+        word = words[i];
+        results.push((function() {
+          var j, len1, obj, results1;
+          results1 = [];
+          for (j = 0, len1 = fields.length; j < len1; j++) {
+            field = fields[j];
+            results1.push({
+              prefix: (
+                obj = {},
+                obj["" + field] = word,
+                obj
+              )
+            });
+          }
+          return results1;
+        })());
+      }
+      return results;
+    })();
+    results = [];
+    for (i = 0, len = parts.length; i < len; i++) {
+      w = parts[i];
+      results.push({
+        'or': (function() {
+          var j, len1, results1;
+          results1 = [];
+          for (j = 0, len1 = w.length; j < len1; j++) {
+            f = w[j];
+            results1.push(f);
+          }
+          return results1;
+        })()
+      });
+    }
+    return results;
+  } else {
+    return null;
+  }
+};
+
+buildQuery = function() {
+  var f, filters;
+  filters = (function() {
+    var i, len, ref, results;
+    ref = _.flatten([buildQueryFilter(), buildFacetFilters()]);
+    results = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      f = ref[i];
+      if (f) {
+        results.push(f);
+      }
+    }
+    return results;
+  })();
+  if (filters.length) {
+    return {
+      constant_score: {
+        filter: {
+          and: filters
         }
       }
     };
   } else {
-    body = {
-      query: {
-        match_all: {}
-      }
+    return {
+      match_all: {}
     };
   }
-  body.size = 1000;
+};
+
+search = function() {
+  var query;
+  query = buildQuery();
   return elastic.search({
     index: 'ebisc',
     type: 'cellline',
-    body: body
+    body: {
+      query: query,
+      size: 1000
+    }
   }).then(function(body) {
     return State.set('celllines', body.hits.hits);
   }).error(function(error) {
@@ -124,7 +312,7 @@ search = function() {
   });
 };
 
-State.select('query').on('update', LoDash.debounce(search, 100));
+State.select('filter').on('update', _.debounce(search, 100));
 
 module.exports = {
   search: search
@@ -132,7 +320,7 @@ module.exports = {
 
 
 
-},{"./state":5}],5:[function(require,module,exports){
+},{"./state":6}],6:[function(require,module,exports){
 var Baobab, ReactAddons, options, state;
 
 Baobab = require('baobab');
@@ -140,9 +328,38 @@ Baobab = require('baobab');
 ReactAddons = window.React.addons;
 
 state = {
-  'query': '',
-  'facets': void 0,
-  'celllines': []
+  query_fields: ['biosamplesid', 'celllinename', 'celllineprimarydisease'],
+  filter: {
+    query: '',
+    facets: [
+      {
+        name: 'celllineaccepted',
+        label: 'Accepted',
+        items: [
+          {
+            name: 'pending',
+            checked: false
+          }, {
+            name: 'accepted',
+            checked: false
+          }, {
+            name: 'rejected',
+            checked: false
+          }
+        ]
+      }, {
+        name: 'celllineprimarydisease',
+        label: 'Disease',
+        items: [
+          {
+            name: 'Control',
+            checked: false
+          }
+        ]
+      }
+    ]
+  },
+  celllines: []
 };
 
 options = {
@@ -154,7 +371,7 @@ module.exports = new Baobab(state, options);
 
 
 
-},{"baobab":7}],6:[function(require,module,exports){
+},{"baobab":8}],7:[function(require,module,exports){
 /**
  * Baobab Default Options
  * =======================
@@ -193,7 +410,7 @@ module.exports = {
   validate: null
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /**
  * Baobab Public Interface
  * ========================
@@ -214,7 +431,7 @@ Baobab.getIn = helpers.getIn;
 // Exporting
 module.exports = Baobab;
 
-},{"./src/baobab.js":10,"./src/helpers.js":13}],8:[function(require,module,exports){
+},{"./src/baobab.js":11,"./src/helpers.js":14}],9:[function(require,module,exports){
 (function() {
   'use strict';
 
@@ -757,7 +974,7 @@ module.exports = Baobab;
     this.Emitter = Emitter;
 }).call(this);
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /**
  * typology.js - A data validation library for Node.js and the browser,
  *
@@ -1358,7 +1575,7 @@ module.exports = Baobab;
     this.types = types;
 })(this);
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /**
  * Baobab Data Structure
  * ======================
@@ -1690,7 +1907,7 @@ Baobab.prototype.toJSON = function() {
  */
 module.exports = Baobab;
 
-},{"../defaults.js":6,"./cursor.js":12,"./helpers.js":13,"./merge.js":14,"./mixins.js":15,"./type.js":16,"./update.js":17,"emmett":8,"typology":9}],11:[function(require,module,exports){
+},{"../defaults.js":7,"./cursor.js":13,"./helpers.js":14,"./merge.js":15,"./mixins.js":16,"./type.js":17,"./update.js":18,"emmett":9,"typology":10}],12:[function(require,module,exports){
 /**
  * Baobab Cursor Combination
  * ==========================
@@ -1857,7 +2074,7 @@ Combination.prototype.release = function() {
  */
 module.exports = Combination;
 
-},{"./helpers.js":13,"./type.js":16,"emmett":8}],12:[function(require,module,exports){
+},{"./helpers.js":14,"./type.js":17,"emmett":9}],13:[function(require,module,exports){
 /**
  * Baobab Cursor Abstraction
  * ==========================
@@ -2247,7 +2464,7 @@ type.Cursor = function (value) {
  */
 module.exports = Cursor;
 
-},{"./combination.js":11,"./helpers.js":13,"./mixins.js":15,"./type.js":16,"emmett":8}],13:[function(require,module,exports){
+},{"./combination.js":12,"./helpers.js":14,"./mixins.js":16,"./type.js":17,"emmett":9}],14:[function(require,module,exports){
 /**
  * Baobab Helpers
  * ===============
@@ -2507,7 +2724,7 @@ module.exports = {
   solvePath: solvePath
 };
 
-},{"./type.js":16}],14:[function(require,module,exports){
+},{"./type.js":17}],15:[function(require,module,exports){
 /**
  * Baobab Merge
  * =============
@@ -2621,7 +2838,7 @@ function merge() {
 
 module.exports = merge;
 
-},{"./helpers.js":13,"./type.js":16}],15:[function(require,module,exports){
+},{"./helpers.js":14,"./type.js":17}],16:[function(require,module,exports){
 /**
  * Baobab React Mixins
  * ====================
@@ -2771,7 +2988,7 @@ module.exports = {
   }
 };
 
-},{"./combination.js":11,"./type.js":16}],16:[function(require,module,exports){
+},{"./combination.js":12,"./type.js":17}],17:[function(require,module,exports){
 /**
  * Baobab Type Checking
  * =====================
@@ -2887,7 +3104,7 @@ type.ComplexPath = function (value) {
 
 module.exports = type;
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /**
  * Baobab Update
  * ==============
@@ -3062,6 +3279,6 @@ function update(target, spec, opts) {
 // Exporting
 module.exports = update;
 
-},{"./helpers.js":13,"./type.js":16}]},{},[1]);
+},{"./helpers.js":14,"./type.js":17}]},{},[1]);
 
 //# sourceMappingURL=maps/search.js.map
