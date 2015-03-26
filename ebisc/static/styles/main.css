@@ -42,12 +42,6 @@ button, input[type="button"], input[type="reset"], input[type="submit"], button 
   position: relative;
   padding: 3px 5px;
   font-size: 14.4px; }
-  .dropdown ul {
-    padding: 0;
-    margin: 0; }
-  .dropdown li {
-    list-style: none;
-    position: relative; }
   .dropdown .dropdown-container {
     display: inline-block;
     position: relative; }
@@ -105,20 +99,9 @@ button, input[type="button"], input[type="reset"], input[type="submit"], button 
       top: -1.1em; }
   .dropdown .dropdown-menu li {
     color: #333333;
-    padding: 0.5em 1.6em;
+    padding-left: 1.6em;
+    padding-right: 1.6em;
     white-space: nowrap; }
-    .dropdown .dropdown-menu li .checkbox {
-      position: absolute;
-      top: 10px;
-      left: 0px;
-      width: 1.1em;
-      height: 1.1em;
-      border: solid 1px #bdbdbd;
-      margin-right: 8px; }
-    .dropdown .dropdown-menu li:hover {
-      color: #009fee; }
-      .dropdown .dropdown-menu li:hover .checkbox {
-        border-color: #009fee; }
   .dropdown .show-menu {
     display: block; }
   .dropdown.two-col ul {
@@ -202,6 +185,33 @@ dl {
     margin-top: 0.75em; }
   dl dd {
     margin: 0; }
+
+ul.checkbox {
+  margin: 0;
+  padding: 0; }
+  ul.checkbox li {
+    position: relative;
+    padding: 0.5em 0;
+    list-style: none; }
+    ul.checkbox li label {
+      font-weight: normal; }
+    ul.checkbox li .checkbox {
+      position: absolute;
+      top: 11px;
+      left: 0px;
+      width: 1.1em;
+      height: 1.1em;
+      border: solid 1px #bdbdbd;
+      margin-right: 8px; }
+    ul.checkbox li:hover {
+      color: #009fee; }
+      ul.checkbox li:hover .checkbox {
+        border-color: #009fee; }
+    ul.checkbox li.selected {
+      color: #009fee; }
+      ul.checkbox li.selected .checkbox {
+        border-color: #009fee;
+        content: "-"; }
 
 img, picture {
   margin: 0;
@@ -408,7 +418,7 @@ hr {
       color: #e32719;
       border: 1px solid #dddddd; }
 
-.filter-group .filter {
+.filter-group .dropdown {
   display: inline-block;
   width: 200px; }
 

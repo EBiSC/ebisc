@@ -29,3 +29,47 @@ dl {
     margin: 0;
   }
 }
+
+ul.checkbox {
+  margin: 0;
+  padding: 0;
+
+  li {
+    position: relative;
+    padding: 0.5em 0;
+
+    list-style: none;
+
+    label {
+      font-weight: normal;    
+    }
+
+    .checkbox {
+      position: absolute;
+      top: 11px;
+      left: 0px;
+      width: 1.1em;
+      height: 1.1em;
+      border: solid 1px $medium-gray;
+      margin-right: 8px;
+    }
+
+    &:hover {
+      color: $color-blue-light;
+
+      .checkbox {
+        border-color: $color-blue-light;
+      }
+    }
+
+    &.selected {
+      color: $color-blue-light;
+
+      .checkbox {
+        border-color: $color-blue-light;
+
+        content: "-";
+      }
+    }
+  }
+}

@@ -4,16 +4,6 @@
 
   font-size: $base-font-size * 0.9;
 
-  ul {
-    padding: 0;
-    margin: 0;
-  }
-
-  li {
-    list-style: none;
-    position: relative;
-  }
-
   $dropdown-color: $base-font-color;
   $dropdown-border: $base-border;
   $dropdown-background: $base-background-color;
@@ -87,27 +77,10 @@
 
   .dropdown-menu li {
     color: $dropdown-color; 
-    padding: $dropdown-padding / 2 $dropdown-padding * 1.6;
+    padding-left: $dropdown-padding * 1.6;
+    padding-right: $dropdown-padding * 1.6;
 
     white-space: nowrap;
-
-    .checkbox {
-      position: absolute;
-      top: 10px;
-      left: 0px;
-      width: 1.1em;
-      height: 1.1em;
-      border: solid 1px $medium-gray;
-      margin-right: 8px;
-    }
-
-    &:hover {
-      color: $color-blue-light;
-
-      .checkbox {
-        border-color: $color-blue-light;
-      }
-    }
   }
 
   .show-menu {
