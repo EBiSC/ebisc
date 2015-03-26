@@ -22,12 +22,6 @@ table.listing {
   @include table-listing;
 }
 
-div#table {
-  table {
-    @include table-listing;
-  }
-}
-
 // Table for displaying data
 
 table.data {
