@@ -1,13 +1,13 @@
 React = window.React
+classNames = require 'classnames'
 State = require '../state'
 
 Term = React.createClass
 
     render: () ->
-        <li key={@props.index} onClick={@handleClick}>
-            <div className="checkbox">{@props.item.name}</div>
+        <li key={@props.index} onClick={@handleClick} className={classNames(selected: @props.item.checked)}>
+            <div className="checkbox"></div>
             <label>{_.capitalize(@props.item.name)}</label>
-            <div>{@props.item.checked and 'x' or 'o'}</div>
         </li>
 
     handleClick: (e) ->
@@ -16,7 +16,12 @@ Term = React.createClass
 Facet = React.createClass
 
     render: () ->
-        <ul>{(<Term index={index} item={item} cursor={@props.cursor.select('items').select(index)} /> for item, index in @props.facet.items)}</ul>
+        <div className="dropdown">
+            <div className="dropdown-container">
+                <div className="dropdown-button">Accepted status</div>
+                <ul className="dropdown-menu checkbox">{(<Term index={index} item={item} cursor={@props.cursor.select('items').select(index)} /> for item, index in @props.facet.items)}</ul>
+            </div>
+        </div>
 
 Facets = React.createClass
 
@@ -26,7 +31,7 @@ Facets = React.createClass
         facets: ['filter', 'facets']
 
     render: () ->
-        <ul>{(<Facet index={index} facet={facet} cursor={@cursors.facets.select(index)} /> for facet, index in @state.cursors.facets)}</ul>
+        <div className="filter-group">{(<Facet index={index} facet={facet} cursor={@cursors.facets.select(index)} /> for facet, index in @state.cursors.facets)}</div>
 
 
 module.exports = Facets

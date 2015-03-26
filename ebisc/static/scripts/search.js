@@ -22,9 +22,11 @@ React.render(React.createElement(Table, null), document.getElementById('table'))
 
 
 },{"./components/filter":2,"./components/search":3,"./components/table":4,"./elastic":5}],2:[function(require,module,exports){
-var Facet, Facets, React, State, Term;
+var Facet, Facets, React, State, Term, classNames;
 
 React = window.React;
+
+classNames = require('classnames');
 
 State = require('../state');
 
@@ -32,10 +34,13 @@ Term = React.createClass({
   render: function() {
     return React.createElement("li", {
       "key": this.props.index,
-      "onClick": this.handleClick
+      "onClick": this.handleClick,
+      "className": classNames({
+        selected: this.props.item.checked
+      })
     }, React.createElement("div", {
       "className": "checkbox"
-    }, this.props.item.name), React.createElement("label", null, _.capitalize(this.props.item.name)), React.createElement("div", null, this.props.item.checked && 'x' || 'o'));
+    }), React.createElement("label", null, _.capitalize(this.props.item.name)));
   },
   handleClick: function(e) {
     return this.props.cursor.set('checked', !this.props.cursor.get('checked'));
@@ -45,7 +50,15 @@ Term = React.createClass({
 Facet = React.createClass({
   render: function() {
     var index, item;
-    return React.createElement("ul", null, (function() {
+    return React.createElement("div", {
+      "className": "dropdown"
+    }, React.createElement("div", {
+      "className": "dropdown-container"
+    }, React.createElement("div", {
+      "className": "dropdown-button"
+    }, "Accepted status"), React.createElement("ul", {
+      "className": "dropdown-menu checkbox"
+    }, (function() {
       var i, len, ref, results;
       ref = this.props.facet.items;
       results = [];
@@ -58,7 +71,7 @@ Facet = React.createClass({
         }));
       }
       return results;
-    }).call(this));
+    }).call(this))));
   }
 });
 
@@ -69,7 +82,9 @@ Facets = React.createClass({
   },
   render: function() {
     var facet, index;
-    return React.createElement("ul", null, (function() {
+    return React.createElement("div", {
+      "className": "filter-group"
+    }, (function() {
       var i, len, ref, results;
       ref = this.state.cursors.facets;
       results = [];
@@ -90,7 +105,7 @@ module.exports = Facets;
 
 
 
-},{"../state":6}],3:[function(require,module,exports){
+},{"../state":6,"classnames":19}],3:[function(require,module,exports){
 var React, Search, State;
 
 React = window.React;
@@ -3279,6 +3294,38 @@ function update(target, spec, opts) {
 // Exporting
 module.exports = update;
 
-},{"./helpers.js":14,"./type.js":17}]},{},[1]);
+},{"./helpers.js":14,"./type.js":17}],19:[function(require,module,exports){
+function classNames() {
+	var classes = '';
+	var arg;
+
+	for (var i = 0; i < arguments.length; i++) {
+		arg = arguments[i];
+		if (!arg) {
+			continue;
+		}
+
+		if ('string' === typeof arg || 'number' === typeof arg) {
+			classes += ' ' + arg;
+		} else if (Object.prototype.toString.call(arg) === '[object Array]') {
+			classes += ' ' + classNames.apply(null, arg);
+		} else if ('object' === typeof arg) {
+			for (var key in arg) {
+				if (!arg.hasOwnProperty(key) || !arg[key]) {
+					continue;
+				}
+				classes += ' ' + key;
+			}
+		}
+	}
+	return classes.substr(1);
+}
+
+// safely export classNames in case the script is included directly on a page
+if (typeof module !== 'undefined' && module.exports) {
+	module.exports = classNames;
+}
+
+},{}]},{},[1]);
 
 //# sourceMappingURL=maps/search.js.map

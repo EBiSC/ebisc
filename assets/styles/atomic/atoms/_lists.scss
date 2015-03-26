@@ -36,39 +36,43 @@ ul.checkbox {
 
   li {
     position: relative;
-    padding: 0.5em 0;
+    padding: 0.2em 0;
 
     list-style: none;
 
     label {
-      font-weight: normal;    
+      font-weight: normal;
+      cursor: pointer;
     }
 
     .checkbox {
       position: absolute;
-      top: 11px;
+      top: 0.4em;
       left: 0px;
       width: 1.1em;
       height: 1.1em;
       border: solid 1px $medium-gray;
-      margin-right: 8px;
+      background-color: white;
     }
 
     &:hover {
-      color: $color-blue-light;
+      color: $action-color;
 
       .checkbox {
-        border-color: $color-blue-light;
+        border-color: $action-color;
       }
     }
 
     &.selected {
-      color: $color-blue-light;
+      label {
+        font-weight: bold;
+      }
 
       .checkbox {
-        border-color: $color-blue-light;
-
-        content: "-";
+        background-image: url('/static/images/checkmark.png');
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 10px;
       }
     }
   }
