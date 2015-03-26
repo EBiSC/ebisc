@@ -280,12 +280,29 @@ a img {
     .message-error a:focus, .message-error a:hover {
       color: black; }
 
-table {
-  border-collapse: collapse; }
-  table td.number {
-    text-align: right; }
-  table td.empty {
-    text-align: center; }
+td.number {
+  text-align: right; }
+
+td.empty {
+  text-align: center; }
+
+td.accepted {
+  white-space: nowrap; }
+
+td.label {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+  color: #797979; }
+
+th.title {
+  text-align: left;
+  padding-bottom: 20px; }
+  th.title h2 {
+    margin-bottom: 0px;
+    padding-bottom: 5px;
+    padding-top: 20px;
+    border-bottom: 1px solid #dddddd; }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
@@ -395,59 +412,6 @@ hr {
   display: inline-block;
   width: 200px; }
 
-table.dashboard {
-  width: 100%;
-  font-size: 12.8px; }
-  table.dashboard tr:nth-child(even) {
-    background-color: #eaeaea; }
-  table.dashboard tr:hover {
-    background-color: #dff0ff; }
-  table.dashboard tr .accepted {
-    white-space: nowrap; }
-  table.dashboard td, table.dashboard th {
-    border: solid 1px #dddddd;
-    padding: 10px;
-    vertical-align: top; }
-  table.dashboard th {
-    background-color: #848484;
-    color: white;
-    text-align: left; }
-    table.dashboard th a {
-      color: white; }
-    table.dashboard th.order-by {
-      background-color: #5e5e5e; }
-      table.dashboard th.order-by a {
-        position: relative; }
-        table.dashboard th.order-by a:after {
-          position: absolute;
-          content: "▼";
-          font-family: sans-serif;
-          font-size: 10.24px;
-          top: 2px;
-          margin-left: 5px; }
-      table.dashboard th.order-by.dsc a:after {
-        content: "▲"; }
-  table.dashboard select {
-    display: inline-block; }
-
-table.data {
-  width: 100%; }
-  table.data th {
-    text-align: left;
-    padding-bottom: 20px; }
-    table.data th h2 {
-      margin-bottom: 0px;
-      padding-bottom: 5px;
-      padding-top: 20px;
-      border-bottom: 1px solid #dddddd; }
-  table.data td {
-    padding: 3px 10px 3px 0px; }
-    table.data td.label {
-      width: 1%;
-      white-space: nowrap;
-      text-align: right;
-      color: #797979; }
-
 .pagination {
   margin-top: 2.4em; }
   .pagination ul {
@@ -489,6 +453,84 @@ table.data {
   margin: 40px 0 50px 0; }
   .search-filters .search-form {
     margin-bottom: 20px; }
+
+table {
+  border-collapse: collapse; }
+
+table.listing {
+  width: 100%;
+  font-size: 12.8px; }
+  table.listing tr:nth-child(even) {
+    background-color: #eaeaea; }
+  table.listing tr:nth-child(odd) {
+    background-color: transparent; }
+  table.listing tr:hover {
+    background-color: #dff0ff; }
+  table.listing td, table.listing th {
+    border: solid 1px #dddddd;
+    padding: 10px;
+    vertical-align: top; }
+  table.listing thead th {
+    background-color: #848484;
+    color: white;
+    text-align: left; }
+    table.listing thead th a {
+      color: white; }
+    table.listing thead th.order-by {
+      background-color: #5e5e5e; }
+      table.listing thead th.order-by a {
+        position: relative; }
+        table.listing thead th.order-by a:after {
+          position: absolute;
+          content: "▼";
+          font-family: sans-serif;
+          font-size: 10.24px;
+          top: 2px;
+          margin-left: 5px; }
+      table.listing thead th.order-by.dsc a:after {
+        content: "▲"; }
+  table.listing select {
+    display: inline-block; }
+
+div#table table {
+  width: 100%;
+  font-size: 12.8px; }
+  div#table table tr:nth-child(even) {
+    background-color: #eaeaea; }
+  div#table table tr:nth-child(odd) {
+    background-color: transparent; }
+  div#table table tr:hover {
+    background-color: #dff0ff; }
+  div#table table td, div#table table th {
+    border: solid 1px #dddddd;
+    padding: 10px;
+    vertical-align: top; }
+  div#table table thead th {
+    background-color: #848484;
+    color: white;
+    text-align: left; }
+    div#table table thead th a {
+      color: white; }
+    div#table table thead th.order-by {
+      background-color: #5e5e5e; }
+      div#table table thead th.order-by a {
+        position: relative; }
+        div#table table thead th.order-by a:after {
+          position: absolute;
+          content: "▼";
+          font-family: sans-serif;
+          font-size: 10.24px;
+          top: 2px;
+          margin-left: 5px; }
+      div#table table thead th.order-by.dsc a:after {
+        content: "▲"; }
+  div#table table select {
+    display: inline-block; }
+
+table.data {
+  width: 100%; }
+  table.data td {
+    padding: 3px 10px 3px 0px; }
 
 body {
   background-color: #d6e6e9;

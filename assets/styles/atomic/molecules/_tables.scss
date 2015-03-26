@@ -1,0 +1,15 @@
+// Table headers
+
+@mixin thead-listing {
+  thead {
+    th {    
+      @include th-listing;
+    }      
+  }
+}
+
+// Table bodies
+
+tbody {
+
+}

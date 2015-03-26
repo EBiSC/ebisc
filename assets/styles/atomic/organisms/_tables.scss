@@ -1,0 +1,40 @@
+table {
+  border-collapse: collapse;
+}
+
+// Listing table
+
+@mixin table-listing {
+  width: 100%;
+  font-size: $font-size-small;
+
+  @include striped;
+  @include bordered;
+
+  @include thead-listing;
+
+  select {
+    display: inline-block;
+  }  
+}
+
+table.listing {
+  @include table-listing;
+}
+
+div#table {
+  table {
+    @include table-listing;
+  }
+}
+
+// Table for displaying data
+
+table.data {
+  width: 100%;
+
+  td {
+    padding: 3px 10px 3px 0px;
+  }
+}
+
