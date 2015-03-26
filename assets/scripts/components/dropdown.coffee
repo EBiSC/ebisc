@@ -1,14 +1,14 @@
 $(document).ready ->
 
-    $('.dropdown-button').click ->
+    $('.dropdown-button').click (event) ->
 
         dropdownButton = $(@)
         dropdownMenu = dropdownButton.next('.dropdown-menu')
 
         dropdownMenu.toggleClass 'show-menu'
 
-        $('> li', dropdownMenu).click ->
-            dropdownMenu.removeClass 'show-menu'
+        $(document).click (e) ->
+            if $(e.target).closest(dropdownMenu).length == 0
+                dropdownMenu.removeClass 'show-menu'
 
-        $('> li', dropdownMenu).click ->
-            dropdownButton.html $('label', @).html()
+        event.stopPropagation()
