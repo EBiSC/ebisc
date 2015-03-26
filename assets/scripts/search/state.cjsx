@@ -1,5 +1,5 @@
 Baobab = require 'baobab'
-ReactAddons = require 'react/addons'
+ReactAddons = window.React.addons
 
 state = {
     'query': ''

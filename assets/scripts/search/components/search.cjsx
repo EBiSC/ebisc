@@ -1,4 +1,4 @@
-React = require 'react'
+React = window.React
 State = require '../state'
 
 Search = React.createClass

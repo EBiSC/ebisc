@@ -1,9 +1,9 @@
-LoDash = require 'lodash'
-Elasticsearch = require 'elasticsearch'
+LoDash = window._
+Elasticsearch = window.elasticsearch
 
 State = require './state'
 
-elastic = new Elasticsearch.Client
+elastic = Elasticsearch.Client
     hosts: 'localhost:9200'
 
 search = () ->
