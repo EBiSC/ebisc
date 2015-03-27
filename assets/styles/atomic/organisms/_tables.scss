@@ -4,14 +4,14 @@ table {
 
 // Listing table
 
-@mixin table-listing {
+%table-listing {
   width: 100%;
   font-size: $font-size-small;
 
-  @include striped;
-  @include bordered;
+  @extend %striped;
+  @extend %bordered;
 
-  @include thead-listing;
+  @extend %thead-listing;
 
   select {
     display: inline-block;
@@ -19,7 +19,7 @@ table {
 }
 
 table.listing {
-  @include table-listing;
+  @extend %table-listing;
 }
 
 // Table for displaying data

@@ -29,7 +29,7 @@ th.title {
   }
 }
 
-@mixin th-listing {
+%th-listing {
   background-color: darken($color-table-background, 40%);
   color: white;
   text-align: left;
@@ -65,7 +65,7 @@ th.title {
   }
 }
 
-@mixin striped {
+%striped {
   tr {
     &:nth-child(even) {
       background-color: $color-table-background;
@@ -81,7 +81,7 @@ th.title {
   }
 }
 
-@mixin bordered {
+%bordered {
   td, th {
     border: solid 1px $base-border-color;
     padding: 10px;

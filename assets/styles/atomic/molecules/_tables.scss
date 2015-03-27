@@ -1,9 +1,9 @@
 // Table headers
 
-@mixin thead-listing {
+%thead-listing {
   thead {
     th {    
-      @include th-listing;
+      @extend %th-listing;
     }      
   }
 }
