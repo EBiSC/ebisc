@@ -1,18 +1,113 @@
-_ = window._
-Elasticsearch = window.elasticsearch
-
 XRegExp = require('xregexp').XRegExp
 
 State = require './state'
 Config = require './config'
 
-elastic = Elasticsearch.Client
+elastic = window.elasticsearch.Client
     hosts: 'localhost:9200'
 
-'''
-Example query:
+# -----------------------------------------------------------------------------
+# Search
 
-GET ebisc/cellline/_search
+search = () ->
+
+    body = 
+        size: 1000
+        query: buildFilteredQuery()
+        aggs: buildAggregations()
+
+    # console.debug '-- QUERY BODY --'
+    # console.debug JSON.stringify(body, null, '  ')
+
+    elastic.search
+        index: 'ebisc'
+        type: 'cellline'
+        body: body
+
+    .then (body) ->
+        State.set('celllines', body.hits.hits)
+        State.set('facets', body.aggregations.facets)
+
+    .error (error) ->
+        console.log error
+        alert('Error loading data.')
+
+# -----------------------------------------------------------------------------
+# Filtered query
+
+buildFilteredQuery = () ->
+
+    filtered:
+        query: buildQuery()
+        filter: buildFilter()
+
+# -----------------------------------------------------------------------------
+# Query
+
+buildQuery = () ->
+
+    queryString = _.trim(State.select('filter', 'query').get().toLowerCase())
+
+    if not queryString
+        return match_all: {}
+
+    else
+        words = (w for w in XRegExp.split(queryString, XRegExp('[^(\\p{L}|\\d)]')) when w != '')
+
+        buildQueryMultiMatch = (word, fields) ->
+            multi_match:
+                query: word
+                type: 'phrase_prefix'
+                fields: fields
+
+        bool:
+            must: (buildQueryMultiMatch(word, Config.query_fields) for word in words)
+
+# -----------------------------------------------------------------------------
+# Filters
+
+buildFilter = () ->
+
+    filters = buildFacetFilters()
+
+    if not filters
+        return {}
+    else
+        bool:
+            must: filters
+
+buildFacetFilters = () ->
+
+    buildTerms = (items) ->
+        (item.name for item in items when item.checked)
+
+    (terms: "#{facet.name}": buildTerms(facet.items) for facet in State.select('filter', 'facets').get() when buildTerms(facet.items).length)
+
+
+# -----------------------------------------------------------------------------
+# Aggregations
+
+buildAggregations = () ->
+
+    if not Config.facets.length
+        return {}
+
+    else
+        facets:
+            global: {}
+            aggs: _.object([facet.name, terms: field: facet.name] for facet in Config.facets)
+
+# -----------------------------------------------------------------------------
+
+module.exports =
+    search: search
+
+# -----------------------------------------------------------------------------
+# Example query
+
+'''
+
+GET /ebisc/cellline/_search
 {
   "query": {
     "filtered": {
@@ -60,79 +155,25 @@ GET ebisc/cellline/_search
         }
       }
     }
-  }
+  },
+  "aggs": {
+    "facets": {
+      "global": {},
+      "aggs": {
+        "celllinetype": {
+          "terms": {
+            "field": "celllinecelltype"
+          }
+        },
+        "disease": {
+          "terms": {
+            "field": "celllineprimarydisease"
+          }
+        }
+      }
+    }
+  }  
 }
+
 '''
-
-
-buildFacetFilters = () ->
-
-    buildTerms = (items) ->
-        (item.name for item in items when item.checked)
-
-    (terms: "#{facet.name}": buildTerms(facet.items) for facet in State.select('filter', 'facets').get() when buildTerms(facet.items).length)
-
-
-buildFilter = () ->
-
-    filters = buildFacetFilters()
-
-    if not filters
-        return {}
-    else
-        bool:
-            must: filters
-
-
-buildQuery = () ->
-
-    queryString = _.trim(State.select('filter', 'query').get().toLowerCase())
-
-    if not queryString
-        return match_all: {}
-
-    else
-        words = (w for w in XRegExp.split(queryString, XRegExp('[^(\\p{L}|\\d)]')) when w != '')
-
-        buildQueryMultiMatch = (word, fields) ->
-            multi_match:
-                query: word
-                type: 'phrase_prefix'
-                fields: fields
-
-        bool:
-            must: (buildQueryMultiMatch(word, Config.query_fields) for word in words)
-
-
-buildFilteredQuery = () ->
-
-    filtered:
-        query: buildQuery()
-        filter: buildFilter()
-
-
-search = () ->
-
-    query = buildFilteredQuery()
-
-    # console.debug '-- QUERY BODY --'
-    # console.debug JSON.stringify(query, null, ' ')
-
-    elastic.search
-        index: 'ebisc'
-        type: 'cellline'
-        body:
-            query: query
-            size: 1000
-
-    .then (body) ->
-        State.set('celllines', body.hits.hits)
-
-    .error (error) ->
-        console.log error
-
-State.select('filter').on('update', _.debounce(search, 200))
-
-
-module.exports =
-    search: search
+# -----------------------------------------------------------------------------

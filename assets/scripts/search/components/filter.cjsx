@@ -1,17 +1,22 @@
 React = window.React
 classNames = require 'classnames'
+Config = require '../config'
 State = require '../state'
 
-Term = React.createClass
+Facets = React.createClass
+
+    mixins: [State.mixin]
+
+    cursors:
+        items: ['facets']
+        checked: ['filter', 'facets']
 
     render: () ->
-        <li onClick={@handleClick} className={classNames(selected: @props.item.checked)}>
-            <div className="checkbox"></div>
-            <label>{_.capitalize(@props.item.name)}</label>
-        </li>
-
-    handleClick: (e) ->
-        @props.cursor.set('checked', ! @props.cursor.get('checked'))
+        <div className="filter-group">
+        {
+            (<Facet key={i} facet={facet} items={@state.cursors.items[facet.name]} checked={@cursors.checked} /> for facet, i in Config.facets)
+        }
+        </div>
 
 Facet = React.createClass
 
@@ -20,25 +25,26 @@ Facet = React.createClass
             <div className="dropdown-container">
                 <div className="dropdown-button">{@props.facet.label}</div>
                 <ul className="dropdown-menu checkbox">
-                {
-                    (<Term key={i} item={item} cursor={@props.cursor.select('items').select(i)} /> for item, i in @props.facet.items)
+                {   
+                    if @props.items
+                        (<Term key={i} item={item} /> for item, i in @props.items.buckets)
                 }
                 </ul>
             </div>
         </div>
 
-Facets = React.createClass
-
-    mixins: [State.mixin]
-
-    cursors:
-        facets: ['filter', 'facets']
+Term = React.createClass
 
     render: () ->
-        <div className="filter-group">
-        {
-            (<Facet key={i} facet={facet} cursor={@cursors.facets.select(i)} /> for facet, i in @state.cursors.facets)
-        }
-        </div>
+        # <li onClick={@handleClick} className={classNames(selected: @state.cursors.item.checked)}>
+        <li onClick={@handleClick}>
+            <div className="checkbox"></div>
+            <label>{_.capitalize(@props.item.key)}</label>
+        </li>
+
+    handleClick: (e) ->
+        console.log @props.item
+        # @props.cursor.set('checked', ! @props.cursor.get('checked'))
 
 module.exports = Facets
+

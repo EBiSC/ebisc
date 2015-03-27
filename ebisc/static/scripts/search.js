@@ -1,11 +1,11 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Config, Elastic, Filter, React, Search, Table;
-
-React = window.React;
+var Config, Elastic, Filter, Search, State, Table, facet, i, len, ref;
 
 Config = require('./config');
 
 Elastic = require('./elastic');
+
+State = require('./state');
 
 Filter = require('./components/filter');
 
@@ -13,11 +13,17 @@ Search = require('./components/search');
 
 Table = require('./components/table');
 
-Elastic.search();
+ref = Config.facets;
+for (i = 0, len = ref.length; i < len; i++) {
+  facet = ref[i];
+  State.select('filter', 'facets').set(facet.name, {});
+}
 
-React.render(React.createElement(Filter, null), document.getElementById('filter'));
+State.select('filter').on('update', _.debounce(Elastic.search, 200));
 
 React.render(React.createElement(Search, null), document.getElementById('search'));
+
+React.render(React.createElement(Filter, null), document.getElementById('filter'));
 
 React.render(React.createElement(Table, {
   "cols": Config.fields
@@ -25,28 +31,42 @@ React.render(React.createElement(Table, {
 
 
 
-},{"./components/filter":2,"./components/search":3,"./components/table":4,"./config":5,"./elastic":6}],2:[function(require,module,exports){
-var Facet, Facets, React, State, Term, classNames;
+},{"./components/filter":2,"./components/search":3,"./components/table":4,"./config":5,"./elastic":6,"./state":7}],2:[function(require,module,exports){
+var Config, Facet, Facets, React, State, Term, classNames;
 
 React = window.React;
 
 classNames = require('classnames');
 
+Config = require('../config');
+
 State = require('../state');
 
-Term = React.createClass({
-  render: function() {
-    return React.createElement("li", {
-      "onClick": this.handleClick,
-      "className": classNames({
-        selected: this.props.item.checked
-      })
-    }, React.createElement("div", {
-      "className": "checkbox"
-    }), React.createElement("label", null, _.capitalize(this.props.item.name)));
+Facets = React.createClass({
+  mixins: [State.mixin],
+  cursors: {
+    items: ['facets'],
+    checked: ['filter', 'facets']
   },
-  handleClick: function(e) {
-    return this.props.cursor.set('checked', !this.props.cursor.get('checked'));
+  render: function() {
+    var facet, i;
+    return React.createElement("div", {
+      "className": "filter-group"
+    }, (function() {
+      var j, len, ref, results;
+      ref = Config.facets;
+      results = [];
+      for (i = j = 0, len = ref.length; j < len; i = ++j) {
+        facet = ref[i];
+        results.push(React.createElement(Facet, {
+          "key": i,
+          "facet": facet,
+          "items": this.state.cursors.items[facet.name],
+          "checked": this.cursors.checked
+        }));
+      }
+      return results;
+    }).call(this));
   }
 });
 
@@ -61,46 +81,32 @@ Facet = React.createClass({
       "className": "dropdown-button"
     }, this.props.facet.label), React.createElement("ul", {
       "className": "dropdown-menu checkbox"
-    }, (function() {
+    }, (this.props.items ? (function() {
       var j, len, ref, results;
-      ref = this.props.facet.items;
+      ref = this.props.items.buckets;
       results = [];
       for (i = j = 0, len = ref.length; j < len; i = ++j) {
         item = ref[i];
         results.push(React.createElement(Term, {
           "key": i,
-          "item": item,
-          "cursor": this.props.cursor.select('items').select(i)
+          "item": item
         }));
       }
       return results;
-    }).call(this))));
+    }).call(this) : void 0))));
   }
 });
 
-Facets = React.createClass({
-  mixins: [State.mixin],
-  cursors: {
-    facets: ['filter', 'facets']
-  },
+Term = React.createClass({
   render: function() {
-    var facet, i;
-    return React.createElement("div", {
-      "className": "filter-group"
-    }, (function() {
-      var j, len, ref, results;
-      ref = this.state.cursors.facets;
-      results = [];
-      for (i = j = 0, len = ref.length; j < len; i = ++j) {
-        facet = ref[i];
-        results.push(React.createElement(Facet, {
-          "key": i,
-          "facet": facet,
-          "cursor": this.cursors.facets.select(i)
-        }));
-      }
-      return results;
-    }).call(this));
+    return React.createElement("li", {
+      "onClick": this.handleClick
+    }, React.createElement("div", {
+      "className": "checkbox"
+    }), React.createElement("label", null, _.capitalize(this.props.item.key)));
+  },
+  handleClick: function(e) {
+    return console.log(this.props.item);
   }
 });
 
@@ -108,10 +114,8 @@ module.exports = Facets;
 
 
 
-},{"../state":7,"classnames":20}],3:[function(require,module,exports){
-var React, Search, State;
-
-React = window.React;
+},{"../config":5,"../state":7,"classnames":20}],3:[function(require,module,exports){
+var Search, State;
 
 State = require('../state');
 
@@ -146,9 +150,7 @@ module.exports = Search;
 
 
 },{"../state":7}],4:[function(require,module,exports){
-var React, State, Table, Tbody, Thead;
-
-React = window.React;
+var State, Table, Tbody, Thead;
 
 State = require('../state');
 
@@ -242,7 +244,16 @@ config = {
       label: 'Cell type'
     }
   ],
-  query_fields: ['biosamplesid', 'celllinename', 'celllinecelltype.analyzed', 'celllineprimarydisease.analyzed']
+  query_fields: ['biosamplesid', 'celllinename', 'celllinecelltype.analyzed', 'celllineprimarydisease.analyzed'],
+  facets: [
+    {
+      name: 'celllinecelltype',
+      label: 'Cell line type'
+    }, {
+      name: 'celllineprimarydisease',
+      label: 'Disease'
+    }
+  ]
 };
 
 module.exports = config;
@@ -250,11 +261,7 @@ module.exports = config;
 
 
 },{}],6:[function(require,module,exports){
-var Config, Elasticsearch, State, XRegExp, _, buildFacetFilters, buildFilter, buildFilteredQuery, buildQuery, elastic, search;
-
-_ = window._;
-
-Elasticsearch = window.elasticsearch;
+var Config, State, XRegExp, buildAggregations, buildFacetFilters, buildFilter, buildFilteredQuery, buildQuery, elastic, search;
 
 XRegExp = require('xregexp').XRegExp;
 
@@ -262,54 +269,37 @@ State = require('./state');
 
 Config = require('./config');
 
-elastic = Elasticsearch.Client({
+elastic = window.elasticsearch.Client({
   hosts: 'localhost:9200'
 });
 
-'Example query:\n\nGET ebisc/cellline/_search\n{\n  "query": {\n    "filtered": {\n      "query": {\n        "bool": {\n          "must": [\n            {\n              "multi_match": {\n                "query": "control",\n                "type": "phrase_prefix",\n                "fields": [\n                  "biosamplesid",\n                  "celllinename",\n                  "celllinecelltype.analyzed",\n                  "celllineprimarydisease.analyzed"\n                ]\n              }\n            },\n            {\n              "multi_match": {\n                "query": "derma",\n                "type": "phrase_prefix",\n                "fields": [\n                  "biosamplesid",\n                  "celllinename",\n                  "celllinecelltype.analyzed",\n                  "celllineprimarydisease.analyzed"\n                ]\n              }\n            }\n          ]\n        }\n      },\n      "filter": {\n        "bool": {\n          "must": [\n            {\n              "terms": {\n                "celllineprimarydisease": [\n                  "Control", "Foo"\n                ]\n              }\n            }\n          ]\n        }\n      }\n    }\n  }\n}';
-
-buildFacetFilters = function() {
-  var buildTerms, facet, i, len, obj, ref, results;
-  buildTerms = function(items) {
-    var i, item, len, results;
-    results = [];
-    for (i = 0, len = items.length; i < len; i++) {
-      item = items[i];
-      if (item.checked) {
-        results.push(item.name);
-      }
-    }
-    return results;
+search = function() {
+  var body;
+  body = {
+    size: 1000,
+    query: buildFilteredQuery(),
+    aggs: buildAggregations()
   };
-  ref = State.select('filter', 'facets').get();
-  results = [];
-  for (i = 0, len = ref.length; i < len; i++) {
-    facet = ref[i];
-    if (buildTerms(facet.items).length) {
-      results.push({
-        terms: (
-          obj = {},
-          obj["" + facet.name] = buildTerms(facet.items),
-          obj
-        )
-      });
-    }
-  }
-  return results;
+  return elastic.search({
+    index: 'ebisc',
+    type: 'cellline',
+    body: body
+  }).then(function(body) {
+    State.set('celllines', body.hits.hits);
+    return State.set('facets', body.aggregations.facets);
+  }).error(function(error) {
+    console.log(error);
+    return alert('Error loading data.');
+  });
 };
 
-buildFilter = function() {
-  var filters;
-  filters = buildFacetFilters();
-  if (!filters) {
-    return {};
-  } else {
-    return {
-      bool: {
-        must: filters
-      }
-    };
-  }
+buildFilteredQuery = function() {
+  return {
+    filtered: {
+      query: buildQuery(),
+      filter: buildFilter()
+    }
+  };
 };
 
 buildQuery = function() {
@@ -357,82 +347,104 @@ buildQuery = function() {
   }
 };
 
-buildFilteredQuery = function() {
-  return {
-    filtered: {
-      query: buildQuery(),
-      filter: buildFilter()
+buildFilter = function() {
+  var filters;
+  filters = buildFacetFilters();
+  if (!filters) {
+    return {};
+  } else {
+    return {
+      bool: {
+        must: filters
+      }
+    };
+  }
+};
+
+buildFacetFilters = function() {
+  var buildTerms, facet, i, len, obj, ref, results;
+  buildTerms = function(items) {
+    var i, item, len, results;
+    results = [];
+    for (i = 0, len = items.length; i < len; i++) {
+      item = items[i];
+      if (item.checked) {
+        results.push(item.name);
+      }
     }
+    return results;
   };
-};
-
-search = function() {
-  var query;
-  query = buildFilteredQuery();
-  return elastic.search({
-    index: 'ebisc',
-    type: 'cellline',
-    body: {
-      query: query,
-      size: 1000
+  ref = State.select('filter', 'facets').get();
+  results = [];
+  for (i = 0, len = ref.length; i < len; i++) {
+    facet = ref[i];
+    if (buildTerms(facet.items).length) {
+      results.push({
+        terms: (
+          obj = {},
+          obj["" + facet.name] = buildTerms(facet.items),
+          obj
+        )
+      });
     }
-  }).then(function(body) {
-    return State.set('celllines', body.hits.hits);
-  }).error(function(error) {
-    return console.log(error);
-  });
+  }
+  return results;
 };
 
-State.select('filter').on('update', _.debounce(search, 200));
+buildAggregations = function() {
+  var facet;
+  if (!Config.facets.length) {
+    return {};
+  } else {
+    return {
+      facets: {
+        global: {},
+        aggs: _.object((function() {
+          var i, len, ref, results;
+          ref = Config.facets;
+          results = [];
+          for (i = 0, len = ref.length; i < len; i++) {
+            facet = ref[i];
+            results.push([
+              facet.name, {
+                terms: {
+                  field: facet.name
+                }
+              }
+            ]);
+          }
+          return results;
+        })())
+      }
+    };
+  }
+};
 
 module.exports = {
   search: search
 };
 
+'\nGET /ebisc/cellline/_search\n{\n  "query": {\n    "filtered": {\n      "query": {\n        "bool": {\n          "must": [\n            {\n              "multi_match": {\n                "query": "control",\n                "type": "phrase_prefix",\n                "fields": [\n                  "biosamplesid",\n                  "celllinename",\n                  "celllinecelltype.analyzed",\n                  "celllineprimarydisease.analyzed"\n                ]\n              }\n            },\n            {\n              "multi_match": {\n                "query": "derma",\n                "type": "phrase_prefix",\n                "fields": [\n                  "biosamplesid",\n                  "celllinename",\n                  "celllinecelltype.analyzed",\n                  "celllineprimarydisease.analyzed"\n                ]\n              }\n            }\n          ]\n        }\n      },\n      "filter": {\n        "bool": {\n          "must": [\n            {\n              "terms": {\n                "celllineprimarydisease": [\n                  "Control", "Foo"\n                ]\n              }\n            }\n          ]\n        }\n      }\n    }\n  },\n  "aggs": {\n    "facets": {\n      "global": {},\n      "aggs": {\n        "celllinetype": {\n          "terms": {\n            "field": "celllinecelltype"\n          }\n        },\n        "disease": {\n          "terms": {\n            "field": "celllineprimarydisease"\n          }\n        }\n      }\n    }\n  }  \n}\n';
+
 
 
 },{"./config":5,"./state":7,"xregexp":21}],7:[function(require,module,exports){
-var Baobab, ReactAddons, options, state;
+var Baobab, options, state;
 
 Baobab = require('baobab');
-
-ReactAddons = window.React.addons;
 
 state = {
   filter: {
     query: '',
-    facets: [
-      {
-        name: 'celllinecelltype',
-        label: 'Cell line type',
-        items: [
-          {
-            name: 'Dermal Fibroblasts'
-          }, {
-            name: 'Foreskin Keratinocytes'
-          }, {
-            name: 'Unknown'
-          }
-        ]
-      }, {
-        name: 'celllineprimarydisease',
-        label: 'Disease',
-        items: [
-          {
-            name: 'Control'
-          }, {
-            name: 'Long QT Syndrome-3'
-          }
-        ]
-      }
-    ]
+    facets: {}
   },
-  celllines: []
+  celllines: [],
+  facets: []
 };
 
 options = {
   shiftReferences: true,
-  mixins: [ReactAddons.PureRenderMixin]
+  mixins: [React.addons.PureRenderMixin]
 };
 
 module.exports = new Baobab(state, options);

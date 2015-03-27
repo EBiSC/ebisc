@@ -26,6 +26,17 @@ config = {
         'celllinecelltype.analyzed'
         'celllineprimarydisease.analyzed'
     ]
+
+    facets: [
+        {
+            name: 'celllinecelltype'
+            label: 'Cell line type'
+        }
+        {
+            name: 'celllineprimarydisease'
+            label: 'Disease'
+        }
+    ]
 }
 
 module.exports = config

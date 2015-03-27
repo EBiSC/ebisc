@@ -1,4 +1,3 @@
-React = window.React
 State = require '../state'
 
 Search = React.createClass

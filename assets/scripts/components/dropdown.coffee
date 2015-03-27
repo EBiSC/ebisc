@@ -1,6 +1,6 @@
 $(document).ready ->
 
-    $('.dropdown-button').click (event) ->
+    $('.dropdown-button').on 'click', (event) ->
 
         dropdownButton = $(@)
         dropdownMenu = dropdownButton.next('.dropdown-menu')
