@@ -1,7 +1,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Elastic, Filter, React, Search, Table;
+var Config, Elastic, Filter, React, Search, Table;
 
 React = window.React;
+
+Config = require('./config');
 
 Elastic = require('./elastic');
 
@@ -17,11 +19,13 @@ React.render(React.createElement(Filter, null), document.getElementById('filter'
 
 React.render(React.createElement(Search, null), document.getElementById('search'));
 
-React.render(React.createElement(Table, null), document.getElementById('table'));
+React.render(React.createElement(Table, {
+  "cols": Config.fields
+}), document.getElementById('table'));
 
 
 
-},{"./components/filter":2,"./components/search":3,"./components/table":4,"./elastic":5}],2:[function(require,module,exports){
+},{"./components/filter":2,"./components/search":3,"./components/table":4,"./config":5,"./elastic":6}],2:[function(require,module,exports){
 var Facet, Facets, React, State, Term, classNames;
 
 React = window.React;
@@ -33,7 +37,6 @@ State = require('../state');
 Term = React.createClass({
   render: function() {
     return React.createElement("li", {
-      "key": this.props.index,
       "onClick": this.handleClick,
       "className": classNames({
         selected: this.props.item.checked
@@ -49,7 +52,7 @@ Term = React.createClass({
 
 Facet = React.createClass({
   render: function() {
-    var index, item;
+    var i, item;
     return React.createElement("div", {
       "className": "dropdown"
     }, React.createElement("div", {
@@ -59,15 +62,15 @@ Facet = React.createClass({
     }, "Accepted status"), React.createElement("ul", {
       "className": "dropdown-menu checkbox"
     }, (function() {
-      var i, len, ref, results;
+      var j, len, ref, results;
       ref = this.props.facet.items;
       results = [];
-      for (index = i = 0, len = ref.length; i < len; index = ++i) {
-        item = ref[index];
+      for (i = j = 0, len = ref.length; j < len; i = ++j) {
+        item = ref[i];
         results.push(React.createElement(Term, {
-          "index": index,
+          "key": i,
           "item": item,
-          "cursor": this.props.cursor.select('items').select(index)
+          "cursor": this.props.cursor.select('items').select(i)
         }));
       }
       return results;
@@ -81,19 +84,19 @@ Facets = React.createClass({
     facets: ['filter', 'facets']
   },
   render: function() {
-    var facet, index;
+    var facet, i;
     return React.createElement("div", {
       "className": "filter-group"
     }, (function() {
-      var i, len, ref, results;
+      var j, len, ref, results;
       ref = this.state.cursors.facets;
       results = [];
-      for (index = i = 0, len = ref.length; i < len; index = ++i) {
-        facet = ref[index];
+      for (i = j = 0, len = ref.length; j < len; i = ++j) {
+        facet = ref[i];
         results.push(React.createElement(Facet, {
-          "index": index,
+          "key": i,
           "facet": facet,
-          "cursor": this.cursors.facets.select(index)
+          "cursor": this.cursors.facets.select(i)
         }));
       }
       return results;
@@ -105,7 +108,7 @@ module.exports = Facets;
 
 
 
-},{"../state":6,"classnames":19}],3:[function(require,module,exports){
+},{"../state":7,"classnames":20}],3:[function(require,module,exports){
 var React, Search, State;
 
 React = window.React;
@@ -142,8 +145,8 @@ module.exports = Search;
 
 
 
-},{"../state":6}],4:[function(require,module,exports){
-var React, State, Table;
+},{"../state":7}],4:[function(require,module,exports){
+var React, State, Table, Tbody, Thead;
 
 React = window.React;
 
@@ -157,21 +160,62 @@ Table = React.createClass({
   render: function() {
     return React.createElement("table", {
       "className": "listing"
-    }, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", null, "Biosamples ID"), React.createElement("th", null, "Cell line Name"), React.createElement("th", null, "Disease"), React.createElement("th", null, "Accepted"))), React.createElement("tbody", null, this.renderBody(this.state.cursors.celllines)));
-  },
-  renderBody: function(celllines) {
-    var cellline, i, len, results;
-    if (!celllines) {
+    }, React.createElement(Thead, {
+      "cols": this.props.cols
+    }), React.createElement(Tbody, {
+      "cols": this.props.cols,
+      "data": this.state.cursors.celllines
+    }));
+  }
+});
+
+Thead = React.createClass({
+  render: function() {
+    var col, i;
+    return React.createElement("thead", null, React.createElement("tr", null, (function() {
+      var j, len, ref, results;
+      ref = this.props.cols;
+      results = [];
+      for (i = j = 0, len = ref.length; j < len; i = ++j) {
+        col = ref[i];
+        results.push(React.createElement("th", {
+          "key": i
+        }, col.label));
+      }
+      return results;
+    }).call(this)));
+  }
+});
+
+Tbody = React.createClass({
+  render: function() {
+    var col, i, row;
+    if (!this.props.data) {
       return '';
     }
-    results = [];
-    for (i = 0, len = celllines.length; i < len; i++) {
-      cellline = celllines[i];
-      results.push(React.createElement("tr", {
-        "key": cellline._id
-      }, React.createElement("td", null, cellline._source.biosamplesid), React.createElement("td", null, cellline._source.celllinename), React.createElement("td", null, cellline._source.celllineprimarydisease), React.createElement("td", null, cellline._source.celllineaccepted)));
-    }
-    return results;
+    return React.createElement("tbody", null, (function() {
+      var j, len, ref, results;
+      ref = this.props.data;
+      results = [];
+      for (j = 0, len = ref.length; j < len; j++) {
+        row = ref[j];
+        results.push(React.createElement("tr", {
+          "key": row._id
+        }, (function() {
+          var k, len1, ref1, results1;
+          ref1 = this.props.cols;
+          results1 = [];
+          for (i = k = 0, len1 = ref1.length; k < len1; i = ++k) {
+            col = ref1[i];
+            results1.push(React.createElement("td", {
+              "key": i
+            }, row._source[col.name]));
+          }
+          return results1;
+        }).call(this)));
+      }
+      return results;
+    }).call(this));
   }
 });
 
@@ -179,7 +223,33 @@ module.exports = Table;
 
 
 
-},{"../state":6}],5:[function(require,module,exports){
+},{"../state":7}],5:[function(require,module,exports){
+var config;
+
+config = {
+  fields: [
+    {
+      name: 'biosamplesid',
+      label: 'Biosamples ID'
+    }, {
+      name: 'celllinename',
+      label: 'Cell line Name'
+    }, {
+      name: 'celllineprimarydisease',
+      label: 'Disease'
+    }, {
+      name: 'celllineaccepted',
+      label: 'Accepted'
+    }
+  ],
+  query_fields: ['biosamplesid', 'celllinename', 'celllineprimarydisease']
+};
+
+module.exports = config;
+
+
+
+},{}],6:[function(require,module,exports){
 var Elasticsearch, State, _, buildFacetFilter, buildFacetFilters, buildQuery, buildQueryFilter, elastic, search;
 
 _ = window._;
@@ -343,7 +413,7 @@ module.exports = {
 
 
 
-},{"./state":6}],6:[function(require,module,exports){
+},{"./state":7}],7:[function(require,module,exports){
 var Baobab, ReactAddons, options, state;
 
 Baobab = require('baobab');
@@ -351,7 +421,6 @@ Baobab = require('baobab');
 ReactAddons = window.React.addons;
 
 state = {
-  query_fields: ['biosamplesid', 'celllinename', 'celllineprimarydisease'],
   filter: {
     query: '',
     facets: [
@@ -394,7 +463,7 @@ module.exports = new Baobab(state, options);
 
 
 
-},{"baobab":8}],7:[function(require,module,exports){
+},{"baobab":9}],8:[function(require,module,exports){
 /**
  * Baobab Default Options
  * =======================
@@ -433,7 +502,7 @@ module.exports = {
   validate: null
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /**
  * Baobab Public Interface
  * ========================
@@ -454,7 +523,7 @@ Baobab.getIn = helpers.getIn;
 // Exporting
 module.exports = Baobab;
 
-},{"./src/baobab.js":11,"./src/helpers.js":14}],9:[function(require,module,exports){
+},{"./src/baobab.js":12,"./src/helpers.js":15}],10:[function(require,module,exports){
 (function() {
   'use strict';
 
@@ -997,7 +1066,7 @@ module.exports = Baobab;
     this.Emitter = Emitter;
 }).call(this);
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /**
  * typology.js - A data validation library for Node.js and the browser,
  *
@@ -1598,7 +1667,7 @@ module.exports = Baobab;
     this.types = types;
 })(this);
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /**
  * Baobab Data Structure
  * ======================
@@ -1930,7 +1999,7 @@ Baobab.prototype.toJSON = function() {
  */
 module.exports = Baobab;
 
-},{"../defaults.js":7,"./cursor.js":13,"./helpers.js":14,"./merge.js":15,"./mixins.js":16,"./type.js":17,"./update.js":18,"emmett":9,"typology":10}],12:[function(require,module,exports){
+},{"../defaults.js":8,"./cursor.js":14,"./helpers.js":15,"./merge.js":16,"./mixins.js":17,"./type.js":18,"./update.js":19,"emmett":10,"typology":11}],13:[function(require,module,exports){
 /**
  * Baobab Cursor Combination
  * ==========================
@@ -2097,7 +2166,7 @@ Combination.prototype.release = function() {
  */
 module.exports = Combination;
 
-},{"./helpers.js":14,"./type.js":17,"emmett":9}],13:[function(require,module,exports){
+},{"./helpers.js":15,"./type.js":18,"emmett":10}],14:[function(require,module,exports){
 /**
  * Baobab Cursor Abstraction
  * ==========================
@@ -2487,7 +2556,7 @@ type.Cursor = function (value) {
  */
 module.exports = Cursor;
 
-},{"./combination.js":12,"./helpers.js":14,"./mixins.js":16,"./type.js":17,"emmett":9}],14:[function(require,module,exports){
+},{"./combination.js":13,"./helpers.js":15,"./mixins.js":17,"./type.js":18,"emmett":10}],15:[function(require,module,exports){
 /**
  * Baobab Helpers
  * ===============
@@ -2747,7 +2816,7 @@ module.exports = {
   solvePath: solvePath
 };
 
-},{"./type.js":17}],15:[function(require,module,exports){
+},{"./type.js":18}],16:[function(require,module,exports){
 /**
  * Baobab Merge
  * =============
@@ -2861,7 +2930,7 @@ function merge() {
 
 module.exports = merge;
 
-},{"./helpers.js":14,"./type.js":17}],16:[function(require,module,exports){
+},{"./helpers.js":15,"./type.js":18}],17:[function(require,module,exports){
 /**
  * Baobab React Mixins
  * ====================
@@ -3011,7 +3080,7 @@ module.exports = {
   }
 };
 
-},{"./combination.js":12,"./type.js":17}],17:[function(require,module,exports){
+},{"./combination.js":13,"./type.js":18}],18:[function(require,module,exports){
 /**
  * Baobab Type Checking
  * =====================
@@ -3127,7 +3196,7 @@ type.ComplexPath = function (value) {
 
 module.exports = type;
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /**
  * Baobab Update
  * ==============
@@ -3302,7 +3371,7 @@ function update(target, spec, opts) {
 // Exporting
 module.exports = update;
 
-},{"./helpers.js":14,"./type.js":17}],19:[function(require,module,exports){
+},{"./helpers.js":15,"./type.js":18}],20:[function(require,module,exports){
 function classNames() {
 	var classes = '';
 	var arg;

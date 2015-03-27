@@ -71,5 +71,6 @@ search = () ->
 
 State.select('filter').on('update', _.debounce(search, 100))
 
+
 module.exports =
     search: search

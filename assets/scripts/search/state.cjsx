@@ -2,7 +2,6 @@ Baobab = require 'baobab'
 ReactAddons = window.React.addons
 
 state = {
-    query_fields: ['biosamplesid', 'celllinename', 'celllineprimarydisease']
     filter:
         query: ''
         facets: [
@@ -14,7 +13,7 @@ state = {
                     {name: 'accepted', checked: false}
                     {name: 'rejected', checked: false}
                 ]
-            },
+            }
             {
                 name: 'celllineprimarydisease'
                 label: 'Disease'

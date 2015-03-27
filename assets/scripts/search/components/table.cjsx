@@ -10,28 +10,35 @@ Table = React.createClass
 
     render: () ->
         <table className="listing">
-            <thead>
-                <tr>
-                    <th>Biosamples ID</th>
-                    <th>Cell line Name</th>
-                    <th>Disease</th>
-                    <th>Accepted</th>
-                </tr>
-            </thead>
-
-            <tbody>{@renderBody(@state.cursors.celllines)}</tbody>
+            <Thead cols={@props.cols} />
+            <Tbody cols={@props.cols} data={@state.cursors.celllines} />
         </table>
 
-    renderBody: (celllines) ->
+Thead = React.createClass
 
-        return '' if not celllines
-
-        for cellline in celllines
-            <tr key={cellline._id}>
-                <td>{cellline._source.biosamplesid}</td>
-                <td>{cellline._source.celllinename}</td>
-                <td>{cellline._source.celllineprimarydisease}</td>
-                <td>{cellline._source.celllineaccepted}</td>
+    render: () ->
+        <thead>
+            <tr>
+                {(<th key={i}>{ col.label }</th> for col, i in @props.cols)}
             </tr>
+        </thead>
+
+Tbody = React.createClass
+
+    render: () ->
+
+        return '' if not @props.data
+
+        <tbody>
+        {
+            for row in @props.data
+                <tr key={row._id}>
+                {
+                    for col, i in @props.cols
+                        <td key={i}>{row._source[col.name]}</td>
+                }
+                </tr>
+        }
+        </tbody>
 
 module.exports = Table
