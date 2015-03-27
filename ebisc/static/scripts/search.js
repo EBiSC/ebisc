@@ -117,15 +117,23 @@ Search = React.createClass({
   cursors: {
     query: ['filter', 'query']
   },
+  getInitialState: function() {
+    return {
+      query: ''
+    };
+  },
   render: function() {
     return React.createElement("input", {
       "type": "text",
       "placeholder": "Search",
-      "value": this.cursors.query.get(),
+      "value": this.state.query,
       "onChange": this.handleChange
     });
   },
   handleChange: function(e) {
+    this.setState({
+      query: e.target.value
+    });
     return this.cursors.query.edit(e.target.value);
   }
 });

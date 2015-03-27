@@ -8,10 +8,14 @@ Search = React.createClass
     cursors:
         query: ['filter', 'query']
 
+    getInitialState: () ->
+        query: ''
+
     render: () ->
-        <input type="text" placeholder="Search" value={@cursors.query.get()} onChange={@handleChange} />
+        <input type="text" placeholder="Search" value={@state.query} onChange={@handleChange} />
 
     handleChange: (e) ->
+        @setState(query: e.target.value)
         @cursors.query.edit(e.target.value)
 
 module.exports = Search
