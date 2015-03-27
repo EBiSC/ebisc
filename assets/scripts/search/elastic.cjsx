@@ -2,6 +2,7 @@ _ = window._
 Elasticsearch = window.elasticsearch
 
 State = require './state'
+Config = require './config'
 
 elastic = Elasticsearch.Client
     hosts: 'localhost:9200'
@@ -28,7 +29,7 @@ buildQueryFilter = () ->
 
     if query
         words = (w.toLowerCase() for w in query.split(/\s+/) when w != '')
-        fields = State.select('query_fields').get()
+        fields = Config.query_fields
 
         # for each word check all fields using (OR - match any field)
         parts = (({prefix: "#{field}": word} for field in fields) for word in words)

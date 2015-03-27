@@ -103,10 +103,10 @@ class Cellline(models.Model):
     def to_elastic(self):
 
         return {
-            'celllineaccepted': self.celllineaccepted,
             'biosamplesid': self.biosamplesid,
             'celllinename': self.celllinename,
             'celllineprimarydisease': self.celllineprimarydisease.disease,
+            'celllinecelltype': self.celllinecelltype.celltype,
         }
 
 

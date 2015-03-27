@@ -238,11 +238,11 @@ config = {
       name: 'celllineprimarydisease',
       label: 'Disease'
     }, {
-      name: 'celllineaccepted',
-      label: 'Accepted'
+      name: 'celllinecelltype',
+      label: 'Cell type'
     }
   ],
-  query_fields: ['biosamplesid', 'celllinename', 'celllineprimarydisease']
+  query_fields: ['biosamplesid', 'celllinename', 'celllineprimarydisease', 'celllinecelltype']
 };
 
 module.exports = config;
@@ -250,13 +250,15 @@ module.exports = config;
 
 
 },{}],6:[function(require,module,exports){
-var Elasticsearch, State, _, buildFacetFilter, buildFacetFilters, buildQuery, buildQueryFilter, elastic, search;
+var Config, Elasticsearch, State, _, buildFacetFilter, buildFacetFilters, buildQuery, buildQueryFilter, elastic, search;
 
 _ = window._;
 
 Elasticsearch = window.elasticsearch;
 
 State = require('./state');
+
+Config = require('./config');
 
 elastic = Elasticsearch.Client({
   hosts: 'localhost:9200'
@@ -314,7 +316,7 @@ buildQueryFilter = function() {
       }
       return results;
     })();
-    fields = State.select('query_fields').get();
+    fields = Config.query_fields;
     parts = (function() {
       var i, len, results;
       results = [];
@@ -413,7 +415,7 @@ module.exports = {
 
 
 
-},{"./state":7}],7:[function(require,module,exports){
+},{"./config":5,"./state":7}],7:[function(require,module,exports){
 var Baobab, ReactAddons, options, state;
 
 Baobab = require('baobab');
@@ -423,33 +425,7 @@ ReactAddons = window.React.addons;
 state = {
   filter: {
     query: '',
-    facets: [
-      {
-        name: 'celllineaccepted',
-        label: 'Accepted',
-        items: [
-          {
-            name: 'pending',
-            checked: false
-          }, {
-            name: 'accepted',
-            checked: false
-          }, {
-            name: 'rejected',
-            checked: false
-          }
-        ]
-      }, {
-        name: 'celllineprimarydisease',
-        label: 'Disease',
-        items: [
-          {
-            name: 'Control',
-            checked: false
-          }
-        ]
-      }
-    ]
+    facets: []
   },
   celllines: []
 };

@@ -14,11 +14,11 @@ config = {
             label: 'Disease'
         }
         {
-            name: 'celllineaccepted'
-            label: 'Accepted'
+            name: 'celllinecelltype'
+            label: 'Cell type'
         }
     ]
-    query_fields: ['biosamplesid', 'celllinename', 'celllineprimarydisease']
+    query_fields: ['biosamplesid', 'celllinename', 'celllineprimarydisease', 'celllinecelltype']
 
 }
 

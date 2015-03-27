@@ -1,10 +1,10 @@
 {
     "cellline": {
         "properties": {
-            "celllineaccepted": {"type": "string", "index": "not_analyzed"},
             "biosamplesid": {"type": "string"},
             "celllinename": {"type": "string"},
-            "celllineprimarydisease": {"type": "string"}
+            "celllineprimarydisease": {"type": "string"},
+            "celllinecelltype": {"type": "string"}
         }
     }
 }
