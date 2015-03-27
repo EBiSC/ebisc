@@ -31,8 +31,10 @@
                     {% for node in document.node|menu:0 %}
                     <li class="{% if document.node|is_descendant_of:node %}active{% endif %}"><a href="{% url 'site:document' node.path %}">{{ node.menu_title|default:node.title }}</a></li>
                     {% endfor %}
-                    <!-- <li><a href="{% url 'search:search' %}">Cell Line Search</a></li> -->
+                    <li><a href="{% url 'site:document' document.node.ancestors.0.path %}">Home</a></li>
+                    <li><a href="{% url 'search:search' %}">Cell Line Catalogue</a></li>
                     <li><a href="{% url 'executive:dashboard' %}">Executive Dashboard</a></li>
+                    <li><a href="http://www.ebisc.org/">About EBiSC</a>
                 </ul>
             </nav>
         </div>
@@ -48,7 +50,24 @@
 
     <article>{% block article %}{% endblock %}</article>
 
-    <footer>&copy; EBiSC European Bank for induced pluripotent Stem Cells</footer>
+    <footer>
+        <div class="support">
+            <hr>
+            <div class="text">
+                The EBiSC – European Bank for induced pluripotent Stem Cells project has received support from the Innovative Medicines Initiative Joint Undertaking under grant agreement n° 115582, resources of which are composed of financial contribution from the European Union’s Seventh Framework Programme (FP7/2007-2013) and EFPIA companies’ in kind contribution. <a href="http://www.imi.europa.eu/">www.imi.europa.eu</a>
+            </div>
+            <div class="links">
+                <ul>
+                    <li><a href="http://www.efpia.eu/"><img src="{% static 'images/logo-efpia.png' %}" width="144" height="60" alt="EFPIA - European Federation of Pharmaceutical Industries and Associations"></a></li>
+                    <li><a href="http://www.imi.europa.eu/"><img src="{% static 'images/logo-imi.png' %}" width="96" height="60" alt="IMI - Innovative Medicines Initiative"></a></li>
+                    <li><a href="http://europa.eu/"><img src="{% static 'images/logo-europe.png' %}" width="80" height="60" alt="EU"></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copy">
+            &copy; EBiSC European Bank for induced pluripotent Stem Cells    
+        </div>
+    </footer>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="{% static 'scripts/main.js' %}"></script>

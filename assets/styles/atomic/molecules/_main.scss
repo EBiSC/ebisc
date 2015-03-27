@@ -48,17 +48,9 @@
 
 // Cards
 
-.card {
-  background-color: white;
-  border: $base-border;
-  padding: 18px;
 
-  .title
-  {
-    font-weight: bold;
-    font-size: $font-size-large;
-    margin-bottom: 10px;
-  }
+.status {
+  @extend %card;
 }
 
 // Forms

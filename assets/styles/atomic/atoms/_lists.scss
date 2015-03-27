@@ -15,6 +15,12 @@ ol {
     margin-bottom: $small-spacing;
     padding-left: $base-spacing;
   }
+
+  &%inline-ul {
+    li {
+      display: inline-block;
+    }
+  }
 }
 
 dl {
