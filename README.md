@@ -57,3 +57,60 @@ mysql ebisc < schema.sql
 - Write update function
 - Write searching / filtering widgets
 - Connect widgets with update function
+
+## Exec dashboard
+
+- EBiSC Board Members (set user accounts)
+- Order first by most recent 
+- Print version Cell line data
+- Grouping of data (Dana)
+- Sales information (future goal - need to get QTY info from LIMS and sales data from ECACC)
+- Option: Should there be a way for EBM to add notes to the Cell Line regarding Accept/Reject?
+- Filters:
+    - Accepted/Rejected/Pending
+    - Depositor
+    - Any other attribute? (Disease, Cell type, Tissue source)
+    - Cell line status: available/not available
+- Search: inlcudes all atributes
+
+## Cell line Catalog
+
+- User is customer
+- Table:
+    - Biosamples ID
+    - Name
+    - Depositor
+    - Disease
+    - Cell type
+    - Cell line name synonims
+- Filters:
+    - Disease
+    - Depositor
+    - Cell type
+    - Tissue source
+    ------------------------------------
+    - Protocol?
+    - Mutant gene? (mutagene - not defined terms)
+    - Growth mode?
+    - Culture medium (we have, but empty for now) / culture system
+    - Available formats? (ECACC)
+- For sales link to ECACC?
+
+## EBiSC Knowledge Community
+
+- User is customer
+- List of diseases? (page 97) -> then you get a list of celllines for that disease?? (... page 99) - primerjave med cell lini
+- Assistance and support on differentiation, tests performed etc.?
+
+  Services: 
+    - Protocols (support material): (uploaded by depositors, approved by execs?)
+        - cell line derivation protocol
+        - quality control
+        - investigations
+        - etc
+    - Training, support and experts
+    - Knowledge forum
+
+- Feedback form 30 days after purchase
+- Support - not finalized
+
