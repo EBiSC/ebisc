@@ -502,10 +502,11 @@ hr {
         color: #004e93;
         background: white; }
 
-.search-filters {
-  margin: 40px 0 50px 0; }
-  .search-filters .search-form {
-    margin-bottom: 20px; }
+#filter {
+  margin: 40px 0 20px 0; }
+
+#search {
+  margin-bottom: 40px; }
 
 table {
   border-collapse: collapse; }
@@ -544,7 +545,8 @@ article {
   padding: 10px 20px;
   margin-top: 10px;
   padding-top: 30px;
-  padding-bottom: 40px; }
+  padding-bottom: 40px;
+  min-height: 600px; }
   article:after {
     content: " ";
     display: block;
