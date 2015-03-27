@@ -2,9 +2,20 @@
     "cellline": {
         "properties": {
             "biosamplesid": {"type": "string"},
+
             "celllinename": {"type": "string"},
-            "celllineprimarydisease": {"type": "string"},
-            "celllinecelltype": {"type": "string"}
+
+            "celllineprimarydisease": {
+                "type": "string",
+                "index": "not_analyzed",
+                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+            },
+
+            "celllinecelltype": {
+                "type": "string",
+                "index": "not_analyzed",
+                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+            }
         }
     }
 }

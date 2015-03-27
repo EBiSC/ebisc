@@ -1,5 +1,6 @@
 
 config = {
+
     fields: [
         {
             name: 'biosamplesid'
@@ -18,8 +19,13 @@ config = {
             label: 'Cell type'
         }
     ]
-    query_fields: ['biosamplesid', 'celllinename', 'celllineprimarydisease', 'celllinecelltype']
 
+    query_fields: [
+        'biosamplesid'
+        'celllinename'
+        'celllinecelltype.analyzed'
+        'celllineprimarydisease.analyzed'
+    ]
 }
 
 module.exports = config

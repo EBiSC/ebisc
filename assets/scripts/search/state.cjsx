@@ -5,22 +5,23 @@ state = {
     filter:
         query: ''
         facets: [
-            # {
-            #     name: 'celllineaccepted'
-            #     label: 'Accepted'
-            #     items: [
-            #         {name: 'pending', checked: false}
-            #         {name: 'accepted', checked: false}
-            #         {name: 'rejected', checked: false}
-            #     ]
-            # }
-            # {
-            #     name: 'celllineprimarydisease'
-            #     label: 'Disease'
-            #     items: [
-            #         {name: 'Control', checked: false}
-            #     ]
-            # }
+            {
+                name: 'celllinecelltype'
+                label: 'Cell line type'
+                items: [
+                    {name: 'Dermal Fibroblasts'}
+                    {name: 'Foreskin Keratinocytes'}
+                    {name: 'Unknown'}
+                ]
+            }
+            {
+                name: 'celllineprimarydisease'
+                label: 'Disease'
+                items: [
+                    {name: 'Control'}
+                    {name: 'Long QT Syndrome-3'}
+                ]
+            }
         ]
     celllines: []
 }

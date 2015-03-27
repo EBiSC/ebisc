@@ -1,58 +1,119 @@
 _ = window._
 Elasticsearch = window.elasticsearch
 
+XRegExp = require('xregexp').XRegExp
+
 State = require './state'
 Config = require './config'
 
 elastic = Elasticsearch.Client
     hosts: 'localhost:9200'
 
+'''
+Example query:
 
-buildFacetFilter = (facet) ->
-
-    (item.name for item in facet.items when item.checked)
+GET ebisc/cellline/_search
+{
+  "query": {
+    "filtered": {
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "multi_match": {
+                "query": "control",
+                "type": "phrase_prefix",
+                "fields": [
+                  "biosamplesid",
+                  "celllinename",
+                  "celllinecelltype.analyzed",
+                  "celllineprimarydisease.analyzed"
+                ]
+              }
+            },
+            {
+              "multi_match": {
+                "query": "derma",
+                "type": "phrase_prefix",
+                "fields": [
+                  "biosamplesid",
+                  "celllinename",
+                  "celllinecelltype.analyzed",
+                  "celllineprimarydisease.analyzed"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "terms": {
+                "celllineprimarydisease": [
+                  "Control", "Foo"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+'''
 
 
 buildFacetFilters = () ->
 
-    filters = _.object([facet.name, buildFacetFilter(facet)] for facet in State.select('filter', 'facets').get() when buildFacetFilter(facet).length > 0)
+    buildTerms = (items) ->
+        (item.name for item in items when item.checked)
 
-    if _.size(filters)
-        terms: filters
+    (terms: "#{facet.name}": buildTerms(facet.items) for facet in State.select('filter', 'facets').get() when buildTerms(facet.items).length)
+
+
+buildFilter = () ->
+
+    filters = buildFacetFilters()
+
+    if not filters
+        return {}
     else
-        null
-
-
-buildQueryFilter = () ->
-
-    query = State.select('filter', 'query').get()
-
-    if query
-        words = (w.toLowerCase() for w in query.split(/\s+/) when w != '')
-        fields = Config.query_fields
-
-        # for each word check all fields using (OR - match any field)
-        parts = (({prefix: "#{field}": word} for field in fields) for word in words)
-        ('or': (f for f in w) for w in parts)
-    else
-        null
+        bool:
+            must: filters
 
 
 buildQuery = () ->
 
-    filters = (f for f in _.flatten([buildQueryFilter(), buildFacetFilters()]) when f)
+    queryString = _.trim(State.select('filter', 'query').get().toLowerCase())
 
-    if filters.length
-        constant_score:
-            filter:
-                and: filters
+    if not queryString
+        return match_all: {}
+
     else
-        match_all: {}
+        words = (w for w in XRegExp.split(queryString, XRegExp('[^(\\p{L}|\\d)]')) when w != '')
+
+        buildQueryMultiMatch = (word, fields) ->
+            multi_match:
+                query: word
+                type: 'phrase_prefix'
+                fields: fields
+
+        bool:
+            must: (buildQueryMultiMatch(word, Config.query_fields) for word in words)
+
+
+buildFilteredQuery = () ->
+
+    filtered:
+        query: buildQuery()
+        filter: buildFilter()
 
 
 search = () ->
 
-    query = buildQuery()
+    query = buildFilteredQuery()
 
     # console.debug '-- QUERY BODY --'
     # console.debug JSON.stringify(query, null, ' ')
@@ -70,7 +131,7 @@ search = () ->
     .error (error) ->
         console.log error
 
-State.select('filter').on('update', _.debounce(search, 100))
+State.select('filter').on('update', _.debounce(search, 200))
 
 
 module.exports =

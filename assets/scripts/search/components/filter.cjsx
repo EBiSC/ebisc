@@ -18,7 +18,7 @@ Facet = React.createClass
     render: () ->
         <div className="dropdown">
             <div className="dropdown-container">
-                <div className="dropdown-button">Accepted status</div>
+                <div className="dropdown-button">{@props.facet.label}</div>
                 <ul className="dropdown-menu checkbox">
                 {
                     (<Term key={i} item={item} cursor={@props.cursor.select('items').select(i)} /> for item, i in @props.facet.items)
