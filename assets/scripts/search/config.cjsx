@@ -11,6 +11,10 @@ config = {
             label: 'Cell line Name'
         }
         {
+            name: 'depositor'
+            label: 'Depositor'
+        }
+        {
             name: 'celllineprimarydisease'
             label: 'Disease'
         }
@@ -18,23 +22,36 @@ config = {
             name: 'celllinecelltype'
             label: 'Cell type'
         }
+        {
+            name: 'celllinenamesynonyms'
+            label: 'Cell line name synonims'
+        }
     ]
 
     query_fields: [
         'biosamplesid'
         'celllinename'
+        'depositor.analyzed'
         'celllinecelltype.analyzed'
         'celllineprimarydisease.analyzed'
+        'celllinenamesynonyms'
     ]
 
     facets: [
         {
-            name: 'celllinecelltype'
-            label: 'Cell line type'
-        }
-        {
             name: 'celllineprimarydisease'
             label: 'Disease'
+            selectedTerms: {}
+        }
+        {
+            name: 'celllinecelltype'
+            label: 'Cell line type'
+            selectedTerms: {}
+        }
+        {
+            name: 'depositor'
+            label: 'Depositor'
+            selectedTerms: {}
         }
     ]
 }

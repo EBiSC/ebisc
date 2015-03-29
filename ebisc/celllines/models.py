@@ -106,7 +106,9 @@ class Cellline(models.Model):
             'biosamplesid': self.biosamplesid,
             'celllinename': self.celllinename,
             'celllineprimarydisease': self.celllineprimarydisease.disease,
+            'depositor': self.celllineorganization.organization.organizationname,
             'celllinecelltype': self.celllinecelltype.celltype,
+            'celllinenamesynonyms': self.celllinenamesynonyms,
         }
 
 

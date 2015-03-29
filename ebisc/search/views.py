@@ -7,17 +7,7 @@ from ebisc.celllines.models import Cellline
 @login_required
 def search(request):
 
-    return render(request, 'search/search.html', {
-        'celllines': Cellline.objects.filter(celllineaccepted='accepted'),
-    })
-
-
-@login_required
-def search_develop(request):
-
-    return render(request, 'search/develop.html', {
-        # 'celllines': Cellline.objects.filter(celllineaccepted='accepted'),
-    })
+    return render(request, 'search/search.html', {})
 
 
 @login_required

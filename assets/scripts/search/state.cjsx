@@ -3,9 +3,9 @@ Baobab = require 'baobab'
 state = {
     filter:
         query: ''
-        facets: {}
+        facets: []
+    facetTerms: {}
     celllines: []
-    facets: []
 }
 
 options =

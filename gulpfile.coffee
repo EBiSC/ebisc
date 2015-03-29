@@ -137,6 +137,6 @@ gulp.task 'default', () ->
 
 onError = (error) ->
     gutil.beep()
-    gutil.log gutil.colors.red('Error'), error.message
+    gutil.log gutil.colors.red('Error'), error
 
 # -----------------------------------------------------------------------------

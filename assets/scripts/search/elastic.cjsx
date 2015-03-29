@@ -26,10 +26,9 @@ search = () ->
 
     .then (body) ->
         State.set('celllines', body.hits.hits)
-        State.set('facets', body.aggregations.facets)
+        State.set('facetTerms', body.aggregations.facets)
 
     .error (error) ->
-        console.log error
         alert('Error loading data.')
 
 # -----------------------------------------------------------------------------
@@ -78,10 +77,10 @@ buildFilter = () ->
 
 buildFacetFilters = () ->
 
-    buildTerms = (items) ->
-        (item.name for item in items when item.checked)
+    buildTerms = (terms) ->
+        (term for term, selected of terms when selected == true)
 
-    (terms: "#{facet.name}": buildTerms(facet.items) for facet in State.select('filter', 'facets').get() when buildTerms(facet.items).length)
+    (terms: "#{facet.name}": buildTerms(facet.selectedTerms) for facet in State.select('filter', 'facets').get() when buildTerms(facet.selectedTerms).length)
 
 
 # -----------------------------------------------------------------------------

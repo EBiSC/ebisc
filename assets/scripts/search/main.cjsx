@@ -6,8 +6,7 @@ Filter = require './components/filter'
 Search = require './components/search'
 Table = require './components/table'
 
-for facet in Config.facets
-    State.select('filter', 'facets').set(facet.name, {})
+State.select('filter').set('facets', Config.facets)
 
 State.select('filter').on('update', _.debounce(Elastic.search, 200))
 

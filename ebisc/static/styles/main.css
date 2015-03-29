@@ -525,7 +525,7 @@ table.data {
 body {
   background-color: #d6e6e9;
   background-image: url('/static/images/background.jpg');
-  background-size: cover;
+  background-size: 100% auto;
   padding: 10px;
   -webkit-font-feature-settings: "kern", "liga", "pnum";
   -moz-font-feature-settings: "kern", "liga", "pnum";

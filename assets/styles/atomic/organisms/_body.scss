@@ -1,7 +1,7 @@
 body {
   background-color: #d6e6e9;
   background-image: url('/static/images/background.jpg');
-  background-size: cover;
+  background-size: 100% auto;
   padding: 10px;
 
   @include font-feature-settings("kern", "liga", "pnum");
