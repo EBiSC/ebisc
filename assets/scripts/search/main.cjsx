@@ -9,7 +9,7 @@ TotalCount = require './components/total-count'
 
 State.select('filter').set('facets', Config.facets)
 
-State.select('filter').on('update', _.debounce(Elastic.search, 200))
+State.select('filter').on('update', _.debounce(Elastic.search, 150))
 
 React.render <TotalCount />, document.getElementById('total-count')
 
