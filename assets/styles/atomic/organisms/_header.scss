@@ -9,6 +9,10 @@ header {
     display: inline-block;
     margin-left: 40px;
 
+    @include breakpoint(map-get($breakpoints, medium)) {
+      margin-left: 15px;
+    }
+    
     .collapsible-menu-items
     {
       li a

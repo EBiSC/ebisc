@@ -1,6 +1,7 @@
 // Menu
 
 .collapsible-menu {
+  position: relative;
 
   button {
     outline: none;
@@ -8,10 +9,18 @@
 
   .collapsible-menu-toggle {
     display: none;
+  }
 
-    @include breakpoint(map-get($breakpoints, small)) {
+  @include breakpoint(map-get($breakpoints, small)) {
+    float: right;
+    
+    .collapsible-menu-toggle {
       display: block;
     }
+
+    // position: absolute;
+    // top: 0px;
+    // right: 20px;
   }
 
   .collapsible-menu-items {
@@ -19,6 +28,10 @@
       display: inline-block;
       margin-right: 25px;
       font-size: $base-font-size * 0.9;
+
+      &:last-child {
+        margin-right: 0px;
+      }
 
       a {
         color: $color-text;
