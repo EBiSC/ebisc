@@ -23,6 +23,54 @@ ol {
   }
 }
 
+
+@mixin thumbnail-links($cols) {
+  display: inline-block;
+
+  li {
+    padding: 20px;
+    text-align: center;
+
+    @include span($cols);
+
+    &:last-child {
+      @include span(last $cols);
+    }
+
+    .title {
+      margin: 0.5em 0 0.5em 0;
+      font-size: $font-size-large;
+    }
+
+    .blurb {
+      color: $color-text;
+      font-size: $font-size-small;
+
+      &:hover {
+        color: darken($color-text, 10%);
+      }
+    }
+
+    @include breakpoint(map-get($breakpoints, medium)) {
+      padding: 0px;
+    }
+  }        
+
+  @include breakpoint(map-get($breakpoints, small)) {
+    li {
+      @include span(12);
+      float: none;
+      display: block;
+      margin: 10px 0 30px 0;
+
+      &:last-child {
+        @include span(12);
+      }
+    }
+  }
+}
+
+
 dl {
   margin-bottom: $small-spacing;
 

@@ -12,78 +12,58 @@
     <img src="{% static 'images/cell-header.jpg' %}" alt="EBiSC">
 </div>
 
-<div class="about">
-
-<h1>European Bank for induced pluripotent Stem Cells</h1>
+<h1>The first European Bank for induced pluripotent Stem Cells</h1>
 
 <div class="lead">EBiSC is designed to address the increasing demand by iPSC researchers for quality-controlled, disease-relevant research grade iPSC lines, data and cell services. </div>
 
-<p>The central EBiSC facility will distribute existing cell lines from the catalogue and bank new lines as they are generated. The EBiSC cell line catalogue will support current and future EU-funded projects using iPSCs. It will also make future drug discovery and development more effective. It supports  a diversity of strategies from the straightforward exploratory target validation to the more complex patient stratification.</p>
+<div class="about">
 
-<p>During the initial “Hot Start” phase up to 64 iPS cell lines representing both disease backgrounds and normal controls will enter the EBiSC Foundational Collection. These iPS cell lines which are being expanded by the eight iPSC Centres have already been well characterised and are in most cases published.</p>
-
-</div>
-
-<div class="login">
-
-    <h2>Login</h2>
-
-    <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
-
-        <input type="hidden" name="" value="">
-
-        <label for="id_username">Username:</label><input id="id_username" maxlength="254" name="username" type="text">
-        <label for="id_password">Password:</label><input id="id_password" name="password" type="password">
-
-        <input type="hidden" name="next" value="">
-
-        <button>Submit</button>
-
-    </form>
+    <p>EBiSC partners are establishing a centralised European banking and distribution operation that will meet growing demand from academic, clinical, industrial (biotech, pharmaceutical) researchers as well as government-funded research organisations and charities. The operation will provide a diverse array of human disease-related iPSC lines as the main component of the cell line catalogue. The central EBiSC facility will distribute existing cell lines from the catalogue and bank new lines as they are generated. The EBiSC cell line catalogue will support current and future EU-funded projects using iPSCs. It will also make future drug discovery and development more effective. It supports  a diversity of strategies from the straightforward exploratory target validation to the more complex patient stratification.</p>
 
 </div>
 
-<hr>
+<div class="catalogue">
 
-<h2 class="center">About the EBiSC project</h2>
+    <a href="{% url 'search:search' %}"><button>Search the Cell Line Catalogue</button></a>
 
-<ul class="links">
-    <li>
-        <a href="http://www.ebisc.org/about-ebisc/the-project.php">
-            <div class="circle"></div>
-            <div class="title">The project</div>
-            <div class="blurb">
-                EBiSC is designed to address the increasing demand by iPSC researchers for quality-controlled, disease-relevant research grade iPSC lines, data and cell services.
-            </div>
-        </a>
-    </li>
-    <li>
-        <a href="http://www.ebisc.org/about-ebisc/main-work-groups.php">
-            <div class="circle"></div>
-            <div class="title">Main work groups</div>
-            <div class="blurb">
-                To ensure that the EBiSC project meets its main objective in demonstrating an EU-based iPSC banking operation, different work groups have been established to carry out the complex research activities planned.
-            </div>
-        </a>
-    </li>
-    <li>
-        <a href="http://www.ebisc.org/about-ebisc/the-bank.php">
-            <div class="circle"></div>
-            <div class="title">The Bank</div>
-            <div class="blurb">
-                EBiSC’s central repository and processing operation is located at the Babraham Research Campus (close to Cambridge, UK). This facility is used to expand and quality control iPSC lines.
-            </div>
-        </a>
-    </li>
-    <li>
-        <a href="http://www.ebisc.org/the-ebisc-catalogue/major-applications-of-ipsc.php">
-            <div class="circle"></div>
-            <div class="title">Applications of iPSC</div>
-            <div class="blurb">
-                Consistent supply of standardized, high quality iPSC lines from the EBiSC facility is envisioned to greatly facilitate many categories of research in this important area of stem cell science.
-            </div>
-        </a>
-    </li>
-</ul>
+    <p>During the initial “Hot Start” phase up to 64 iPS cell lines representing both disease backgrounds and normal controls will enter the EBiSC Foundational Collection. These iPS cell lines which are being expanded by the eight iPSC Centres have already been well characterised and are in most cases published.</p>
+
+</div>
+
+<div class="links">
+
+    <h2>About the EBiSC project</h2>
+
+    <ul>
+        <li>
+            <a href="http://www.ebisc.org/about-ebisc/the-bank.php">
+                <img src="{% static 'images/thumbs/banking-distribution.png' %}" alt="Banking and Distribution" width="120" height="120">
+                <div class="title">Banking and Distribution</div>
+                <div class="blurb">
+                    EBiSC’s central repository and processing operation is located at the Babraham Research Campus (close to Cambridge, UK). This facility is used to expand and quality control iPSC lines.
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="http://www.ebisc.org/about-ebisc/main-work-groups.php">
+                <img src="{% static 'images/thumbs/work-groups.png' %}" alt="Main Work Groups" width="120" height="120">
+                <div class="title">Main Work Groups</div>
+                <div class="blurb">
+                    To ensure that the EBiSC project meets its main objective in demonstrating an EU-based iPSC banking operation, different work groups have been established to carry out the complex research activities planned.
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="http://www.ebisc.org/about-ebisc/the-project.php">
+                <img src="{% static 'images/thumbs/project.png' %}" alt="The project" width="120" height="120">
+                <div class="title">The EBiSC project</div>
+                <div class="blurb">
+                    EBiSC is designed to address the increasing demand by iPSC researchers for quality-controlled, disease-relevant research grade iPSC lines, data and cell services.
+                </div>
+            </a>
+        </li>
+    </ul>
+
+</div>
 
 {% endblock %}

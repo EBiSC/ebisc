@@ -30,3 +30,14 @@ button {
     opacity: 0.5;
   }
 }
+
+@mixin button($color) {
+  background-color: $color;
+  border-color: $color;
+
+  &:hover,
+  &:focus {
+    background-color: darken($color, 5%);
+    border-color: darken($color, 5%);
+  }
+}

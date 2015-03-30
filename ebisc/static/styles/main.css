@@ -189,7 +189,7 @@ ul, ol {
   list-style-type: none;
   margin: 0;
   padding: 0; }
-  footer .support .links ul li, body.template-home article ul.links li, body.template-home article ol.links li {
+  footer .support .links ul li {
     display: inline-block; }
 
 dl {
@@ -426,7 +426,7 @@ hr {
   text-align: center; }
   .hero img {
     width: 100%;
-    margin-bottom: 10px; }
+    margin-bottom: 0px; }
 
 .collapsible-menu button {
   outline: none; }
@@ -839,7 +839,7 @@ body.template-grid article .grid-offset-12 {
   margin-left: 102.85714%; }
 
 body.template-home article .about {
-  width: 65.71429%;
+  width: 48.57143%;
   float: left;
   margin-right: 2.85714%; }
   @media  (max-width: 767px) {
@@ -847,47 +847,89 @@ body.template-home article .about {
       width: 100%;
       float: left;
       margin-right: 0; } }
-body.template-home article .login {
-  width: 31.42857%;
+body.template-home article .catalogue {
+  width: 48.57143%;
   float: left;
   margin-right: 0;
-  margin-top: 10px; }
+  padding: 6px 30px 10px 30px; }
+  body.template-home article .catalogue button {
+    background-color: #009fee;
+    border-color: #009fee;
+    font-size: 19.2px;
+    position: relative;
+    padding-right: 50px; }
+    body.template-home article .catalogue button:hover, body.template-home article .catalogue button:focus {
+      background-color: #008ed4;
+      border-color: #008ed4; }
+    body.template-home article .catalogue button:after {
+      color: white;
+      content: "\25B6";
+      display: block;
+      position: absolute;
+      right: 1em;
+      top: 0.8em; }
+  body.template-home article .catalogue p {
+    margin-top: 1em;
+    padding-right: 100px;
+    color: #797979; }
   @media  (max-width: 767px) {
-    body.template-home article .login {
+    body.template-home article .catalogue {
       width: 100%;
       float: left;
-      margin-right: 0; } }
-  body.template-home article .login h2 {
-    margin-top: 0;
-    color: #004e93; }
-body.template-home article hr {
+      margin-right: 0;
+      padding: 10px 0px 10px 0px; }
+      body.template-home article .catalogue p {
+        padding-right: 0px; } }
+body.template-home article .links {
   clear: both;
   padding-top: 2em; }
-body.template-home article .links {
-  margin-top: 2em; }
-  body.template-home article .links li {
-    width: 22.85714%;
-    float: left;
-    margin-right: 2.85714%;
-    text-align: center; }
-    body.template-home article .links li:last-child {
-      width: 22.85714%;
+  body.template-home article .links h2 {
+    margin-top: 0.5em;
+    margin-right: auto;
+    margin-left: auto;
+    padding-top: 1em;
+    border-top: 1px solid #dddddd;
+    width: 82.85714%;
+    text-align: center;
+    color: #004e93; }
+  body.template-home article .links ul {
+    display: inline-block;
+    margin-top: 0.5em; }
+    body.template-home article .links ul li {
+      padding: 20px;
+      text-align: center;
+      width: 31.42857%;
       float: left;
-      margin-right: 0; }
-    body.template-home article .links li .circle {
-      width: 120px;
-      height: 120px;
-      border-radius: 100px;
-      background-color: #ff9999;
-      margin: 0 auto; }
-    body.template-home article .links li .title {
-      margin: 1em 0 0.5em 0;
-      font-size: 19.2px; }
-    body.template-home article .links li .blurb {
-      color: #333333;
-      font-size: 14.4px; }
-      body.template-home article .links li .blurb:hover {
-        color: #1a1a1a; }
+      margin-right: 2.85714%; }
+      body.template-home article .links ul li:last-child {
+        width: 31.42857%;
+        float: left;
+        margin-right: 0; }
+      body.template-home article .links ul li .title {
+        margin: 0.5em 0 0.5em 0;
+        font-size: 19.2px; }
+      body.template-home article .links ul li .blurb {
+        color: #333333;
+        font-size: 14.4px; }
+        body.template-home article .links ul li .blurb:hover {
+          color: #1a1a1a; }
+      @media  (max-width: 991px) {
+        body.template-home article .links ul li {
+          padding: 0px; } }
+    @media  (max-width: 767px) {
+      body.template-home article .links ul li {
+        width: 100%;
+        float: left;
+        margin-left: 0;
+        margin-right: 0;
+        float: none;
+        display: block;
+        margin: 10px 0 30px 0; }
+        body.template-home article .links ul li:last-child {
+          width: 100%;
+          float: left;
+          margin-left: 0;
+          margin-right: 0; } }
 
 .login-container {
   text-align: center; }

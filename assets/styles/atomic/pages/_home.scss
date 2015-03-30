@@ -1,68 +1,69 @@
 body.template-home {
   article {
-
+    
     .about {
-      @include span(8);
+      @include span(6);
 
       @include breakpoint(map-get($breakpoints, small)) {
         @include span(last 12);
       }
     }
 
-    .login {
-      @include span(last 4);
+    .catalogue {
+      @include span(last 6);
+      padding: 6px 30px 10px 30px;
 
-      margin-top: 10px;
+      button {
+        @include button($color-blue-light);
+        font-size: $font-size-large;
+        position: relative;
+        padding-right: 50px;
+
+        &:after {
+          color: white;
+          content: "\25B6";
+          display: block;
+          position: absolute;
+          right: 1em;
+          top: 0.8em;
+        }
+      }
+
+      p {
+        margin-top: 1em;
+        padding-right: 100px;
+        color: $dark-gray;
+      }
 
       @include breakpoint(map-get($breakpoints, small)) {
         @include span(last 12);
-      }
+        padding: 10px 0px 10px 0px;
 
-      h2 {
-        margin-top: 0;
-        color: $action-color;
+        p {
+          padding-right: 0px;
+        }
       }
-    }
-
-    hr {
-      clear: both;
-      padding-top: 2em;
     }
 
     .links {
-      @extend %inline-ul;
-      margin-top: 2em;
+      clear: both;
+      padding-top: 2em;
 
-      li {
-        @include span(3);
-
-        &:last-child {
-          @include span(last 3);
-        }
+      h2 {
+        margin-top: 0.5em;
+        margin-right: auto;
+        margin-left: auto;
+        padding-top: 1em;
+        border-top: $base-border;      
+        width: span(10);
 
         text-align: center;
+        color: $action-color;
+      }
 
-        .circle {
-          width: 120px;
-          height: 120px;
-          border-radius: 100px;
-          background-color: lighten(red, 30%);
-          margin: 0 auto;
-        }
-
-        .title {
-          margin: 1em 0 0.5em 0;
-          font-size: $font-size-large;
-        }
-
-        .blurb {
-          color: $color-text;
-          font-size: $font-size-small;
-
-          &:hover {
-            color: darken($color-text, 10%);
-          }
-        }
+      ul {
+        @include thumbnail-links(4);
+        margin-top: 0.5em;
       }
     }
   }
