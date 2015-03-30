@@ -1,5 +1,6 @@
 header {
   @include organism;
+  position: relative;
 
   .logo {
     display: inline-block;
@@ -12,7 +13,7 @@ header {
     @include breakpoint(map-get($breakpoints, medium)) {
       margin-left: 15px;
     }
-    
+
     .collapsible-menu-items
     {
       li a
@@ -24,5 +25,9 @@ header {
   .user-account {
     float: right;
     font-size: $font-size-small;
+
+    @include breakpoint(map-get($breakpoints, small)) {
+      margin-top: 10px;
+    }
   }
 }

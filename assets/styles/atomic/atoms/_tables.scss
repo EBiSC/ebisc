@@ -15,6 +15,10 @@ td.label {
   white-space: nowrap;
   text-align: right;
   color: $dark-gray;
+
+  @include breakpoint(map-get($breakpoints, small)) {
+    white-space: normal;
+  }
 }
 
 th.title {

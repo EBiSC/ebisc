@@ -1,7 +1,6 @@
 // Menu
 
 .collapsible-menu {
-  position: relative;
 
   button {
     outline: none;
@@ -16,11 +15,8 @@
     
     .collapsible-menu-toggle {
       display: block;
+      float: right;
     }
-
-    // position: absolute;
-    // top: 0px;
-    // right: 20px;
   }
 
   .collapsible-menu-items {
@@ -52,8 +48,13 @@
       margin-left: 0;
       padding-left: 0;
 
+      text-align: right;
+      padding: 10px;
+
       li {
         display: block;
+        font-size: $font-size-large;
+        margin: 10px 0px 10px 0px;
       }
     }
   }

@@ -1,5 +1,23 @@
 body.template-home {
   article {
+
+    .hero {
+      margin: -30px -20px 30px -20px;
+      height: 245px;
+
+      @include breakpoint(map-get($breakpoints, medium)) {
+        height: 200px;
+      }
+
+      @include breakpoint(map-get($breakpoints, small)) {
+        height: 120px;
+      }
+
+      background-image: url('../images/cell-header.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+    }
     
     .about {
       @include span(6);
@@ -37,7 +55,8 @@ body.template-home {
 
       @include breakpoint(map-get($breakpoints, medium)) {
         button {
-          font-size: $base-font-size;
+          font-size: $base-font-size * 0.9;
+          padding-right: 30px;
         }
 
         p {
