@@ -27,7 +27,7 @@ DropdownMultiSelect = React.createClass
         window.removeEventListener('click', @hideMenu, true)
 
     render: () ->
-        <div className={classNames('dropdown': true, 'has-selection': @props.hasSelection)}>
+        <div className={classNames('dropdown': true, 'two-cols': @props.items.length >= 15, 'has-selection': @props.hasSelection)}>
             <div className="dropdown-container">
                 <div className="dropdown-button" onClick={@showMenu}>{@props.label}</div>
                 <ul className={classNames('dropdown-menu': true, 'checkbox': true, 'show-menu': @state.showMenu)}>
