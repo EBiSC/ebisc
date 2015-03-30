@@ -488,7 +488,18 @@ buildFacetFilters = function() {
 };
 
 buildAggregations = function() {
-  var facet;
+  var buildAgg, facet;
+  buildAgg = function(facet) {
+    return {
+      terms: {
+        field: facet.name,
+        order: {
+          _term: 'asc'
+        },
+        size: 1000
+      }
+    };
+  };
   if (!Config.facets.length) {
     return {};
   } else {
@@ -501,16 +512,7 @@ buildAggregations = function() {
           results = [];
           for (i = 0, len = ref.length; i < len; i++) {
             facet = ref[i];
-            results.push([
-              facet.name, {
-                terms: {
-                  field: facet.name,
-                  order: {
-                    _term: 'asc'
-                  }
-                }
-              }
-            ]);
+            results.push([facet.name, buildAgg(facet)]);
           }
           return results;
         })())

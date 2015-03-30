@@ -88,13 +88,19 @@ buildFacetFilters = () ->
 
 buildAggregations = () ->
 
+    buildAgg = (facet) ->
+        terms:
+            field: facet.name
+            order: _term: 'asc'
+            size: 1000
+
     if not Config.facets.length
         return {}
 
     else
         facets:
             global: {}
-            aggs: _.object([facet.name, terms: {field: facet.name, order: _term: 'asc'}] for facet in Config.facets)
+            aggs: _.object([facet.name, buildAgg(facet)] for facet in Config.facets)
 
 # -----------------------------------------------------------------------------
 
