@@ -27,6 +27,7 @@ search = () ->
     .then (body) ->
         State.set('celllines', body.hits.hits)
         State.set('facetTerms', body.aggregations.facets)
+        State.set('isLoaded', true)
 
     .error (error) ->
         alert('Error loading data.')

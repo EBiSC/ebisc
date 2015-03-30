@@ -7,6 +7,7 @@ Celllines = React.createClass
     mixins: [State.mixin]
 
     cursors:
+        isLoaded: ['isLoaded']
         celllines: ['celllines']
 
     render: () ->
@@ -24,6 +25,11 @@ Celllines = React.createClass
 
         rows = (buildRow(row, Config.fields) for row in @state.cursors.celllines)
 
-        <Table cols={Config.fields} rows={rows} />
+        <div>
+        {
+            if @state.cursors.isLoaded
+                <Table cols={Config.fields} rows={rows} />
+        }
+        </div>
 
 module.exports = Celllines        

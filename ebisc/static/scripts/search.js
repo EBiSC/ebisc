@@ -56,6 +56,7 @@ Table = require('./table');
 Celllines = React.createClass({
   mixins: [State.mixin],
   cursors: {
+    isLoaded: ['isLoaded'],
     celllines: ['celllines']
   },
   render: function() {
@@ -90,10 +91,10 @@ Celllines = React.createClass({
       }
       return results;
     }).call(this);
-    return React.createElement(Table, {
+    return React.createElement("div", null, (this.state.cursors.isLoaded ? React.createElement(Table, {
       "cols": Config.fields,
       "rows": rows
-    });
+    }) : void 0));
   }
 });
 
@@ -138,7 +139,10 @@ DropdownMultiSelect = React.createClass({
   render: function() {
     var item;
     return React.createElement("div", {
-      "className": "dropdown"
+      "className": classNames({
+        'dropdown': true,
+        'has-selection': this.props.hasSelection
+      })
     }, React.createElement("div", {
       "className": "dropdown-container"
     }, React.createElement("div", {
@@ -196,9 +200,7 @@ module.exports = DropdownMultiSelect;
 
 
 },{"classnames":23}],5:[function(require,module,exports){
-var Actions, DropdownMultiSelect, Facets, React, State;
-
-React = window.React;
+var Actions, DropdownMultiSelect, Facets, State;
 
 State = require('../state');
 
@@ -231,7 +233,7 @@ Facets = React.createClass({
     return results;
   },
   render: function() {
-    var facet, i, selectedTerms;
+    var facet, i, key, selectedTerms, terms, value;
     return React.createElement("div", {
       "className": "filter-group"
     }, ((function() {
@@ -241,13 +243,25 @@ Facets = React.createClass({
         results = [];
         for (i = j = 0, len = ref.length; j < len; i = ++j) {
           facet = ref[i];
-          selectedTerms = this.state.cursors.facets[_.findIndex(this.state.cursors.facets, {
+          terms = this.state.cursors.facets[_.findIndex(this.state.cursors.facets, {
             name: facet.name
           })].selectedTerms;
+          selectedTerms = _.object((function() {
+            var results1;
+            results1 = [];
+            for (key in terms) {
+              value = terms[key];
+              if (value === true) {
+                results1.push([key, value]);
+              }
+            }
+            return results1;
+          })());
           results.push(React.createElement(DropdownMultiSelect, {
             "key": facet.name,
             "name": facet.name,
             "label": facet.label,
+            "hasSelection": _.size(selectedTerms) > 0,
             "items": this.getItems(facet.name, selectedTerms),
             "action": _.partial(Actions.setFilterFacetTerm, facet.name)
           }));
@@ -270,6 +284,7 @@ State = require('../state');
 Search = React.createClass({
   mixins: [State.mixin],
   cursors: {
+    isLoaded: ['isLoaded'],
     query: ['filter', 'query']
   },
   getInitialState: function() {
@@ -278,12 +293,12 @@ Search = React.createClass({
     };
   },
   render: function() {
-    return React.createElement("input", {
+    return React.createElement("div", null, (this.state.cursors.isLoaded ? React.createElement("input", {
       "type": "text",
       "placeholder": "Search",
       "value": this.state.query,
       "onChange": this.handleChange
-    });
+    }) : void 0));
   },
   handleChange: function(e) {
     this.setState({
@@ -436,7 +451,8 @@ search = function() {
     body: body
   }).then(function(body) {
     State.set('celllines', body.hits.hits);
-    return State.set('facetTerms', body.aggregations.facets);
+    State.set('facetTerms', body.aggregations.facets);
+    return State.set('isLoaded', true);
   }).error(function(error) {
     return alert('Error loading data.');
   });
@@ -632,7 +648,8 @@ state = {
     facets: []
   },
   facetTerms: {},
-  celllines: []
+  celllines: [],
+  isLoaded: false
 };
 
 options = {

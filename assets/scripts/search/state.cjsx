@@ -6,6 +6,7 @@ state = {
         facets: []
     facetTerms: {}
     celllines: []
+    isLoaded: false
 }
 
 options =

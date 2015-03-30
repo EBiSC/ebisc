@@ -1,7 +1,5 @@
-React = window.React
 State = require '../state'
 Actions = require '../actions'
-
 DropdownMultiSelect = require './dropdown-multi-select'
 
 Facets = React.createClass
@@ -28,8 +26,9 @@ Facets = React.createClass
         {
             if _.size(@state.cursors.facetTerms)
                 for facet, i in @state.cursors.facets
-                    selectedTerms = @state.cursors.facets[_.findIndex(@state.cursors.facets, {name: facet.name})].selectedTerms
-                    <DropdownMultiSelect key={facet.name} name={facet.name} label={facet.label} items={@getItems(facet.name, selectedTerms)} action={_.partial(Actions.setFilterFacetTerm, facet.name)}/>
+                    terms = @state.cursors.facets[_.findIndex(@state.cursors.facets, {name: facet.name})].selectedTerms
+                    selectedTerms = _.object(([key, value] for key, value of terms when value == true))
+                    <DropdownMultiSelect key={facet.name} name={facet.name} label={facet.label} hasSelection={_.size(selectedTerms) > 0} items={@getItems(facet.name, selectedTerms)} action={_.partial(Actions.setFilterFacetTerm, facet.name)}/>
         }
         </div>
 
