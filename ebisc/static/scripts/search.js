@@ -504,7 +504,10 @@ buildAggregations = function() {
             results.push([
               facet.name, {
                 terms: {
-                  field: facet.name
+                  field: facet.name,
+                  order: {
+                    _term: 'asc'
+                  }
                 }
               }
             ]);
@@ -520,7 +523,7 @@ module.exports = {
   search: search
 };
 
-'\nGET /ebisc/cellline/_search\n{\n  "query": {\n    "filtered": {\n      "query": {\n        "bool": {\n          "must": [\n            {\n              "multi_match": {\n                "query": "control",\n                "type": "phrase_prefix",\n                "fields": [\n                  "biosamplesid",\n                  "celllinename",\n                  "celllinecelltype.analyzed",\n                  "celllineprimarydisease.analyzed"\n                ]\n              }\n            },\n            {\n              "multi_match": {\n                "query": "derma",\n                "type": "phrase_prefix",\n                "fields": [\n                  "biosamplesid",\n                  "celllinename",\n                  "celllinecelltype.analyzed",\n                  "celllineprimarydisease.analyzed"\n                ]\n              }\n            }\n          ]\n        }\n      },\n      "filter": {\n        "bool": {\n          "must": [\n            {\n              "terms": {\n                "celllineprimarydisease": [\n                  "Control", "Foo"\n                ]\n              }\n            }\n          ]\n        }\n      }\n    }\n  },\n  "aggs": {\n    "facets": {\n      "global": {},\n      "aggs": {\n        "celllinetype": {\n          "terms": {\n            "field": "celllinecelltype"\n          }\n        },\n        "disease": {\n          "terms": {\n            "field": "celllineprimarydisease"\n          }\n        }\n      }\n    }\n  }  \n}\n';
+'\nGET /ebisc/cellline/_search\n{\n  "query": {\n    "filtered": {\n      "query": {\n        "bool": {\n          "must": [\n            {\n              "multi_match": {\n                "query": "control",\n                "type": "phrase_prefix",\n                "fields": [\n                  "biosamplesid",\n                  "celllinename",\n                  "celllinecelltype.analyzed",\n                  "celllineprimarydisease.analyzed"\n                ]\n              }\n            },\n            {\n              "multi_match": {\n                "query": "derma",\n                "type": "phrase_prefix",\n                "fields": [\n                  "biosamplesid",\n                  "celllinename",\n                  "celllinecelltype.analyzed",\n                  "celllineprimarydisease.analyzed"\n                ]\n              }\n            }\n          ]\n        }\n      },\n      "filter": {\n        "bool": {\n          "must": [\n            {\n              "terms": {\n                "celllineprimarydisease": [\n                  "Control",\n                  "Foo"\n                ]\n              }\n            }\n          ]\n        }\n      }\n    }\n  },\n  "aggs": {\n    "facets": {\n      "global": {},\n      "aggs": {\n        "celllinetypes": {\n          "terms": {\n            "field": "celllinecelltype",\n            "order": {\n              "_term": "asc"\n            }\n          }\n        },\n        "diseases": {\n          "terms": {\n            "field": "celllineprimarydisease",\n            "order": {\n              "_term": "asc"\n            }\n          }\n        }\n      }\n    }\n  }\n}\n';
 
 
 

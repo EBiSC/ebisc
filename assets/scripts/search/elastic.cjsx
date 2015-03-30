@@ -94,7 +94,7 @@ buildAggregations = () ->
     else
         facets:
             global: {}
-            aggs: _.object([facet.name, terms: field: facet.name] for facet in Config.facets)
+            aggs: _.object([facet.name, terms: {field: facet.name, order: _term: 'asc'}] for facet in Config.facets)
 
 # -----------------------------------------------------------------------------
 
@@ -146,7 +146,8 @@ GET /ebisc/cellline/_search
             {
               "terms": {
                 "celllineprimarydisease": [
-                  "Control", "Foo"
+                  "Control",
+                  "Foo"
                 ]
               }
             }
@@ -159,19 +160,25 @@ GET /ebisc/cellline/_search
     "facets": {
       "global": {},
       "aggs": {
-        "celllinetype": {
+        "celllinetypes": {
           "terms": {
-            "field": "celllinecelltype"
+            "field": "celllinecelltype",
+            "order": {
+              "_term": "asc"
+            }
           }
         },
-        "disease": {
+        "diseases": {
           "terms": {
-            "field": "celllineprimarydisease"
+            "field": "celllineprimarydisease",
+            "order": {
+              "_term": "asc"
+            }
           }
         }
       }
     }
-  }  
+  }
 }
 
 '''
