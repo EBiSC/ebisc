@@ -535,11 +535,21 @@ hr {
         color: #004e93;
         background: white; }
 
-#filter {
+.cell-line-filter #filter {
   margin: 40px 0 20px 0; }
-
-#search {
-  margin-bottom: 40px; }
+.cell-line-filter #total-count {
+  float: right;
+  margin-right: 0.5em; }
+  .cell-line-filter #total-count .count {
+    font-size: 240%;
+    color: #009fee; }
+  .cell-line-filter #total-count .unit {
+    margin-left: 0.4em;
+    font-size: 19.2px;
+    color: #797979; }
+.cell-line-filter #search {
+  margin-bottom: 40px;
+  width: 65.71429%; }
 
 table {
   border-collapse: collapse; }

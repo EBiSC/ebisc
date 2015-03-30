@@ -1,8 +1,27 @@
-#filter {
-  margin: 40px 0 20px 0;
-}
+.cell-line-filter {
 
-#search {
-  margin-bottom: 40px;
-}
+  #filter {
+    margin: 40px 0 20px 0;
+  }
 
+  #total-count {
+    float: right;
+    margin-right: 0.5em;
+
+    .count {
+      font-size: 240%;
+      color: $color-blue-light;
+    }
+
+    .unit {
+      margin-left: 0.4em;
+      font-size: $font-size-large;
+      color: $dark-gray;
+    }
+  }
+
+  #search {
+    margin-bottom: 40px;
+    width: span(8);
+  }
+}

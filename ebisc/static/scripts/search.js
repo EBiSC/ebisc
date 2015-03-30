@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Celllines, Config, Elastic, Filter, Search, State;
+var Celllines, Config, Elastic, Filter, Search, State, TotalCount;
 
 Config = require('./config');
 
@@ -13,19 +13,23 @@ Search = require('./components/search');
 
 Celllines = require('./components/celllines');
 
+TotalCount = require('./components/total-count');
+
 State.select('filter').set('facets', Config.facets);
 
 State.select('filter').on('update', _.debounce(Elastic.search, 200));
 
-React.render(React.createElement(Search, null), document.getElementById('search'));
+React.render(React.createElement(TotalCount, null), document.getElementById('total-count'));
 
 React.render(React.createElement(Filter, null), document.getElementById('filter'));
+
+React.render(React.createElement(Search, null), document.getElementById('search'));
 
 React.render(React.createElement(Celllines, null), document.getElementById('celllines'));
 
 
 
-},{"./components/celllines":3,"./components/filter":5,"./components/search":6,"./config":8,"./elastic":9,"./state":10}],2:[function(require,module,exports){
+},{"./components/celllines":3,"./components/filter":5,"./components/search":6,"./components/total-count":8,"./config":9,"./elastic":10,"./state":11}],2:[function(require,module,exports){
 var State, setFilterFacetTerm;
 
 State = require('./state');
@@ -44,7 +48,7 @@ module.exports = {
 
 
 
-},{"./state":10}],3:[function(require,module,exports){
+},{"./state":11}],3:[function(require,module,exports){
 var Celllines, Config, State, Table;
 
 Config = require('../config');
@@ -102,7 +106,7 @@ module.exports = Celllines;
 
 
 
-},{"../config":8,"../state":10,"./table":7}],4:[function(require,module,exports){
+},{"../config":9,"../state":11,"./table":7}],4:[function(require,module,exports){
 var DropdownMultiSelect, Item, classNames;
 
 classNames = require('classnames');
@@ -199,7 +203,7 @@ module.exports = DropdownMultiSelect;
 
 
 
-},{"classnames":23}],5:[function(require,module,exports){
+},{"classnames":24}],5:[function(require,module,exports){
 var Actions, DropdownMultiSelect, Facets, State;
 
 State = require('../state');
@@ -276,7 +280,7 @@ module.exports = Facets;
 
 
 
-},{"../actions":2,"../state":10,"./dropdown-multi-select":4}],6:[function(require,module,exports){
+},{"../actions":2,"../state":11,"./dropdown-multi-select":4}],6:[function(require,module,exports){
 var Search, State;
 
 State = require('../state');
@@ -312,7 +316,7 @@ module.exports = Search;
 
 
 
-},{"../state":10}],7:[function(require,module,exports){
+},{"../state":11}],7:[function(require,module,exports){
 var Table, Tbody, Thead;
 
 Table = React.createClass({
@@ -379,6 +383,31 @@ module.exports = Table;
 
 
 },{}],8:[function(require,module,exports){
+var State, TotalCount,
+  modulo = function(a, b) { return (+a % (b = +b) + b) % b; };
+
+State = require('../state');
+
+TotalCount = React.createClass({
+  mixins: [State.mixin],
+  cursors: {
+    isLoaded: ['isLoaded'],
+    celllines: ['celllines']
+  },
+  render: function() {
+    return React.createElement("div", null, (this.state.cursors.isLoaded ? React.createElement("div", null, React.createElement("span", {
+      "className": "count"
+    }, this.state.cursors.celllines.length), React.createElement("span", {
+      "className": "unit"
+    }, modulo(this.state.cursors.celllines.length, 100) === 1 && 'cell line' || 'cell lines')) : void 0));
+  }
+});
+
+module.exports = TotalCount;
+
+
+
+},{"../state":11}],9:[function(require,module,exports){
 var config;
 
 config = {
@@ -425,7 +454,7 @@ module.exports = config;
 
 
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var Config, State, XRegExp, buildAggregations, buildFacetFilters, buildFilter, buildFilteredQuery, buildQuery, elastic, search;
 
 XRegExp = require('xregexp').XRegExp;
@@ -637,7 +666,7 @@ module.exports = {
 
 
 
-},{"./config":8,"./state":10,"xregexp":24}],10:[function(require,module,exports){
+},{"./config":9,"./state":11,"xregexp":25}],11:[function(require,module,exports){
 var Baobab, options, state;
 
 Baobab = require('baobab');
@@ -661,7 +690,7 @@ module.exports = new Baobab(state, options);
 
 
 
-},{"baobab":12}],11:[function(require,module,exports){
+},{"baobab":13}],12:[function(require,module,exports){
 /**
  * Baobab Default Options
  * =======================
@@ -700,7 +729,7 @@ module.exports = {
   validate: null
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /**
  * Baobab Public Interface
  * ========================
@@ -721,7 +750,7 @@ Baobab.getIn = helpers.getIn;
 // Exporting
 module.exports = Baobab;
 
-},{"./src/baobab.js":15,"./src/helpers.js":18}],13:[function(require,module,exports){
+},{"./src/baobab.js":16,"./src/helpers.js":19}],14:[function(require,module,exports){
 (function() {
   'use strict';
 
@@ -1264,7 +1293,7 @@ module.exports = Baobab;
     this.Emitter = Emitter;
 }).call(this);
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /**
  * typology.js - A data validation library for Node.js and the browser,
  *
@@ -1865,7 +1894,7 @@ module.exports = Baobab;
     this.types = types;
 })(this);
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /**
  * Baobab Data Structure
  * ======================
@@ -2197,7 +2226,7 @@ Baobab.prototype.toJSON = function() {
  */
 module.exports = Baobab;
 
-},{"../defaults.js":11,"./cursor.js":17,"./helpers.js":18,"./merge.js":19,"./mixins.js":20,"./type.js":21,"./update.js":22,"emmett":13,"typology":14}],16:[function(require,module,exports){
+},{"../defaults.js":12,"./cursor.js":18,"./helpers.js":19,"./merge.js":20,"./mixins.js":21,"./type.js":22,"./update.js":23,"emmett":14,"typology":15}],17:[function(require,module,exports){
 /**
  * Baobab Cursor Combination
  * ==========================
@@ -2364,7 +2393,7 @@ Combination.prototype.release = function() {
  */
 module.exports = Combination;
 
-},{"./helpers.js":18,"./type.js":21,"emmett":13}],17:[function(require,module,exports){
+},{"./helpers.js":19,"./type.js":22,"emmett":14}],18:[function(require,module,exports){
 /**
  * Baobab Cursor Abstraction
  * ==========================
@@ -2754,7 +2783,7 @@ type.Cursor = function (value) {
  */
 module.exports = Cursor;
 
-},{"./combination.js":16,"./helpers.js":18,"./mixins.js":20,"./type.js":21,"emmett":13}],18:[function(require,module,exports){
+},{"./combination.js":17,"./helpers.js":19,"./mixins.js":21,"./type.js":22,"emmett":14}],19:[function(require,module,exports){
 /**
  * Baobab Helpers
  * ===============
@@ -3014,7 +3043,7 @@ module.exports = {
   solvePath: solvePath
 };
 
-},{"./type.js":21}],19:[function(require,module,exports){
+},{"./type.js":22}],20:[function(require,module,exports){
 /**
  * Baobab Merge
  * =============
@@ -3128,7 +3157,7 @@ function merge() {
 
 module.exports = merge;
 
-},{"./helpers.js":18,"./type.js":21}],20:[function(require,module,exports){
+},{"./helpers.js":19,"./type.js":22}],21:[function(require,module,exports){
 /**
  * Baobab React Mixins
  * ====================
@@ -3278,7 +3307,7 @@ module.exports = {
   }
 };
 
-},{"./combination.js":16,"./type.js":21}],21:[function(require,module,exports){
+},{"./combination.js":17,"./type.js":22}],22:[function(require,module,exports){
 /**
  * Baobab Type Checking
  * =====================
@@ -3394,7 +3423,7 @@ type.ComplexPath = function (value) {
 
 module.exports = type;
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /**
  * Baobab Update
  * ==============
@@ -3569,7 +3598,7 @@ function update(target, spec, opts) {
 // Exporting
 module.exports = update;
 
-},{"./helpers.js":18,"./type.js":21}],23:[function(require,module,exports){
+},{"./helpers.js":19,"./type.js":22}],24:[function(require,module,exports){
 function classNames() {
 	var classes = '';
 	var arg;
@@ -3601,7 +3630,7 @@ if (typeof module !== 'undefined' && module.exports) {
 	module.exports = classNames;
 }
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 
 /***** xregexp.js *****/
 
