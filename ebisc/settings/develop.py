@@ -3,6 +3,8 @@ from .base import *
 DEBUG = True
 TEMPLATE_DEBUG = True
 
+INTERNAL_IPS = ['127.0.0.1']
+
 # -----------------------------------------------------------------------------
 # Database
 

@@ -4,6 +4,8 @@ gulpif = require 'gulp-if'
 concat = require 'gulp-concat'
 source = require('vinyl-source-stream')
 buffer = require('vinyl-buffer')
+argv = require('yargs').argv
+production = !!(argv.production)
 
 sourcemaps = require 'gulp-sourcemaps'
 
@@ -32,6 +34,7 @@ processStyles = (src) ->
         .pipe sourcemaps.init()
         .pipe sass
             errLogToConsole: true
+            outputStyle: 'compressed'
         .on('error', onError)
         .pipe sourcemaps.write('maps')
         .pipe gulp.dest("#{PROJECT}/static/styles/")
@@ -79,7 +82,7 @@ browserifyApp = (src, target, watch=false) ->
             .pipe source(target)
                 .pipe buffer()
                 .pipe sourcemaps.init(loadMaps: true)
-                # .pipe uglify()
+                .pipe gulpif(production, uglify())
                 .pipe sourcemaps.write('maps')
             .pipe gulp.dest("#{PROJECT}/static/scripts/")
             .pipe browserSync.reload(stream: true)
