@@ -4,18 +4,20 @@
 
 {% block article %}
 
-<h1>Login</h1>
+<div class="login-container">
+    <div class="login">
+        <h1>Login</h1>
+        <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
 
-<form method="post" action="{% url 'django.contrib.auth.views.login' %}" class="login">
+            {% csrf_token %}
 
-    {% csrf_token %}
+            {{ form }}
 
-    {{ form }}
+            <input type="hidden" name="next" value="{{ next }}" />
 
-    <input type="hidden" name="next" value="{{ next }}" />
+            <button>Submit</button>
 
-    <button>Submit</button>
-
-</form>
-
+        </form>
+    </div>
+</div>
 {% endblock %}

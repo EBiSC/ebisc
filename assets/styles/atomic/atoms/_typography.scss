@@ -23,6 +23,7 @@ h1 {
 }
 
 h2 {
+  margin-top: 1.5em;
   font-size: $base-font-size * 1.8;
 }
 
@@ -53,4 +54,20 @@ hr {
   border-right: none;
   border-top: none;
   margin: $base-spacing 0;
+}
+
+.lead {
+  font-size: $font-size-large * 1.2;
+  color: darken($color-text, 10%);
+  margin: 0 0 1.2em 0;
+}
+
+.hero {
+  margin: -30px -20px 30px -20px;
+  text-align: center;
+
+  img {
+    width: 100%;
+    margin-bottom: 10px;
+  }
 }

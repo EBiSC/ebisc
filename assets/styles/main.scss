@@ -19,6 +19,7 @@
 @import 'atomic/atoms/typography';
 
 @import 'atomic/molecules/main';
+@import 'atomic/molecules/forms';
 @import 'atomic/molecules/pagination';
 @import 'atomic/molecules/tables';
 
@@ -32,6 +33,8 @@
 @import 'atomic/organisms/footer';
 
 @import 'atomic/templates/default';
+@import 'atomic/templates/with-sidebar';
 @import 'atomic/templates/grid';
 
 @import 'atomic/pages/home';
+@import 'atomic/pages/login';

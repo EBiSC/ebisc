@@ -1,7 +1,10 @@
-body.template-home {
+body.template-with-sidebar {
   article {
+    .lead {
+      @include span(last 12);
+    }
 
-    .about {
+    .main {
       @include span(8);
 
       @include breakpoint(map-get($breakpoints, small)) {
@@ -9,21 +12,12 @@ body.template-home {
       }
     }
 
-    .login {
+    .sidebar {
       @include span(last 4);
 
       @include breakpoint(map-get($breakpoints, small)) {
         @include span(last 12);
       }
-
-      h2 {
-        margin-top: 0;
-      }
-    }
-
-    hr {
-      clear: both;
-      padding-top: 2em;
     }
   }
 }

@@ -1,10 +1,85 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
+{% block body-class %}template-home{% endblock%}
+
+{% block full-title %}EBiSC - European Bank for induced pluripotent Stem Cells{% endblock %}
+
 {% block article %}
 
-{% block full-title %}{% endblock %}
+<div class="hero">
+    <img src="{% static 'images/cell-header.jpg' %}" alt="EBiSC">
+</div>
 
-{% block article-content %}
-{% endblock %}
+<div class="about">
+
+<h1>The first European Bank for induced pluripotent Stem Cells</h1>
+
+<div class="lead">EBiSC is designed to address the increasing demand by iPSC researchers for quality-controlled, disease-relevant research grade iPSC lines, data and cell services. </div>
+
+<p>The central EBiSC facility will distribute existing cell lines from the catalogue and bank new lines as they are generated. The EBiSC cell line catalogue will support current and future EU-funded projects using iPSCs. It will also make future drug discovery and development more effective. It supports  a diversity of strategies from the straightforward exploratory target validation to the more complex patient stratification.</p>
+
+<p>During the initial “Hot Start” phase up to 64 iPS cell lines representing both disease backgrounds and normal controls will enter the EBiSC Foundational Collection. These iPS cell lines which are being expanded by the eight iPSC Centres have already been well characterised and are in most cases published.</p>
+
+</div>
+
+<div class="login">
+
+    <h2>Login</h2>
+
+    <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
+
+        <input type="hidden" name="" value="">
+
+        <label for="id_username">Username:</label><input id="id_username" maxlength="254" name="username" type="text">
+        <label for="id_password">Password:</label><input id="id_password" name="password" type="password">
+
+        <input type="hidden" name="next" value="">
+
+        <button>Submit</button>
+
+    </form>
+
+</div>
+
+<hr>
+
+<h2 class="center">About the EBiSC project</h2>
+
+<ul class="">
+    <li>
+        <a href="http://www.ebisc.org/about-ebisc/the-project.php">
+            <div class="title">The project</div>
+            <div class="blurb">
+                EBiSC is designed to address the increasing demand by iPSC researchers for quality-controlled, disease-relevant research grade iPSC lines, data and cell services. Its goal is to demonstrate an operational banking and distribution service of iPSC lines after 3 years and to establish subsequently for Europe a centralised, not-for-profit bank providing all qualified users with access to scalable, cost-efficient and customised products.
+            </div>
+        </a>
+    </li>
+    <li>
+        <a href="http://www.ebisc.org/about-ebisc/main-work-groups.php">
+            <div class="title">Main work groups</div>
+            <div class="blurb">
+                To ensure that the EBiSC project meets its main objective in demonstrating an EU-based iPSC banking operation, different work groups have been established to carry out the complex research activities planned.
+            </div>
+        </a>
+    </li>
+    <li>
+        <a href="http://www.ebisc.org/about-ebisc/the-bank.php">
+            <div class="title">The Bank</div>
+            <div class="blurb">
+                EBiSC’s central repository and processing operation will be located at the Babraham Research Campus (close to Cambridge, UK). The facility will be operated by Roslin Cells and be used to expand and quality control iPSC lines before they enter the EBiSC catalogue. 
+            </div>
+        </a>
+    </li>
+    <li>
+        <a href="http://www.ebisc.org/the-ebisc-catalogue/major-applications-of-ipsc.php">
+            <div class="title">Major applications of iPSC</div>
+            <div class="blurb">
+                Consistent supply of standardized, high quality iPSC lines from the EBiSC facility is envisioned to greatly facilitate many categories of research in this important area of stem cell science. These span from the intricacies of the mechanism of reprogramming to factors determining pluripotency and how individual cell fates are programmed in stem cells.
+            </div>
+        </a>
+    </li>
+</ul>
 
 {% endblock %}

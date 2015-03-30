@@ -21,3 +21,13 @@ picture {
 a img {
   border: none;
 }
+
+.hide-small {
+  @include breakpoint(map-get($breakpoints, small)) {
+    display: none;
+  }
+}
+
+.center {
+  text-align: center;
+}

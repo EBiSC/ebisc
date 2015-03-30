@@ -1,0 +1,19 @@
+.login-container {
+  text-align: center;
+
+  .login {
+
+    margin: 1em auto;
+    text-align: left;
+
+    width: span(5);
+
+    @include breakpoint(map-get($breakpoints, medium)) {
+      width: span(8);
+    }
+
+    @include breakpoint(map-get($breakpoints, small)) {
+      width: span(12);
+    }
+  }
+}
