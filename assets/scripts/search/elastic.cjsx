@@ -88,19 +88,40 @@ buildFacetFilters = () ->
 
 buildAggregations = () ->
 
-    buildAgg = (facet) ->
-        terms:
-            field: facet.name
-            order: _term: 'asc'
-            size: 1000
+    facets = State.select('filter', 'facets').get()
 
-    if not Config.facets.length
+    if not facets.length
         return {}
 
     else
+
+        buildAgg = (facet, filters) ->
+
+            # If there are filters for other facets, use them to filter this facet (but do not use filter for this facet)
+            otherFilters = (filter for filter in filters when not (facet.name of filter.terms))
+
+            terms = 
+                field: facet.name
+                order: _term: 'asc'
+                size: 1000
+
+
+            if not otherFilters.length
+                terms: terms
+
+            else
+                filter:
+                    bool:
+                        must: otherFilters
+                aggs:
+                    facet:
+                        terms: terms
+
+        filters = buildFacetFilters()
+
         facets:
             global: {}
-            aggs: _.object([facet.name, buildAgg(facet)] for facet in Config.facets)
+            aggs: _.object([facet.name, buildAgg(facet, filters)] for facet in facets)
 
 # -----------------------------------------------------------------------------
 
@@ -152,8 +173,7 @@ GET /ebisc/cellline/_search
             {
               "terms": {
                 "celllineprimarydisease": [
-                  "Control",
-                  "Foo"
+                  "Control"
                 ]
               }
             }
@@ -167,10 +187,28 @@ GET /ebisc/cellline/_search
       "global": {},
       "aggs": {
         "celllinetypes": {
-          "terms": {
-            "field": "celllinecelltype",
-            "order": {
-              "_term": "asc"
+          "filter": {
+            "bool": {
+              "must": [
+                {
+                  "terms": {
+                    "celllineprimarydisease": [
+                      "Control"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "aggs": {
+            "facet": {
+              "terms": {
+                "field": "celllinecelltype",
+                "size": 100,
+                "order": {
+                  "_term": "asc"
+                }
+              }
             }
           }
         },

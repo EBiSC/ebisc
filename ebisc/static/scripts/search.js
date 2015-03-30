@@ -158,11 +158,15 @@ Facets = React.createClass({
     facetTerms: ['facetTerms']
   },
   getItems: function(facet) {
-    var j, len, ref, results, term;
-    ref = this.state.cursors.facetTerms[facet].buckets;
+    var j, len, results, term, terms;
+    if ('buckets' in this.state.cursors.facetTerms[facet]) {
+      terms = this.state.cursors.facetTerms[facet].buckets;
+    } else {
+      terms = this.state.cursors.facetTerms[facet]['facet'].buckets;
+    }
     results = [];
-    for (j = 0, len = ref.length; j < len; j++) {
-      term = ref[j];
+    for (j = 0, len = terms.length; j < len; j++) {
+      term = terms[j];
       results.push({
         name: term.key,
         label: term.key + " (" + term.doc_count + ")"
@@ -488,31 +492,60 @@ buildFacetFilters = function() {
 };
 
 buildAggregations = function() {
-  var buildAgg, facet;
-  buildAgg = function(facet) {
-    return {
-      terms: {
+  var buildAgg, facet, facets, filters;
+  facets = State.select('filter', 'facets').get();
+  if (!facets.length) {
+    return {};
+  } else {
+    buildAgg = function(facet, filters) {
+      var filter, otherFilters, terms;
+      otherFilters = (function() {
+        var i, len, results;
+        results = [];
+        for (i = 0, len = filters.length; i < len; i++) {
+          filter = filters[i];
+          if (!(facet.name in filter.terms)) {
+            results.push(filter);
+          }
+        }
+        return results;
+      })();
+      terms = {
         field: facet.name,
         order: {
           _term: 'asc'
         },
         size: 1000
+      };
+      if (!otherFilters.length) {
+        return {
+          terms: terms
+        };
+      } else {
+        return {
+          filter: {
+            bool: {
+              must: otherFilters
+            }
+          },
+          aggs: {
+            facet: {
+              terms: terms
+            }
+          }
+        };
       }
     };
-  };
-  if (!Config.facets.length) {
-    return {};
-  } else {
+    filters = buildFacetFilters();
     return {
       facets: {
         global: {},
         aggs: _.object((function() {
-          var i, len, ref, results;
-          ref = Config.facets;
+          var i, len, results;
           results = [];
-          for (i = 0, len = ref.length; i < len; i++) {
-            facet = ref[i];
-            results.push([facet.name, buildAgg(facet)]);
+          for (i = 0, len = facets.length; i < len; i++) {
+            facet = facets[i];
+            results.push([facet.name, buildAgg(facet, filters)]);
           }
           return results;
         })())
@@ -525,7 +558,7 @@ module.exports = {
   search: search
 };
 
-'\nGET /ebisc/cellline/_search\n{\n  "query": {\n    "filtered": {\n      "query": {\n        "bool": {\n          "must": [\n            {\n              "multi_match": {\n                "query": "control",\n                "type": "phrase_prefix",\n                "fields": [\n                  "biosamplesid",\n                  "celllinename",\n                  "celllinecelltype.analyzed",\n                  "celllineprimarydisease.analyzed"\n                ]\n              }\n            },\n            {\n              "multi_match": {\n                "query": "derma",\n                "type": "phrase_prefix",\n                "fields": [\n                  "biosamplesid",\n                  "celllinename",\n                  "celllinecelltype.analyzed",\n                  "celllineprimarydisease.analyzed"\n                ]\n              }\n            }\n          ]\n        }\n      },\n      "filter": {\n        "bool": {\n          "must": [\n            {\n              "terms": {\n                "celllineprimarydisease": [\n                  "Control",\n                  "Foo"\n                ]\n              }\n            }\n          ]\n        }\n      }\n    }\n  },\n  "aggs": {\n    "facets": {\n      "global": {},\n      "aggs": {\n        "celllinetypes": {\n          "terms": {\n            "field": "celllinecelltype",\n            "order": {\n              "_term": "asc"\n            }\n          }\n        },\n        "diseases": {\n          "terms": {\n            "field": "celllineprimarydisease",\n            "order": {\n              "_term": "asc"\n            }\n          }\n        }\n      }\n    }\n  }\n}\n';
+'\nGET /ebisc/cellline/_search\n{\n  "query": {\n    "filtered": {\n      "query": {\n        "bool": {\n          "must": [\n            {\n              "multi_match": {\n                "query": "control",\n                "type": "phrase_prefix",\n                "fields": [\n                  "biosamplesid",\n                  "celllinename",\n                  "celllinecelltype.analyzed",\n                  "celllineprimarydisease.analyzed"\n                ]\n              }\n            },\n            {\n              "multi_match": {\n                "query": "derma",\n                "type": "phrase_prefix",\n                "fields": [\n                  "biosamplesid",\n                  "celllinename",\n                  "celllinecelltype.analyzed",\n                  "celllineprimarydisease.analyzed"\n                ]\n              }\n            }\n          ]\n        }\n      },\n      "filter": {\n        "bool": {\n          "must": [\n            {\n              "terms": {\n                "celllineprimarydisease": [\n                  "Control"\n                ]\n              }\n            }\n          ]\n        }\n      }\n    }\n  },\n  "aggs": {\n    "facets": {\n      "global": {},\n      "aggs": {\n        "celllinetypes": {\n          "filter": {\n            "bool": {\n              "must": [\n                {\n                  "terms": {\n                    "celllineprimarydisease": [\n                      "Control"\n                    ]\n                  }\n                }\n              ]\n            }\n          },\n          "aggs": {\n            "facet": {\n              "terms": {\n                "field": "celllinecelltype",\n                "size": 100,\n                "order": {\n                  "_term": "asc"\n                }\n              }\n            }\n          }\n        },\n        "diseases": {\n          "terms": {\n            "field": "celllineprimarydisease",\n            "order": {\n              "_term": "asc"\n            }\n          }\n        }\n      }\n    }\n  }\n}\n';
 
 
 

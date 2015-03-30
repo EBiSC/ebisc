@@ -13,7 +13,15 @@ Facets = React.createClass
         facetTerms: ['facetTerms']
 
     getItems: (facet) ->
-        ({name: term.key, label: "#{term.key} (#{term.doc_count})"} for term in @state.cursors.facetTerms[facet].buckets)
+
+        # Buckets' locations are different for filtered / non-filtered facet aggregations
+
+        if 'buckets' of @state.cursors.facetTerms[facet]
+            terms = @state.cursors.facetTerms[facet].buckets
+        else
+            terms = @state.cursors.facetTerms[facet]['facet'].buckets
+
+        ({name: term.key, label: "#{term.key} (#{term.doc_count})"} for term in terms)
 
     render: () ->
         <div className="filter-group">
