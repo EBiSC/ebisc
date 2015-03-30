@@ -28,7 +28,7 @@ Facets = React.createClass
         {
             if _.size(@state.cursors.facetTerms)
                 for facet, i in @state.cursors.facets
-                    <DropdownMultiSelect key={i} name={facet.name} label={facet.label} items={@getItems(facet.name)} action={_.partial(Actions.setFilterFacetTerm, facet.name)}/>
+                    <DropdownMultiSelect key={facet.name} name={facet.name} label={facet.label} items={@getItems(facet.name)} action={_.partial(Actions.setFilterFacetTerm, facet.name)}/>
         }
         </div>
 

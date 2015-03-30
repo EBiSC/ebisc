@@ -31,7 +31,7 @@ DropdownMultiSelect = React.createClass
             <div className="dropdown-container">
                 <div className="dropdown-button" onClick={@showMenu}>{@props.label}</div>
                 <ul className={classNames('dropdown-menu': true, 'checkbox': true, 'show-menu': @state.showMenu)}>
-                {(<Item key={i} item={item} action=@props.action /> for item, i in @props.items)}
+                {(<Item key={item.name} item={item} action=@props.action /> for item in @props.items)}
                 </ul>
             </div>
         </div>

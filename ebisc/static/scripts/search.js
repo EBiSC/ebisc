@@ -81,7 +81,7 @@ DropdownMultiSelect = React.createClass({
     return window.removeEventListener('click', this.hideMenu, true);
   },
   render: function() {
-    var i, item;
+    var item;
     return React.createElement("div", {
       "className": "dropdown"
     }, React.createElement("div", {
@@ -96,13 +96,13 @@ DropdownMultiSelect = React.createClass({
         'show-menu': this.state.showMenu
       })
     }, (function() {
-      var j, len, ref, results;
+      var i, len, ref, results;
       ref = this.props.items;
       results = [];
-      for (i = j = 0, len = ref.length; j < len; i = ++j) {
+      for (i = 0, len = ref.length; i < len; i++) {
         item = ref[i];
         results.push(React.createElement(Item, {
-          "key": i,
+          "key": item.name,
           "item": item,
           "action": this.props.action
         }));
@@ -186,7 +186,7 @@ Facets = React.createClass({
         for (i = j = 0, len = ref.length; j < len; i = ++j) {
           facet = ref[i];
           results.push(React.createElement(DropdownMultiSelect, {
-            "key": i,
+            "key": facet.name,
             "name": facet.name,
             "label": facet.label,
             "items": this.getItems(facet.name),
