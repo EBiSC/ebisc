@@ -299,7 +299,7 @@ Search = React.createClass({
   render: function() {
     return React.createElement("div", null, (this.state.cursors.isLoaded ? React.createElement("input", {
       "type": "text",
-      "placeholder": "Search",
+      "placeholder": "Enter keywords",
       "value": this.state.query,
       "onChange": this.handleChange
     }) : void 0));

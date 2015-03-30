@@ -31,17 +31,23 @@ body.template-home {
 
       p {
         margin-top: 1em;
-        padding-right: 100px;
+        padding-right: 50px;
         color: $dark-gray;
+      }
+
+      @include breakpoint(map-get($breakpoints, medium)) {
+        button {
+          font-size: $base-font-size;
+        }
+
+        p {
+          padding-right: 0px;
+        }
       }
 
       @include breakpoint(map-get($breakpoints, small)) {
         @include span(last 12);
         padding: 10px 0px 10px 0px;
-
-        p {
-          padding-right: 0px;
-        }
       }
     }
 

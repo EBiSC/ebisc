@@ -15,7 +15,7 @@ Search = React.createClass
         <div>
         {
             if @state.cursors.isLoaded
-                <input type="text" placeholder="Search" value={@state.query} onChange={@handleChange} />
+                <input type="text" placeholder="Enter keywords" value={@state.query} onChange={@handleChange} />
         }
         </div>
 
