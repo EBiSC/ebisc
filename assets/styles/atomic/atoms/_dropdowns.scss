@@ -28,19 +28,28 @@
     padding: 0 ($dropdown-padding * 2.5) 0 ($dropdown-padding / 2);
     position: relative;
     min-width: 200px;
-  }
 
-  .dropdown-button:hover {
-    background-color: $dropdown-background-hover;
-  }
+    &:hover {
+      background-color: $dropdown-background-hover;
+    }
 
-  .dropdown-button:after {
-    color: $base-font-color;
-    content: "\25BE";
-    display: block;
-    position: absolute;
-    right: $dropdown-padding;
-    top: $dropdown-arrow-top-distance;
+    &:after {
+      color: $base-font-color;
+      content: "\25BE";
+      display: block;
+      position: absolute;
+      right: $dropdown-padding;
+      top: $dropdown-arrow-top-distance;
+    }
+
+    &.has-selection {
+      background-color: $action-color;
+      color: white;
+
+      &:after {
+        color: white;
+      }
+    }
   }
 
   .dropdown-menu {

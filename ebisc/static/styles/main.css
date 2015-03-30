@@ -64,15 +64,20 @@ button, input[type="button"], input[type="reset"], input[type="submit"], button 
     padding: 0 2.5em 0 0.5em;
     position: relative;
     min-width: 200px; }
-  .dropdown .dropdown-button:hover {
-    background-color: #fafafa; }
-  .dropdown .dropdown-button:after {
-    color: #333333;
-    content: "\25BE";
-    display: block;
-    position: absolute;
-    right: 1em;
-    top: 0; }
+    .dropdown .dropdown-button:hover {
+      background-color: #fafafa; }
+    .dropdown .dropdown-button:after {
+      color: #333333;
+      content: "\25BE";
+      display: block;
+      position: absolute;
+      right: 1em;
+      top: 0; }
+    .dropdown .dropdown-button.has-selection {
+      background-color: #004e93;
+      color: white; }
+      .dropdown .dropdown-button.has-selection:after {
+        color: white; }
   .dropdown .dropdown-menu {
     -webkit-transition: all 0.2s ease-in-out;
     -moz-transition: all 0.2s ease-in-out;
