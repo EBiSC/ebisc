@@ -15,7 +15,7 @@ Celllines = require('./components/celllines');
 
 State.select('filter').set('facets', Config.facets);
 
-State.select('filter').on('update', _.debounce(Elastic.search, 100));
+State.select('filter').on('update', _.debounce(Elastic.search, 200));
 
 React.render(React.createElement(Search, null), document.getElementById('search'));
 
@@ -547,7 +547,7 @@ buildAggregations = function() {
     return {};
   } else {
     buildAgg = function(facet, filters) {
-      var filter, otherFilters, terms;
+      var filter, i, len, match, otherFilters, query, ref, terms;
       otherFilters = (function() {
         var i, len, results;
         results = [];
@@ -559,6 +559,16 @@ buildAggregations = function() {
         }
         return results;
       })();
+      query = buildQuery();
+      if ('bool' in query) {
+        ref = query.bool.must;
+        for (i = 0, len = ref.length; i < len; i++) {
+          match = ref[i];
+          otherFilters.push({
+            query: match
+          });
+        }
+      }
       terms = {
         field: facet.name,
         order: {
@@ -607,7 +617,7 @@ module.exports = {
   search: search
 };
 
-'\nGET /ebisc/cellline/_search\n{\n  "query": {\n    "filtered": {\n      "query": {\n        "bool": {\n          "must": [\n            {\n              "multi_match": {\n                "query": "control",\n                "type": "phrase_prefix",\n                "fields": [\n                  "biosamplesid",\n                  "celllinename",\n                  "celllinecelltype.analyzed",\n                  "celllineprimarydisease.analyzed"\n                ]\n              }\n            },\n            {\n              "multi_match": {\n                "query": "derma",\n                "type": "phrase_prefix",\n                "fields": [\n                  "biosamplesid",\n                  "celllinename",\n                  "celllinecelltype.analyzed",\n                  "celllineprimarydisease.analyzed"\n                ]\n              }\n            }\n          ]\n        }\n      },\n      "filter": {\n        "bool": {\n          "must": [\n            {\n              "terms": {\n                "celllineprimarydisease": [\n                  "Control"\n                ]\n              }\n            }\n          ]\n        }\n      }\n    }\n  },\n  "aggs": {\n    "facets": {\n      "global": {},\n      "aggs": {\n        "celllinetypes": {\n          "filter": {\n            "bool": {\n              "must": [\n                {\n                  "terms": {\n                    "celllineprimarydisease": [\n                      "Control"\n                    ]\n                  }\n                }\n              ]\n            }\n          },\n          "aggs": {\n            "facet": {\n              "terms": {\n                "field": "celllinecelltype",\n                "size": 100,\n                "order": {\n                  "_term": "asc"\n                }\n              }\n            }\n          }\n        },\n        "diseases": {\n          "terms": {\n            "field": "celllineprimarydisease",\n            "order": {\n              "_term": "asc"\n            }\n          }\n        }\n      }\n    }\n  }\n}\n';
+'\nGET /ebisc/cellline/_search\n{\n  "size": 1000,\n  "query": {\n    "filtered": {\n      "query": {\n        "bool": {\n          "must": [\n            {\n              "multi_match": {\n                "query": "unass",\n                "type": "phrase_prefix",\n                "fields": [\n                  "biosamplesid",\n                  "celllinename",\n                  "depositor.analyzed",\n                  "celllinecelltype.analyzed",\n                  "celllineprimarydisease.analyzed",\n                  "celllinenamesynonyms"\n                ]\n              }\n            }\n          ]\n        }\n      },\n      "filter": {\n        "bool": {\n          "must": [\n            {\n              "terms": {\n                "celllineprimarydisease": [\n                  "Hereditary spastic Paraplegia: SPG4"\n                ]\n              }\n            },\n            {\n              "terms": {\n                "depositor": [\n                  "UKB"\n                ]\n              }\n            }\n          ]\n        }\n      }\n    }\n  },\n  "aggs": {\n    "facets": {\n      "global": {},\n      "aggs": {\n        "celllineprimarydisease": {\n          "filter": {\n            "bool": {\n              "must": [\n                {\n                  "terms": {\n                    "depositor": [\n                      "UKB"\n                    ]\n                  }\n                },\n                {\n                  "query": {\n                    "multi_match": {\n                      "query": "unass",\n                      "type": "phrase_prefix",\n                      "fields": [\n                        "biosamplesid",\n                        "celllinename",\n                        "depositor.analyzed",\n                        "celllinecelltype.analyzed",\n                        "celllineprimarydisease.analyzed",\n                        "celllinenamesynonyms"\n                      ]\n                    }\n                  }\n                }\n              ]\n            }\n          },\n          "aggs": {\n            "facet": {\n              "terms": {\n                "field": "celllineprimarydisease",\n                "order": {\n                  "_term": "asc"\n                },\n                "size": 0\n              }\n            }\n          }\n        },\n        "celllinecelltype": {\n          "filter": {\n            "bool": {\n              "must": [\n                {\n                  "terms": {\n                    "celllineprimarydisease": [\n                      "Hereditary spastic Paraplegia: SPG4"\n                    ]\n                  }\n                },\n                {\n                  "terms": {\n                    "depositor": [\n                      "UKB"\n                    ]\n                  }\n                },\n                {\n                  "query": {\n                    "multi_match": {\n                      "query": "unass",\n                      "type": "phrase_prefix",\n                      "fields": [\n                        "biosamplesid",\n                        "celllinename",\n                        "depositor.analyzed",\n                        "celllinecelltype.analyzed",\n                        "celllineprimarydisease.analyzed",\n                        "celllinenamesynonyms"\n                      ]\n                    }\n                  }\n                }\n              ]\n            }\n          },\n          "aggs": {\n            "facet": {\n              "terms": {\n                "field": "celllinecelltype",\n                "order": {\n                  "_term": "asc"\n                },\n                "size": 0\n              }\n            }\n          }\n        },\n        "depositor": {\n          "filter": {\n            "bool": {\n              "must": [\n                {\n                  "terms": {\n                    "celllineprimarydisease": [\n                      "Hereditary spastic Paraplegia: SPG4"\n                    ]\n                  }\n                },\n                {\n                  "query": {\n                    "multi_match": {\n                      "query": "unass",\n                      "type": "phrase_prefix",\n                      "fields": [\n                        "biosamplesid",\n                        "celllinename",\n                        "depositor.analyzed",\n                        "celllinecelltype.analyzed",\n                        "celllineprimarydisease.analyzed",\n                        "celllinenamesynonyms"\n                      ]\n                    }\n                  }\n                }\n              ]\n            }\n          },\n          "aggs": {\n            "facet": {\n              "terms": {\n                "field": "depositor",\n                "order": {\n                  "_term": "asc"\n                },\n                "size": 0\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n';
 
 
 

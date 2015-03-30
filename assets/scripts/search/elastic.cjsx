@@ -99,7 +99,13 @@ buildAggregations = () ->
             # If there are filters for other facets, use them to filter this facet (but do not use filter for this facet)
             otherFilters = (filter for filter in filters when not (facet.name of filter.terms))
 
-            terms = 
+            # If there is a query, use it to filter this facet
+            query = buildQuery()
+            if 'bool' of query
+                for match in query.bool.must
+                    otherFilters.push query: match
+
+            terms =
                 field: facet.name
                 order: _term: 'asc'
                 size: 0
@@ -133,6 +139,7 @@ module.exports =
 
 GET /ebisc/cellline/_search
 {
+  "size": 1000,
   "query": {
     "filtered": {
       "query": {
@@ -140,25 +147,15 @@ GET /ebisc/cellline/_search
           "must": [
             {
               "multi_match": {
-                "query": "control",
+                "query": "unass",
                 "type": "phrase_prefix",
                 "fields": [
                   "biosamplesid",
                   "celllinename",
+                  "depositor.analyzed",
                   "celllinecelltype.analyzed",
-                  "celllineprimarydisease.analyzed"
-                ]
-              }
-            },
-            {
-              "multi_match": {
-                "query": "derma",
-                "type": "phrase_prefix",
-                "fields": [
-                  "biosamplesid",
-                  "celllinename",
-                  "celllinecelltype.analyzed",
-                  "celllineprimarydisease.analyzed"
+                  "celllineprimarydisease.analyzed",
+                  "celllinenamesynonyms"
                 ]
               }
             }
@@ -171,7 +168,14 @@ GET /ebisc/cellline/_search
             {
               "terms": {
                 "celllineprimarydisease": [
-                  "Control"
+                  "Hereditary spastic Paraplegia: SPG4"
+                ]
+              }
+            },
+            {
+              "terms": {
+                "depositor": [
+                  "UKB"
                 ]
               }
             }
@@ -184,15 +188,80 @@ GET /ebisc/cellline/_search
     "facets": {
       "global": {},
       "aggs": {
-        "celllinetypes": {
+        "celllineprimarydisease": {
+          "filter": {
+            "bool": {
+              "must": [
+                {
+                  "terms": {
+                    "depositor": [
+                      "UKB"
+                    ]
+                  }
+                },
+                {
+                  "query": {
+                    "multi_match": {
+                      "query": "unass",
+                      "type": "phrase_prefix",
+                      "fields": [
+                        "biosamplesid",
+                        "celllinename",
+                        "depositor.analyzed",
+                        "celllinecelltype.analyzed",
+                        "celllineprimarydisease.analyzed",
+                        "celllinenamesynonyms"
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "aggs": {
+            "facet": {
+              "terms": {
+                "field": "celllineprimarydisease",
+                "order": {
+                  "_term": "asc"
+                },
+                "size": 0
+              }
+            }
+          }
+        },
+        "celllinecelltype": {
           "filter": {
             "bool": {
               "must": [
                 {
                   "terms": {
                     "celllineprimarydisease": [
-                      "Control"
+                      "Hereditary spastic Paraplegia: SPG4"
                     ]
+                  }
+                },
+                {
+                  "terms": {
+                    "depositor": [
+                      "UKB"
+                    ]
+                  }
+                },
+                {
+                  "query": {
+                    "multi_match": {
+                      "query": "unass",
+                      "type": "phrase_prefix",
+                      "fields": [
+                        "biosamplesid",
+                        "celllinename",
+                        "depositor.analyzed",
+                        "celllinecelltype.analyzed",
+                        "celllineprimarydisease.analyzed",
+                        "celllinenamesynonyms"
+                      ]
+                    }
                   }
                 }
               ]
@@ -202,19 +271,53 @@ GET /ebisc/cellline/_search
             "facet": {
               "terms": {
                 "field": "celllinecelltype",
-                "size": 100,
                 "order": {
                   "_term": "asc"
-                }
+                },
+                "size": 0
               }
             }
           }
         },
-        "diseases": {
-          "terms": {
-            "field": "celllineprimarydisease",
-            "order": {
-              "_term": "asc"
+        "depositor": {
+          "filter": {
+            "bool": {
+              "must": [
+                {
+                  "terms": {
+                    "celllineprimarydisease": [
+                      "Hereditary spastic Paraplegia: SPG4"
+                    ]
+                  }
+                },
+                {
+                  "query": {
+                    "multi_match": {
+                      "query": "unass",
+                      "type": "phrase_prefix",
+                      "fields": [
+                        "biosamplesid",
+                        "celllinename",
+                        "depositor.analyzed",
+                        "celllinecelltype.analyzed",
+                        "celllineprimarydisease.analyzed",
+                        "celllinenamesynonyms"
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "aggs": {
+            "facet": {
+              "terms": {
+                "field": "depositor",
+                "order": {
+                  "_term": "asc"
+                },
+                "size": 0
+              }
             }
           }
         }

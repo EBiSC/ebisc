@@ -8,7 +8,7 @@ Celllines = require './components/celllines'
 
 State.select('filter').set('facets', Config.facets)
 
-State.select('filter').on('update', _.debounce(Elastic.search, 100))
+State.select('filter').on('update', _.debounce(Elastic.search, 200))
 
 React.render <Search />, document.getElementById('search')
 
