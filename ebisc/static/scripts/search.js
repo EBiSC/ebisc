@@ -455,7 +455,7 @@ module.exports = config;
 
 
 },{}],10:[function(require,module,exports){
-var Config, State, XRegExp, buildAggregations, buildFacetFilters, buildFilter, buildFilteredQuery, buildQuery, elastic, search;
+var Config, State, XRegExp, buildAggregations, buildFacetFilters, buildFilter, buildFilteredQuery, buildQuery, elastic, elasticSearchHost, ref, search;
 
 XRegExp = require('xregexp').XRegExp;
 
@@ -463,8 +463,14 @@ State = require('./state');
 
 Config = require('./config');
 
+if ((ref = window.location.hostname) === '127.0.0.1' || ref === 'localhost') {
+  elasticSearchHost = '127.0.0.1:9200';
+} else {
+  elasticSearchHost = window.location.hostname + '/db';
+}
+
 elastic = window.elasticsearch.Client({
-  hosts: 'localhost:9200'
+  hosts: elasticSearchHost
 });
 
 search = function() {
@@ -505,11 +511,11 @@ buildQuery = function() {
     };
   } else {
     words = (function() {
-      var i, len, ref, results;
-      ref = XRegExp.split(queryString, XRegExp('[^(\\p{L}|\\d)]'));
+      var i, len, ref1, results;
+      ref1 = XRegExp.split(queryString, XRegExp('[^(\\p{L}|\\d)]'));
       results = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        w = ref[i];
+      for (i = 0, len = ref1.length; i < len; i++) {
+        w = ref1[i];
         if (w !== '') {
           results.push(w);
         }
@@ -556,7 +562,7 @@ buildFilter = function() {
 };
 
 buildFacetFilters = function() {
-  var buildTerms, facet, i, len, obj, ref, results;
+  var buildTerms, facet, i, len, obj, ref1, results;
   buildTerms = function(terms) {
     var results, selected, term;
     results = [];
@@ -568,10 +574,10 @@ buildFacetFilters = function() {
     }
     return results;
   };
-  ref = State.select('filter', 'facets').get();
+  ref1 = State.select('filter', 'facets').get();
   results = [];
-  for (i = 0, len = ref.length; i < len; i++) {
-    facet = ref[i];
+  for (i = 0, len = ref1.length; i < len; i++) {
+    facet = ref1[i];
     if (buildTerms(facet.selectedTerms).length) {
       results.push({
         terms: (
@@ -592,7 +598,7 @@ buildAggregations = function() {
     return {};
   } else {
     buildAgg = function(facet, filters) {
-      var filter, i, len, match, otherFilters, query, ref, terms;
+      var filter, i, len, match, otherFilters, query, ref1, terms;
       otherFilters = (function() {
         var i, len, results;
         results = [];
@@ -606,9 +612,9 @@ buildAggregations = function() {
       })();
       query = buildQuery();
       if ('bool' in query) {
-        ref = query.bool.must;
-        for (i = 0, len = ref.length; i < len; i++) {
-          match = ref[i];
+        ref1 = query.bool.must;
+        for (i = 0, len = ref1.length; i < len; i++) {
+          match = ref1[i];
           otherFilters.push({
             query: match
           });

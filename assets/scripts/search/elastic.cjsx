@@ -3,8 +3,13 @@ XRegExp = require('xregexp').XRegExp
 State = require './state'
 Config = require './config'
 
+if window.location.hostname in ['127.0.0.1', 'localhost']
+    elasticSearchHost = '127.0.0.1:9200'
+else
+    elasticSearchHost = window.location.hostname + '/db'
+
 elastic = window.elasticsearch.Client
-    hosts: 'localhost:9200'
+    hosts: elasticSearchHost
 
 # -----------------------------------------------------------------------------
 # Search
