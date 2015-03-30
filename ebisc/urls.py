@@ -17,14 +17,11 @@ urlpatterns = patterns('',
     url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'auth/login.html'}, name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),
 
-    # CMS
-    url(r'^cms/', include('cms.urls')),
-
     # API
     url(r'^api/', include('ebisc.api.urls')),
 
     # Executive dashboard
-    url(r'^exec-dash/', include('ebisc.executive.urls', namespace='executive')),
+    url(r'^executive/', include('ebisc.executive.urls', namespace='executive')),
 
     # Cell line search
     url(r'^search/', include('ebisc.search.urls', namespace='search')),

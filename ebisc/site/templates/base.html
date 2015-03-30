@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-{% load static cms %}
+{% load static %}
 
 <html lang="en">
 
@@ -11,11 +11,11 @@
     <link rel="stylesheet" type="text/css" href="{% static 'styles/main.css' %}">
 </head>
 
-<body class="{% if document %}template-{{ document.template|slugify }}{% endif %}">
+<body>
 
     <header>
         <div class="logo">
-            <a href="{% url 'site:document' document.node.ancestors.0.path %}"><img src="{% static 'images/EBiSC-logo.png' %}" alt="EBiSC" width="131" height="80"></a>    
+            <a href="{% url 'site:document' '' %}"><img src="{% static 'images/EBiSC-logo.png' %}" alt="EBiSC" width="131" height="80"></a>    
         </div>
         <div class="user-account">
             {% if user.is_authenticated %}
@@ -28,13 +28,10 @@
             <button id="main-navigation-menu-mobile-toggle" class="collapsible-menu-toggle" data-target="main-navigation-menu-items">MENU</button>
             <nav role="navigation">
                 <ul id="main-navigation-menu-items" class="collapsible-menu-items">
-                    {% for node in document.node|menu:0 %}
-                    <li class="{% if document.node|is_descendant_of:node %}active{% endif %}"><a href="{% url 'site:document' node.path %}">{{ node.menu_title|default:node.title }}</a></li>
+                    <li><a href="{% url 'site:document' '' %}">Home</a></li>
+                    {% for item in menu %}
+                    <li class="{% if item.active %}active{% endif %}"><a href="{{ item.path }}">{{ item.title }}</a></li>
                     {% endfor %}
-                    <li><a href="{% url 'site:document' document.node.ancestors.0.path %}">Home</a></li>
-                    <li><a href="{% url 'search:search' %}">Cell Line Catalogue</a></li>
-                    <li><a href="{% url 'executive:dashboard' %}">Executive Dashboard</a></li>
-                    <li><a href="http://www.ebisc.org/">About EBiSC</a>
                 </ul>
             </nav>
         </div>

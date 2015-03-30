@@ -30,8 +30,6 @@ INSTALLED_APPS = (
     'ebisc.search',
     'ebisc.executive',
 
-    'cms',
-
     'tastypie',
     'django_cleanup',
     'grappelli.dashboard',
@@ -106,14 +104,6 @@ LOGIN_REDIRECT_URL = '/'
 # Tastypie
 
 TASTYPIE_ALLOW_MISSING_SLASH = True
-
-# -----------------------------------------------------------------------------
-# CMS
-
-CMS_SITE_APP = 'ebisc.site'
-CMS_SITE_VIEW = 'site:document'
-CMS_SITE_NAME = 'EBiSC'
-CMS_SITE_BASE_URL = 'http://ebisc.douglasconnect.com'
 
 # -----------------------------------------------------------------------------
 # Logging

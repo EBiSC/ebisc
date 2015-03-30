@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.shortcuts import redirect
 from django.contrib import messages
@@ -6,6 +6,7 @@ from django.utils.html import format_html
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 
+from ebisc.site.views import render
 from ebisc.celllines.models import Cellline
 
 
