@@ -94,7 +94,6 @@ buildAggregations = () ->
         return {}
 
     else
-
         buildAgg = (facet, filters) ->
 
             # If there are filters for other facets, use them to filter this facet (but do not use filter for this facet)
@@ -103,8 +102,7 @@ buildAggregations = () ->
             terms = 
                 field: facet.name
                 order: _term: 'asc'
-                size: 1000
-
+                size: 0
 
             if not otherFilters.length
                 terms: terms

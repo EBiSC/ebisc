@@ -12,7 +12,7 @@ Facets = React.createClass
         facets: ['filter', 'facets']
         facetTerms: ['facetTerms']
 
-    getItems: (facet) ->
+    getItems: (facet, selectedTerms) ->
 
         # Buckets' locations are different for filtered / non-filtered facet aggregations
 
@@ -21,14 +21,15 @@ Facets = React.createClass
         else
             terms = @state.cursors.facetTerms[facet]['facet'].buckets
 
-        ({name: term.key, label: "#{term.key} (#{term.doc_count})"} for term in terms)
+        ({name: term.key, label: "#{term.key} (#{term.doc_count})", selected: selectedTerms[term.key]} for term in terms)
 
     render: () ->
         <div className="filter-group">
         {
             if _.size(@state.cursors.facetTerms)
                 for facet, i in @state.cursors.facets
-                    <DropdownMultiSelect key={facet.name} name={facet.name} label={facet.label} items={@getItems(facet.name)} action={_.partial(Actions.setFilterFacetTerm, facet.name)}/>
+                    selectedTerms = @state.cursors.facets[_.findIndex(@state.cursors.facets, {name: facet.name})].selectedTerms
+                    <DropdownMultiSelect key={facet.name} name={facet.name} label={facet.label} items={@getItems(facet.name, selectedTerms)} action={_.partial(Actions.setFilterFacetTerm, facet.name)}/>
         }
         </div>
 

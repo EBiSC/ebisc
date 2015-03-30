@@ -121,7 +121,7 @@ Item = React.createClass({
   },
   getInitialState: function() {
     return {
-      selected: false
+      selected: this.props.item.selected !== void 0 && this.props.item.selected || false
     };
   },
   render: function() {
@@ -157,7 +157,7 @@ Facets = React.createClass({
     facets: ['filter', 'facets'],
     facetTerms: ['facetTerms']
   },
-  getItems: function(facet) {
+  getItems: function(facet, selectedTerms) {
     var j, len, results, term, terms;
     if ('buckets' in this.state.cursors.facetTerms[facet]) {
       terms = this.state.cursors.facetTerms[facet].buckets;
@@ -169,13 +169,14 @@ Facets = React.createClass({
       term = terms[j];
       results.push({
         name: term.key,
-        label: term.key + " (" + term.doc_count + ")"
+        label: term.key + " (" + term.doc_count + ")",
+        selected: selectedTerms[term.key]
       });
     }
     return results;
   },
   render: function() {
-    var facet, i;
+    var facet, i, selectedTerms;
     return React.createElement("div", {
       "className": "filter-group"
     }, ((function() {
@@ -185,11 +186,14 @@ Facets = React.createClass({
         results = [];
         for (i = j = 0, len = ref.length; j < len; i = ++j) {
           facet = ref[i];
+          selectedTerms = this.state.cursors.facets[_.findIndex(this.state.cursors.facets, {
+            name: facet.name
+          })].selectedTerms;
           results.push(React.createElement(DropdownMultiSelect, {
             "key": facet.name,
             "name": facet.name,
             "label": facet.label,
-            "items": this.getItems(facet.name),
+            "items": this.getItems(facet.name, selectedTerms),
             "action": _.partial(Actions.setFilterFacetTerm, facet.name)
           }));
         }
@@ -515,7 +519,7 @@ buildAggregations = function() {
         order: {
           _term: 'asc'
         },
-        size: 1000
+        size: 0
       };
       if (!otherFilters.length) {
         return {

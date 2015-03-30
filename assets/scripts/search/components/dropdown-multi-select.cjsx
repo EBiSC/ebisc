@@ -43,7 +43,7 @@ Item = React.createClass
         @props.action(@props.item.name, not @state.selected)
 
     getInitialState: () ->
-        selected: false
+        selected: @props.item.selected != undefined and @props.item.selected or false
 
     render: () ->
         <li onClick={@handleOnClick} className={classNames(selected: @state.selected)}>
