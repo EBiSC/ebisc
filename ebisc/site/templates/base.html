@@ -17,13 +17,6 @@
         <div class="logo">
             <a href="{% url 'site:document' '' %}"><img src="{% static 'images/EBiSC-logo.png' %}" alt="EBiSC" width="131" height="80"></a>    
         </div>
-        <div class="user-account">
-            {% if user.is_authenticated %}
-            {{ user.get_short_name }} | <a href="{% url 'logout' %}">Log out</a>
-            {% else %}
-            <a href="{% url 'login' %}">Log in</a>
-            {% endif %}            
-        </div>
         <div class="collapsible-menu">
             <button id="main-navigation-menu-mobile-toggle" class="collapsible-menu-toggle" data-target="main-navigation-menu-items">MENU</button>
             <nav role="navigation">
@@ -34,6 +27,13 @@
                     {% endfor %}
                 </ul>
             </nav>
+        </div>
+        <div class="user-account">
+            {% if user.is_authenticated %}
+            {{ user.get_short_name }} | <a href="{% url 'logout' %}">Log out</a>
+            {% else %}
+            <a href="{% url 'login' %}">Log in</a>
+            {% endif %}            
         </div>
     </header>
 

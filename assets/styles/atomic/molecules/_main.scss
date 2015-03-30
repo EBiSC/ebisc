@@ -11,11 +11,15 @@
   }
 
   @include breakpoint(map-get($breakpoints, small)) {
-    float: right;
+    position: absolute;
+    right: 0px;
+    top: 50px;
+    width: 100%;
     
     .collapsible-menu-toggle {
       display: block;
       float: right;
+      margin-right: 20px;
     }
   }
 
@@ -48,7 +52,10 @@
       margin-left: 0;
       padding-left: 0;
 
-      text-align: right;
+      background-color: rgba(255,255,255,0.9);
+      border-top: solid 1px $base-border-color;
+      border-bottom: solid 1px $base-border-color;
+      margin-top: 55px;
       padding: 10px;
 
       li {

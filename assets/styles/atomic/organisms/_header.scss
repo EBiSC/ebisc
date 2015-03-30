@@ -25,9 +25,5 @@ header {
   .user-account {
     float: right;
     font-size: $font-size-small;
-
-    @include breakpoint(map-get($breakpoints, small)) {
-      margin-top: 10px;
-    }
   }
 }
