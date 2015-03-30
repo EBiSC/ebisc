@@ -20,11 +20,19 @@ h6 {
 
 h1 {
   font-size: $base-font-size * 2.4;
+
+  @include breakpoint(map-get($breakpoints, small)) {
+    font-size: $base-font-size * 1.8;
+  }
 }
 
 h2 {
   margin-top: 1.5em;
   font-size: $base-font-size * 1.8;
+
+  @include breakpoint(map-get($breakpoints, small)) {
+    font-size: $base-font-size * 1.4;
+  }
 }
 
 p {
@@ -60,6 +68,10 @@ hr {
   font-size: $font-size-large * 1.2;
   color: darken($color-text, 10%);
   margin: 0 0 1.2em 0;
+
+  @include breakpoint(map-get($breakpoints, small)) {
+    font-size: $font-size-large;
+  }
 }
 
 .hero {

@@ -1,6 +1,6 @@
 footer {
   margin-bottom: 20px;
-  font-size: $font-size-small;
+  font-size: $font-size-small * 0.9;
 
   hr {
     border-bottom-color: darken($base-border-color, 20%);

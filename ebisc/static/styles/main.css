@@ -111,9 +111,9 @@ button, input[type="button"], input[type="reset"], input[type="submit"], button 
     padding-right: 1.6em;
     white-space: nowrap; }
     .dropdown .dropdown-menu li .checkbox {
-      font-size: 12.8px; }
+      font-size: 14.4px; }
     .dropdown .dropdown-menu li label {
-      font-size: 12.8px; }
+      font-size: 14.4px; }
   .dropdown .show-menu {
     display: block; }
   .dropdown.two-col ul {
@@ -189,7 +189,7 @@ ul, ol {
   list-style-type: none;
   margin: 0;
   padding: 0; }
-  footer .support .links ul li {
+  footer .support .links ul li, body.template-home article ul.links li, body.template-home article ol.links li {
     display: inline-block; }
 
 dl {
@@ -352,7 +352,7 @@ table.listing thead th {
         position: absolute;
         content: "▼";
         font-family: sans-serif;
-        font-size: 10.24px;
+        font-size: 11.52px;
         top: 2px;
         margin-left: 5px; }
     table.listing thead th.order-by.dsc a:after {
@@ -383,10 +383,16 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   font-size: 38.4px; }
+  @media  (max-width: 767px) {
+    h1 {
+      font-size: 28.8px; } }
 
 h2 {
   margin-top: 1.5em;
   font-size: 28.8px; }
+  @media  (max-width: 767px) {
+    h2 {
+      font-size: 22.4px; } }
 
 p {
   margin: 0 0 0.75em; }
@@ -411,6 +417,9 @@ hr {
   font-size: 23.04px;
   color: #1a1a1a;
   margin: 0 0 1.2em 0; }
+  @media  (max-width: 767px) {
+    .lead {
+      font-size: 19.2px; } }
 
 .hero {
   margin: -30px -20px 30px -20px;
@@ -445,13 +454,13 @@ hr {
       display: block; } }
 
 .accepted-status {
-  font-size: 12.8px;
+  font-size: 14.4px;
   display: inline-block; }
   .accepted-status .accepted-label {
     background-color: #bdd332;
     padding: 2px 22px 2px 10px; }
   .accepted-status select {
-    font-size: 12.8px; }
+    font-size: 14.4px; }
     .accepted-status select.pending {
       background-color: white;
       border: 1px solid #dddddd; }
@@ -531,7 +540,7 @@ table {
 
 table.listing {
   width: 100%;
-  font-size: 12.8px; }
+  font-size: 14.4px; }
   table.listing select {
     display: inline-block; }
 
@@ -587,7 +596,7 @@ header {
     margin-left: 40px; }
   header .user-account {
     float: right;
-    font-size: 12.8px; }
+    font-size: 14.4px; }
 
 .messages {
   max-width: 1170px;
@@ -602,7 +611,7 @@ header {
 
 footer {
   margin-bottom: 20px;
-  font-size: 12.8px; }
+  font-size: 12.96px; }
   footer hr {
     border-bottom-color: #aaaaaa; }
   footer .support {
@@ -841,17 +850,44 @@ body.template-home article .about {
 body.template-home article .login {
   width: 31.42857%;
   float: left;
-  margin-right: 0; }
+  margin-right: 0;
+  margin-top: 10px; }
   @media  (max-width: 767px) {
     body.template-home article .login {
       width: 100%;
       float: left;
       margin-right: 0; } }
   body.template-home article .login h2 {
-    margin-top: 0; }
+    margin-top: 0;
+    color: #004e93; }
 body.template-home article hr {
   clear: both;
   padding-top: 2em; }
+body.template-home article .links {
+  margin-top: 2em; }
+  body.template-home article .links li {
+    width: 22.85714%;
+    float: left;
+    margin-right: 2.85714%;
+    text-align: center; }
+    body.template-home article .links li:last-child {
+      width: 22.85714%;
+      float: left;
+      margin-right: 0; }
+    body.template-home article .links li .circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 100px;
+      background-color: #ff9999;
+      margin: 0 auto; }
+    body.template-home article .links li .title {
+      margin: 1em 0 0.5em 0;
+      font-size: 19.2px; }
+    body.template-home article .links li .blurb {
+      color: #333333;
+      font-size: 14.4px; }
+      body.template-home article .links li .blurb:hover {
+        color: #1a1a1a; }
 
 .login-container {
   text-align: center; }

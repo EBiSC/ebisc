@@ -12,18 +12,58 @@ body.template-home {
     .login {
       @include span(last 4);
 
+      margin-top: 10px;
+
       @include breakpoint(map-get($breakpoints, small)) {
         @include span(last 12);
       }
 
       h2 {
         margin-top: 0;
+        color: $action-color;
       }
     }
 
     hr {
       clear: both;
       padding-top: 2em;
+    }
+
+    .links {
+      @extend %inline-ul;
+      margin-top: 2em;
+
+      li {
+        @include span(3);
+
+        &:last-child {
+          @include span(last 3);
+        }
+
+        text-align: center;
+
+        .circle {
+          width: 120px;
+          height: 120px;
+          border-radius: 100px;
+          background-color: lighten(red, 30%);
+          margin: 0 auto;
+        }
+
+        .title {
+          margin: 1em 0 0.5em 0;
+          font-size: $font-size-large;
+        }
+
+        .blurb {
+          color: $color-text;
+          font-size: $font-size-small;
+
+          &:hover {
+            color: darken($color-text, 10%);
+          }
+        }
+      }
     }
   }
 }
