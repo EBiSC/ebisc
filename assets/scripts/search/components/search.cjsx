@@ -1,4 +1,5 @@
 State = require '../state'
+Actions = require '../actions'
 
 Search = React.createClass
 
@@ -8,19 +9,24 @@ Search = React.createClass
         isLoaded: ['isLoaded']
         query: ['filter', 'query']
 
-    getInitialState: () ->
-        query: ''
-
     render: () ->
         <div>
         {
             if @state.cursors.isLoaded
-                <input type="text" placeholder="Enter keywords" value={@state.query} onChange={@handleChange} />
+                <Input query={@state.cursors.query} />
         }
         </div>
 
+Input = React.createClass
+
+    getInitialState: () ->
+        query: @props.query
+
+    render: () ->
+        <input type="text" placeholder="Enter keywords" value={@state.query} onChange={@handleChange} />
+
     handleChange: (e) ->
         @setState(query: e.target.value)
-        @cursors.query.edit(e.target.value)
+        Actions.updateQueryFilter(e.target.value)
 
 module.exports = Search

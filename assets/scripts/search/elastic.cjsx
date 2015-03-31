@@ -16,7 +16,7 @@ elastic = window.elasticsearch.Client
 
 search = () ->
 
-    body = 
+    body =
         size: 1000
         query: buildFilteredQuery()
         aggs: buildAggregations()

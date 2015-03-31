@@ -28,7 +28,7 @@ Facets = React.createClass
                 for facet, i in @state.cursors.facets
                     terms = @state.cursors.facets[_.findIndex(@state.cursors.facets, {name: facet.name})].selectedTerms
                     selectedTerms = _.object(([key, value] for key, value of terms when value == true))
-                    <DropdownMultiSelect key={facet.name} name={facet.name} label={facet.label} hasSelection={_.size(selectedTerms) > 0} items={@getItems(facet.name, selectedTerms)} action={_.partial(Actions.setFilterFacetTerm, facet.name)}/>
+                    <DropdownMultiSelect key={facet.name} name={facet.name} label={facet.label} hasSelection={_.size(selectedTerms) > 0} items={@getItems(facet.name, selectedTerms)} action={_.partial(Actions.updateFacetTermFilter, facet.name)}/>
         }
         </div>
 

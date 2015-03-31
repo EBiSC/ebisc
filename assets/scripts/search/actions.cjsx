@@ -1,8 +1,12 @@
 State = require './state'
 
-setFilterFacetTerm = (facetName, term, state) ->
+updateQueryFilter = (query) ->
+    State.select('filter', 'query').edit(query)
+
+updateFacetTermFilter = (facetName, term, state) ->
     selectedTerms = State.select('filter', 'facets', _.findIndex(State.select('filter', 'facets').get(), {name: facetName}), 'selectedTerms')
     selectedTerms.set(term, state)
 
 module.exports =
-    setFilterFacetTerm: setFilterFacetTerm
+    updateQueryFilter: updateQueryFilter
+    updateFacetTermFilter: updateFacetTermFilter
