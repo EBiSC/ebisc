@@ -29,6 +29,18 @@ button {
     cursor: not-allowed;
     opacity: 0.5;
   }
+
+  &%inverse-button, &.inverse-button {
+    background-color: white;
+    border-color: $button-color;
+    color: $button-color;
+
+    &:hover,
+    &:focus {
+      background-color: darken(white, 2%);
+      border-color: darken($button-color, 5%);
+    }    
+  }
 }
 
 @mixin button($color) {
