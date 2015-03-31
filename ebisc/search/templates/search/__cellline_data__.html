@@ -13,12 +13,17 @@
     <tr><td class="label">Cell line collection:</td><td>{{ cellline.celllinecollection|default:"-" }}</td></tr>
     <tr><td class="label">Clinical treatment B4 donation:</td><td>{{ cellline.celllinetissuetreatment|default:"-" }}</td></tr>
     <tr><td class="label">Cellline tissue date:</td><td>{{ cellline.celllinetissuedate|default:"-" }}</td></tr>
-    <tr><td class="label">Depositors cell line URI:</td><td>{{ cellline.depositorscelllineuri|default:"-" }}</td></tr>
+
     <tr><td class="label">Cell line comments:</td><td>{{ cellline.celllinecomments|default:"-" }}</td></tr>
-    <tr><td class="label">Cell line update:</td><td>{{ cellline.celllineupdate|default:"-" }}</td></tr>
+<!--     <tr><td class="label">Cell line update:</td><td>{{ cellline.celllineupdate|default:"-" }}</td></tr>
     <tr><td class="label">Last update type:</td><td>{{ cellline.celllineupdatetype|default:"-" }}</td></tr>
+ -->    <!-- <tr><td class="label">Cell line ECACC URL:</td><td>{{ cellline.celllineecaccurl|default:"-" }}</td></tr> -->
+
+    <tr><th colspan="2" class="title"><h2>Depositor</h2></th></tr>
+
+    <tr><td class="label">Depositor:</td><td>{{ cellline.celllineorganization.organization.organizationname|default:"-" }}</td></tr>
+    <tr><td class="label">Depositors cell line URI:</td><td>{{ cellline.depositorscelllineuri|default:"-" }}</td></tr>
     <tr><td class="label">Cell line user account:</td><td>{{ cellline.celllineupdatedby|default:"-" }}</td></tr>
-    <tr><td class="label">Cell line ECACC URL:</td><td>{{ cellline.celllineecaccurl|default:"-" }}</td></tr>
 
     <tr><th colspan="2" class="title"><h2>Derivation</h2></th></tr>
 
@@ -51,7 +56,7 @@
     <tr><td class="label">Hepititus c:</td><td>{{ cellline.celllinecharacterization.hepititusc|default:"-" }}</td></tr>
     <tr><td class="label">Mycoplasma:</td><td>{{ cellline.celllinecharacterization.mycoplasma|default:"-" }}</td></tr>
 
-    <tr><th colspan="2" class="title"><h2>Cell line labs</h2></th></tr>
+    <tr><th colspan="2" class="title"><h2>Labs</h2></th></tr>
 
     <tr><td class="label">Cryodate:</td><td>{{ cellline.celllinelab.cryodate|default:"-" }}</td></tr>
     <tr><td class="label">Expansion in progress:</td><td>{{ cellline.celllinelab.expansioninprogress|default:"-" }}</td></tr>
@@ -65,7 +70,7 @@
     <tr><td class="label">Culture system:</td><td>{{ cellline.celllinelab.culturesystem|default:"-" }}</td></tr>
     <tr><td class="label">Culture system comment:</td><td>{{ cellline.celllinelab.culturesystemcomment|default:"-" }}</td></tr>
 
-    <tr><th colspan="2" class="title"><h2>Cell line legal</h2></th></tr>
+    <tr><th colspan="2" class="title"><h2>Ethics</h2></th></tr>
 
     <tr><td class="label">Q1 donor consent:</td><td>{{ cellline.celllinelegal.q1donorconsent|default:"-" }}</td></tr>
     <tr><td class="label">Q2 donor trace:</td><td>{{ cellline.celllinelegal.q2donortrace|default:"-" }}</td></tr>
@@ -78,7 +83,7 @@
     <tr><td class="label">Q9 applicable legislation and regulation:</td><td>{{ cellline.celllinelegal.q9applicablelegislationandregulation|default:"-" }}</td></tr>
     <tr><td class="label">Q10 managed access:</td><td>{{ cellline.celllinelegal.q10managedaccess|default:"-" }}</td></tr>
 
-    <tr><th colspan="2" class="title"><h2>Cell line values</h2></th></tr>
+    <tr><th colspan="2" class="title"><h2>Values</h2></th></tr>
 
     <tr><td class="label">Potential use:</td><td>{{ cellline.celllinevalue.potentialuse|default:"-" }}</td></tr>
     <tr><td class="label">Value to society:</td><td>{{ cellline.celllinevalue.valuetosociety|default:"-" }}</td></tr>

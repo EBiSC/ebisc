@@ -22,6 +22,26 @@ table.listing {
   @extend %table-listing;
 }
 
+.load-more {
+  display: none;
+  text-align: center;
+  margin: 40px 0px;
+
+  button {
+    @extend %inverse-button;
+    margin: 0 auto;
+    width: span(3);
+
+    @include breakpoint(map-get($breakpoints, medium)) {
+      width: span(4);
+    }
+
+    @include breakpoint(map-get($breakpoints, small)) {
+      width: span(7);
+    }
+  }
+}
+
 // Table for displaying data
 
 table.data {
