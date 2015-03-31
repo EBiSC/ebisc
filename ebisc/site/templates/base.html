@@ -15,16 +15,16 @@
 
     <header>
         <div class="logo">
-            <a href="{% url 'site:document' '' %}"><img src="{% static 'images/EBiSC-logo.png' %}" alt="EBiSC" width="131" height="80"></a>    
+            <img src="{% static 'images/EBiSC-logo.png' %}" alt="EBiSC" width="131" height="80">
         </div>
         <div class="collapsible-menu">
             <button id="main-navigation-menu-mobile-toggle" class="collapsible-menu-toggle" data-target="main-navigation-menu-items">MENU</button>
             <nav role="navigation">
                 <ul id="main-navigation-menu-items" class="collapsible-menu-items">
-                    <li><a href="{% url 'site:document' '' %}">Home</a></li>
                     {% for item in menu %}
                     <li class="{% if item.active %}active{% endif %}"><a href="{{ item.path }}">{{ item.title }}</a></li>
                     {% endfor %}
+                    <li><a href="http://www.ebisc.org/">About EBiSC</a></li>
                 </ul>
             </nav>
         </div>

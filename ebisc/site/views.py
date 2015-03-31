@@ -33,7 +33,6 @@ def get_menu(path):
     MENU = (
         (reverse('search:search'), 'Cell Line Catalogue'),
         (reverse('executive:dashboard'), 'Executive Dashboard'),
-        (reverse('site:document', args=['about/']), 'About EBiSC'),
     )
 
     return Menu(MENU, path)
