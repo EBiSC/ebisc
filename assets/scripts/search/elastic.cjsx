@@ -114,6 +114,7 @@ buildAggregations = () ->
             terms =
                 field: facet.name
                 order: _term: 'asc'
+                min_doc_count: 0
                 size: 0
 
             if not otherFilters.length
