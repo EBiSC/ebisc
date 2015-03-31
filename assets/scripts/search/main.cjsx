@@ -1,6 +1,6 @@
-Config = require './config'
 Elastic = require './elastic'
 State = require './state'
+Actions = require './actions'
 
 Filter = require './components/filter'
 Search = require './components/search'
@@ -12,7 +12,7 @@ TotalCount = require './components/total-count'
 if sessionStorage.getItem('filter')
     State.set('filter', JSON.parse(sessionStorage.getItem('filter')))
 else
-    State.select('filter').set('facets', Config.facets)
+    actions.initFilter()
 
 onFilterUpdate = () ->
     sessionStorage.setItem('filter', JSON.stringify(State.select('filter').get()))

@@ -39,14 +39,10 @@ DropdownMultiSelect = React.createClass
 Item = React.createClass
 
     handleOnClick: () ->
-        @setState selected: not @state.selected
-        @props.action(@props.item.name, not @state.selected)
-
-    getInitialState: () ->
-        selected: @props.item.selected != undefined and @props.item.selected or false
+        @props.action(@props.item.name, not @props.item.selected)
 
     render: () ->
-        <li onClick={@handleOnClick} className={classNames(selected: @state.selected)}>
+        <li onClick={@handleOnClick} className={classNames(selected: @props.item.selected != undefined and @props.item.selected or false)}>
             <div className="checkbox"></div>
             <label>{_.capitalize(@props.item.label)}</label>
         </li>
