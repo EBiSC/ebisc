@@ -12,7 +12,7 @@ TotalCount = require './components/total-count'
 if sessionStorage.getItem('filter')
     State.set('filter', JSON.parse(sessionStorage.getItem('filter')))
 else
-    actions.initFilter()
+    Actions.initFilter()
 
 onFilterUpdate = () ->
     sessionStorage.setItem('filter', JSON.stringify(State.select('filter').get()))

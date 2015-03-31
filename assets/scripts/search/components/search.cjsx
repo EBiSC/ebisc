@@ -23,7 +23,7 @@ Input = React.createClass
         query: @props.query
 
     render: () ->
-        <input type="text" placeholder="Enter keywords" value={@state.query} onChange={@handleChange} />
+        <input type="text" placeholder="Search cell lines" value={@state.query} onChange={@handleChange} />
 
     handleChange: (e) ->
         @setState(query: e.target.value)

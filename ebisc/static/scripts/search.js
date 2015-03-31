@@ -1,21 +1,12 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-<<<<<<< HEAD
 var Actions, Celllines, Elastic, Filter, Search, State, TotalCount, onFilterUpdate;
-=======
-var Celllines, Config, Elastic, Filter, Search, State, TotalCount, onFilterUpdate;
-
-Config = require('./config');
->>>>>>> origin/develop
 
 Elastic = require('./elastic');
 
 State = require('./state');
 
-<<<<<<< HEAD
 Actions = require('./actions');
 
-=======
->>>>>>> origin/develop
 Filter = require('./components/filter');
 
 Search = require('./components/search');
@@ -27,11 +18,7 @@ TotalCount = require('./components/total-count');
 if (sessionStorage.getItem('filter')) {
   State.set('filter', JSON.parse(sessionStorage.getItem('filter')));
 } else {
-<<<<<<< HEAD
-  actions.initFilter();
-=======
-  State.select('filter').set('facets', Config.facets);
->>>>>>> origin/develop
+  Actions.initFilter();
 }
 
 onFilterUpdate = function() {
@@ -51,7 +38,6 @@ React.render(React.createElement(Celllines, null), document.getElementById('cell
 
 
 
-<<<<<<< HEAD
 },{"./actions":2,"./components/celllines":3,"./components/filter":5,"./components/search":6,"./components/total-count":8,"./elastic":10,"./state":11}],2:[function(require,module,exports){
 var Config, State, initFilter, updateFacetTermFilter, updateQueryFilter;
 
@@ -59,13 +45,6 @@ State = require('./state');
 
 Config = require('./config');
 
-=======
-},{"./components/celllines":3,"./components/filter":5,"./components/search":6,"./components/total-count":8,"./config":9,"./elastic":10,"./state":11}],2:[function(require,module,exports){
-var State, updateFacetTermFilter, updateQueryFilter;
-
-State = require('./state');
-
->>>>>>> origin/develop
 updateQueryFilter = function(query) {
   return State.select('filter', 'query').edit(query);
 };
@@ -78,27 +57,19 @@ updateFacetTermFilter = function(facetName, term, state) {
   return selectedTerms.set(term, state);
 };
 
-<<<<<<< HEAD
 initFilter = function() {
   return State.select('filter').set('facets', Config.facets);
 };
 
 module.exports = {
   initFilter: initFilter,
-=======
-module.exports = {
->>>>>>> origin/develop
   updateQueryFilter: updateQueryFilter,
   updateFacetTermFilter: updateFacetTermFilter
 };
 
 
 
-<<<<<<< HEAD
 },{"./config":9,"./state":11}],3:[function(require,module,exports){
-=======
-},{"./state":11}],3:[function(require,module,exports){
->>>>>>> origin/develop
 var Celllines, Config, State, Table;
 
 Config = require('../config');
@@ -228,29 +199,13 @@ DropdownMultiSelect = React.createClass({
 
 Item = React.createClass({
   handleOnClick: function() {
-<<<<<<< HEAD
     return this.props.action(this.props.item.name, !this.props.item.selected);
-=======
-    this.setState({
-      selected: !this.state.selected
-    });
-    return this.props.action(this.props.item.name, !this.state.selected);
-  },
-  getInitialState: function() {
-    return {
-      selected: this.props.item.selected !== void 0 && this.props.item.selected || false
-    };
->>>>>>> origin/develop
   },
   render: function() {
     return React.createElement("li", {
       "onClick": this.handleOnClick,
       "className": classNames({
-<<<<<<< HEAD
         selected: this.props.item.selected !== void 0 && this.props.item.selected || false
-=======
-        selected: this.state.selected
->>>>>>> origin/develop
       })
     }, React.createElement("div", {
       "className": "checkbox"
@@ -263,12 +218,8 @@ module.exports = DropdownMultiSelect;
 
 
 },{"classnames":24}],5:[function(require,module,exports){
-<<<<<<< HEAD
 var Actions, DropdownMultiSelect, Facets, State,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-=======
-var Actions, DropdownMultiSelect, Facets, State;
->>>>>>> origin/develop
 
 State = require('../state');
 
@@ -300,15 +251,12 @@ Facets = React.createClass({
     }
     return results;
   },
-<<<<<<< HEAD
   clearFilters: function() {
     return Actions.initFilter();
   },
   render: function() {
     var facet, getSelectedTerms, i, selectedTerms;
-    return React.createElement("div", {
-      "className": "filter-group"
-    }, (getSelectedTerms = (function(_this) {
+    getSelectedTerms = (function(_this) {
       return function(facetName) {
         var key, terms, value;
         terms = _this.state.cursors.facets[_.findIndex(_this.state.cursors.facets, {
@@ -326,7 +274,10 @@ Facets = React.createClass({
           return results;
         })());
       };
-    })(this), _.size(this.state.cursors.facetTerms) ? React.createElement("div", null, React.createElement("div", null, (function() {
+    })(this);
+    return React.createElement("span", null, React.createElement("span", null, (_.size(this.state.cursors.facetTerms) ? React.createElement("div", {
+      "className": "filter-group"
+    }, (function() {
       var j, len, ref, results;
       ref = this.state.cursors.facets;
       results = [];
@@ -343,7 +294,7 @@ Facets = React.createClass({
         }));
       }
       return results;
-    }).call(this)), (indexOf.call((function() {
+    }).call(this)) : void 0)), React.createElement("span", null, (indexOf.call((function() {
       var j, len, ref, results;
       ref = this.state.cursors.facets;
       results = [];
@@ -353,47 +304,11 @@ Facets = React.createClass({
       }
       return results;
     }).call(this), true) >= 0 ? React.createElement("div", {
+      "className": "clear",
       "onClick": this.clearFilters
-    }, "clear filters") : void 0)) : void 0));
-=======
-  render: function() {
-    var facet, i, key, selectedTerms, terms, value;
-    return React.createElement("div", {
-      "className": "filter-group"
-    }, ((function() {
-      var j, len, ref, results;
-      if (_.size(this.state.cursors.facetTerms)) {
-        ref = this.state.cursors.facets;
-        results = [];
-        for (i = j = 0, len = ref.length; j < len; i = ++j) {
-          facet = ref[i];
-          terms = this.state.cursors.facets[_.findIndex(this.state.cursors.facets, {
-            name: facet.name
-          })].selectedTerms;
-          selectedTerms = _.object((function() {
-            var results1;
-            results1 = [];
-            for (key in terms) {
-              value = terms[key];
-              if (value === true) {
-                results1.push([key, value]);
-              }
-            }
-            return results1;
-          })());
-          results.push(React.createElement(DropdownMultiSelect, {
-            "key": facet.name,
-            "name": facet.name,
-            "label": facet.label,
-            "hasSelection": _.size(selectedTerms) > 0,
-            "items": this.getItems(facet.name, selectedTerms),
-            "action": _.partial(Actions.updateFacetTermFilter, facet.name)
-          }));
-        }
-        return results;
-      }
-    }).call(this)));
->>>>>>> origin/develop
+    }, React.createElement("span", {
+      "className": "glyphicon glyphicon-remove-sign"
+    }), " Clear filters") : void 0)));
   }
 });
 
@@ -430,7 +345,7 @@ Input = React.createClass({
   render: function() {
     return React.createElement("input", {
       "type": "text",
-      "placeholder": "Enter keywords",
+      "placeholder": "Search cell lines",
       "value": this.state.query,
       "onChange": this.handleChange
     });

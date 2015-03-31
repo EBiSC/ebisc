@@ -1,22 +1,21 @@
 .cell-line-filter {
 
-  .filters {
+  #filter {
     @include clearfix();
     width: span(12);
+    margin: 0;
 
-    #filter {
+    .filter-group {
       display: inline-block;
-      margin: 0;
     }
 
-    #clear-filters {
+    .clear {
       display: inline-block;
       margin-left: 10px;
+      color: $dark-gray;
       font-size: $font-size-small * 1.1;
 
-      a {
-        color: $dark-gray;
-      }
+      cursor: pointer;
 
       @include breakpoint(map-get($breakpoints, small)) {
         display: block;

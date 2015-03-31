@@ -25,27 +25,31 @@ Facets = React.createClass
         Actions.initFilter()
 
     render: () ->
-        <div className="filter-group">
-        {
-            getSelectedTerms = (facetName) =>
-                terms = @state.cursors.facets[_.findIndex(@state.cursors.facets, {name: facetName})].selectedTerms
-                _.object(([key, value] for key, value of terms when value == true))
 
-            if _.size(@state.cursors.facetTerms)
-                <div>
-                    <div>
+        getSelectedTerms = (facetName) =>
+            terms = @state.cursors.facets[_.findIndex(@state.cursors.facets, {name: facetName})].selectedTerms
+            _.object(([key, value] for key, value of terms when value == true))
+
+        <span>
+            <span>
+            {
+                if _.size(@state.cursors.facetTerms)
+                    <div className="filter-group">
                     {
                         for facet, i in @state.cursors.facets
                             selectedTerms = getSelectedTerms(facet.name)
                             <DropdownMultiSelect key={facet.name} name={facet.name} label={facet.label} hasSelection={_.size(selectedTerms) > 0} items={@getItems(facet.name, selectedTerms)} action={_.partial(Actions.updateFacetTermFilter, facet.name)}/>
                     }
                     </div>
-                    {
-                        if true in (_.size(getSelectedTerms(facet.name)) > 0 for facet in @state.cursors.facets)
-                            <div onClick={@clearFilters}>clear filters</div>
-                    }
-                </div>
-        }
-        </div>
+            }
+            </span>
+
+            <span>
+            {
+                if true in (_.size(getSelectedTerms(facet.name)) > 0 for facet in @state.cursors.facets)
+                    <div className="clear" onClick={@clearFilters}><span className="glyphicon glyphicon-remove-sign"></span> Clear filters</div>
+            }
+            </span>
+        </span>
 
 module.exports = Facets
