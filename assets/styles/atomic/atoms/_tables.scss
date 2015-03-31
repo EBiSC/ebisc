@@ -39,14 +39,14 @@ th.title {
   color: white;
   text-align: left;
 
-  a {
+  .sort {
     color: white;
   }
 
   &.order-by {
     background-color: darken($color-table-background, 55%);
 
-    a {
+    .sort {
       position: relative;
 
       &:after
@@ -61,7 +61,7 @@ th.title {
     }
 
     &.dsc {
-      a {
+      .sort {
         &:after {
           content: "▲";
         }
