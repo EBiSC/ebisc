@@ -15,8 +15,10 @@ class Menu(object):
 
     @staticmethod
     def active(item, path):
-        path = '/' + path
-        return path.startswith(unicode(item))
+        if item == '/':
+            return path == item
+        else:
+            return path.startswith(unicode(item))
 
     def __init__(self, items, path):
         self.menu = ({'path': item[0], 'title': item[1], 'active': Menu.active(item[0], path)} for item in items)
@@ -47,7 +49,7 @@ def document(request, path):
 
 def render(request, path, context={}):
 
-    menu = get_menu(path)
+    menu = get_menu(request.path)
 
     context.update({
         'path': path,
