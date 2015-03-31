@@ -27,7 +27,6 @@
     margin: 0 0 5px 0;
     padding: 0 ($dropdown-padding * 2.5) 0 ($dropdown-padding / 2);
     position: relative;
-    min-width: 200px;
 
     &:hover {
       background-color: $dropdown-background-hover;
@@ -115,6 +114,18 @@
       -webkit-column-gap: 40px;
       -moz-column-gap: 40px;
       column-gap: 40px;
+
+      @include breakpoint(map-get($breakpoints, small)) {
+        min-width: 0;
+
+        -webkit-column-count: 1;
+        -moz-column-count: 1;
+        column-count: 1;
+
+        -webkit-column-gap: 0px;
+        -moz-column-gap: 0px;
+        column-gap: 0px;
+      }
     }    
   }
 }

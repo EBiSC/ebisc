@@ -106,11 +106,21 @@
 
 .filter-group {
   margin: 20px 0px;
-  
+
+  $button-width: 190px;
+
   .dropdown {
     display: inline-block;
-    width: 200px;
+    width: $button-width;
     margin-right: 5px;
+
+    .dropdown-button {
+      min-width: $button-width;
+    }
+
+    @include breakpoint(map-get($breakpoints, small)) {
+      display: block;
+    }
   }
 }
 

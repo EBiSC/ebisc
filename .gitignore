@@ -5,8 +5,5 @@
 /node_modules/
 /assets/components/
 
-/*/static/scripts/maps/
-/*/static/styles/maps/
-
 /var/static/
 /var/virtualenv/
