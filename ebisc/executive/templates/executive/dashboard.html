@@ -15,7 +15,7 @@
             {% for column in columns %}
             <th{% if sort_column == column.0 %} class="order-by {{ sort_order }}"{% endif %}>
                 {% if column.2 %}
-                <a href="?sc={{ column.0 }}{% if sort_column == column.0 %}{% if sort_order == 'asc' %}&so=dsc{% endif %}{% endif %}">{{ column.1 }}</a>
+                <a class="sort" href="?sc={{ column.0 }}{% if sort_column == column.0 %}{% if sort_order == 'asc' %}&so=dsc{% endif %}{% endif %}">{{ column.1 }}</a>
                 {% else %}
                 {{ column.1 }}
                 {% endif %}
