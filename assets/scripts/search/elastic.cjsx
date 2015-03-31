@@ -21,6 +21,10 @@ search = () ->
         query: buildFilteredQuery()
         aggs: buildAggregations()
 
+    orderBy = State.select('filter', 'orderBy').get()
+    if orderBy != null
+      body.sort = ["#{orderBy.field}": order: orderBy.direction]
+
     # console.debug '-- QUERY BODY --'
     # console.debug JSON.stringify(body, null, '  ')
 

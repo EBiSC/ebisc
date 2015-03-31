@@ -1,9 +1,17 @@
 {
     "cellline": {
         "properties": {
-            "biosamplesid": {"type": "string"},
+            "biosamplesid": {
+                "type": "string",
+                "index": "not_analyzed",
+                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+            },
 
-            "celllinename": {"type": "string"},
+            "celllinename": {
+                "type": "string",
+                "index": "not_analyzed",
+                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+            },
 
             "depositor": {
                 "type": "string",
@@ -23,7 +31,11 @@
                 "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
             },
 
-            "celllinenamesynonyms": {"type": "string"}
+            "celllinenamesynonyms": {
+                "type": "string",
+                "index": "not_analyzed",
+                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+            }
         }
     }
 }

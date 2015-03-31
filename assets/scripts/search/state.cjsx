@@ -4,6 +4,7 @@ state = {
     filter:
         query: ''
         facets: []
+        orderBy: null
     facetTerms: {}
     celllines: []
     isLoaded: false

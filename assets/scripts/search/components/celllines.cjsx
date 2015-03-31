@@ -1,6 +1,7 @@
 Config = require '../config'
 State = require '../state'
 Table = require './table'
+Actions = require '../actions'
 
 Celllines = React.createClass
 
@@ -9,6 +10,7 @@ Celllines = React.createClass
     cursors:
         isLoaded: ['isLoaded']
         celllines: ['celllines']
+        orderBy: ['filter', 'orderBy']
 
     render: () ->
 
@@ -28,7 +30,7 @@ Celllines = React.createClass
         <div>
         {
             if @state.cursors.isLoaded
-                <Table cols={Config.fields} rows={rows} />
+                <Table cols={Config.fields} rows={rows} orderBy={@state.cursors.orderBy} onOrderBy={Actions.orderBy} />
         }
         </div>
 

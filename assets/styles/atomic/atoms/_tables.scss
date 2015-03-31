@@ -38,9 +38,11 @@ th.title {
   background-color: darken($color-table-background, 40%);
   color: white;
   text-align: left;
+  cursor: pointer;
 
   .sort {
     color: white;
+    display: block;
   }
 
   &.order-by {
@@ -55,12 +57,12 @@ th.title {
           content: "▼";
           font-family: sans-serif;
           font-size: $font-size-small * 0.8;
-          top: 2px;
+          top: 4px;
           margin-left: 5px;
       }
     }
 
-    &.dsc {
+    &.desc {
       .sort {
         &:after {
           content: "▲";

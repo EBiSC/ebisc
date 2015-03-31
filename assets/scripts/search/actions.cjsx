@@ -11,7 +11,11 @@ updateFacetTermFilter = (facetName, term, state) ->
 initFilter = () ->
     State.select('filter').set('facets', Config.facets)
 
+orderBy = (value) ->
+    State.select('filter').set('orderBy', value)
+
 module.exports =
     initFilter: initFilter
     updateQueryFilter: updateQueryFilter
     updateFacetTermFilter: updateFacetTermFilter
+    orderBy: orderBy
