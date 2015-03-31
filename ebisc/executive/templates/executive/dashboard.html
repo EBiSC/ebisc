@@ -31,7 +31,7 @@
             <td>{{ cellline.celllinename }}</td>
             <td>{{ cellline.celllineprimarydisease }}</td>
             <td>{{ cellline.registration_name }}</td>
-            <td>{{ cellline.celllineorganization.organization }}</td>
+            <td>{{ cellline.celllineorganization.organization.organizationname }}</td>
             <td class="number {{ cellline.quantity|default:'empty' }}">{{ cellline.quantity|default:'-' }}</td>
             <td class="number {{ cellline.sold|default:'empty' }}">{{ cellline.sold|default:'-' }}</td>
             <td class="accepted">{% include 'executive/accepted-form.html' %}</td>
