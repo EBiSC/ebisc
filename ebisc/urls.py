@@ -24,7 +24,7 @@ urlpatterns = patterns('',
     url(r'^executive/', include('ebisc.executive.urls', namespace='executive')),
 
     # Cell line search
-    url(r'^search/', include('ebisc.search.urls', namespace='search')),
+    url(r'', include('ebisc.search.urls', namespace='search')),
 
     # Site
     url(r'', include('ebisc.site.urls', namespace='site')),
