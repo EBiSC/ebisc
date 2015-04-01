@@ -5,20 +5,20 @@
 .cell-line-filter {
 
   #filter {
-    @include clearfix();
+    margin-bottom: 30px;
     width: span(12);
-    margin: 0;
+
+    @include clearfix();
 
     .filter-group {
       display: inline-block;
     }
 
-    .clear {
+    .clear-all-filters {
       display: inline-block;
       margin-left: 10px;
       color: $dark-gray;
       font-size: $font-size-small * 1.1;
-
       cursor: pointer;
 
       @include breakpoint(map-get($breakpoints, small)) {
@@ -30,7 +30,6 @@
   }
 
   #search {
-    margin-bottom: 40px;
     width: span(8);
     float: left;
 

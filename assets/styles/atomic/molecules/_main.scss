@@ -107,22 +107,43 @@
 // Filters
 
 .filter-group {
-  margin: 20px 0px;
+  $filter-width: 245px;
 
-  $button-width: 190px;
+  margin-top: 10px;
 
-  .dropdown {
+  > .filter {
     display: inline-block;
-    width: $button-width;
-    margin-right: 5px;
+    vertical-align: top;
 
-    .dropdown-button {
-      min-width: $button-width;
+    > .dropdown {
+      display: inline-block;
+      width: $filter-width;
+      margin-right: 5px;
+
+      .dropdown-button {
+        min-width: $filter-width;
+      }
+
+      @include breakpoint(map-get($breakpoints, small)) {
+        display: block;
+      }
     }
 
-    @include breakpoint(map-get($breakpoints, small)) {
-      display: block;
+    > .selected-terms {
+      width: $filter-width;
+      line-height: 1.5em;
+
+      .term {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: $font-size-small * 1.1;
+        color: $dark-gray;
+
+        .remove {
+          cursor: pointer;
+        }
+      }
     }
   }
 }
-
