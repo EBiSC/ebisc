@@ -29,12 +29,12 @@ config = {
     ]
 
     query_fields: [
-        'biosamplesid'
-        'celllinename'
+        'biosamplesid.analyzed'
+        'celllinename.analyzed'
         'depositor.analyzed'
         'celllinecelltype.analyzed'
         'celllineprimarydisease.analyzed'
-        'celllinenamesynonyms'
+        'celllinenamesynonyms.analyzed'
     ]
 
     facets: [
