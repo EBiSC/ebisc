@@ -1,3 +1,5 @@
+ReactCSSTransitionGroup = React.addons.CSSTransitionGroup
+
 State = require '../state'
 Actions = require '../actions'
 DropdownMultiSelect = require './dropdown-multi-select'
@@ -30,7 +32,7 @@ Facets = React.createClass
             </span>
             <span>
             {
-                if true in (@getSelectedTerms(facet.name).length > 0 for facet in @state.cursors.facets)
+                if _.size(@state.cursors.facetTerms) and true in (@getSelectedTerms(facet.name).length > 0 for facet in @state.cursors.facets)
                     <div className="clear-all-filters" onClick={@clearFilters}><span className="glyphicon glyphicon-remove-sign"></span> Clear all filters</div>
             }
             </span>
@@ -58,7 +60,9 @@ SelectedTerms = React.createClass
 
     render: () ->
         <ul className="selected-terms">
+            <ReactCSSTransitionGroup transitionName="transition-opacity">
             {(<li key={term} className="term"><span className="remove glyphicon glyphicon-remove-sign" onClick={@createHandleOnRemove(term)}></span> {term}</li> for term in @props.terms)}
+            </ReactCSSTransitionGroup>
         </ul>
 
     createHandleOnRemove: (term) ->

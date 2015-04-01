@@ -1,0 +1,20 @@
+@mixin transition-opacity($duration)
+{
+  .transition-opacity-enter {
+    opacity: 0;
+    @include transition(opacity $duration);
+  }
+
+  .transition-opacity-enter.transition-opacity-enter-active {
+    opacity: 1;
+  }
+
+  .transition-opacity-leave {
+    opacity: 1;
+    @include transition(opacity $duration);
+  }
+
+  .transition-opacity-leave.transition-opacity-leave-active {
+    opacity: 0;
+  }  
+}
