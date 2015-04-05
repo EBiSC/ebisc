@@ -8,7 +8,11 @@ config = {
         }
         {
             name: 'celllinename'
-            label: 'Cell line Name'
+            label: 'Name'
+        }
+        {
+            name: 'celllinenamesynonyms'
+            label: 'Name synonyms'
         }
         {
             name: 'depositor'
@@ -22,19 +26,15 @@ config = {
             name: 'celllinecelltype'
             label: 'Cell type'
         }
-        {
-            name: 'celllinenamesynonyms'
-            label: 'Cell line name synonims'
-        }
     ]
 
     query_fields: [
         'biosamplesid.analyzed'
         'celllinename.analyzed'
+        'celllinenamesynonyms.analyzed'
         'depositor.analyzed'
         'celllinecelltype.analyzed'
         'celllineprimarydisease.analyzed'
-        'celllinenamesynonyms.analyzed'
     ]
 
     facets: [

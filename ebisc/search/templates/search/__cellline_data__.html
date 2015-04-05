@@ -6,13 +6,14 @@
     <tr><td class="label">Cell line name synonyms:</td><td>{{ cellline.celllinenamesynonyms|default:"-" }}</td></tr>
     <tr><td class="label">Donor:</td><td>{{ cellline.celllinedonor|default:"-" }}</td></tr>
     <tr><td class="label">Disease:</td><td>{{ cellline.celllineprimarydisease|default:"-" }}</td></tr>
+    <tr><td class="label">Mutant gene:</td><td>{{ cellline.celllinelab.mutagene|default:"-" }}</td></tr>
     <tr><td class="label">Cell line disease info:</td><td>{{ cellline.celllinediseaseaddinfo|default:"-" }}</td></tr>
     <tr><td class="label">Cell line status:</td><td>{{ cellline.celllinestatus|default:"-" }}</td></tr>
     <tr><td class="label">Cell type:</td><td>{{ cellline.celllinecelltype|default:"-" }}</td></tr>
     <tr><td class="label">Tissue source:</td><td>{{ cellline.celllinetissuesource|default:"-" }}</td></tr>
     <tr><td class="label">Cell line collection:</td><td>{{ cellline.celllinecollection|default:"-" }}</td></tr>
-    <tr><td class="label">Clinical treatment B4 donation:</td><td>{{ cellline.celllinetissuetreatment|default:"-" }}</td></tr>
-    <tr><td class="label">Cellline tissue date:</td><td>{{ cellline.celllinetissuedate|default:"-" }}</td></tr>
+    <tr><td class="label">Clinical treatment before donation:</td><td>{{ cellline.celllinetissuetreatment|default:"-" }}</td></tr>
+    <tr><td class="label">Cell line tissue date:</td><td>{{ cellline.celllinetissuedate|default:"-" }}</td></tr>
 
     <tr><td class="label">Cell line comments:</td><td>{{ cellline.celllinecomments|default:"-" }}</td></tr>
 <!--     <tr><td class="label">Cell line update:</td><td>{{ cellline.celllineupdate|default:"-" }}</td></tr>
@@ -28,7 +29,7 @@
     <tr><th colspan="2" class="title"><h2>Derivation</h2></th></tr>
 
     <tr><td class="label">Primary cell type name:</td><td>{{ cellline.celllinederivation.primarycelltypename|default:"-" }}</td></tr>
-    <tr><td class="label">Primary cell type cell finder id:</td><td>{{ cellline.celllinederivation.primarycelltypecellfinderid|default:"-" }}</td></tr>
+    <tr><td class="label">Primary cell type cell finder ID:</td><td>{{ cellline.celllinederivation.primarycelltypecellfinderid|default:"-" }}</td></tr>
     <tr><td class="label">Primary cell developmental stage:</td><td>{{ cellline.celllinederivation.primarycelldevelopmentalstage|default:"-" }}</td></tr>
     <tr><td class="label">Selection criteria for clones:</td><td>{{ cellline.celllinederivation.selectioncriteriaforclones|default:"-" }}</td></tr>
     <tr><td class="label">Xeno free conditions:</td><td>{{ cellline.celllinederivation.xenofreeconditions|default:"-" }}</td></tr>
@@ -39,21 +40,21 @@
 
     <tr><td class="label">Surface coating:</td><td>{{ cellline.celllinecultureconditions.surfacecoating|default:"-" }}</td></tr>
     <tr><td class="label">Feeder cell type:</td><td>{{ cellline.celllinecultureconditions.feedercelltype|default:"-" }}</td></tr>
-    <tr><td class="label">Feeder cell id:</td><td>{{ cellline.celllinecultureconditions.feedercellid|default:"-" }}</td></tr>
+    <tr><td class="label">Feeder cell ID:</td><td>{{ cellline.celllinecultureconditions.feedercellid|default:"-" }}</td></tr>
     <tr><td class="label">Passage method:</td><td>{{ cellline.celllinecultureconditions.passagemethod|default:"-" }}</td></tr>
     <tr><td class="label">Enzymatically:</td><td>{{ cellline.celllinecultureconditions.enzymatically|default:"-" }}</td></tr>
     <tr><td class="label">Enzyme free:</td><td>{{ cellline.celllinecultureconditions.enzymefree|default:"-" }}</td></tr>
-    <tr><td class="label">O2 concentration:</td><td>{{ cellline.celllinecultureconditions.o2concentration|default:"-" }}</td></tr>
-    <tr><td class="label">Co2 concentration:</td><td>{{ cellline.celllinecultureconditions.co2concentration|default:"-" }}</td></tr>
+    <tr><td class="label">O<sub>2</sub> concentration:</td><td>{{ cellline.celllinecultureconditions.o2concentration|default:"-" }}</td></tr>
+    <tr><td class="label">CO<sub>2</sub> concentration:</td><td>{{ cellline.celllinecultureconditions.co2concentration|default:"-" }}</td></tr>
     <tr><td class="label">Culture medium:</td><td>{{ cellline.celllinecultureconditions.culturemedium|default:"-" }}</td></tr>
 
     <tr><th colspan="2" class="title"><h2>Characterization</h2></th></tr>
 
     <tr><td class="label">Certificate of analysis passage:</td><td>{{ cellline.celllinecharacterization.certificateofanalysispassage|default:"-" }}</td></tr>
-    <tr><td class="label">Hiv1 screening:</td><td>{{ cellline.celllinecharacterization.hiv1screening|default:"-" }}</td></tr>
-    <tr><td class="label">Hiv2 screening:</td><td>{{ cellline.celllinecharacterization.hiv2screening|default:"-" }}</td></tr>
-    <tr><td class="label">Hepititus b:</td><td>{{ cellline.celllinecharacterization.hepititusb|default:"-" }}</td></tr>
-    <tr><td class="label">Hepititus c:</td><td>{{ cellline.celllinecharacterization.hepititusc|default:"-" }}</td></tr>
+    <tr><td class="label">HIV1 screening:</td><td>{{ cellline.celllinecharacterization.hiv1screening|default:"-" }}</td></tr>
+    <tr><td class="label">HIV2 screening:</td><td>{{ cellline.celllinecharacterization.hiv2screening|default:"-" }}</td></tr>
+    <tr><td class="label">Hepatitis b:</td><td>{{ cellline.celllinecharacterization.hepititusb|default:"-" }}</td></tr>
+    <tr><td class="label">Hepatitis c:</td><td>{{ cellline.celllinecharacterization.hepititusc|default:"-" }}</td></tr>
     <tr><td class="label">Mycoplasma:</td><td>{{ cellline.celllinecharacterization.mycoplasma|default:"-" }}</td></tr>
 
     <tr><th colspan="2" class="title"><h2>Labs</h2></th></tr>
@@ -61,7 +62,6 @@
     <tr><td class="label">Cryodate:</td><td>{{ cellline.celllinelab.cryodate|default:"-" }}</td></tr>
     <tr><td class="label">Expansion in progress:</td><td>{{ cellline.celllinelab.expansioninprogress|default:"-" }}</td></tr>
     <tr><td class="label">Funder:</td><td>{{ cellline.celllinelab.funder|default:"-" }}</td></tr>
-    <tr><td class="label">Mutagene:</td><td>{{ cellline.celllinelab.mutagene|default:"-" }}</td></tr>
     <tr><td class="label">Reprogramming method 1:</td><td>{{ cellline.celllinelab.reprogrammingmethod1|default:"-" }}</td></tr>
     <tr><td class="label">Reprogramming method 2:</td><td>{{ cellline.celllinelab.reprogrammingmethod2|default:"-" }}</td></tr>
     <tr><td class="label">Reprogramming method 3:</td><td>{{ cellline.celllinelab.reprogrammingmethod3|default:"-" }}</td></tr>
@@ -72,16 +72,16 @@
 
     <tr><th colspan="2" class="title"><h2>Ethics</h2></th></tr>
 
-    <tr><td class="label">Q1 donor consent:</td><td>{{ cellline.celllinelegal.q1donorconsent|default:"-" }}</td></tr>
-    <tr><td class="label">Q2 donor trace:</td><td>{{ cellline.celllinelegal.q2donortrace|default:"-" }}</td></tr>
-    <tr><td class="label">Q3 irb approval:</td><td>{{ cellline.celllinelegal.q3irbapproval|default:"-" }}</td></tr>
-    <tr><td class="label">Q4 Approved use:</td><td>{{ cellline.celllinelegal.q4approveduse|default:"-" }}</td></tr>
-    <tr><td class="label">Q5 informed consent reference:</td><td>{{ cellline.celllinelegal.q5informedconsentreference|default:"-" }}</td></tr>
-    <tr><td class="label">Q6 restrictions:</td><td>{{ cellline.celllinelegal.q6restrictions|default:"-" }}</td></tr>
-    <tr><td class="label">Q7 ip restrictions:</td><td>{{ cellline.celllinelegal.q7iprestrictions|default:"-" }}</td></tr>
-    <tr><td class="label">Q8 Country:</td><td>{{ cellline.celllinelegal.q8jurisdiction|default:"-" }}</td></tr>
-    <tr><td class="label">Q9 applicable legislation and regulation:</td><td>{{ cellline.celllinelegal.q9applicablelegislationandregulation|default:"-" }}</td></tr>
-    <tr><td class="label">Q10 managed access:</td><td>{{ cellline.celllinelegal.q10managedaccess|default:"-" }}</td></tr>
+    <tr><td class="label">Donor consent:</td><td>{{ cellline.celllinelegal.q1donorconsent|default:"-" }}</td></tr>
+    <tr><td class="label">Donor trace:</td><td>{{ cellline.celllinelegal.q2donortrace|default:"-" }}</td></tr>
+    <tr><td class="label">IRB approval:</td><td>{{ cellline.celllinelegal.q3irbapproval|default:"-" }}</td></tr>
+    <tr><td class="label">Approved use:</td><td>{{ cellline.celllinelegal.q4approveduse|default:"-" }}</td></tr>
+    <tr><td class="label">Informed consent reference:</td><td>{{ cellline.celllinelegal.q5informedconsentreference|default:"-" }}</td></tr>
+    <tr><td class="label">Restrictions:</td><td>{{ cellline.celllinelegal.q6restrictions|default:"-" }}</td></tr>
+    <tr><td class="label">IP restrictions:</td><td>{{ cellline.celllinelegal.q7iprestrictions|default:"-" }}</td></tr>
+    <tr><td class="label">Country:</td><td>{{ cellline.celllinelegal.q8jurisdiction|default:"-" }}</td></tr>
+    <tr><td class="label">Applicable legislation and regulation:</td><td>{{ cellline.celllinelegal.q9applicablelegislationandregulation|default:"-" }}</td></tr>
+    <tr><td class="label">Managed access:</td><td>{{ cellline.celllinelegal.q10managedaccess|default:"-" }}</td></tr>
 
     <tr><th colspan="2" class="title"><h2>Values</h2></th></tr>
 
