@@ -8,7 +8,7 @@ elastic = window.elasticsearch.Client
     host:
         protocol: window.location.protocol
         host: window.location.hostname
-        port: (window.location.port and window.location.port) or (window.location.protocol == 'https' and 443) or 80
+        port: (window.location.port and window.location.port) or (window.location.protocol == 'https' and 443 or 80)
         path: '/es'
         headers: 'X-CSRFToken': cookie.get('csrftoken')
 
