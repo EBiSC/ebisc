@@ -5,12 +5,15 @@ State = require './state'
 Config = require './config'
 
 elastic = window.elasticsearch.Client
+
+console.log
     host:
         protocol: window.location.protocol
         host: window.location.hostname
         port: window.location.port
         path: '/es'
         headers: 'X-CSRFToken': cookie.get('csrftoken')
+
 
 # -----------------------------------------------------------------------------
 # Search
