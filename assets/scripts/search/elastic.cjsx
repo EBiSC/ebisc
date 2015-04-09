@@ -1,10 +1,16 @@
 XRegExp = require('xregexp').XRegExp
+cookie = require('cookie-dough')()
 
 State = require './state'
 Config = require './config'
 
 elastic = window.elasticsearch.Client
-    hosts: window.location.host + '/es'
+    host:
+        protocol: window.location.protocol
+        host: window.location.hostname
+        port: window.location.port
+        path: '/es'
+        headers: 'X-CSRFToken': cookie.get('csrftoken')
 
 # -----------------------------------------------------------------------------
 # Search
@@ -139,199 +145,4 @@ buildAggregations = () ->
 module.exports =
     search: search
 
-# -----------------------------------------------------------------------------
-# Example query
-
-'''
-
-GET /ebisc/cellline/_search
-{
-  "size": 1000,
-  "query": {
-    "filtered": {
-      "query": {
-        "bool": {
-          "must": [
-            {
-              "multi_match": {
-                "query": "unass",
-                "type": "phrase_prefix",
-                "fields": [
-                  "biosamplesid",
-                  "celllinename",
-                  "depositor.analyzed",
-                  "celllinecelltype.analyzed",
-                  "celllineprimarydisease.analyzed",
-                  "celllinenamesynonyms"
-                ]
-              }
-            }
-          ]
-        }
-      },
-      "filter": {
-        "bool": {
-          "must": [
-            {
-              "terms": {
-                "celllineprimarydisease": [
-                  "Hereditary spastic Paraplegia: SPG4"
-                ]
-              }
-            },
-            {
-              "terms": {
-                "depositor": [
-                  "UKB"
-                ]
-              }
-            }
-          ]
-        }
-      }
-    }
-  },
-  "aggs": {
-    "facets": {
-      "global": {},
-      "aggs": {
-        "celllineprimarydisease": {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "terms": {
-                    "depositor": [
-                      "UKB"
-                    ]
-                  }
-                },
-                {
-                  "query": {
-                    "multi_match": {
-                      "query": "unass",
-                      "type": "phrase_prefix",
-                      "fields": [
-                        "biosamplesid",
-                        "celllinename",
-                        "depositor.analyzed",
-                        "celllinecelltype.analyzed",
-                        "celllineprimarydisease.analyzed",
-                        "celllinenamesynonyms"
-                      ]
-                    }
-                  }
-                }
-              ]
-            }
-          },
-          "aggs": {
-            "facet": {
-              "terms": {
-                "field": "celllineprimarydisease",
-                "order": {
-                  "_term": "asc"
-                },
-                "size": 0
-              }
-            }
-          }
-        },
-        "celllinecelltype": {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "terms": {
-                    "celllineprimarydisease": [
-                      "Hereditary spastic Paraplegia: SPG4"
-                    ]
-                  }
-                },
-                {
-                  "terms": {
-                    "depositor": [
-                      "UKB"
-                    ]
-                  }
-                },
-                {
-                  "query": {
-                    "multi_match": {
-                      "query": "unass",
-                      "type": "phrase_prefix",
-                      "fields": [
-                        "biosamplesid",
-                        "celllinename",
-                        "depositor.analyzed",
-                        "celllinecelltype.analyzed",
-                        "celllineprimarydisease.analyzed",
-                        "celllinenamesynonyms"
-                      ]
-                    }
-                  }
-                }
-              ]
-            }
-          },
-          "aggs": {
-            "facet": {
-              "terms": {
-                "field": "celllinecelltype",
-                "order": {
-                  "_term": "asc"
-                },
-                "size": 0
-              }
-            }
-          }
-        },
-        "depositor": {
-          "filter": {
-            "bool": {
-              "must": [
-                {
-                  "terms": {
-                    "celllineprimarydisease": [
-                      "Hereditary spastic Paraplegia: SPG4"
-                    ]
-                  }
-                },
-                {
-                  "query": {
-                    "multi_match": {
-                      "query": "unass",
-                      "type": "phrase_prefix",
-                      "fields": [
-                        "biosamplesid",
-                        "celllinename",
-                        "depositor.analyzed",
-                        "celllinecelltype.analyzed",
-                        "celllineprimarydisease.analyzed",
-                        "celllinenamesynonyms"
-                      ]
-                    }
-                  }
-                }
-              ]
-            }
-          },
-          "aggs": {
-            "facet": {
-              "terms": {
-                "field": "depositor",
-                "order": {
-                  "_term": "asc"
-                },
-                "size": 0
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-'''
 # -----------------------------------------------------------------------------
