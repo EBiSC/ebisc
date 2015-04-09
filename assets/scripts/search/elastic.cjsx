@@ -3,13 +3,8 @@ XRegExp = require('xregexp').XRegExp
 State = require './state'
 Config = require './config'
 
-if window.location.hostname in ['127.0.0.1', 'localhost']
-    elasticSearchHost = '127.0.0.1:9200'
-else
-    elasticSearchHost = window.location.hostname + '/db'
-
 elastic = window.elasticsearch.Client
-    hosts: elasticSearchHost
+    hosts: window.location.host + '/es'
 
 # -----------------------------------------------------------------------------
 # Search
@@ -39,6 +34,7 @@ search = () ->
         State.set('isLoaded', true)
 
     .error (error) ->
+        console.error JSON.stringify(error, null, '  ')
         alert('Error loading data.')
 
 # -----------------------------------------------------------------------------

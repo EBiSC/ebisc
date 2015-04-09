@@ -17,6 +17,9 @@ urlpatterns = patterns('',
     url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'auth/login.html'}, name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),
 
+    # Elastic proxy
+    url(r'^es/', include('ebisc.elastic.urls', namespace='elastic')),
+
     # API
     url(r'^api/', include('ebisc.api.urls')),
 
