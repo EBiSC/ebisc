@@ -12,7 +12,9 @@ elastic = window.elasticsearch.Client
         path: '/es'
         headers: 'X-CSRFToken': cookie.get('csrftoken')
 
-console.log window.location.port and window.location.port or (window.location.protocol == 'https' and '443' or '80')
+console.log window.location.port
+console.log window.location.protocol
+console.log window.location.protocol == 'https' and '443' or '80'
 
 # -----------------------------------------------------------------------------
 # Search
