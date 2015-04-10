@@ -7,11 +7,11 @@ Search = require './components/search'
 Celllines = require './components/celllines'
 TotalCount = require './components/total-count'
 
-# Load session from sessionStorage or init from config
-
 if sessionStorage.getItem('filter')
-    State.set('filter', JSON.parse(sessionStorage.getItem('filter')))
+    # Load filter state from sessionStorage
+    Actions.setFilter(JSON.parse(sessionStorage.getItem('filter')))
 else
+    # Init filter state from config
     Actions.initFilter()
 
 onFilterUpdate = () ->

@@ -36,7 +36,7 @@ search = () ->
 
     .then (body) ->
         State.set('celllines', body.hits.hits)
-        State.set('facetTerms', body.aggregations.facets)
+        State.set('facetTerms', body.aggregations.facets) if body.aggregations
         State.set('isLoaded', true)
 
     .error (error) ->
@@ -87,6 +87,7 @@ buildFilter = () ->
         bool:
             must: filters
 
+
 buildFacetFilters = () ->
 
     buildTerms = (terms) ->
@@ -106,39 +107,41 @@ buildAggregations = () ->
         return {}
 
     else
-        buildAgg = (facet, filters) ->
-
-            # If there are filters for other facets, use them to filter this facet (but do not use filter for this facet)
-            otherFilters = (filter for filter in filters when not (facet.name of filter.terms))
-
-            # If there is a query, use it to filter this facet
-            query = buildQuery()
-            if 'bool' of query
-                for match in query.bool.must
-                    otherFilters.push query: match
-
-            terms =
-                field: facet.name
-                order: _term: 'asc'
-                min_doc_count: 0
-                size: 0
-
-            if not otherFilters.length
-                terms: terms
-
-            else
-                filter:
-                    bool:
-                        must: otherFilters
-                aggs:
-                    facet:
-                        terms: terms
-
         filters = buildFacetFilters()
 
         facets:
             global: {}
-            aggs: _.object([facet.name, buildAgg(facet, filters)] for facet in facets)
+            aggs: _.object([facet.name, buildAggregation(facet, filters)] for facet in facets)
+
+
+buildAggregation = (facet, filters) ->
+
+    # If there are filters for other facets, use them to filter this facet (but do not use filter for this facet)
+    otherFilters = (filter for filter in filters when not (facet.name of filter.terms))
+
+    # If there is a query, use it to filter this facet
+    query = buildQuery()
+    if 'bool' of query
+        for match in query.bool.must
+            otherFilters.push query: match
+
+    terms =
+        field: facet.name
+        order: _term: 'asc'
+        min_doc_count: 0
+        size: 0
+
+    if not otherFilters.length
+        terms: terms
+
+    else
+        filter:
+            bool:
+                must: otherFilters
+        aggs:
+            facet:
+                terms: terms
+
 
 # -----------------------------------------------------------------------------
 
