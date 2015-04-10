@@ -1,17 +1,17 @@
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
 
 from ebisc.site.views import render
 from ebisc.celllines.models import Cellline
 
 
-@login_required
+@permission_required('site.can_view_cell_lines', raise_exception=True)
 def search(request):
 
     return render(request, 'search/search.html', {})
 
 
-@login_required
+@permission_required('site.can_view_cell_lines', raise_exception=True)
 def cellline(request, biosamples_id):
 
     return render(request, 'search/cellline.html', {

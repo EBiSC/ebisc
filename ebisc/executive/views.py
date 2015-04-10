@@ -4,13 +4,13 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.utils.html import format_html
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
 
 from ebisc.site.views import render
 from ebisc.celllines.models import Cellline
 
 
-@login_required
+@permission_required('site.can_view_executive_dashboard', raise_exception=True)
 def dashboard(request):
 
     '''Display a list of all cell lines. Provide paging and sorting.'''
@@ -69,7 +69,7 @@ def dashboard(request):
     })
 
 
-@login_required
+@permission_required('site.can_view_executive_dashboard', raise_exception=True)
 def cellline(request, biosamples_id):
 
     '''Display complete information for the selected cell line.'''
@@ -79,7 +79,7 @@ def cellline(request, biosamples_id):
     })
 
 
-@login_required
+@permission_required('site.can_manage_executive_dashboard', raise_exception=True)
 @require_POST
 def accept(request, biosamples_id):
 
