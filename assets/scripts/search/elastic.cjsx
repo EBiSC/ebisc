@@ -26,8 +26,8 @@ search = () ->
     if orderBy != null
       body.sort = ["#{orderBy.field}": order: orderBy.direction]
 
-    # console.debug '-- QUERY BODY --'
-    # console.debug JSON.stringify(body, null, '  ')
+    # console.log '-- QUERY BODY --'
+    # console.log JSON.stringify(body, null, '  ')
 
     elastic.search
         index: 'ebisc'
@@ -38,6 +38,24 @@ search = () ->
         State.set('celllines', body.hits.hits)
         State.set('facetTerms', body.aggregations.facets) if body.aggregations
         State.set('isLoaded', true)
+
+        # console.log '-- QUERY BODY --'
+        # console.log JSON.stringify(body.aggregations.facets, null, '  ')
+
+        changed = false
+        facetFilter = State.select('filter', 'facets').get()
+
+        for facet, i in facetFilter
+            if body.aggregations.facets[facet.name].buckets
+                matchingTerms = (bucket.key for bucket in body.aggregations.facets[facet.name].buckets)
+            else
+                matchingTerms = (bucket.key for bucket in body.aggregations.facets[facet.name].facet.buckets)
+            for term, selected of facet.selectedTerms when selected and term not in matchingTerms
+                changed = true
+                facet.selectedTerms[term] = false
+
+        if changed
+            State.select('filter').set('facets', facetFilter)
 
     .error (error) ->
         console.error JSON.stringify(error, null, '  ')
@@ -128,7 +146,7 @@ buildAggregation = (facet, filters) ->
     terms =
         field: facet.name
         order: _term: 'asc'
-        min_doc_count: 0
+        min_doc_count: 1
         size: 0
 
     if not otherFilters.length
