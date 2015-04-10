@@ -30,7 +30,7 @@ urlpatterns = patterns('',
     url(r'', include('ebisc.search.urls', namespace='search')),
 
     # Site
-    url(r'', include('ebisc.site.urls', namespace='site')),
+    # url(r'', include('ebisc.site.urls', namespace='site')),
 )
 
 urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + urlpatterns
