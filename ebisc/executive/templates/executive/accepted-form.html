@@ -2,8 +2,10 @@
 
 <div class="accepted-status">
 {% if cellline.celllineaccepted == 'accepted' %}
-<span class="accepted-label">{{ cellline.get_celllineaccepted_display }}</span>
-{% else %}
+<span class="status-label accepted">{{ cellline.get_celllineaccepted_display }}</span>
+<!-- <span class="status-label pending">Pending</span>
+<span class="status-label rejected">Rejected</span>
+ -->{% else %}
 <form class="accepted" method="post" action="{% url 'executive:accept' cellline.biosamplesid %}">
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ request.get_full_path }}">

@@ -83,9 +83,25 @@
   font-size: $font-size-small;
   display: inline-block;
 
-  .accepted-label {
-    background-color: $color-green;
-    padding: 2px 22px 2px 10px;    
+  .status-label {
+    display: inline-block;
+    min-width: 88px;
+    padding: 2px 10px;
+  
+    &.accepted {
+      background-color: $color-green;
+    }
+
+    &.pending {
+      background-color: white;
+      border: $base-border;
+    }
+
+    &.rejected {
+      background-color: $color-red-light;
+      color: white;
+      font-weight: bold;
+    }
   }
 
   select {
@@ -93,7 +109,7 @@
 
     &.pending {
       background-color: white;
-      border: $base-border;    
+      border: $base-border;
     }
 
     &.rejected {
