@@ -7,6 +7,12 @@ initFilter = () ->
 setFilter = (filter) ->
     State.set('filter', filter)
 
+loadFilter = () ->
+    setFilter(JSON.parse(sessionStorage.getItem('filter')))
+
+saveFilter = () ->
+    sessionStorage.setItem('filter', JSON.stringify(State.select('filter').get()))
+
 updateQueryFilter = (query) ->
     State.select('filter', 'query').edit(query)
 
@@ -20,6 +26,8 @@ orderBy = (value) ->
 module.exports =
     initFilter: initFilter
     setFilter: setFilter
+    loadFilter: loadFilter
+    saveFilter: saveFilter
     updateQueryFilter: updateQueryFilter
     updateFacetTermFilter: updateFacetTermFilter
     orderBy: orderBy

@@ -8,14 +8,12 @@ Celllines = require './components/celllines'
 TotalCount = require './components/total-count'
 
 if sessionStorage.getItem('filter')
-    # Load filter state from sessionStorage
-    Actions.setFilter(JSON.parse(sessionStorage.getItem('filter')))
+    Actions.loadFilter()
 else
-    # Init filter state from config
     Actions.initFilter()
 
 onFilterUpdate = () ->
-    sessionStorage.setItem('filter', JSON.stringify(State.select('filter').get()))
+    Actions.saveFilter()
     Elastic.search()
 
 State.select('filter').on('update', _.debounce(onFilterUpdate, 150))
