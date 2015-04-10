@@ -79,14 +79,15 @@ class Migration(migrations.Migration):
             name='Cellline',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('celllineaccepted', models.CharField(default=b'pending', max_length=10, verbose_name='Cell line accepted', choices=[(b'pending', 'Pending'), (b'accepted', 'Accepted'), (b'rejected', 'Rejected')])),
                 ('biosamplesid', models.CharField(unique=True, max_length=12, verbose_name='Biosamples ID')),
                 ('celllinename', models.CharField(unique=True, max_length=15, verbose_name='Cell line name')),
                 ('celllinediseaseaddinfo', models.CharField(max_length=100, null=True, verbose_name='Cell line disease info', blank=True)),
-                ('celllinetissuedate', models.DateField(null=True, blank=True)),
+                ('celllinetissuedate', models.DateField(null=True, verbose_name='Cell line tissue date', blank=True)),
                 ('celllinenamesynonyms', models.CharField(max_length=500, null=True, verbose_name='Cell line name synonyms', blank=True)),
                 ('depositorscelllineuri', models.CharField(max_length=45, verbose_name='Depositors cell line URI', blank=True)),
                 ('celllinecomments', models.TextField(null=True, verbose_name='Cell line comments', blank=True)),
-                ('celllineupdate', models.DateField(null=True, blank=True)),
+                ('celllineupdate', models.DateField(null=True, verbose_name='Cell line updated', blank=True)),
                 ('celllineecaccurl', models.URLField(null=True, verbose_name='Cell line ECACC URL', blank=True)),
             ],
             options={
