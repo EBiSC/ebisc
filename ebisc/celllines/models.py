@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class Accesslevel(models.Model):
@@ -102,6 +103,11 @@ class Cellline(models.Model):
 
     def to_elastic(self):
 
+        try:
+            mutagene = self.celllinelab and self.celllinelab.mutagene or None
+        except ObjectDoesNotExist:
+            mutagene = None
+
         return {
             'biosamplesid': self.biosamplesid,
             'celllinename': self.celllinename,
@@ -109,6 +115,7 @@ class Cellline(models.Model):
             'depositor': self.celllineorganization.organization.organizationname,
             'celllinecelltype': self.celllinecelltype.celltype,
             'celllinenamesynonyms': self.celllinenamesynonyms,
+            'mutagene': mutagene,
         }
 
 

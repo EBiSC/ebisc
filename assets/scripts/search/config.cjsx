@@ -26,6 +26,10 @@ config = {
             name: 'celllinecelltype'
             label: 'Cell type'
         }
+        {
+            name: 'mutagene'
+            label: 'Mutant gene'
+        }
     ]
 
     query_fields: [
@@ -35,6 +39,7 @@ config = {
         'depositor.analyzed'
         'celllinecelltype.analyzed'
         'celllineprimarydisease.analyzed'
+        'mutagene.analyzed'
     ]
 
     facets: [
