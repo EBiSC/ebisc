@@ -7,12 +7,12 @@
 <h1>Executive dashboard <small>Cell line {{ cellline.celllinename }}</small></h1>
 
 <div class="status">
-    {% if cellline.celllineaccepted == 'accepted' %}
+    {% if cellline.celllineaccepted == 'accepted' or not perms.site.can_manage_executive_dashboard %}
     Status:
     {% else %}
     Change status:
     {% endif %}
-    {% include 'executive/accepted-form.html' %}
+    {% include 'executive/accepted-status.html' %}
 </div>
 
 {% include 'search/__cellline_data__.html' %}
@@ -20,5 +20,7 @@
 {% endblock %}
 
 {% block extra-scripts %}
+{% if perms.site.can_manage_executive_dashboard %}
 {% include 'executive/accepted-script.html' %}
+{% endif %}
 {% endblock %}

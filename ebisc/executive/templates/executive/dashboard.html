@@ -34,7 +34,7 @@
             <td>{{ cellline.celllineorganization.organization.organizationname }}</td>
             <td class="number {{ cellline.quantity|default:'empty' }}">{{ cellline.quantity|default:'-' }}</td>
             <td class="number {{ cellline.sold|default:'empty' }}">{{ cellline.sold|default:'-' }}</td>
-            <td class="accepted">{% include 'executive/accepted-form.html' %}</td>
+            <td class="accepted">{% include 'executive/accepted-status.html' %}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -57,5 +57,7 @@
 {% endblock %}
 
 {% block extra-scripts %}
+{% if perms.site.can_manage_executive_dashboard %}
 {% include 'executive/accepted-script.html' %}
+{% endif %}
 {% endblock %}
