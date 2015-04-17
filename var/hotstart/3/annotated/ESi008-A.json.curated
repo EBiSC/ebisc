@@ -1,0 +1,107 @@
+{
+    "form_finished_flag": "1",
+    "final_name_generated_flag": "1",
+    "id": "1041",
+    "validation_status": "1",
+    "name": "ESi008-A",
+# added field to json:
+    "biosample_id": "SAMEA3303318",
+    "alternate_name": [
+        "KiPS4F-8"
+    ],
+    "type_name": "hiPSC",
+# json format change
+    "internal_donor_id": ["hPC0803"],
+# added field to json:
+    "donor_biosample_id": "SAMEA3303305",
+    "available_flag": "1",
+    "same_donor_cell_line_flag": "0",
+    "same_donor_derived_from_flag": "0",
+    "registration_reference": "Aasen T et al. Efficient and rapid generation of induced pluripotent stem cells from human keratinocytes. Nat Biotechnol. 2008 Nov;26(11):1276-84.",
+    "registration_reference_publication_pubmed_id": "18931654 ",
+    "informed_consent_flag": "1",
+    "consent_form_file": "736_97_ci_ips_def 06.02.09.pdf",
+    "consent_form_file_enc": "2042c2f5c747e695518efd014387b685.pdf",
+    "approval_flag": "1",
+    "approval_auth_name": "Ethics Board of the Center of Regenerative Medicine in Barcelona",
+    "material_transfer_aggreement_file": "736_96_MTA_CMRB_English.pdf",
+    "material_transfer_aggreement_file_enc": "9a7c2720e19f0c653b7764ab0f157b8a.pdf",
+    "vector_type": "integrating",
+    "integrating_vector": "virus",
+    "integrating_vector_virus_type": "retrovirus",
+    "integrating_vector_gene_list": [
+        "5460###POU5F1###entrez_id###id_type_gene",
+        "6657###SOX2###entrez_id###id_type_gene",
+        "9314###KLF4###entrez_id###id_type_gene",
+        "4609###MYC###entrez_id###id_type_gene"
+    ],
+    "dev_stage_primary_cell": "0",
+    "donor_age": "---",
+    "gender_primary_cell": "male",
+# Explicitly added missing disease flag
+    "disease_flag": "0",
+    "excisable_vector_flag": "0",
+    "primary_celltype_name": "human foreskin keratinocytes",
+# purl is better way to store ontology:
+    "primary_celltype_purl": "http://purl.obolibrary.org/obo/CL_1001606",
+    "derivation_gmp_ips_flag": "0",
+    "available_clinical_grade_ips_flag": "0",
+    "derivation_xeno_graft_free_flag": "0",
+    "surface_coating": "gelatine",
+    "surface_coating_other": "Human foreskin fibroblasts",
+    "feeder_cells_flag": "1",
+    "feeder_cells_name": "Human Foreskin fibroblasts ",
+    "feeder_cells_ont_id": "CELDA_000001419",
+    "o2_concentration": "21",
+    "co2_concentration": "5",
+    "culture_conditions_medium_culture_medium": "other_medium",
+    "culture_conditions_medium_culture_medium_other_base": "Knockout-DMEM",
+    "culture_conditions_medium_culture_medium_other_protein_source": "knockout_serum_replacement",
+    "culture_conditions_medium_culture_medium_other_concentration": "20",
+    "culture_conditions_medium_culture_medium_other_supplements": [
+        "glutamax######",
+        "bFGF######"
+    ],
+    "certificate_of_analysis_flag": "0",
+    "undiff_immstain_marker": [
+        "alpl###+",
+        "nanog###+",
+        "pou5f1###+",
+        "ssea3###+",
+        "ssea4###+",
+        "tra160###+",
+        "tra181###+",
+        "zfp42###+",
+        "SOX-2###+#########"
+    ],
+    "embryoid_body_differentiation_flag": "1",
+    "embryoid_body_endo_flag": "1",
+    "embryoid_body_meso_flag": "1",
+    "embryoid_body_ekto_flag": "1",
+    "teratoma_formation_differentiation_flag": "1",
+    "teratoma_formation_endo_flag": "1",
+    "teratoma_formation_meso_flag": "1",
+    "teratoma_formation_ekto_flag": "1",
+    "karyotyping_flag": "1",
+    "karyotyping_karyotype": "46XY",
+    "derivation_country": "Spain",
+    "providers": [
+        {
+            "id": "427",
+            "name": "Spanish Stem Cell Bank",
+            "contact_person_fullname": "",
+            "adress": ", ",
+            "role": "Generator"
+        },
+        {
+            "id": "360",
+            "name": "Centre of Regenerative Medicine in Barcelona - Banc de Linies Cellulars",
+            "contact_person_id": "7",
+            "contact_person_fullname": "Dr. Anna Veiga",
+            "adress": ", ",
+            "role": "Contact institution \/ working group",
+            "workinggroup_id": "17",
+            "workinggroup_name": "Banc de Linies Cellulars"
+        }
+    ]
+}

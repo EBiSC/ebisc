@@ -1,0 +1,66 @@
+{
+  "form_finished_flag": "1",
+  "final_name_generated_flag": "1",
+  "id": "1168",
+  "validation_status": "2",
+  "name": "RCi004-A",
+# added field to json:
+    "biosample_id": "SAMEA3106011",
+  "alternate_name": [
+    "RCi150"
+  ],
+  "type": "1",
+# json format change
+  "internal_donor_id": ["hFB143"],
+# added field to json:
+    "donor_biosample_id": "SAMEA3106020",
+  "same_donor_cell_line_flag": "0",
+  "same_donor_derived_from_flag": "0",
+  "informed_consent_flag": "1",
+  "vector_type": "non_integrating",
+  "non_integrating_vector": "episomal",
+  "non_integrating_vector_gene_list": [
+    "5460###POU5F1###entrez_id###id_type_gene",
+    "9314###KLF4###entrez_id###id_type_gene",
+    "6657###SOX2###entrez_id###id_type_gene",
+    "4609###MYC###entrez_id###id_type_gene",
+    "###Lin28###entrez_id###id_type_gene",
+    "###shP53###entrez_id###id_type_gene"
+  ],
+  "dev_stage_primary_cell": "adult",
+  "donor_age": "---",
+  "gender_primary_cell": "female",
+  "disease_flag": "1",
+# added disease ontology
+  "disease_doid": "DOID:12858",
+  "disease_doid_name": "Huntington\u0027s disease",
+  "disease_doid_synonyms": "HD EXACT CSP2005:2057-3283,Huntington disease EXACT ,Huntington\u0027s chorea EXACT ICD9CM_2006:333.4",
+  "disease_purl": "http://www.orpha.net/ORDO/Orphanet_399",
+  "disease_control_cellline_phenotype": "Mutant gene: HTT",
+  "primary_celltype_name": "Dermal Fibroblasts",
+# purl is better way to store ontology:
+    "primary_celltype_purl": "http://purl.obolibrary.org/obo/CL_0000057",
+  "surface_coating": "matrigel",
+  "feeder_cells_flag": "0",
+  "passage_method": "enzyme_free",
+  "passage_method_enzyme_free": "edta",
+  "o2_concentration": "21",
+  "co2_concentration": "5",
+  "culture_conditions_medium_culture_medium": "mtesr_1",
+  "genetic_modification_flag": "0",
+  "providers": [
+    {
+      "id": "83",
+      "name": "Roslin Cells Ltd.",
+      "contact_person_id": "30",
+      "contact_person_fullname": " Jennifer Marshall",
+      "website": "http://www.roslincells.com",
+      "adress": "Roslin Biocentre, Roslin, EH25 9PS Midlothian, United Kingdom",
+      "role": "Generator",
+      "category": "Company",
+      "workinggroup_id": "91",
+      "workinggroup_name": "Derivation of Clinical Grade hES Cells",
+      "institution_name": "Roslin Cells Ltd."
+    }
+  ]
+}
