@@ -1,8 +1,6 @@
 import os
-import csv
-import datetime
-
-import django.db.models.fields
+import json
+import functools
 
 import logging
 logger = logging.getLogger('management.commands')
@@ -11,347 +9,269 @@ from ..models import *
 
 
 '''
-This is HotsStart data importer.
-
-Importer is implemented via schema definition which maps CSV files to models.
+This is HotsStart JSON data importer.
 '''
-
-# -----------------------------------------------------------------------------
-# File schema definition
-
-FILES = [
-    {
-        'filename': 'approveduse.csv',
-        'model': Approveduse,
-        'fields': {'id': 0, 'approveduse': 1}
-    },
-    {
-        'filename': 'disease.csv',
-        'model': Disease,
-        'fields': {'id': 0, 'disease': 1}
-    },
-    {
-        'filename': 'binnedage.csv',
-        'model': Binnedage,
-        'fields': {'id': 0, 'binnedage': 1}
-    },
-    {
-        'filename': 'celllinecollection.csv',
-        'model': Celllinecollection,
-        'fields': {
-            'id': 0,
-            'celllinecollectiontotal': 1,
-            'celllinecollectionupdate': 2,
-            'celllinecollectionupdatetype': 3,
-            'celllinecollectionupdatedby': 4,
-        }
-    },
-    {
-        'filename': 'celllinestatus.csv',
-        'model': Celllinestatus,
-        'fields': {'id': 0, 'celllinestatus': 1}
-    },
-    {
-        'filename': 'celltype.csv',
-        'model': Celltype,
-        'fields': {'id': 0, 'celltype': 1}
-    },
-    {
-        'filename': 'country.csv',
-        'model': Country,
-        'fields': {'id': 0, 'country': 1}
-    },
-    {
-        'filename': 'culturesystem.csv',
-        'model': Culturesystem,
-        'fields': {'id': 0, 'culturesystem': 1}
-    },
-    {
-        'filename': 'gender.csv',
-        'model': Gender,
-        'fields': {'id': 0, 'gender': 1}
-    },
-    {
-        'filename': 'organization.csv',
-        'model': Organization,
-        'fields': {'id': 0, 'organizationshortname': 1}
-    },
-    {
-        'filename': 'phenotype.csv',
-        'model': Phenotype,
-        'fields': {'id': 0, 'phenotype': 1}
-    },
-    {
-        'filename': 'phonecountrycode.csv',
-        'model': Phonecountrycode,
-        'fields': {'id': 0, 'phonecountrycode': 1}
-    },
-    {
-        'filename': 'reprogrammingmethod1.csv',
-        'model': Reprogrammingmethod1,
-        'fields': {'id': 0, 'reprogrammingmethod1': 1}
-    },
-    {
-        'filename': 'reprogrammingmethod2.csv',
-        'model': Reprogrammingmethod2,
-        'fields': {'id': 0, 'reprogrammingmethod2': 1}
-    },
-    {
-        'filename': 'reprogrammingmethod3.csv',
-        'model': Reprogrammingmethod3,
-        'fields': {'id': 0, 'reprogrammingmethod3': 1}
-    },
-    {
-        'filename': 'tissuesource.csv',
-        'model': Tissuesource,
-        'fields': {'id': 0, 'tissuesource': 1}
-    },
-    {
-        'filename': 'clinicaltreatmentb4donation.csv',
-        'model': Clinicaltreatmentb4donation,
-        'fields': {'id': 0, 'clinicaltreatmentb4donation': 1}
-    },
-    {
-        'filename': 'lastupdatetype.csv',
-        'model': Lastupdatetype,
-        'fields': {'id': 0, 'lastupdatetype': 1}
-    },
-    {
-        'filename': 'useraccount.csv',
-        'model': Useraccount,
-        'fields': {
-            'id': 0,
-            'username': 1,
-            'useraccounttype': 2,
-            'person': 3,
-            'organization': 4,
-            'accesslevel': 5,
-            'useraccountupdate': 6,
-            'useraccountupdatetype': 7,
-            'useraccountupdatedby': 8,
-        }
-    },
-    {
-        'filename': 'postcode.csv',
-        'model': Postcode,
-        'fields': {'id': 0, 'postcode': 1, 'district': 2}
-    },
-    {
-        'filename': 'contacttype.csv',
-        'model': Contacttype,
-        'fields': {'id': 0, 'contacttype': 1}
-    },
-    {
-        'filename': 'orgtype.csv',
-        'model': Orgtype,
-        'fields': {'id': 0, 'orgtype': 1}
-    },
-    {
-        'filename': 'celllineorgtype.csv',
-        'model': Celllineorgtype,
-        'fields': {'id': 0, 'celllineorgtype': 1}
-    },
-
-    # --- Related models ---
-
-    {
-        'filename': 'contact.csv',
-        'model': Contact,
-        'fields': {
-            'id': 0,
-            'contacttype': {'model': Contacttype, 'id': 1},
-            'country': {'model': Country, 'id': 2},
-            'postcode': {'model': Postcode, 'id': 3},
-            'statecounty': 4,
-            'city': 5,
-            'street': 6,
-            'buildingnumber': 7,
-            'suiteoraptordept': 8,
-            'officephonecountrycode': {'model': Phonecountrycode, 'id': 9},
-            'officephone': 10,
-            'faxcountrycode': {'model': Phonecountrycode, 'id': 11},
-            'fax': 12,
-            'mobilecountrycode': {'model': Phonecountrycode, 'id': 13},
-            'mobilephone': 14,
-            'website': 15,
-            'emailaddress': 16,
-            'contactupdate': 17,
-            'contactupdatetype': {'model': Lastupdatetype, 'id': 18},
-            'contactupdatedby': {'model': Useraccount, 'id': 19},
-        }
-    },
-    {
-        'filename': 'organization.csv',
-        'model': Organization,
-        'fields': {
-            'id': 0,
-            'organizationname': 1,
-            'organizationshortname': 2,
-            'organizationcontact': {'model': Contact, 'id': 3},
-            'organizationupdate': 4,
-            'organizationupdatetype': {'model': Lastupdatetype, 'id': 5},
-            'organizationupdatedby': {'model': Useraccount, 'id': 6},
-            'organizationtype': {'model': Orgtype, 'id': 7},
-        }
-    },
-    {
-        'filename': 'donor.csv',
-        'model': Donor,
-        'fields': {'id': 0, 'hescregdonorid': 1, 'gender': {'model': Gender, 'id': 3}, 'providerdonorid': 7}
-    },
-    {
-        'filename': 'cellline.csv',
-        'model': Cellline,
-        'fields': {
-            'id': 0,
-            'biosamplesid': 1,
-            'celllinename': 2,
-            'celllinedonor': {'model': Donor, 'id': 3},
-
-            'celllineprimarydisease': {'model': Disease, 'id': 4},
-            'celllinediseaseaddinfo': 5,
-            'celllinestatus': {'model': Celllinestatus, 'id': 6},
-            'celllinecelltype': {'model': Celltype, 'id': 7},
-            'celllinecollection': {'model': Celllinecollection, 'id': 8},
-            'celllinetissuesource': {'model': Tissuesource, 'id': 9},
-            'celllinetissuetreatment': {'model': Clinicaltreatmentb4donation, 'id': 10},
-            # 'celllinetissuedate': 11,
-            'celllinenamesynonyms': 12,
-            # 'depositorscelllineuri': 13,
-            # 'celllinecomments': 14,
-            'celllineupdate': 15,
-            'celllineupdatetype': {'model': Lastupdatetype, 'id': 16},
-            'celllineupdatedby': {'model': Useraccount, 'id': 17},
-            # 'celllineecaccur': 18,
-        }
-    },
-    {
-        'filename': 'celllinechecklist.csv',
-        'model': Celllinechecklist,
-        'fields': {
-            'id': 0,
-            'checklistcellline': {'model': Cellline, 'id': 1},
-            'morphologicalassessment': 2,
-            'facs': 3,
-            'ihc': 4,
-            'pcrforreprofactorremoval': 5,
-            'pcrforpluripotency': 6,
-            'teratoma': 7,
-            'invitrodifferentiation': 8,
-            'karyotype': 9,
-            'cnvanalysis': 10,
-            'dnamethylation': 11,
-            'microbiologyinclmycoplasma': 12,
-            'dnagenotyping': 13,
-            'hlatyping': 14,
-            'virustesting': 15,
-            'postthawviability': 16,
-            'checklistcomments': 17,
-        }
-    },
-    {
-        'filename': 'celllinelab.csv',
-        'model': Celllinelab,
-        'fields': {
-            'id': 0,
-            'labcellline': {'model': Cellline, 'id': 1},
-            'cryodate': 2,
-            'expansioninprogress': 3,
-            'funder': 4,
-            'mutagene': 5,
-            'reprogrammingmethod1': {'model': Reprogrammingmethod1, 'id': 6},
-            'reprogrammingmethod2': {'model': Reprogrammingmethod2, 'id': 7},
-            'reprogrammingmethod3': {'model': Reprogrammingmethod3, 'id': 8},
-            'clonenumber': 9,
-            'passagenumber': 10,
-            'culturesystem': {'model': Culturesystem, 'id': 11},
-            'culturesystemcomment': 12,
-            'celllinelabupdate': 13,
-            'celllinelabupdatetype': {'model': Lastupdatetype, 'id': 14},
-            'celllinelabupdatedby': {'model': Useraccount, 'id': 15},
-        }
-    },
-    {
-        'filename': 'celllineorganization.csv',
-        'model': Celllineorganization,
-        'fields': {
-            'id': 0,
-            'orgcellline': {'model': Cellline, 'id': 1},
-            'organization': {'model': Organization, 'id': 2},
-            'celllineorgtype': {'model': Celllineorgtype, 'id': 3},
-            'orgstatus': 4,
-            'orgregistrationdate': 5,
-        }
-    },
-]
 
 
 # -----------------------------------------------------------------------------
 # Importer
 
+def value_of_json(source, field, cast=None):
 
-def value_of_csv(value):
-    if value == 'NULL':
-        return None
-    return value
+    if cast == 'bool':
+
+        if source.get(field, None) == '1':
+            return True
+        else:
+            return False
+
+    else:
+        return source.get(field, None)
 
 
-def import_hotstart(basedir):
+def inject_valuef(func):
+    def wrapper(source, *args):
+        args = [functools.partial(value_of_json, source), source] + list(args)
+        return func(*args)
+    return wrapper
 
-    for f in FILES:
-        logger.info('Importing %s' % f['filename'])
 
-        f['model'].objects.all().delete()
+@inject_valuef
+def parse_disease(valuef, source):
 
-        with open(os.path.join(basedir, f['filename']), 'r') as fi:
+    if not valuef('disease_flag', 'bool'):
+        disease = None
+    else:
+        disease, created = Disease.objects.get_or_create(
+            icdcode=valuef('disease_doid'),
+            disease=valuef('disease_doid_name'),
+        )
 
-            reader = csv.reader(fi)
-            next(reader, None)
+        if created:
+            logger.info('Found new disease: %s' % disease)
 
-            for line in reader:
-                logger.debug('  Data: %s' % line)
+    return disease
 
-                kwargs = {}
-                for key, index in f['fields'].items():
 
-                    if isinstance(index, dict):
-                        # foreign key index value
-                        value = value_of_csv(line[index['id']])
-                        if value is not None:
-                            value = value_of_csv(index['model'].objects.get(id=value))
+@inject_valuef
+def parse_cell_type(valuef, source):
 
-                    else:
-                        # atomic index value
-                        value = value_of_csv(line[index])
+    cell_type, created = Celltype.objects.get_or_create(
+        celltype=valuef('primary_celltype_name'),
+    )
 
-                        # inspect the Django model and convert the value to special fields
+    if created:
+        logger.info('Found new cell type: %s' % cell_type)
 
-                        if isinstance(f['model']._meta.get_field_by_name(key)[0], django.db.models.fields.IntegerField):
-                            if value is not None:
-                                value = int(value)
+    return cell_type
 
-                        if isinstance(f['model']._meta.get_field_by_name(key)[0], django.db.models.fields.DateField):
-                            if value == '':
-                                value = None
-                            elif value is not None:
-                                parts = [int(x) for x in value.split('-')]
-                                value = datetime.date(*parts)
 
-                        if isinstance(f['model']._meta.get_field_by_name(key)[0], django.db.models.fields.BooleanField):
-                            if value is not None:
-                                value = int(value) == 1 and True or False
-                            else:
-                                value = False
+@inject_valuef
+def parse_organization(valuef, source):
 
-                    kwargs[key] = value
+    # Organization
 
-                logger.debug('  Args: %s' % kwargs)
+    organization, created = Organization.objects.get_or_create(
+        organizationname=valuef('name')
+    )
+    if created:
+        logger.info('Found new organization: %s' % organization)
 
-                obj = f['model'](**kwargs)
-                try:
-                    obj.save()
-                    logger.info('  Object: %s' % obj)
-                except Exception, e:
-                    logger.error('  %s' % str(e).replace('\n', ' '))
+    if valuef('role') == 'Generator':
+
+        return (organization, 'generator')
+
+    elif valuef('role') == 'Generator':
+
+        return (organization, 'owner')
+
+    else:
+
+        # Other organization roles
+
+        organization_role, created = Celllineorgtype.objects.get_or_create(
+            celllineorgtype=valuef('role')
+        )
+        if created:
+            logger.info('Found new organization type: %s' % organization_role)
+
+        # Cell line organization
+
+        return (organization, organization_role)
+
+
+def import_data(basedir):
+
+    for f in os.listdir(basedir):
+
+        logger.info('Importing %s' % f)
+
+        with open(os.path.join(basedir, f), 'r') as fi:
+
+            source = json.load(fi)
+            valuef = functools.partial(value_of_json, source)
+
+            logger.info('Importing cell line %s' % valuef('name'))
+
+            cell_line = Cellline(
+                biosamplesid=valuef('biosample_id'),
+                celllinename=valuef('name'),
+                celllineprimarydisease=parse_disease(source),
+                celllinecelltype=parse_cell_type(source),
+                celllinenamesynonyms=', '.join(valuef('alternate_name')),
+            )
+
+            organizations = []
+
+            for org in valuef('providers'):
+                organization, role = parse_organization(org)
+
+                if role == 'generator':
+                    cell_line.generator = organization
+                elif role == 'owner':
+                    cell_line.owner = organization
+                else:
+                    organizations.append((organization, role))
+
+            cell_line.save()
+
+            for organization, organization_role in organizations:
+
+                cell_line_organization, created = Celllineorganization.objects.get_or_create(
+                    orgcellline=cell_line,
+                    organization=organization,
+                    celllineorgtype=organization_role,
+                )
+                if created:
+                    logger.info('Added organization %s as %s' % (organization, organization_role))
+
+
+# -----------------------------------------------------------------------------
+# Example JSON
+
+{
+    "form_finished_flag": "1",
+    "final_name_generated_flag": "1",
+    "id": "1088",
+    "validation_status": "1",
+    "name": "ESi001-A",
+    "biosample_id": "SAMEA3302942",
+    "alternate_name": [
+        "SPO2#1"
+    ],
+    "type_name": "hiPSC",
+    "internal_donor_id": [
+        "1088",
+        "SP02"
+    ],
+    "donor_biosample_id": "SAMEA3302933",
+    "available_flag": "1",
+    "same_donor_cell_line_flag": "0",
+    "same_donor_derived_from_flag": "0",
+    "registration_reference": "S\u00e1nchez-Dan\u00e9s A et al. Disease-specific phenotypes in dopamine neurons from human iPS-based models of genetic and sporadic Parkinson's disease. EMBO Mol Med. 2012 May;4(5):380-95.",
+    "registration_reference_publication_pubmed_id": "22407749",
+    "informed_consent_flag": "1",
+    "approval_flag": "1",
+    "approval_auth_name": "Ethic Committee Center of Regenerative Medicine in Barcelona",
+    "vector_type": "integrating",
+    "integrating_vector": "virus",
+    "integrating_vector_virus_type": "retrovirus",
+    "integrating_vector_gene_list": [
+        "5460###POU5F1###entrez_id###id_type_gene",
+        "9314###KLF4###entrez_id###id_type_gene",
+        "6657###SOX2###entrez_id###id_type_gene"
+    ],
+    "dev_stage_primary_cell": "adult",
+    "donor_age": "55-59",
+    "gender_primary_cell": "male",
+    "disease_flag": "1",
+    "disease_doid": "DOID:14330",
+    "disease_doid_name": "Parkinson's disease",
+    "disease_doid_synonyms": "paralysis agitans EXACT CSP2005:2057-3689,Parkinson disease EXACT ",
+    "disease_purl": "http://www.ebi.ac.uk/efo/EFO_0002508",
+    "disease_control_cellline_abnormal_karyotype": "0",
+    "primary_celltype_ont_id": "CL_0000362",
+    "primary_celltype_name": "Epidermal keratinocytes ",
+    "primary_celltype_purl": "http://purl.obolibrary.org/obo/CL_0000362",
+    "derivation_gmp_ips_flag": "0",
+    "available_clinical_grade_ips_flag": "0",
+    "derivation_xeno_graft_free_flag": "0",
+    "surface_coating": "gelatine",
+    "feeder_cells_flag": "1",
+    "feeder_cells_name": "Human foreskin fibroblasts",
+    "feeder_cells_ont_id": "CELDA_000001419",
+    "passage_method": "mechanically",
+    "co2_concentration": "5",
+    "culture_conditions_medium_culture_medium": "other_medium",
+    "culture_conditions_medium_culture_medium_other_base": "KnockOut DMEM",
+    "culture_conditions_medium_culture_medium_other_protein_source": "knockout_serum_replacement",
+    "culture_conditions_medium_culture_medium_other_concentration": "20",
+    "culture_conditions_medium_culture_medium_other_supplements": [
+        "Glutamax###2###millimeter",
+        "2-mercaptoethanol###50###mikrometer",
+        "NEAA###1###percent",
+        "bFGF###10###nanogram_millilitre"
+    ],
+    "undiff_immstain_marker": [
+        "alpl###+",
+        "nanog###+",
+        "pou5f1###+",
+        "ssea3###+",
+        "ssea4###+",
+        "tra160###+",
+        "tra181###+",
+        "###+###Sox2###entrez_id###id_type_protein"
+    ],
+    "undiff_immstain_marker_passage_number": "11",
+    "virology_screening_flag": "1",
+    "virology_screening_mycoplasma_flag": "1",
+    "virology_screening_mycoplasma_result": "negative",
+    "embryoid_body_differentiation_flag": "1",
+    "embryoid_body_passage_number": "13",
+    "embryoid_body_endo_flag": "1",
+    "embryoid_body_endo_marker_immstain_marker": [
+        "###+###AFP###entrez_id###id_type_protein",
+        "###+###FoxA2###entrez_id###id_type_protein"
+    ],
+    "embryoid_body_meso_flag": "1",
+    "embryoid_body_meso_marker_immstain_marker": [
+        "###+###SMA###entrez_id###id_type_protein"
+    ],
+    "embryoid_body_ekto_flag": "1",
+    "embryoid_body_ekto_marker_immstain_marker": [
+        "###+###TUJ1###entrez_id###id_type_protein"
+    ],
+    "teratoma_formation_differentiation_flag": "1",
+    "teratoma_formation_endo_flag": "1",
+    "teratoma_formation_endo_marker_immstain_marker": [
+        "###+###FoxA2###entrez_id###id_type_protein",
+        "###+###AFP###entrez_id###id_type_protein"
+    ],
+    "teratoma_formation_meso_flag": "1",
+    "teratoma_formation_meso_marker_immstain_marker": [
+        "###+###CS###entrez_id###id_type_protein",
+        "###+###Sox9###entrez_id###id_type_protein"
+    ],
+    "teratoma_formation_ekto_flag": "1",
+    "teratoma_formation_ekto_marker_immstain_marker": [
+        "###+###Tuj1###entrez_id###id_type_protein",
+        "###+###GFAP###entrez_id###id_type_protein"
+    ],
+    "karyotyping_flag": "1",
+    "karyotyping_karyotype": "46,XY",
+    "karyotyping_image_upload_file": "SP02_1_Karyotype.pdf",
+    "karyotyping_image_upload_file_enc": "ad5579c4a248a497bc55b7f13e422912.pdf",
+    "karyotyping_method": "g_banding",
+    "derivation_country": "Spain",
+    "providers": [
+        {
+            "id": "427",
+            "name": "Spanish Stem Cell Bank",
+            "contact_person_fullname": "",
+            "adress": "",
+            "role": "Generator"
+        }
+    ]
+}
 
 # -----------------------------------------------------------------------------

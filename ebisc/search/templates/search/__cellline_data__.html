@@ -22,7 +22,7 @@
 
     <tr><th colspan="2" class="title"><h2>Depositor</h2></th></tr>
 
-    <tr><td class="label">Depositor:</td><td>{{ cellline.celllineorganization.organization.organizationname|default:"-" }}</td></tr>
+    <tr><td class="label">Depositor:</td><td>{{ cellline.generator.organizationname|default:"-" }}</td></tr>
     <tr><td class="label">Depositors cell line URI:</td><td>{{ cellline.depositorscelllineuri|default:"-" }}</td></tr>
     <tr><td class="label">Cell line user account:</td><td>{{ cellline.celllineupdatedby|default:"-" }}</td></tr>
 

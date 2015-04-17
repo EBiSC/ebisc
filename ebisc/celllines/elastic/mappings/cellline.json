@@ -35,12 +35,6 @@
                 "type": "string",
                 "index": "not_analyzed",
                 "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
-            },
-
-            "mutagene": {
-                "type": "string",
-                "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
             }
         }
     }

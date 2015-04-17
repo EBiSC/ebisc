@@ -652,7 +652,7 @@ class Migration(migrations.Migration):
             name='Celltype',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('celltype', models.CharField(max_length=30, verbose_name='Celltypes', blank=True)),
+                ('celltype', models.CharField(max_length=100, verbose_name='Celltype', blank=True)),
             ],
             options={
                 'ordering': ['celltype'],
@@ -755,7 +755,7 @@ class Migration(migrations.Migration):
             name='Disease',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('icdcode', models.CharField(max_length=10, unique=True, null=True, verbose_name='ICD code', blank=True)),
+                ('icdcode', models.CharField(max_length=30, unique=True, null=True, verbose_name='DOID', blank=True)),
                 ('disease', models.CharField(max_length=45, verbose_name='Disease', blank=True)),
             ],
             options={
@@ -986,7 +986,7 @@ class Migration(migrations.Migration):
             name='Organization',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('organizationname', models.CharField(max_length=45, unique=True, null=True, verbose_name='Organization name', blank=True)),
+                ('organizationname', models.CharField(max_length=100, unique=True, null=True, verbose_name='Organization name', blank=True)),
                 ('organizationshortname', models.CharField(max_length=6, unique=True, null=True, verbose_name='Organization short name', blank=True)),
                 ('organizationupdate', models.DateField(null=True, verbose_name='Organization update', blank=True)),
                 ('organizationcontact', models.ForeignKey(verbose_name='Contact', blank=True, to='celllines.Contact', null=True)),
@@ -1670,20 +1670,24 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='celllineorganization',
             name='celllineorgtype',
-            field=models.ForeignKey(verbose_name='Cell line org type', blank=True, to='celllines.Celllineorgtype', null=True),
+            field=models.ForeignKey(verbose_name='Cell line org type', to='celllines.Celllineorgtype'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='celllineorganization',
             name='organization',
-            field=models.ForeignKey(verbose_name='Organization', blank=True, to='celllines.Organization', null=True),
+            field=models.ForeignKey(verbose_name='Organization', to='celllines.Organization'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='celllineorganization',
             name='orgcellline',
-            field=models.OneToOneField(null=True, blank=True, to='celllines.Cellline', verbose_name='Cell line'),
+            field=models.ForeignKey(related_name='organizations', verbose_name='Cell line', to='celllines.Cellline'),
             preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='celllineorganization',
+            unique_together=set([('orgcellline', 'organization', 'celllineorgtype')]),
         ),
         migrations.AddField(
             model_name='celllinemarker',
@@ -2157,6 +2161,18 @@ class Migration(migrations.Migration):
             model_name='cellline',
             name='celllineupdatetype',
             field=models.ForeignKey(verbose_name='Last update type', blank=True, to='celllines.Lastupdatetype', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='cellline',
+            name='generator',
+            field=models.ForeignKey(related_name='generator_of_cell_lines', verbose_name='Generator', to='celllines.Organization'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='cellline',
+            name='owner',
+            field=models.ForeignKey(related_name='owner_of_cell_lines', verbose_name='Owner', blank=True, to='celllines.Organization', null=True),
             preserve_default=True,
         ),
     ]

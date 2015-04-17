@@ -93,6 +93,9 @@ class Cellline(models.Model):
     celllineupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'User account'), blank=True, null=True)
     celllineecaccurl = models.URLField(_(u'Cell line ECACC URL'), blank=True, null=True)
 
+    generator = models.ForeignKey('Organization', verbose_name=_(u'Generator'), related_name='generator_of_cell_lines')
+    owner = models.ForeignKey('Organization', verbose_name=_(u'Owner'), null=True, blank=True, related_name='owner_of_cell_lines')
+
     class Meta:
         verbose_name = _(u'Cell line')
         verbose_name_plural = _(u'Cell lines')
@@ -108,14 +111,18 @@ class Cellline(models.Model):
         except ObjectDoesNotExist:
             mutagene = None
 
+        try:
+            disease = self.celllineprimarydisease and self.celllineprimarydisease.disease or None
+        except ObjectDoesNotExist:
+            disease = None
+
         return {
             'biosamplesid': self.biosamplesid,
             'celllinename': self.celllinename,
-            'celllineprimarydisease': self.celllineprimarydisease.disease,
-            'depositor': self.celllineorganization.organization.organizationname,
+            'celllineprimarydisease': disease,
+            'depositor': self.generator.organizationname,
             'celllinecelltype': self.celllinecelltype.celltype,
             'celllinenamesynonyms': self.celllinenamesynonyms,
-            'mutagene': mutagene,
         }
 
 
@@ -544,15 +551,16 @@ class Celllinemarker(models.Model):
 
 
 class Celllineorganization(models.Model):
-    orgcellline = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), blank=True, null=True)
-    organization = models.ForeignKey('Organization', verbose_name=_(u'Organization'), blank=True, null=True)
-    celllineorgtype = models.ForeignKey('Celllineorgtype', verbose_name=_(u'Cell line org type'), blank=True, null=True)
+    orgcellline = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='organizations')
+    organization = models.ForeignKey('Organization', verbose_name=_(u'Organization'))
+    celllineorgtype = models.ForeignKey('Celllineorgtype', verbose_name=_(u'Cell line org type'))
     orgstatus = models.IntegerField(_(u'Org status'), blank=True, null=True)
     orgregistrationdate = models.DateField(blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line organization')
         verbose_name_plural = _(u'Cell line organizations')
+        unique_together = ('orgcellline', 'organization', 'celllineorgtype')
         ordering = []
 
     def __unicode__(self):
@@ -741,7 +749,7 @@ class Celllinevectormolecule(models.Model):
 
 
 class Celltype(models.Model):
-    celltype = models.CharField(_(u'Celltypes'), max_length=30, blank=True)
+    celltype = models.CharField(_(u'Celltype'), max_length=100, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell type')
@@ -846,7 +854,7 @@ class Culturesystem(models.Model):
 
 
 class Disease(models.Model):
-    icdcode = models.CharField(_(u'ICD code'), max_length=10, unique=True, null=True, blank=True)
+    icdcode = models.CharField(_(u'DOID'), max_length=30, unique=True, null=True, blank=True)
     disease = models.CharField(_(u'Disease'), max_length=45, blank=True)
 
     class Meta:
@@ -1072,7 +1080,7 @@ class Morphologymethod(models.Model):
 
 
 class Organization(models.Model):
-    organizationname = models.CharField(_(u'Organization name'), max_length=45, unique=True, null=True, blank=True)
+    organizationname = models.CharField(_(u'Organization name'), max_length=100, unique=True, null=True, blank=True)
     organizationshortname = models.CharField(_(u'Organization short name'), unique=True, max_length=6, null=True, blank=True)
     organizationcontact = models.ForeignKey('Contact', verbose_name=_(u'Contact'), blank=True, null=True)
     organizationupdate = models.DateField(_(u'Organization update'), blank=True, null=True)
