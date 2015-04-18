@@ -45,7 +45,7 @@ config = {
         }
         {
             name: 'celllinecelltype'
-            label: 'Cell line type'
+            label: 'Cell type'
             selectedTerms: {}
         }
         {

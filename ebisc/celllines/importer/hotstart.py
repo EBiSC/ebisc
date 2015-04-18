@@ -57,7 +57,7 @@ def parse_disease(valuef, source):
 def parse_cell_type(valuef, source):
 
     cell_type, created = Celltype.objects.get_or_create(
-        celltype=valuef('primary_celltype_name'),
+        celltype=valuef('primary_celltype_ont_name'),
     )
 
     if created:

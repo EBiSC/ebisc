@@ -44,7 +44,7 @@ Item = React.createClass
     render: () ->
         <li onClick={@handleOnClick} className={classNames(selected: @props.item.selected != undefined and @props.item.selected or false)}>
             <div className="checkbox"></div>
-            <label>{_.capitalize(@props.item.label)}</label>
+            <label>{@props.item.label}</label>
         </li>
 
 module.exports = DropdownMultiSelect
