@@ -3,6 +3,18 @@ from django.contrib import admin
 from .models import *
 
 
+class GenderAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Gender, GenderAdmin)
+
+
+class AgeRangeAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(AgeRange, AgeRangeAdmin)
+
+
 class AccesslevelAdmin(admin.ModelAdmin):
     pass
 
@@ -25,12 +37,6 @@ class BatchstatusAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Batchstatus, BatchstatusAdmin)
-
-
-class BinnedageAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Binnedage, BinnedageAdmin)
 
 
 class CelllinecharacterizationInline(admin.StackedInline):
@@ -73,8 +79,8 @@ class CelllinelabInline(admin.StackedInline):
     inline_classes = ('grp-collapse grp-open',)
 
 
-class CelllinelegalInline(admin.StackedInline):
-    model = Celllinelegal
+class CellLineLegalInline(admin.StackedInline):
+    model = CellLineLegal
     min_num = 1
     max_num = 1
     extra = 0
@@ -89,10 +95,36 @@ class CelllinevalueInline(admin.StackedInline):
     inline_classes = ('grp-collapse grp-open',)
 
 
+class CellLineIntegratingVectorInline(admin.StackedInline):
+    model = CellLineIntegratingVector
+    min_num = 1
+    max_num = 1
+    extra = 0
+    inline_classes = ('grp-collapse grp-open',)
+
+
+class CellLineNonIntegratingVectorInline(admin.StackedInline):
+    model = CellLineNonIntegratingVector
+    min_num = 1
+    max_num = 1
+    extra = 0
+    inline_classes = ('grp-collapse grp-open',)
+
+
 class CelllineAdmin(admin.ModelAdmin):
 
-    list_display = ['biosamplesid', 'celllinename', 'celllinedonor', 'celllineprimarydisease', 'celllinestatus', 'celllinecelltype', 'celllinecollection', 'celllinetissuesource', 'celllinetissuetreatment', 'celllinetissuedate', 'celllinenamesynonyms', 'celllineupdate', 'celllineupdatetype', 'celllineupdatedby', 'celllineecaccurl']
-    inlines = (CelllinecharacterizationInline, CelllinechecklistInline, CelllinecultureconditionsInline, CelllinederivationInline, CelllinelabInline, CelllinelegalInline, CelllinevalueInline)
+    list_display = ['biosamplesid', 'celllinename', 'donor', 'celllineprimarydisease', 'celllinestatus', 'celllinecelltype', 'celllinecollection', 'celllinetissuesource', 'celllinetissuetreatment', 'celllinetissuedate', 'celllinenamesynonyms', 'celllineecaccurl']
+    inlines = (
+        CelllinecharacterizationInline,
+        CelllinechecklistInline,
+        CelllinecultureconditionsInline,
+        CelllinederivationInline,
+        CelllinelabInline,
+        CellLineLegalInline,
+        CelllinevalueInline,
+        CellLineIntegratingVectorInline,
+        CellLineNonIntegratingVectorInline,
+    )
 
     list_filter = ('celllinestatus', 'celllineprimarydisease', 'celllinetissuesource', 'celllinecelltype')
 
@@ -250,24 +282,6 @@ class CelllinestrfingerprintingAdmin(admin.ModelAdmin):
 admin.site.register(Celllinestrfingerprinting, CelllinestrfingerprintingAdmin)
 
 
-class CelllinevectorAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinevector, CelllinevectorAdmin)
-
-
-class CelllinevectorfreereprogrammingAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinevectorfreereprogramming, CelllinevectorfreereprogrammingAdmin)
-
-
-class CelllinevectormoleculeAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinevectormolecule, CelllinevectormoleculeAdmin)
-
-
 class CelltypeAdmin(admin.ModelAdmin):
     pass
 
@@ -330,9 +344,9 @@ admin.site.register(Documenttype, DocumenttypeAdmin)
 
 class DonorAdmin(admin.ModelAdmin):
 
-    list_display = ['hescregdonorid', 'age', 'gender', 'countryoforigin', 'primarydisease', 'diseaseadditionalinfo', 'providerdonorid']
-    list_display_links = ['hescregdonorid']
-    list_filter = ['age', 'gender', 'countryoforigin']
+    list_display = ['biosamplesid', 'gender', 'countryoforigin', 'primarydisease', 'diseaseadditionalinfo', 'providerdonorid']
+    list_display_links = ['biosamplesid']
+    list_filter = ['gender', 'countryoforigin']
 
 admin.site.register(Donor, DonorAdmin)
 
@@ -353,12 +367,6 @@ class EnzymefreeAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Enzymefree, EnzymefreeAdmin)
-
-
-class GenderAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Gender, GenderAdmin)
 
 
 class GermlayerAdmin(admin.ModelAdmin):
@@ -383,12 +391,6 @@ class KeywordAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Keyword, KeywordAdmin)
-
-
-class LastupdatetypeAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Lastupdatetype, LastupdatetypeAdmin)
 
 
 class MarkerAdmin(admin.ModelAdmin):
@@ -505,12 +507,6 @@ class TissuesourceAdmin(admin.ModelAdmin):
 admin.site.register(Tissuesource, TissuesourceAdmin)
 
 
-class TransposonAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Transposon, TransposonAdmin)
-
-
 class UnitsAdmin(admin.ModelAdmin):
     pass
 
@@ -529,25 +525,36 @@ class UseraccounttypeAdmin(admin.ModelAdmin):
 admin.site.register(Useraccounttype, UseraccounttypeAdmin)
 
 
-class VectorAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Vector, VectorAdmin)
-
-
 class VectorfreereprogramfactorAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Vectorfreereprogramfactor, VectorfreereprogramfactorAdmin)
 
 
-class VectortypeAdmin(admin.ModelAdmin):
+# -----------------------------------------------------------------------------
+# Cell line vector
+
+class NonIntegratingVectorAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(Vectortype, VectortypeAdmin)
+admin.site.register(NonIntegratingVector, NonIntegratingVectorAdmin)
+
+
+class IntegratingVectorAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(IntegratingVector, IntegratingVectorAdmin)
 
 
 class VirusAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Virus, VirusAdmin)
+
+
+class TransposonAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Transposon, TransposonAdmin)
+
+# -----------------------------------------------------------------------------

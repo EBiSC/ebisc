@@ -4,7 +4,6 @@
     <tr><td class="label">Biosamples ID:</td><td>{{ cellline.biosamplesid|default:"-" }}</td></tr>
     <tr><td class="label">Cell line name:</td><td>{{ cellline.celllinename|default:"-" }}</td></tr>
     <tr><td class="label">Cell line name synonyms:</td><td>{{ cellline.celllinenamesynonyms|default:"-" }}</td></tr>
-    <tr><td class="label">Donor:</td><td>{{ cellline.celllinedonor|default:"-" }}</td></tr>
     <tr><td class="label">Disease:</td><td>{{ cellline.celllineprimarydisease|default:"-" }}</td></tr>
     <tr><td class="label">Mutant gene:</td><td>{{ cellline.celllinelab.mutagene|default:"-" }}</td></tr>
     <tr><td class="label">Cell line disease info:</td><td>{{ cellline.celllinediseaseaddinfo|default:"-" }}</td></tr>
@@ -20,6 +19,12 @@
     <!-- <tr><td class="label">Last update type:</td><td>{{ cellline.celllineupdatetype|default:"-" }}</td></tr> -->
     <!-- <tr><td class="label">Cell line ECACC URL:</td><td>{{ cellline.celllineecaccurl|default:"-" }}</td></tr> -->
 
+    <tr><th colspan="2" class="title"><h2>Donor</h2></th></tr>
+    <tr><td class="label">Biosamples ID:</td><td>{{ cellline.donor.biosamplesid|default:"-" }}</td></tr>
+    <tr><td class="label">Gender:</td><td>{{ cellline.donor.gender|default:"-" }}</td></tr>
+    <tr><td class="label">Age:</td><td>{{ cellline.donor_age|default:"-" }}</td></tr>
+
+
     <tr><th colspan="2" class="title"><h2>Depositor</h2></th></tr>
 
     <tr><td class="label">Depositor:</td><td>{{ cellline.generator.organizationname|default:"-" }}</td></tr>
@@ -27,6 +32,19 @@
     <tr><td class="label">Cell line user account:</td><td>{{ cellline.celllineupdatedby|default:"-" }}</td></tr>
 
     <tr><th colspan="2" class="title"><h2>Derivation</h2></th></tr>
+
+    {% if cellline.integrating_vector %}
+        <tr><td class="label">Vector type:</td><td>integrating</td></tr>
+        {% if cellline.integrating_vector.vector %}<tr><td class="label">Vector:</td><td>{{ cellline.integrating_vector.vector }}</td></tr>{% endif %}
+        {% if cellline.integrating_vector.virus %}<tr><td class="label">Virus type:</td><td>{{ cellline.integrating_vector.virus }}</td></tr>{% endif %}
+        {% if cellline.integrating_vector.transposon %}<tr><td class="label">Transposon:</td><td>{{ cellline.integrating_vector.transposon }}</td></tr>{% endif %}
+        {% if cellline.integrating_vector.excisable %}<tr><td class="label">Excisable:</td><td>{{ cellline.integrating_vector.excisable|yesno:"yes,no" }}</td></tr>{% endif %}
+    {% endif %}
+
+    {% if cellline.non_integrating_vector %}
+        <tr><td class="label">Vector type:</td><td>non-integrating</td></tr>
+        {% if cellline.non_integrating_vector. %}<tr><td class="label">Vector:</td><td>{{ cellline.non_integrating_vector. }}</td></tr>{% endif %}
+    {% endif %}
 
     <tr><td class="label">Primary cell type name:</td><td>{{ cellline.celllinederivation.primarycelltypename|default:"-" }}</td></tr>
     <tr><td class="label">Primary cell type cell finder ID:</td><td>{{ cellline.celllinederivation.primarycelltypecellfinderid|default:"-" }}</td></tr>
@@ -72,7 +90,7 @@
 
     <tr><th colspan="2" class="title"><h2>Ethics</h2></th></tr>
 
-    <tr><td class="label">Donor consent:</td><td>{{ cellline.celllinelegal.q1donorconsent|default:"-" }}</td></tr>
+    <tr><td class="label">Donor consent:</td><td>{{ cellline.celllinelegal.q1donorconsent|yesno:"yes,no"|default:"-" }}</td></tr>
     <tr><td class="label">Donor trace:</td><td>{{ cellline.celllinelegal.q2donortrace|default:"-" }}</td></tr>
     <tr><td class="label">IRB approval:</td><td>{{ cellline.celllinelegal.q3irbapproval|default:"-" }}</td></tr>
     <tr><td class="label">Approved use:</td><td>{{ cellline.celllinelegal.q4approveduse|default:"-" }}</td></tr>

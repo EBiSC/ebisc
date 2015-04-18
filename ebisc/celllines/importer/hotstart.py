@@ -25,6 +25,28 @@ def value_of_json(source, field, cast=None):
         else:
             return False
 
+    elif cast == 'gender':
+
+        try:
+            return Gender.objects.get(name=source.get(field))
+        except KeyError:
+            pass
+        except Gender.DoesNotExist:
+            logger.warn('Invalid donor gender: %s' % source.get(field))
+
+        return None
+
+    elif cast == 'age_range':
+
+        try:
+            return AgeRange.objects.get(name=source.get(field))
+        except KeyError:
+            pass
+        except AgeRange.DoesNotExist:
+            logger.warn('Invalid age range: %s' % source.get(field))
+
+        return None
+
     else:
         return source.get(field, None)
 
@@ -100,6 +122,71 @@ def parse_organization(valuef, source):
         return (organization, organization_role)
 
 
+@inject_valuef
+def parse_donor(valuef, source):
+
+    gender = valuef('gender_primary_cell', 'gender')
+
+    try:
+        donor = Donor.objects.get(biosamplesid=valuef('donor_biosample_id'))
+
+        if donor.gender != gender:
+            logger.warn('Changing donor gender from %s to %s' % (donor.gender, gender))
+            donor.gender = gender
+
+    except Donor.DoesNotExist:
+        donor = Donor(
+            biosamplesid=valuef('donor_biosample_id'),
+            gender=gender
+        )
+
+    donor.save()
+
+    return donor
+
+
+@inject_valuef
+def parse_legal(valuef, source, cell_line):
+
+    if valuef('informed_consent_flag', 'bool'):
+
+        cell_line_legal = CellLineLegal(
+            cell_line=cell_line,
+            q1donorconsent=valuef('informed_consent_flag', 'bool'),
+        )
+
+        cell_line_legal.save()
+
+
+@inject_valuef
+def parse_integrating_vector(valuef, source, cell_line):
+
+    vector = CellLineIntegratingVector(
+        cell_line=cell_line,
+        vector=IntegratingVector.objects.get_or_create(name=valuef('integrating_vector'))[0] if valuef('integrating_vector') else None,
+        virus=Virus.objects.get_or_create(name=valuef('integrating_vector_virus_type'))[0] if valuef('integrating_vector_virus_type') else None,
+        transposon=Transposon.objects.get_or_create(name=valuef('integrating_vector_transposon_type'))[0] if valuef('integrating_vector_transposon_type') else None,
+        excisable=valuef('excisable_vector_flag', 'bool'),
+    )
+
+    logger.info('Added integrating vector: %s' % vector)
+
+    vector.save()
+
+
+@inject_valuef
+def parse_non_integrating_vector(valuef, source, cell_line):
+
+    vector = CellLineNonIntegratingVector(
+        cell_line=cell_line,
+        vector=NonIntegratingVector.objects.get_or_create(name=valuef('non_integrating_vector'))[0] if valuef('non_integrating_vector') else None,
+    )
+
+    logger.info('Added non-integrating vector: %s' % vector)
+
+    vector.save()
+
+
 def import_data(basedir):
 
     for f in os.listdir(basedir):
@@ -119,7 +206,11 @@ def import_data(basedir):
                 celllineprimarydisease=parse_disease(source),
                 celllinecelltype=parse_cell_type(source),
                 celllinenamesynonyms=', '.join(valuef('alternate_name')),
+                donor=parse_donor(source),
+                donor_age=valuef('donor_age', 'age_range'),
             )
+
+            # Organizations
 
             organizations = []
 
@@ -145,6 +236,21 @@ def import_data(basedir):
                 if created:
                     logger.info('Added organization %s as %s' % (organization, organization_role))
 
+            # Legal
+
+            parse_legal(source, cell_line)
+
+            # Vector
+
+            if valuef('vector_type') == 'integrating':
+                parse_integrating_vector(source, cell_line)
+
+            if valuef('vector_type') == 'non_integrating':
+                parse_non_integrating_vector(source, cell_line)
+
+            # Final save
+
+            cell_line.save()
 
 # -----------------------------------------------------------------------------
 # Example JSON
