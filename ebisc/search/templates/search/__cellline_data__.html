@@ -61,8 +61,12 @@
     <tr><td class="label">Passage method:</td><td>{{ cellline.celllinecultureconditions.passagemethod|default:"-" }}</td></tr>
     <tr><td class="label">Enzymatically:</td><td>{{ cellline.celllinecultureconditions.enzymatically|default:"-" }}</td></tr>
     <tr><td class="label">Enzyme free:</td><td>{{ cellline.celllinecultureconditions.enzymefree|default:"-" }}</td></tr>
-    <tr><td class="label">O<sub>2</sub> concentration:</td><td>{{ cellline.celllinecultureconditions.o2concentration|default:"-" }}</td></tr>
-    <tr><td class="label">CO<sub>2</sub> concentration:</td><td>{{ cellline.celllinecultureconditions.co2concentration|default:"-" }}</td></tr>
+    {% if cellline.celllinecultureconditions.o2concentration %}
+    <tr><td class="label">O<sub>2</sub> concentration:</td><td>{{ cellline.celllinecultureconditions.o2concentration }}%</td></tr>
+    {% endif %}
+    {% if cellline.celllinecultureconditions.co2concentration %}
+    <tr><td class="label">CO<sub>2</sub> concentration:</td><td>{{ cellline.celllinecultureconditions.co2concentration }}%</td></tr>
+    {% endif %}
 
     {% if cellline.celllinecultureconditions.culture_medium %}
     <tr><td class="label">Culture medium:</td><td>{{ cellline.celllinecultureconditions.culture_medium }}</td></tr>
