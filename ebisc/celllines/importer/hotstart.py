@@ -14,7 +14,7 @@ This is HotsStart JSON data importer.
 
 
 # -----------------------------------------------------------------------------
-# Importer
+# Convert JSON values to python values
 
 def value_of_json(source, field, cast=None):
 
@@ -24,6 +24,16 @@ def value_of_json(source, field, cast=None):
             return True
         else:
             return False
+
+    elif cast == 'int':
+
+        try:
+            return int(source.get(field))
+        except KeyError:
+            return None
+        except:
+            logger.warn('Invalid field value for int: %s=%s' % (field, source.get(field)))
+            return None
 
     elif cast == 'gender':
 
@@ -50,6 +60,30 @@ def value_of_json(source, field, cast=None):
     else:
         return source.get(field, None)
 
+
+def term_list_value_of_json(source, source_field, model, model_field='name'):
+
+    if source_field not in source:
+        return None
+
+    return term_list_value(source[source_field], model, model_field)
+
+
+def term_list_value(value, model, model_field='name'):
+
+    if value is None:
+        return None
+
+    kwargs = {}
+    kwargs[model_field] = value
+
+    value, created = model.objects.get_or_create(**kwargs)
+
+    return value
+
+
+# -----------------------------------------------------------------------------
+# Specific parsers
 
 def inject_valuef(func):
     def wrapper(source, *args):
@@ -163,9 +197,9 @@ def parse_integrating_vector(valuef, source, cell_line):
 
     vector = CellLineIntegratingVector(
         cell_line=cell_line,
-        vector=IntegratingVector.objects.get_or_create(name=valuef('integrating_vector'))[0] if valuef('integrating_vector') else None,
-        virus=Virus.objects.get_or_create(name=valuef('integrating_vector_virus_type'))[0] if valuef('integrating_vector_virus_type') else None,
-        transposon=Transposon.objects.get_or_create(name=valuef('integrating_vector_transposon_type'))[0] if valuef('integrating_vector_transposon_type') else None,
+        vector=term_list_value_of_json(source, 'integrating_vector', IntegratingVector),
+        virus=term_list_value_of_json(source, 'integrating_vector_virus_type', Virus),
+        transposon=term_list_value_of_json(source, 'integrating_vector_transposon_type', Transposon),
         excisable=valuef('excisable_vector_flag', 'bool'),
     )
 
@@ -179,13 +213,94 @@ def parse_non_integrating_vector(valuef, source, cell_line):
 
     vector = CellLineNonIntegratingVector(
         cell_line=cell_line,
-        vector=NonIntegratingVector.objects.get_or_create(name=valuef('non_integrating_vector'))[0] if valuef('non_integrating_vector') else None,
+        vector=term_list_value_of_json(source, 'non_integrating_vector', NonIntegratingVector),
     )
 
     logger.info('Added non-integrating vector: %s' % vector)
 
     vector.save()
 
+
+@inject_valuef
+def parse_derivation(valuef, source, cell_line):
+
+    cell_line_derivation = Celllinederivation(
+        cell_line=cell_line,
+        primarycelldevelopmentalstage=term_list_value_of_json(source, 'dev_stage_primary_cell', PrimaryCellDevelopmentalStage),
+        primarycelltypename=valuef('primary_celltype_ont_name'),
+        selectioncriteriaforclones=valuef('selection_of_clones'),
+        xenofreeconditions=valuef('derivation_xeno_graft_free_flag', 'bool'),
+        derivedundergmp=valuef('derivation_gmp_ips_flag', 'bool'),
+    )
+
+    logger.info('Added cell line derivation: %s' % cell_line_derivation)
+
+    cell_line_derivation.save()
+
+
+@inject_valuef
+def parse_culture_condions(valuef, source, cell_line):
+
+    cell_line_culture_conditions = Celllinecultureconditions(
+        cell_line=cell_line,
+
+        surfacecoating=term_list_value_of_json(source, 'surface_coating', SurfaceCoating),
+
+        feedercellid=valuef('feeder_cells_ont_id'),
+        feedercelltype=valuef('feeder_cells_name'),
+
+        passagemethod=term_list_value_of_json(source, 'passage_method', PassageMethod),
+        enzymatically=term_list_value_of_json(source, 'passage_method_enzymatically', Enzymatically),
+        enzymefree=term_list_value_of_json(source, 'passage_method_enzyme_free', EnzymeFree),
+
+        o2concentration=valuef('o2_concentration', 'int'),
+        co2concentration=valuef('co2_concentration', 'int'),
+    )
+
+    cell_line_culture_conditions.save()
+
+    # Culture medium
+
+    def parse_supplements(cell_line_culture_conditions, supplements):
+
+        if supplements is None:
+            return
+
+        else:
+            for supplement in supplements:
+                (supplement, amount, unit) = supplement.split('###')
+                CellLineCultureMediumSupplement(
+                    cell_line_culture_conditions=cell_line_culture_conditions,
+                    supplement=supplement,
+                    amount=amount,
+                    unit=term_list_value(unit, Unit),
+                ).save()
+
+    if not valuef('culture_conditions_medium_culture_medium') == 'other_medium':
+        cell_line_culture_conditions.culture_medium = term_list_value_of_json(source, 'culture_conditions_medium_culture_medium', CultureMedium)
+
+        # Culture medium supplements
+        parse_supplements(cell_line_culture_conditions, valuef('culture_conditions_medium_culture_medium_supplements'))
+
+    else:
+        CultureMediumOther(
+            cell_line_culture_conditions=cell_line_culture_conditions,
+            base=valuef('culture_conditions_medium_culture_medium_other_base'),
+            protein_source=term_list_value_of_json(source, 'culture_conditions_medium_culture_medium_other_protein_source', ProteinSource),
+            serum_concentration=valuef('culture_conditions_medium_culture_medium_other_concentration', 'int'),
+        ).save()
+
+        # Culture medium supplements
+        parse_supplements(cell_line_culture_conditions, valuef('culture_conditions_medium_culture_medium_other_supplements'))
+
+    # Final save
+
+    cell_line_culture_conditions.save()
+    logger.info('Added cell line culture conditions: %s' % cell_line_culture_conditions)
+
+
+# -----------------------------------------------------------------------------
+#  Importer
 
 def import_data(basedir):
 
@@ -237,7 +352,6 @@ def import_data(basedir):
                     logger.info('Added organization %s as %s' % (organization, organization_role))
 
             # Legal
-
             parse_legal(source, cell_line)
 
             # Vector
@@ -248,136 +362,13 @@ def import_data(basedir):
             if valuef('vector_type') == 'non_integrating':
                 parse_non_integrating_vector(source, cell_line)
 
+            # Derivation
+            parse_derivation(source, cell_line)
+
+            # Culture conditions
+            parse_culture_condions(source, cell_line)
+
             # Final save
-
             cell_line.save()
-
-# -----------------------------------------------------------------------------
-# Example JSON
-
-{
-    "form_finished_flag": "1",
-    "final_name_generated_flag": "1",
-    "id": "1088",
-    "validation_status": "1",
-    "name": "ESi001-A",
-    "biosample_id": "SAMEA3302942",
-    "alternate_name": [
-        "SPO2#1"
-    ],
-    "type_name": "hiPSC",
-    "internal_donor_id": [
-        "1088",
-        "SP02"
-    ],
-    "donor_biosample_id": "SAMEA3302933",
-    "available_flag": "1",
-    "same_donor_cell_line_flag": "0",
-    "same_donor_derived_from_flag": "0",
-    "registration_reference": "S\u00e1nchez-Dan\u00e9s A et al. Disease-specific phenotypes in dopamine neurons from human iPS-based models of genetic and sporadic Parkinson's disease. EMBO Mol Med. 2012 May;4(5):380-95.",
-    "registration_reference_publication_pubmed_id": "22407749",
-    "informed_consent_flag": "1",
-    "approval_flag": "1",
-    "approval_auth_name": "Ethic Committee Center of Regenerative Medicine in Barcelona",
-    "vector_type": "integrating",
-    "integrating_vector": "virus",
-    "integrating_vector_virus_type": "retrovirus",
-    "integrating_vector_gene_list": [
-        "5460###POU5F1###entrez_id###id_type_gene",
-        "9314###KLF4###entrez_id###id_type_gene",
-        "6657###SOX2###entrez_id###id_type_gene"
-    ],
-    "dev_stage_primary_cell": "adult",
-    "donor_age": "55-59",
-    "gender_primary_cell": "male",
-    "disease_flag": "1",
-    "disease_doid": "DOID:14330",
-    "disease_doid_name": "Parkinson's disease",
-    "disease_doid_synonyms": "paralysis agitans EXACT CSP2005:2057-3689,Parkinson disease EXACT ",
-    "disease_purl": "http://www.ebi.ac.uk/efo/EFO_0002508",
-    "disease_control_cellline_abnormal_karyotype": "0",
-    "primary_celltype_ont_id": "CL_0000362",
-    "primary_celltype_name": "Epidermal keratinocytes ",
-    "primary_celltype_purl": "http://purl.obolibrary.org/obo/CL_0000362",
-    "derivation_gmp_ips_flag": "0",
-    "available_clinical_grade_ips_flag": "0",
-    "derivation_xeno_graft_free_flag": "0",
-    "surface_coating": "gelatine",
-    "feeder_cells_flag": "1",
-    "feeder_cells_name": "Human foreskin fibroblasts",
-    "feeder_cells_ont_id": "CELDA_000001419",
-    "passage_method": "mechanically",
-    "co2_concentration": "5",
-    "culture_conditions_medium_culture_medium": "other_medium",
-    "culture_conditions_medium_culture_medium_other_base": "KnockOut DMEM",
-    "culture_conditions_medium_culture_medium_other_protein_source": "knockout_serum_replacement",
-    "culture_conditions_medium_culture_medium_other_concentration": "20",
-    "culture_conditions_medium_culture_medium_other_supplements": [
-        "Glutamax###2###millimeter",
-        "2-mercaptoethanol###50###mikrometer",
-        "NEAA###1###percent",
-        "bFGF###10###nanogram_millilitre"
-    ],
-    "undiff_immstain_marker": [
-        "alpl###+",
-        "nanog###+",
-        "pou5f1###+",
-        "ssea3###+",
-        "ssea4###+",
-        "tra160###+",
-        "tra181###+",
-        "###+###Sox2###entrez_id###id_type_protein"
-    ],
-    "undiff_immstain_marker_passage_number": "11",
-    "virology_screening_flag": "1",
-    "virology_screening_mycoplasma_flag": "1",
-    "virology_screening_mycoplasma_result": "negative",
-    "embryoid_body_differentiation_flag": "1",
-    "embryoid_body_passage_number": "13",
-    "embryoid_body_endo_flag": "1",
-    "embryoid_body_endo_marker_immstain_marker": [
-        "###+###AFP###entrez_id###id_type_protein",
-        "###+###FoxA2###entrez_id###id_type_protein"
-    ],
-    "embryoid_body_meso_flag": "1",
-    "embryoid_body_meso_marker_immstain_marker": [
-        "###+###SMA###entrez_id###id_type_protein"
-    ],
-    "embryoid_body_ekto_flag": "1",
-    "embryoid_body_ekto_marker_immstain_marker": [
-        "###+###TUJ1###entrez_id###id_type_protein"
-    ],
-    "teratoma_formation_differentiation_flag": "1",
-    "teratoma_formation_endo_flag": "1",
-    "teratoma_formation_endo_marker_immstain_marker": [
-        "###+###FoxA2###entrez_id###id_type_protein",
-        "###+###AFP###entrez_id###id_type_protein"
-    ],
-    "teratoma_formation_meso_flag": "1",
-    "teratoma_formation_meso_marker_immstain_marker": [
-        "###+###CS###entrez_id###id_type_protein",
-        "###+###Sox9###entrez_id###id_type_protein"
-    ],
-    "teratoma_formation_ekto_flag": "1",
-    "teratoma_formation_ekto_marker_immstain_marker": [
-        "###+###Tuj1###entrez_id###id_type_protein",
-        "###+###GFAP###entrez_id###id_type_protein"
-    ],
-    "karyotyping_flag": "1",
-    "karyotyping_karyotype": "46,XY",
-    "karyotyping_image_upload_file": "SP02_1_Karyotype.pdf",
-    "karyotyping_image_upload_file_enc": "ad5579c4a248a497bc55b7f13e422912.pdf",
-    "karyotyping_method": "g_banding",
-    "derivation_country": "Spain",
-    "providers": [
-        {
-            "id": "427",
-            "name": "Spanish Stem Cell Bank",
-            "contact_person_fullname": "",
-            "adress": "",
-            "role": "Generator"
-        }
-    ]
-}
 
 # -----------------------------------------------------------------------------

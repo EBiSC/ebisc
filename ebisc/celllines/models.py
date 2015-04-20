@@ -264,16 +264,19 @@ class Celllinecomments(models.Model):
 
 
 class Celllinecultureconditions(models.Model):
-    cultureconditionscellline = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), blank=True, null=True)
-    surfacecoating = models.ForeignKey('Surfacecoating', verbose_name=_(u'Surface coating'), blank=True, null=True)
-    feedercelltype = models.CharField(_(u'Feeder cell type'), max_length=45, blank=True)
-    feedercellid = models.CharField(_(u'Feeder cell id'), max_length=45, blank=True)
-    passagemethod = models.ForeignKey('Passagemethod', verbose_name=_(u'Passage method'), blank=True, null=True)
+
+    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
+
+    surfacecoating = models.ForeignKey('SurfaceCoating', verbose_name=_(u'Surface coating'), null=True, blank=True)
+    feedercelltype = models.CharField(_(u'Feeder cell type'), max_length=45, null=True, blank=True)
+    feedercellid = models.CharField(_(u'Feeder cell id'), max_length=45, null=True, blank=True)
+    passagemethod = models.ForeignKey('PassageMethod', verbose_name=_(u'Passage method'), blank=True, null=True)
     enzymatically = models.ForeignKey('Enzymatically', verbose_name=_(u'Enzymatically'), blank=True, null=True)
-    enzymefree = models.ForeignKey('Enzymefree', verbose_name=_(u'Enzyme free'), blank=True, null=True)
+    enzymefree = models.ForeignKey('EnzymeFree', verbose_name=_(u'Enzyme free'), blank=True, null=True)
     o2concentration = models.IntegerField(_(u'O2 concentration'), blank=True, null=True)
     co2concentration = models.IntegerField(_(u'Co2 concentration'), blank=True, null=True)
-    culturemedium = models.ForeignKey('Culturemedium', verbose_name=_(u'Culture medium'), blank=True, null=True)
+
+    culture_medium = models.ForeignKey('CultureMedium', verbose_name=_(u'Culture medium'), blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'Cell line culture conditions')
@@ -284,29 +287,62 @@ class Celllinecultureconditions(models.Model):
         return u'%s' % (self.id,)
 
 
-class Celllineculturesupplements(models.Model):
-    celllinecultureconditions = models.ForeignKey('Celllinecultureconditions', verbose_name=_(u'Cell line culture conditions'), blank=True, null=True)
-    supplement = models.CharField(_(u'Supplement'), max_length=45, blank=True)
-    supplementamount = models.CharField(_(u'Supplement amount'), max_length=45, blank=True)
-    supplementamountunit = models.ForeignKey('Units', verbose_name=_(u'Units'), blank=True, null=True)
+class CultureMedium(models.Model):
+    name = models.CharField(_(u'Culture medium'), max_length=45, unique=True)
+
+    class Meta:
+        verbose_name = _(u'Culture medium')
+        verbose_name_plural = _(u'Culture mediums')
+        ordering = ['name']
+
+    def __unicode__(self):
+        return u'%s' % (self.name,)
+
+
+class CultureMediumOther(models.Model):
+    cell_line_culture_conditions = models.OneToOneField(Celllinecultureconditions, verbose_name=_(u'Cell line culture conditions'), related_name='culture_medium_other')
+
+    base = models.CharField(_(u'Culture medium base'), max_length=45, blank=True)
+    protein_source = models.ForeignKey('ProteinSource', verbose_name=_(u'Protein source'), blank=True, null=True)
+    serum_concentration = models.IntegerField(_(u'Serum concentration'), blank=True, null=True)
+
+    class Meta:
+        verbose_name = _(u'Culture medium')
+        verbose_name_plural = _(u'Culture mediums')
+        ordering = ['base', 'protein_source', 'serum_concentration']
+
+    def __unicode__(self):
+        return u'%s / %s / %s' % (self.base, self.protein_source, self.serum_concentration)
+
+
+class CellLineCultureMediumSupplement(models.Model):
+    cell_line_culture_conditions = models.ForeignKey(Celllinecultureconditions, verbose_name=_(u'Cell line culture conditions'), related_name='medium_supplements')
+
+    supplement = models.CharField(_(u'Supplement'), max_length=45)
+    amount = models.CharField(_(u'Amount'), max_length=45, null=True, blank=True)
+    unit = models.ForeignKey('Unit', verbose_name=_(u'Unit'), null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line culture supplements')
         verbose_name_plural = _(u'Cell line culture supplements')
-        ordering = []
+        ordering = ['supplement']
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
-
+        if self.amount and self.unit:
+            return '%s - %s %s' % (self.supplement, self.amount, self.unit)
+        else:
+            return unicode(self.supplement)
 
 class Celllinederivation(models.Model):
-    derivationcellline = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), blank=True, null=True)
+
+    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), blank=True, null=True)
+
     primarycelltypename = models.CharField(_(u'Primary cell type name'), max_length=45, blank=True)
     primarycelltypecellfinderid = models.CharField(_(u'Primary cell type cell finder id'), max_length=45, blank=True)
-    primarycelldevelopmentalstage = models.ForeignKey('Primarycelldevelopmentalstage', verbose_name=_(u'Primary cell developmental stage'), blank=True, null=True)
+    primarycelldevelopmentalstage = models.ForeignKey('PrimaryCellDevelopmentalStage', verbose_name=_(u'Primary cell developmental stage'), blank=True, null=True)
     selectioncriteriaforclones = models.TextField(_(u'Selection criteria for clones'), null=True, blank=True)
-    xenofreeconditions = models.CharField(_(u'Xeno free conditions'), max_length=4, blank=True)
-    derivedundergmp = models.CharField(_(u'Derived under gmp'), max_length=4, blank=True)
+    xenofreeconditions = models.NullBooleanField(_(u'Xeno free conditions'), default=None, null=True, blank=True)
+    derivedundergmp = models.NullBooleanField(_(u'Derived under gmp'), default=None, null=True, blank=True)
     availableasclinicalgrade = models.CharField(_(u'Available as clinical grade'), max_length=4, blank=True)
 
     class Meta:
@@ -718,20 +754,6 @@ class Country(models.Model):
         return u'%s' % (self.country,)
 
 
-class Culturemedium(models.Model):
-    culturemediumbase = models.CharField(_(u'Culture medium base'), max_length=45, blank=True)
-    proteinsource = models.ForeignKey('Proteinsource', verbose_name=_(u'Protein source'), blank=True, null=True)
-    serumconcentration = models.IntegerField(_(u'Serum concentration'), blank=True, null=True)
-
-    class Meta:
-        verbose_name = _(u'Culture medium')
-        verbose_name_plural = _(u'Culture mediums')
-        ordering = ['culturemediumbase']
-
-    def __unicode__(self):
-        return u'%s' % (self.culturemediumbase,)
-
-
 class Culturesystem(models.Model):
     culturesystem = models.CharField(_(u'Culture system'), max_length=45, blank=True)
 
@@ -829,27 +851,27 @@ class Ebisckeyword(models.Model):
 
 
 class Enzymatically(models.Model):
-    enzymatically = models.CharField(_(u'Enzymatically'), max_length=45, blank=True)
+    name = models.CharField(_(u'Enzymatically'), max_length=45, unique=True)
 
     class Meta:
         verbose_name = _(u'Enzymatically')
         verbose_name_plural = _(u'Enzymatically')
-        ordering = ['enzymatically']
+        ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.enzymatically,)
+        return u'%s' % (self.name,)
 
 
-class Enzymefree(models.Model):
-    enzymefree = models.CharField(_(u'Enzyme free'), max_length=45, blank=True)
+class EnzymeFree(models.Model):
+    name = models.CharField(_(u'Enzyme free'), max_length=45, unique=True)
 
     class Meta:
         verbose_name = _(u'Enzyme free')
         verbose_name_plural = _(u'Enzyme free')
-        ordering = ['enzymefree']
+        ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.enzymefree,)
+        return u'%s' % (self.name,)
 
 
 class Germlayer(models.Model):
@@ -965,16 +987,17 @@ class Orgtype(models.Model):
         return u'%s' % (self.orgtype,)
 
 
-class Passagemethod(models.Model):
-    passagemethod = models.CharField(_(u'Passage method'), max_length=45, blank=True)
+class PassageMethod(models.Model):
+
+    name = models.CharField(_(u'Passage method'), max_length=45, unique=True)
 
     class Meta:
         verbose_name = _(u'Passage method')
         verbose_name_plural = _(u'Passage methods')
-        ordering = ['passagemethod']
+        ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.passagemethod,)
+        return u'%s' % (self.name,)
 
 
 class Person(models.Model):
@@ -1029,28 +1052,28 @@ class Postcode(models.Model):
         return u'%s %s' % (self.postcode, self.district)
 
 
-class Primarycelldevelopmentalstage(models.Model):
-    primarycelldevelopmentalstage = models.CharField(_(u'Primary cell developmental stage'), max_length=20, blank=True)
+class PrimaryCellDevelopmentalStage(models.Model):
+    name = models.CharField(_(u'Primary cell developmental stage'), max_length=20, unique=True)
 
     class Meta:
         verbose_name = _(u'Primary cell developmental stage')
         verbose_name_plural = _(u'Primary cell developmental stages')
-        ordering = ['primarycelldevelopmentalstage']
+        ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.primarycelldevelopmentalstage,)
+        return u'%s' % (self.name,)
 
 
-class Proteinsource(models.Model):
-    proteinsource = models.CharField(_(u'Protein source'), max_length=45, blank=True)
+class ProteinSource(models.Model):
+    name = models.CharField(_(u'Protein source'), max_length=45, unique=True)
 
     class Meta:
         verbose_name = _(u'Protein source')
         verbose_name_plural = _(u'Protein sources')
-        ordering = ['proteinsource']
+        ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.proteinsource,)
+        return u'%s' % (self.name,)
 
 
 class Publisher(models.Model):
@@ -1113,16 +1136,16 @@ class Strfplocus(models.Model):
         return u'%s' % (self.strfplocus,)
 
 
-class Surfacecoating(models.Model):
-    surfacecoating = models.CharField(_(u'Surface coating'), max_length=45, blank=True)
+class SurfaceCoating(models.Model):
+    name = models.CharField(_(u'Surface coating'), max_length=45, unique=True)
 
     class Meta:
         verbose_name = _(u'Surface coating')
         verbose_name_plural = _(u'Surface coatings')
-        ordering = ['surfacecoating']
+        ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.surfacecoating,)
+        return u'%s' % (self.name,)
 
 
 class Tissuesource(models.Model):
@@ -1137,16 +1160,16 @@ class Tissuesource(models.Model):
         return u'%s' % (self.tissuesource,)
 
 
-class Units(models.Model):
-    units = models.CharField(_(u'Units'), max_length=10, blank=True)
+class Unit(models.Model):
+    name = models.CharField(_(u'Units'), max_length=20)
 
     class Meta:
         verbose_name = _(u'Units')
         verbose_name_plural = _(u'Units')
-        ordering = ['units']
+        ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.units,)
+        return u'%s' % (self.name,)
 
 
 class Useraccount(models.Model):

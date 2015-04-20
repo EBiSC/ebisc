@@ -161,10 +161,10 @@ class CelllinecommentsAdmin(admin.ModelAdmin):
 admin.site.register(Celllinecomments, CelllinecommentsAdmin)
 
 
-class CelllineculturesupplementsAdmin(admin.ModelAdmin):
+class CellLineCultureMediumSupplementAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(Celllineculturesupplements, CelllineculturesupplementsAdmin)
+admin.site.register(CellLineCultureMediumSupplement, CellLineCultureMediumSupplementAdmin)
 
 
 class CelllinediffpotencyAdmin(admin.ModelAdmin):
@@ -312,10 +312,16 @@ class CountryAdmin(admin.ModelAdmin):
 admin.site.register(Country, CountryAdmin)
 
 
-class CulturemediumAdmin(admin.ModelAdmin):
+class CultureMediumAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(Culturemedium, CulturemediumAdmin)
+admin.site.register(CultureMedium, CultureMediumAdmin)
+
+
+class CultureMediumOtherAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(CultureMediumOther, CultureMediumOtherAdmin)
 
 
 class CulturesystemAdmin(admin.ModelAdmin):
@@ -363,10 +369,10 @@ class EnzymaticallyAdmin(admin.ModelAdmin):
 admin.site.register(Enzymatically, EnzymaticallyAdmin)
 
 
-class EnzymefreeAdmin(admin.ModelAdmin):
+class EnzymeFreeAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(Enzymefree, EnzymefreeAdmin)
+admin.site.register(EnzymeFree, EnzymeFreeAdmin)
 
 
 class GermlayerAdmin(admin.ModelAdmin):
@@ -423,10 +429,10 @@ class OrgtypeAdmin(admin.ModelAdmin):
 admin.site.register(Orgtype, OrgtypeAdmin)
 
 
-class PassagemethodAdmin(admin.ModelAdmin):
+class PassageMethodAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(Passagemethod, PassagemethodAdmin)
+admin.site.register(PassageMethod, PassageMethodAdmin)
 
 
 class PersonAdmin(admin.ModelAdmin):
@@ -453,16 +459,16 @@ class PostcodeAdmin(admin.ModelAdmin):
 admin.site.register(Postcode, PostcodeAdmin)
 
 
-class PrimarycelldevelopmentalstageAdmin(admin.ModelAdmin):
+class PrimaryCellDevelopmentalStageAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(Primarycelldevelopmentalstage, PrimarycelldevelopmentalstageAdmin)
+admin.site.register(PrimaryCellDevelopmentalStage, PrimaryCellDevelopmentalStageAdmin)
 
 
-class ProteinsourceAdmin(admin.ModelAdmin):
+class ProteinSourceAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(Proteinsource, ProteinsourceAdmin)
+admin.site.register(ProteinSource, ProteinSourceAdmin)
 
 
 class PublisherAdmin(admin.ModelAdmin):
@@ -495,10 +501,10 @@ class StrfplocusAdmin(admin.ModelAdmin):
 admin.site.register(Strfplocus, StrfplocusAdmin)
 
 
-class SurfacecoatingAdmin(admin.ModelAdmin):
+class SurfaceCoatingAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(Surfacecoating, SurfacecoatingAdmin)
+admin.site.register(SurfaceCoating, SurfaceCoatingAdmin)
 
 
 class TissuesourceAdmin(admin.ModelAdmin):
@@ -507,10 +513,10 @@ class TissuesourceAdmin(admin.ModelAdmin):
 admin.site.register(Tissuesource, TissuesourceAdmin)
 
 
-class UnitsAdmin(admin.ModelAdmin):
+class UnitAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(Units, UnitsAdmin)
+admin.site.register(Unit, UnitAdmin)
 
 
 class UseraccountAdmin(admin.ModelAdmin):

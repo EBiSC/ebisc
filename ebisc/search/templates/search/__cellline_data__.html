@@ -28,8 +28,8 @@
     <tr><th colspan="2" class="title"><h2>Depositor</h2></th></tr>
 
     <tr><td class="label">Depositor:</td><td>{{ cellline.generator.organizationname|default:"-" }}</td></tr>
-    <tr><td class="label">Depositors cell line URI:</td><td>{{ cellline.depositorscelllineuri|default:"-" }}</td></tr>
-    <tr><td class="label">Cell line user account:</td><td>{{ cellline.celllineupdatedby|default:"-" }}</td></tr>
+    <!-- <tr><td class="label">Depositors cell line URI:</td><td>{{ cellline.depositorscelllineuri|default:"-" }}</td></tr> -->
+    <!-- <tr><td class="label">Cell line user account:</td><td>{{ cellline.celllineupdatedby|default:"-" }}</td></tr> -->
 
     <tr><th colspan="2" class="title"><h2>Derivation</h2></th></tr>
 
@@ -47,12 +47,11 @@
     {% endif %}
 
     <tr><td class="label">Primary cell type name:</td><td>{{ cellline.celllinederivation.primarycelltypename|default:"-" }}</td></tr>
-    <tr><td class="label">Primary cell type cell finder ID:</td><td>{{ cellline.celllinederivation.primarycelltypecellfinderid|default:"-" }}</td></tr>
+    <!-- <tr><td class="label">Primary cell type cell finder ID:</td><td>{{ cellline.celllinederivation.primarycelltypecellfinderid|default:"-" }}</td></tr> -->
     <tr><td class="label">Primary cell developmental stage:</td><td>{{ cellline.celllinederivation.primarycelldevelopmentalstage|default:"-" }}</td></tr>
     <tr><td class="label">Selection criteria for clones:</td><td>{{ cellline.celllinederivation.selectioncriteriaforclones|default:"-" }}</td></tr>
-    <tr><td class="label">Xeno free conditions:</td><td>{{ cellline.celllinederivation.xenofreeconditions|default:"-" }}</td></tr>
-    <tr><td class="label">Derived under gmp:</td><td>{{ cellline.celllinederivation.derivedundergmp|default:"-" }}</td></tr>
-    <tr><td class="label">Available as clinical grade:</td><td>{{ cellline.celllinederivation.availableasclinicalgrade|default:"-" }}</td></tr>
+    <tr><td class="label">Xeno free conditions:</td><td>{{ cellline.celllinederivation.xenofreeconditions|yesno:"yes,no"|default:"-" }}</td></tr>
+    <tr><td class="label">Derived under gmp:</td><td>{{ cellline.celllinederivation.derivedundergmp|yesno:"yes,no"|default:"-" }}</td></tr>
 
     <tr><th colspan="2" class="title"><h2>Culture Conditions</h2></th></tr>
 
@@ -64,7 +63,29 @@
     <tr><td class="label">Enzyme free:</td><td>{{ cellline.celllinecultureconditions.enzymefree|default:"-" }}</td></tr>
     <tr><td class="label">O<sub>2</sub> concentration:</td><td>{{ cellline.celllinecultureconditions.o2concentration|default:"-" }}</td></tr>
     <tr><td class="label">CO<sub>2</sub> concentration:</td><td>{{ cellline.celllinecultureconditions.co2concentration|default:"-" }}</td></tr>
-    <tr><td class="label">Culture medium:</td><td>{{ cellline.celllinecultureconditions.culturemedium|default:"-" }}</td></tr>
+
+    {% if cellline.celllinecultureconditions.culture_medium %}
+    <tr><td class="label">Culture medium:</td><td>{{ cellline.celllinecultureconditions.culture_medium }}</td></tr>
+    {% endif %}
+
+    {% if cellline.celllinecultureconditions.culture_medium_other %}
+    <tr><td class="label">Culture medium base:</td><td>{{ cellline.celllinecultureconditions.culture_medium_other.base }}</td></tr>
+    <tr><td class="label">ProteinSource:</td><td>{{ cellline.celllinecultureconditions.culture_medium_other.protein_source|default:"-" }}</td></tr>
+    <tr><td class="label">Serum concentration:</td><td>{{ cellline.celllinecultureconditions.culture_medium_other.serum_concentration|default:"-" }}</td></tr>
+    {% endif %}
+
+    {% if cellline.celllinecultureconditions.medium_supplements.all|length %}
+    <tr>
+        <td class="label">Culture medium supplements:</td>
+        <td>
+            <ul>
+                {% for medium_supplement in cellline.celllinecultureconditions.medium_supplements.all %}
+                <li>{{ medium_supplement }}</li>
+                {% endfor %}
+            </ul>
+        </td>
+    </tr>
+    {% endif %}
 
     <tr><th colspan="2" class="title"><h2>Characterization</h2></th></tr>
 

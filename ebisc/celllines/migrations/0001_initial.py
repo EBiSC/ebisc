@@ -235,11 +235,11 @@ class Migration(migrations.Migration):
             name='Celllinecultureconditions',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('feedercelltype', models.CharField(max_length=45, verbose_name='Feeder cell type', blank=True)),
-                ('feedercellid', models.CharField(max_length=45, verbose_name='Feeder cell id', blank=True)),
+                ('feedercelltype', models.CharField(max_length=45, null=True, verbose_name='Feeder cell type', blank=True)),
+                ('feedercellid', models.CharField(max_length=45, null=True, verbose_name='Feeder cell id', blank=True)),
                 ('o2concentration', models.IntegerField(null=True, verbose_name='O2 concentration', blank=True)),
                 ('co2concentration', models.IntegerField(null=True, verbose_name='Co2 concentration', blank=True)),
-                ('cultureconditionscellline', models.OneToOneField(null=True, blank=True, to='celllines.Cellline', verbose_name='Cell line')),
+                ('cell_line', models.OneToOneField(verbose_name='Cell line', to='celllines.Cellline')),
             ],
             options={
                 'ordering': [],
@@ -249,15 +249,15 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Celllineculturesupplements',
+            name='CellLineCultureMediumSupplement',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('supplement', models.CharField(max_length=45, verbose_name='Supplement', blank=True)),
-                ('supplementamount', models.CharField(max_length=45, verbose_name='Supplement amount', blank=True)),
-                ('celllinecultureconditions', models.ForeignKey(verbose_name='Cell line culture conditions', blank=True, to='celllines.Celllinecultureconditions', null=True)),
+                ('supplement', models.CharField(max_length=45, verbose_name='Supplement')),
+                ('amount', models.CharField(max_length=45, null=True, verbose_name='Amount', blank=True)),
+                ('cell_line_culture_conditions', models.ForeignKey(related_name='medium_supplements', verbose_name='Cell line culture conditions', to='celllines.Celllinecultureconditions')),
             ],
             options={
-                'ordering': [],
+                'ordering': ['supplement'],
                 'verbose_name': 'Cell line culture supplements',
                 'verbose_name_plural': 'Cell line culture supplements',
             },
@@ -270,10 +270,10 @@ class Migration(migrations.Migration):
                 ('primarycelltypename', models.CharField(max_length=45, verbose_name='Primary cell type name', blank=True)),
                 ('primarycelltypecellfinderid', models.CharField(max_length=45, verbose_name='Primary cell type cell finder id', blank=True)),
                 ('selectioncriteriaforclones', models.TextField(null=True, verbose_name='Selection criteria for clones', blank=True)),
-                ('xenofreeconditions', models.CharField(max_length=4, verbose_name='Xeno free conditions', blank=True)),
-                ('derivedundergmp', models.CharField(max_length=4, verbose_name='Derived under gmp', blank=True)),
+                ('xenofreeconditions', models.NullBooleanField(default=None, verbose_name='Xeno free conditions')),
+                ('derivedundergmp', models.NullBooleanField(default=None, verbose_name='Derived under gmp')),
                 ('availableasclinicalgrade', models.CharField(max_length=4, verbose_name='Available as clinical grade', blank=True)),
-                ('derivationcellline', models.OneToOneField(null=True, blank=True, to='celllines.Cellline', verbose_name='Cell line')),
+                ('cell_line', models.OneToOneField(null=True, blank=True, to='celllines.Cellline', verbose_name='Cell line')),
             ],
             options={
                 'ordering': [],
@@ -411,7 +411,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('excisable', models.NullBooleanField(default=None, verbose_name='Excisable')),
-                ('cell_line', models.OneToOneField(verbose_name='Cell line', to='celllines.Cellline')),
+                ('cell_line', models.OneToOneField(related_name='integrating_vector', verbose_name='Cell line', to='celllines.Cellline')),
             ],
             options={
                 'verbose_name': 'Cell line integrating vector',
@@ -490,7 +490,7 @@ class Migration(migrations.Migration):
             name='CellLineNonIntegratingVector',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('cell_line', models.OneToOneField(verbose_name='Cell line', to='celllines.Cellline')),
+                ('cell_line', models.OneToOneField(related_name='non_integrating_vector', verbose_name='Cell line', to='celllines.Cellline')),
             ],
             options={
                 'verbose_name': 'Cell line non integrating vector',
@@ -703,14 +703,28 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Culturemedium',
+            name='CultureMedium',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('culturemediumbase', models.CharField(max_length=45, verbose_name='Culture medium base', blank=True)),
-                ('serumconcentration', models.IntegerField(null=True, verbose_name='Serum concentration', blank=True)),
+                ('name', models.CharField(unique=True, max_length=45, verbose_name='Culture medium')),
             ],
             options={
-                'ordering': ['culturemediumbase'],
+                'ordering': ['name'],
+                'verbose_name': 'Culture medium',
+                'verbose_name_plural': 'Culture mediums',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='CultureMediumOther',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('base', models.CharField(max_length=45, verbose_name='Culture medium base', blank=True)),
+                ('serum_concentration', models.IntegerField(null=True, verbose_name='Serum concentration', blank=True)),
+                ('cell_line_culture_conditions', models.OneToOneField(related_name='culture_medium_other', verbose_name='Cell line culture conditions', to='celllines.Celllinecultureconditions')),
+            ],
+            options={
+                'ordering': ['base', 'protein_source', 'serum_concentration'],
                 'verbose_name': 'Culture medium',
                 'verbose_name_plural': 'Culture mediums',
             },
@@ -813,23 +827,23 @@ class Migration(migrations.Migration):
             name='Enzymatically',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('enzymatically', models.CharField(max_length=45, verbose_name='Enzymatically', blank=True)),
+                ('name', models.CharField(unique=True, max_length=45, verbose_name='Enzymatically')),
             ],
             options={
-                'ordering': ['enzymatically'],
+                'ordering': ['name'],
                 'verbose_name': 'Enzymatically',
                 'verbose_name_plural': 'Enzymatically',
             },
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Enzymefree',
+            name='EnzymeFree',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('enzymefree', models.CharField(max_length=45, verbose_name='Enzyme free', blank=True)),
+                ('name', models.CharField(unique=True, max_length=45, verbose_name='Enzyme free')),
             ],
             options={
-                'ordering': ['enzymefree'],
+                'ordering': ['name'],
                 'verbose_name': 'Enzyme free',
                 'verbose_name_plural': 'Enzyme free',
             },
@@ -996,13 +1010,13 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Passagemethod',
+            name='PassageMethod',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('passagemethod', models.CharField(max_length=45, verbose_name='Passage method', blank=True)),
+                ('name', models.CharField(unique=True, max_length=45, verbose_name='Passage method')),
             ],
             options={
-                'ordering': ['passagemethod'],
+                'ordering': ['name'],
                 'verbose_name': 'Passage method',
                 'verbose_name_plural': 'Passage methods',
             },
@@ -1065,26 +1079,26 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Primarycelldevelopmentalstage',
+            name='PrimaryCellDevelopmentalStage',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('primarycelldevelopmentalstage', models.CharField(max_length=20, verbose_name='Primary cell developmental stage', blank=True)),
+                ('name', models.CharField(unique=True, max_length=20, verbose_name='Primary cell developmental stage')),
             ],
             options={
-                'ordering': ['primarycelldevelopmentalstage'],
+                'ordering': ['name'],
                 'verbose_name': 'Primary cell developmental stage',
                 'verbose_name_plural': 'Primary cell developmental stages',
             },
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Proteinsource',
+            name='ProteinSource',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('proteinsource', models.CharField(max_length=45, verbose_name='Protein source', blank=True)),
+                ('name', models.CharField(unique=True, max_length=45, verbose_name='Protein source')),
             ],
             options={
-                'ordering': ['proteinsource'],
+                'ordering': ['name'],
                 'verbose_name': 'Protein source',
                 'verbose_name_plural': 'Protein sources',
             },
@@ -1156,13 +1170,13 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Surfacecoating',
+            name='SurfaceCoating',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('surfacecoating', models.CharField(max_length=45, verbose_name='Surface coating', blank=True)),
+                ('name', models.CharField(unique=True, max_length=45, verbose_name='Surface coating')),
             ],
             options={
-                'ordering': ['surfacecoating'],
+                'ordering': ['name'],
                 'verbose_name': 'Surface coating',
                 'verbose_name_plural': 'Surface coatings',
             },
@@ -1195,13 +1209,13 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Units',
+            name='Unit',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('units', models.CharField(max_length=10, verbose_name='Units', blank=True)),
+                ('name', models.CharField(max_length=20, verbose_name='Units')),
             ],
             options={
-                'ordering': ['units'],
+                'ordering': ['name'],
                 'verbose_name': 'Units',
                 'verbose_name_plural': 'Units',
             },
@@ -1318,9 +1332,9 @@ class Migration(migrations.Migration):
             preserve_default=True,
         ),
         migrations.AddField(
-            model_name='culturemedium',
-            name='proteinsource',
-            field=models.ForeignKey(verbose_name='Protein source', blank=True, to='celllines.Proteinsource', null=True),
+            model_name='culturemediumother',
+            name='protein_source',
+            field=models.ForeignKey(verbose_name='Protein source', blank=True, to='celllines.ProteinSource', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -1528,19 +1542,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='celllinederivation',
             name='primarycelldevelopmentalstage',
-            field=models.ForeignKey(verbose_name='Primary cell developmental stage', blank=True, to='celllines.Primarycelldevelopmentalstage', null=True),
+            field=models.ForeignKey(verbose_name='Primary cell developmental stage', blank=True, to='celllines.PrimaryCellDevelopmentalStage', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
-            model_name='celllineculturesupplements',
-            name='supplementamountunit',
-            field=models.ForeignKey(verbose_name='Units', blank=True, to='celllines.Units', null=True),
+            model_name='celllineculturemediumsupplement',
+            name='unit',
+            field=models.ForeignKey(verbose_name='Unit', blank=True, to='celllines.Unit', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='celllinecultureconditions',
-            name='culturemedium',
-            field=models.ForeignKey(verbose_name='Culture medium', blank=True, to='celllines.Culturemedium', null=True),
+            name='culture_medium',
+            field=models.ForeignKey(verbose_name='Culture medium', blank=True, to='celllines.CultureMedium', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -1552,19 +1566,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='celllinecultureconditions',
             name='enzymefree',
-            field=models.ForeignKey(verbose_name='Enzyme free', blank=True, to='celllines.Enzymefree', null=True),
+            field=models.ForeignKey(verbose_name='Enzyme free', blank=True, to='celllines.EnzymeFree', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='celllinecultureconditions',
             name='passagemethod',
-            field=models.ForeignKey(verbose_name='Passage method', blank=True, to='celllines.Passagemethod', null=True),
+            field=models.ForeignKey(verbose_name='Passage method', blank=True, to='celllines.PassageMethod', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='celllinecultureconditions',
             name='surfacecoating',
-            field=models.ForeignKey(verbose_name='Surface coating', blank=True, to='celllines.Surfacecoating', null=True),
+            field=models.ForeignKey(verbose_name='Surface coating', blank=True, to='celllines.SurfaceCoating', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
