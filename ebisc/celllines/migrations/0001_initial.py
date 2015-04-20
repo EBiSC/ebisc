@@ -420,12 +420,12 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Celllinekaryotype',
+            name='CellLineKaryotype',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('passagenumber', models.CharField(max_length=5, verbose_name='Passage number', blank=True)),
-                ('karyotype', models.CharField(max_length=45, verbose_name='Karyotype', blank=True)),
-                ('karyotypecellline', models.ForeignKey(verbose_name='Cell line', blank=True, to='celllines.Cellline', null=True)),
+                ('karyotype', models.CharField(max_length=500, null=True, verbose_name='Karyotype', blank=True)),
+                ('passage_number', models.IntegerField(null=True, verbose_name='Passage number', blank=True)),
+                ('cell_line', models.OneToOneField(related_name='karyotype', verbose_name='Cell line', to='celllines.Cellline')),
             ],
             options={
                 'ordering': [],
@@ -902,13 +902,13 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Karyotypemethod',
+            name='KaryotypeMethod',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('karyotypemethod', models.CharField(max_length=45, verbose_name='Karyotype method', blank=True)),
+                ('name', models.CharField(unique=True, max_length=45, verbose_name='Karyotype method')),
             ],
             options={
-                'ordering': ['karyotypemethod'],
+                'ordering': ['name'],
                 'verbose_name': 'Karyotype method',
                 'verbose_name_plural': 'Karyotype methods',
             },
@@ -1481,8 +1481,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='celllinekaryotype',
-            name='karyotypemethod',
-            field=models.ForeignKey(verbose_name='Karyotype method', blank=True, to='celllines.Karyotypemethod', null=True),
+            name='karyotype_method',
+            field=models.ForeignKey(verbose_name='Karyotype method', blank=True, to='celllines.KaryotypeMethod', null=True),
             preserve_default=True,
         ),
         migrations.AddField(

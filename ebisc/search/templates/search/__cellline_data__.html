@@ -93,6 +93,14 @@
     </tr>
     {% endif %}
 
+    {% if cellline.karyotype %}
+    <tr><th colspan="2" class="title"><h2>Genotyping</h2></th></tr>
+
+    <tr><td class="label">Cell line karyotype:</td><td>{{ cellline.karyotype.karyotype|default:"-" }}</td></tr>
+    <tr><td class="label">Karyotyping method:</td><td>{{ cellline.karyotype.karyotype_method|default:"-" }}</td></tr>
+    <tr><td class="label">Passage number:</td><td>{{ cellline.karyotype.passage_number|default:"-" }}</td></tr>
+    {% endif %}
+
     <tr><th colspan="2" class="title"><h2>Characterization</h2></th></tr>
 
     <tr><td class="label">Certificate of analysis passage:</td><td>{{ cellline.celllinecharacterization.certificateofanalysispassage|default:"-" }}</td></tr>

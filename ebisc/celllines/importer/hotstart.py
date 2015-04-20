@@ -299,6 +299,23 @@ def parse_culture_condions(valuef, source, cell_line):
     logger.info('Added cell line culture conditions: %s' % cell_line_culture_conditions)
 
 
+@inject_valuef
+def parse_karyotyping(valuef, source, cell_line):
+
+    if valuef('karyotyping_flag', 'bool'):
+
+        cell_line_karyotype = CellLineKaryotype(
+            cell_line=cell_line,
+            karyotype=valuef('karyotyping_karyotype'),
+            karyotype_method=term_list_value_of_json(source, 'karyotyping_method', KaryotypeMethod),
+            passage_number=valuef('karyotyping_number_passages', 'int'),
+        )
+
+        cell_line_karyotype.save()
+
+        logger.info('Added cell line karyotype: %s' % cell_line_karyotype)
+
+
 # -----------------------------------------------------------------------------
 #  Importer
 
@@ -367,6 +384,9 @@ def import_data(basedir):
 
             # Culture conditions
             parse_culture_condions(source, cell_line)
+
+            # Karyotyping
+            parse_karyotyping(source, cell_line)
 
             # Final save
             cell_line.save()

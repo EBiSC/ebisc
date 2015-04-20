@@ -4,7 +4,7 @@ from tastypie.authorization import DjangoAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Cellline, Celltype, Tissuesource, Celllinekaryotype
+from ..celllines.models import Cellline, Celltype, Tissuesource, CellLineKaryotype
 
 
 class CelltypeResource(ModelResource):
@@ -32,7 +32,7 @@ class EcaccResource(ModelResource):
     reprogrammingmethod3 = fields.CharField()
     culturemedium = fields.CharField()
     passagemethod = fields.CharField()
-    karyotype = fields.ToManyField(Celllinekaryotype, 'celllinekaryotype_set', full=True)
+    karyotype = fields.ToOneField(CellLineKaryotype, 'celllinekaryotype', full=True)
     donor_phenotype = fields.CharField()
 
     class Meta:

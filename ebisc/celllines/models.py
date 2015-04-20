@@ -333,6 +333,7 @@ class CellLineCultureMediumSupplement(models.Model):
         else:
             return unicode(self.supplement)
 
+
 class Celllinederivation(models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), blank=True, null=True)
@@ -475,11 +476,14 @@ class Celllinehlatyping(models.Model):
         return u'%s' % (self.id,)
 
 
-class Celllinekaryotype(models.Model):
-    karyotypecellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), blank=True, null=True)
-    passagenumber = models.CharField(_(u'Passage number'), max_length=5, blank=True)
-    karyotype = models.CharField(_(u'Karyotype'), max_length=45, blank=True)
-    karyotypemethod = models.ForeignKey('Karyotypemethod', verbose_name=_(u'Karyotype method'), blank=True, null=True)
+class CellLineKaryotype(models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='karyotype')
+
+    karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
+    karyotype_method = models.ForeignKey('KaryotypeMethod', verbose_name=_(u'Karyotype method'), null=True, blank=True)
+
+    passage_number = models.IntegerField(_(u'Passage number'), null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line karyotype')
@@ -898,16 +902,16 @@ class Hla(models.Model):
         return u'%s' % (self.hla,)
 
 
-class Karyotypemethod(models.Model):
-    karyotypemethod = models.CharField(_(u'Karyotype method'), max_length=45, blank=True)
+class KaryotypeMethod(models.Model):
+    name = models.CharField(_(u'Karyotype method'), max_length=45, unique=True)
 
     class Meta:
         verbose_name = _(u'Karyotype method')
         verbose_name_plural = _(u'Karyotype methods')
-        ordering = ['karyotypemethod']
+        ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.karyotypemethod,)
+        return u'%s' % (self.name,)
 
 
 class Keyword(models.Model):

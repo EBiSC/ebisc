@@ -221,10 +221,10 @@ class CelllinehlatypingAdmin(admin.ModelAdmin):
 admin.site.register(Celllinehlatyping, CelllinehlatypingAdmin)
 
 
-class CelllinekaryotypeAdmin(admin.ModelAdmin):
+class CellLineKaryotypeAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(Celllinekaryotype, CelllinekaryotypeAdmin)
+admin.site.register(CellLineKaryotype, CellLineKaryotypeAdmin)
 
 
 class CelllinemarkerAdmin(admin.ModelAdmin):
@@ -387,10 +387,10 @@ class HlaAdmin(admin.ModelAdmin):
 admin.site.register(Hla, HlaAdmin)
 
 
-class KaryotypemethodAdmin(admin.ModelAdmin):
+class KaryotypeMethodAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(Karyotypemethod, KaryotypemethodAdmin)
+admin.site.register(KaryotypeMethod, KaryotypeMethodAdmin)
 
 
 class KeywordAdmin(admin.ModelAdmin):
