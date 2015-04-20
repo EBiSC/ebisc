@@ -5,14 +5,14 @@
     <tr><td class="label">Cell line name:</td><td>{{ cellline.celllinename|default:"-" }}</td></tr>
     <tr><td class="label">Cell line name synonyms:</td><td>{{ cellline.celllinenamesynonyms|default:"-" }}</td></tr>
     <tr><td class="label">Disease:</td><td>{{ cellline.celllineprimarydisease|default:"-" }}</td></tr>
-    <tr><td class="label">Mutant gene:</td><td>{{ cellline.celllinelab.mutagene|default:"-" }}</td></tr>
-    <tr><td class="label">Cell line disease info:</td><td>{{ cellline.celllinediseaseaddinfo|default:"-" }}</td></tr>
-    <tr><td class="label">Cell line status:</td><td>{{ cellline.celllinestatus|default:"-" }}</td></tr>
+    <!-- <tr><td class="label">Mutant gene:</td><td>{{ cellline.celllinelab.mutagene|default:"-" }}</td></tr> -->
+    <!-- <tr><td class="label">Cell line disease info:</td><td>{{ cellline.celllinediseaseaddinfo|default:"-" }}</td></tr> -->
+    <!-- <tr><td class="label">Cell line status:</td><td>{{ cellline.celllinestatus|default:"-" }}</td></tr> -->
     <tr><td class="label">Cell type:</td><td>{{ cellline.celllinecelltype|default:"-" }}</td></tr>
-    <tr><td class="label">Tissue source:</td><td>{{ cellline.celllinetissuesource|default:"-" }}</td></tr>
-    <tr><td class="label">Cell line collection:</td><td>{{ cellline.celllinecollection|default:"-" }}</td></tr>
-    <tr><td class="label">Clinical treatment before donation:</td><td>{{ cellline.celllinetissuetreatment|default:"-" }}</td></tr>
-    <tr><td class="label">Cell line tissue date:</td><td>{{ cellline.celllinetissuedate|default:"-" }}</td></tr>
+    <!-- <tr><td class="label">Tissue source:</td><td>{{ cellline.celllinetissuesource|default:"-" }}</td></tr> -->
+    <!-- <tr><td class="label">Cell line collection:</td><td>{{ cellline.celllinecollection|default:"-" }}</td></tr> -->
+    <!-- <tr><td class="label">Clinical treatment before donation:</td><td>{{ cellline.celllinetissuetreatment|default:"-" }}</td></tr> -->
+    <!-- <tr><td class="label">Cell line tissue date:</td><td>{{ cellline.celllinetissuedate|default:"-" }}</td></tr> -->
 
     <!-- <tr><td class="label">Cell line comments:</td><td>{{ cellline.celllinecomments|default:"-" }}</td></tr> -->
     <!-- <tr><td class="label">Cell line update:</td><td>{{ cellline.celllineupdate|default:"-" }}</td></tr> -->
@@ -71,7 +71,9 @@
     {% if cellline.celllinecultureconditions.culture_medium_other %}
     <tr><td class="label">Culture medium base:</td><td>{{ cellline.celllinecultureconditions.culture_medium_other.base }}</td></tr>
     <tr><td class="label">ProteinSource:</td><td>{{ cellline.celllinecultureconditions.culture_medium_other.protein_source|default:"-" }}</td></tr>
-    <tr><td class="label">Serum concentration:</td><td>{{ cellline.celllinecultureconditions.culture_medium_other.serum_concentration|default:"-" }}</td></tr>
+    {% if cellline.celllinecultureconditions.culture_medium_other.serum_concentration %}
+    <tr><td class="label">Serum concentration:</td><td>{{ cellline.celllinecultureconditions.culture_medium_other.serum_concentration }}%</td></tr>
+    {% endif %}
     {% endif %}
 
     {% if cellline.celllinecultureconditions.medium_supplements.all|length %}
