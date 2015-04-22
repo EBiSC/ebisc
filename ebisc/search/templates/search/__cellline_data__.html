@@ -101,46 +101,46 @@
     <tr><td class="label">Passage number:</td><td>{{ cellline.karyotype.passage_number|default:"-" }}</td></tr>
     {% endif %}
 
-    <tr><th colspan="2" class="title"><h2>Characterization</h2></th></tr>
+    <!-- <tr><th colspan="2" class="title"><h2>Characterization</h2></th></tr> -->
 
-    <tr><td class="label">Certificate of analysis passage:</td><td>{{ cellline.celllinecharacterization.certificateofanalysispassage|default:"-" }}</td></tr>
-    <tr><td class="label">HIV1 screening:</td><td>{{ cellline.celllinecharacterization.hiv1screening|default:"-" }}</td></tr>
-    <tr><td class="label">HIV2 screening:</td><td>{{ cellline.celllinecharacterization.hiv2screening|default:"-" }}</td></tr>
-    <tr><td class="label">Hepatitis b:</td><td>{{ cellline.celllinecharacterization.hepititusb|default:"-" }}</td></tr>
-    <tr><td class="label">Hepatitis c:</td><td>{{ cellline.celllinecharacterization.hepititusc|default:"-" }}</td></tr>
-    <tr><td class="label">Mycoplasma:</td><td>{{ cellline.celllinecharacterization.mycoplasma|default:"-" }}</td></tr>
+<!--     <tr><td class="label">Certificate of analysis passage:</td><td>{{ cellline.celllinecharacterization.certificateofanalysispassage|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">HIV1 screening:</td><td>{{ cellline.celllinecharacterization.hiv1screening|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">HIV2 screening:</td><td>{{ cellline.celllinecharacterization.hiv2screening|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Hepatitis b:</td><td>{{ cellline.celllinecharacterization.hepititusb|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Hepatitis c:</td><td>{{ cellline.celllinecharacterization.hepititusc|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Mycoplasma:</td><td>{{ cellline.celllinecharacterization.mycoplasma|default:"-" }}</td></tr> -->
 
-    <tr><th colspan="2" class="title"><h2>Labs</h2></th></tr>
+    <!-- <tr><th colspan="2" class="title"><h2>Labs</h2></th></tr> -->
 
-    <tr><td class="label">Cryodate:</td><td>{{ cellline.celllinelab.cryodate|default:"-" }}</td></tr>
-    <tr><td class="label">Expansion in progress:</td><td>{{ cellline.celllinelab.expansioninprogress|default:"-" }}</td></tr>
-    <tr><td class="label">Funder:</td><td>{{ cellline.celllinelab.funder|default:"-" }}</td></tr>
-    <tr><td class="label">Reprogramming method 1:</td><td>{{ cellline.celllinelab.reprogrammingmethod1|default:"-" }}</td></tr>
-    <tr><td class="label">Reprogramming method 2:</td><td>{{ cellline.celllinelab.reprogrammingmethod2|default:"-" }}</td></tr>
-    <tr><td class="label">Reprogramming method 3:</td><td>{{ cellline.celllinelab.reprogrammingmethod3|default:"-" }}</td></tr>
-    <tr><td class="label">Clone number:</td><td>{{ cellline.celllinelab.clonenumber|default:"-" }}</td></tr>
-    <tr><td class="label">Passage number:</td><td>{{ cellline.celllinelab.passagenumber|default:"-" }}</td></tr>
-    <tr><td class="label">Culture system:</td><td>{{ cellline.celllinelab.culturesystem|default:"-" }}</td></tr>
-    <tr><td class="label">Culture system comment:</td><td>{{ cellline.celllinelab.culturesystemcomment|default:"-" }}</td></tr>
+<!--     <tr><td class="label">Cryodate:</td><td>{{ cellline.celllinelab.cryodate|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Expansion in progress:</td><td>{{ cellline.celllinelab.expansioninprogress|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Funder:</td><td>{{ cellline.celllinelab.funder|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Reprogramming method 1:</td><td>{{ cellline.celllinelab.reprogrammingmethod1|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Reprogramming method 2:</td><td>{{ cellline.celllinelab.reprogrammingmethod2|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Reprogramming method 3:</td><td>{{ cellline.celllinelab.reprogrammingmethod3|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Clone number:</td><td>{{ cellline.celllinelab.clonenumber|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Passage number:</td><td>{{ cellline.celllinelab.passagenumber|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Culture system:</td><td>{{ cellline.celllinelab.culturesystem|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Culture system comment:</td><td>{{ cellline.celllinelab.culturesystemcomment|default:"-" }}</td></tr> -->
 
     <tr><th colspan="2" class="title"><h2>Ethics</h2></th></tr>
 
     <tr><td class="label">Donor consent:</td><td>{{ cellline.celllinelegal.q1donorconsent|yesno:"yes,no"|default:"-" }}</td></tr>
-    <tr><td class="label">Donor trace:</td><td>{{ cellline.celllinelegal.q2donortrace|default:"-" }}</td></tr>
-    <tr><td class="label">IRB approval:</td><td>{{ cellline.celllinelegal.q3irbapproval|default:"-" }}</td></tr>
-    <tr><td class="label">Approved use:</td><td>{{ cellline.celllinelegal.q4approveduse|default:"-" }}</td></tr>
-    <tr><td class="label">Informed consent reference:</td><td>{{ cellline.celllinelegal.q5informedconsentreference|default:"-" }}</td></tr>
-    <tr><td class="label">Restrictions:</td><td>{{ cellline.celllinelegal.q6restrictions|default:"-" }}</td></tr>
-    <tr><td class="label">IP restrictions:</td><td>{{ cellline.celllinelegal.q7iprestrictions|default:"-" }}</td></tr>
-    <tr><td class="label">Country:</td><td>{{ cellline.celllinelegal.q8jurisdiction|default:"-" }}</td></tr>
-    <tr><td class="label">Applicable legislation and regulation:</td><td>{{ cellline.celllinelegal.q9applicablelegislationandregulation|default:"-" }}</td></tr>
-    <tr><td class="label">Managed access:</td><td>{{ cellline.celllinelegal.q10managedaccess|default:"-" }}</td></tr>
+<!--     <tr><td class="label">Donor trace:</td><td>{{ cellline.celllinelegal.q2donortrace|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">IRB approval:</td><td>{{ cellline.celllinelegal.q3irbapproval|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Approved use:</td><td>{{ cellline.celllinelegal.q4approveduse|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Informed consent reference:</td><td>{{ cellline.celllinelegal.q5informedconsentreference|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Restrictions:</td><td>{{ cellline.celllinelegal.q6restrictions|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">IP restrictions:</td><td>{{ cellline.celllinelegal.q7iprestrictions|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Country:</td><td>{{ cellline.celllinelegal.q8jurisdiction|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Applicable legislation and regulation:</td><td>{{ cellline.celllinelegal.q9applicablelegislationandregulation|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Managed access:</td><td>{{ cellline.celllinelegal.q10managedaccess|default:"-" }}</td></tr> -->
 
-    <tr><th colspan="2" class="title"><h2>Values</h2></th></tr>
+    <!-- <tr><th colspan="2" class="title"><h2>Values</h2></th></tr> -->
 
-    <tr><td class="label">Potential use:</td><td>{{ cellline.celllinevalue.potentialuse|default:"-" }}</td></tr>
-    <tr><td class="label">Value to society:</td><td>{{ cellline.celllinevalue.valuetosociety|default:"-" }}</td></tr>
-    <tr><td class="label">Value to research:</td><td>{{ cellline.celllinevalue.valuetoresearch|default:"-" }}</td></tr>
-    <tr><td class="label">Other value:</td><td>{{ cellline.celllinevalue.othervalue|default:"-" }}</td></tr>
+<!--     <tr><td class="label">Potential use:</td><td>{{ cellline.celllinevalue.potentialuse|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Value to society:</td><td>{{ cellline.celllinevalue.valuetosociety|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Value to research:</td><td>{{ cellline.celllinevalue.valuetoresearch|default:"-" }}</td></tr> -->
+<!--     <tr><td class="label">Other value:</td><td>{{ cellline.celllinevalue.othervalue|default:"-" }}</td></tr> -->
 
 </table>
