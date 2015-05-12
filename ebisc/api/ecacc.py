@@ -4,7 +4,7 @@ from tastypie.authorization import DjangoAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Cellline, Celltype, Tissuesource, CellLineKaryotype
+from ..celllines.models import Cellline, Celltype, Tissuesource
 
 
 class CelltypeResource(ModelResource):
@@ -25,15 +25,16 @@ class EcaccResource(ModelResource):
 
     ecacc_catalogue_number = fields.CharField(unique=True)
     description = fields.CharField()
-    celltype = fields.ToOneField(CelltypeResource, 'celllinecelltype', full=True)
-    tissuesource = fields.ToOneField(TissuesourceResource, 'celllinetissuesource', full=True)
-    reprogrammingmethod1 = fields.CharField()
-    reprogrammingmethod2 = fields.CharField()
-    reprogrammingmethod3 = fields.CharField()
-    culturemedium = fields.CharField()
-    passagemethod = fields.CharField()
-    karyotype = fields.ToOneField(CellLineKaryotype, 'celllinekaryotype', full=True)
-    donor_phenotype = fields.CharField()
+    primary_cell_type = fields.ToOneField(CelltypeResource, 'celllinecelltype', full=True)
+    # disease = fields.ToOneField(DiseaseResource, 'celllineprimarydisease', null=True, blank=True)
+    # tissuesource = fields.ToOneField(TissuesourceResource, 'celllinetissuesource', full=True)
+    # reprogrammingmethod1 = fields.CharField()
+    # reprogrammingmethod2 = fields.CharField()
+    # reprogrammingmethod3 = fields.CharField()
+    # culturemedium = fields.CharField()
+    # passagemethod = fields.CharField()
+    # karyotype = fields.ToOneField(CellLineKaryotype, 'celllinekaryotype', full=True)
+    # donor_phenotype = fields.CharField()
 
     class Meta:
         queryset = Cellline.objects.all()
@@ -47,19 +48,36 @@ class EcaccResource(ModelResource):
         authentication = SessionAuthentication()
         authorization = DjangoAuthorization()
 
-        excludes = ('id', 'biosamplesid', 'celllinecomments', 'celllinediseaseaddinfo', 'celllineecaccurl', 'celllinenamesynonyms', 'celllinetissuedate', 'celllineupdate', 'depositorscelllineuri')
+        # excludes = ('id', 'biosamplesid', 'celllinecomments', 'celllinediseaseaddinfo', 'celllineecaccurl', 'celllinenamesynonyms', 'celllinetissuedate', 'celllineupdate', 'depositorscelllineuri')
+        excludes = ('id', 'biosamplesid', 'celllineaccepted', 'celllinecomments', 'celllinediseaseaddinfo', 'celllineecaccurl', 'celllinetissuedate', 'celllineupdate', 'depositorscelllineuri')
 
     def dehydrate(self, bundle):
 
-        if hasattr(bundle.obj, 'celllinelab'):
-            bundle.data['reprogrammingmethod1'] = bundle.obj.celllinelab.reprogrammingmethod1
-            bundle.data['reprogrammingmethod2'] = bundle.obj.celllinelab.reprogrammingmethod2
-            bundle.data['reprogrammingmethod3'] = bundle.obj.celllinelab.reprogrammingmethod3
+        # if hasattr(bundle.obj, 'celllinelab'):
+        #     bundle.data['reprogrammingmethod1'] = bundle.obj.celllinelab.reprogrammingmethod1
+        #     bundle.data['reprogrammingmethod2'] = bundle.obj.celllinelab.reprogrammingmethod2
+        #     bundle.data['reprogrammingmethod3'] = bundle.obj.celllinelab.reprogrammingmethod3
+
+        if hasattr(bundle.obj, 'karyotype'):
+            bundle.data['karyotype'] = bundle.obj.karyotype.karyotype
 
         if hasattr(bundle.obj, 'celllinecultureconditions'):
-            bundle.data['culturemedium'] = bundle.obj.celllinecultureconditions.culturemedium
+            bundle.data['culture_medium'] = bundle.obj.celllinecultureconditions.culture_medium
+            bundle.data['surfacecoating'] = bundle.obj.celllinecultureconditions.surfacecoating
             bundle.data['passagemethod'] = bundle.obj.celllinecultureconditions.passagemethod
 
-        bundle.data['donor_phenotype'] = bundle.obj.celllinedonor.phenotype
+        if hasattr(bundle.obj, 'non_integrating_vector'):
+            bundle.data['non_integrating_vector'] = bundle.obj.non_integrating_vector.vector
+
+        if hasattr(bundle.obj, 'integrating_vector'):
+            bundle.data['integrating_vector_vector'] = bundle.obj.integrating_vector.vector
+            bundle.data['integrating_vector_virus'] = bundle.obj.integrating_vector.virus
+            bundle.data['integrating_vector_transposon'] = bundle.obj.integrating_vector.transposon
+
+        bundle.data['donor_gender'] = bundle.obj.donor.gender
+
+        bundle.data['depositor'] = bundle.obj.generator.organizationname
+
+        # bundle.data['donor_phenotype'] = bundle.obj.celllinedonor.phenotype
 
         return bundle
