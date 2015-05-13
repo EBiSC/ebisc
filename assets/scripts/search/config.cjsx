@@ -35,6 +35,7 @@ config = {
         'depositor.analyzed'
         'celllinecelltype.analyzed'
         'celllineprimarydisease.analyzed'
+        'celllineprimarydisease_synonyms'
     ]
 
     facets: [

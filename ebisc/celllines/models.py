@@ -133,13 +133,16 @@ class Cellline(models.Model):
 
         try:
             disease = self.celllineprimarydisease and self.celllineprimarydisease.disease or None
+            disease_synonyms = self.celllineprimarydisease and [s.strip() for s in self.celllineprimarydisease.synonyms.split(',')] or None
         except ObjectDoesNotExist:
             disease = None
+            disease_synonyms = None
 
         return {
             'biosamplesid': self.biosamplesid,
             'celllinename': self.celllinename,
             'celllineprimarydisease': disease,
+            'celllineprimarydisease_synonyms': disease_synonyms,
             'depositor': self.generator.organizationname,
             'celllinecelltype': self.celllinecelltype.celltype,
             'celllinenamesynonyms': self.celllinenamesynonyms,
@@ -773,6 +776,7 @@ class Culturesystem(models.Model):
 class Disease(models.Model):
     icdcode = models.CharField(_(u'DOID'), max_length=30, unique=True, null=True, blank=True)
     disease = models.CharField(_(u'Disease'), max_length=45, blank=True)
+    synonyms = models.CharField(_(u'Synonyms'), max_length=500, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Disease')

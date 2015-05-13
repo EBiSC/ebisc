@@ -106,6 +106,12 @@ def parse_disease(valuef, source):
         if created:
             logger.info('Found new disease: %s' % disease)
 
+        synonyms = ', '.join([s.split('EXACT')[0].strip() for s in valuef('disease_doid_synonyms').split(',')])
+
+        if synonyms != '':
+            disease.synonyms = synonyms
+            disease.save()
+
     return disease
 
 

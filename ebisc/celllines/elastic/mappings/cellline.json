@@ -25,6 +25,11 @@
                 "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
             },
 
+            "celllineprimarydisease_synonyms": {
+                "type": "string",
+                "index": "analyzed"
+            },
+
             "celllinecelltype": {
                 "type": "string",
                 "index": "not_analyzed",
