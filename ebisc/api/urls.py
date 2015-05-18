@@ -2,10 +2,10 @@ from tastypie.api import Api
 
 from django.conf.urls import patterns, include, url
 
-from .ecacc import EcaccResource
+from .celllines import CelllineResource
 
-v1_api = Api(api_name='v1')
-v1_api.register(EcaccResource())
+v1_api = Api(api_name='v0')
+v1_api.register(CelllineResource())
 
 urlpatterns = patterns('',
     url(r'^', include(v1_api.urls)),

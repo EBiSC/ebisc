@@ -13,7 +13,7 @@ class Gender(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.name,)
+        return self.name
 
 
 class AgeRange(models.Model):
@@ -26,7 +26,7 @@ class AgeRange(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.name,)
+        return self.name
 
 
 class Accesslevel(models.Model):
@@ -299,7 +299,7 @@ class CultureMedium(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.name,)
+        return self.name
 
 
 class CultureMediumOther(models.Model):
@@ -694,7 +694,7 @@ class Celltype(models.Model):
         ordering = ['celltype']
 
     def __unicode__(self):
-        return u'%s' % (self.celltype,)
+        return self.celltype
 
 
 class Clinicaltreatmentb4donation(models.Model):
@@ -867,7 +867,7 @@ class Enzymatically(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.name,)
+        return self.name
 
 
 class EnzymeFree(models.Model):
@@ -879,7 +879,7 @@ class EnzymeFree(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.name,)
+        return self.name
 
 
 class Germlayer(models.Model):
@@ -915,7 +915,7 @@ class KaryotypeMethod(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.name,)
+        return self.name
 
 
 class Keyword(models.Model):
@@ -1005,7 +1005,7 @@ class PassageMethod(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.name,)
+        return self.name
 
 
 class Person(models.Model):
@@ -1069,7 +1069,7 @@ class PrimaryCellDevelopmentalStage(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.name,)
+        return self.name
 
 
 class ProteinSource(models.Model):
@@ -1081,7 +1081,7 @@ class ProteinSource(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.name,)
+        return self.name
 
 
 class Publisher(models.Model):
@@ -1153,7 +1153,7 @@ class SurfaceCoating(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.name,)
+        return self.name
 
 
 class Tissuesource(models.Model):
@@ -1177,7 +1177,7 @@ class Unit(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.name,)
+        return self.name
 
 
 class Useraccount(models.Model):
@@ -1233,7 +1233,7 @@ class NonIntegratingVector(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.name,)
+        return self.name
 
 
 class IntegratingVector(models.Model):
@@ -1245,7 +1245,7 @@ class IntegratingVector(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.name,)
+        return self.name
 
 
 class Virus(models.Model):
@@ -1257,7 +1257,7 @@ class Virus(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.name,)
+        return self.name
 
 
 class Transposon(models.Model):
@@ -1269,7 +1269,7 @@ class Transposon(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.name,)
+        return self.name
 
 
 class CellLineNonIntegratingVector(models.Model):
@@ -1282,7 +1282,7 @@ class CellLineNonIntegratingVector(models.Model):
         verbose_name_plural = _(u'Cell line non integrating vectors')
 
     def __unicode__(self):
-        return u'%s' % (self.vector,)
+        return self.vector
 
 
 class CellLineIntegratingVector(models.Model):
