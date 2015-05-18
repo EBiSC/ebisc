@@ -46,7 +46,7 @@ class CellLineKaryotypeResource(ModelResource):
     # + karyotype_method = models.ForeignKey('KaryotypeMethod', verbose_name=_(u'Karyotype method'), null=True, blank=True)
     # + passage_number = models.IntegerField(_(u'Passage number'), null=True, blank=True)
 
-    karyotype_method = fields.CharField('karyotype_method', null=True)
+    # karyotype_method = fields.CharField('karyotype_method', null=True)
 
     class Meta:
         queryset = CellLineKaryotype.objects.all()
