@@ -90,12 +90,13 @@ class DonorResource(ModelResource):
     # - otherclinicalinformation = models.CharField(_(u'Other clinical information'), max_length=100, blank=True)
     # - phenotype = models.ForeignKey('Phenotype', verbose_name=_(u'Phenotype'), blank=True, null=True)
 
+    biosamples_id = fields.CharField('biosamplesid', null=True)
     gender = fields.CharField('gender', null=True)
 
     class Meta:
         queryset = Donor.objects.all()
         include_resource_uri = False
-        fields = ('gender')
+        fields = ('biosamples_id', 'gender')
 
 
 # -----------------------------------------------------------------------------
