@@ -4,13 +4,20 @@ from tastypie.authorization import DjangoAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Cellline, Celltype, Tissuesource
+from ..celllines.models import Cellline, Celltype, Disease, Tissuesource
 
 
 class CelltypeResource(ModelResource):
 
     class Meta:
         queryset = Celltype.objects.all()
+        include_resource_uri = False
+
+
+class DiseaseResource(ModelResource):
+
+    class Meta:
+        queryset = Disease.objects.all()
         include_resource_uri = False
 
 
@@ -26,7 +33,7 @@ class EcaccResource(ModelResource):
     ecacc_catalogue_number = fields.CharField(unique=True)
     description = fields.CharField()
     primary_cell_type = fields.ToOneField(CelltypeResource, 'celllinecelltype', full=True)
-    # disease = fields.ToOneField(DiseaseResource, 'celllineprimarydisease', null=True, blank=True)
+    disease = fields.ForeignKey(DiseaseResource, 'celllineprimarydisease', null=True)
     # tissuesource = fields.ToOneField(TissuesourceResource, 'celllinetissuesource', full=True)
     # reprogrammingmethod1 = fields.CharField()
     # reprogrammingmethod2 = fields.CharField()
@@ -77,6 +84,8 @@ class EcaccResource(ModelResource):
         bundle.data['donor_gender'] = bundle.obj.donor.gender
 
         bundle.data['depositor'] = bundle.obj.generator.organizationname
+
+        # bundle.data['celllineprimarydisease'] = bundle.obj.celllineprimarydisease.disease
 
         # bundle.data['donor_phenotype'] = bundle.obj.celllinedonor.phenotype
 
