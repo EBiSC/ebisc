@@ -6,7 +6,7 @@ from tastypie.authorization import DjangoAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, Celllinecultureconditions
+from ..celllines.models import Donor, Disease, Cellline, Celllinecultureconditions, CellLineKaryotype, Organization
 
 
 # -----------------------------------------------------------------------------
@@ -14,6 +14,7 @@ from ..celllines.models import Donor, Disease, Cellline, Celllinecultureconditio
 
 class CelllineCultureConditionsResource(ModelResource):
 
+    # + culture_medium = models.ForeignKey('CultureMedium', verbose_name=_(u'Culture medium'), blank=True, null=True)
     # + surfacecoating = models.ForeignKey('SurfaceCoating', verbose_name=_(u'Surface coating'), null=True, blank=True)
     # - feedercelltype = models.CharField(_(u'Feeder cell type'), max_length=45, null=True, blank=True)
     # - feedercellid = models.CharField(_(u'Feeder cell id'), max_length=45, null=True, blank=True)
@@ -24,6 +25,7 @@ class CelllineCultureConditionsResource(ModelResource):
     # + co2concentration = models.IntegerField(_(u'Co2 concentration'), blank=True, null=True)
 
     surface_coating = fields.CharField('surfacecoating', null=True)
+    culture_medium = fields.CharField('culture_medium', null=True)
     passage_method = fields.CharField('passagemethod', null=True)
 
     o2_concentration = fields.IntegerField('o2concentration', null=True)
@@ -33,6 +35,23 @@ class CelllineCultureConditionsResource(ModelResource):
         queryset = Celllinecultureconditions.objects.all()
         include_resource_uri = False
         fields = ('o2_concentration', 'co2_concentration')
+
+
+# -----------------------------------------------------------------------------
+# CellLineKaryotype
+
+class CellLineKaryotypeResource(ModelResource):
+
+    # + karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
+    # + karyotype_method = models.ForeignKey('KaryotypeMethod', verbose_name=_(u'Karyotype method'), null=True, blank=True)
+    # + passage_number = models.IntegerField(_(u'Passage number'), null=True, blank=True)
+
+    karyotype_method = fields.CharField('karyotype_method', null=True)
+
+    class Meta:
+        queryset = CellLineKaryotype.objects.all()
+        include_resource_uri = False
+        fields = ('karyotype', 'passage_number')
 
 
 # -----------------------------------------------------------------------------
@@ -80,6 +99,24 @@ class DonorResource(ModelResource):
 
 
 # -----------------------------------------------------------------------------
+# Organization
+
+class OrganizationResource(ModelResource):
+
+    # + organizationname = models.CharField(_(u'Organization name'), max_length=100, unique=True, null=True, blank=True)
+    # - organizationshortname = models.CharField(_(u'Organization short name'), unique=True, max_length=6, null=True, blank=True)
+    # - organizationcontact = models.ForeignKey('Contact', verbose_name=_(u'Contact'), blank=True, null=True)
+    # - organizationtype = models.ForeignKey('Orgtype', verbose_name=_(u'Orgtype'), blank=True, null=True)
+
+    name = fields.CharField('organizationname', null=True)
+
+    class Meta:
+        queryset = Donor.objects.all()
+        include_resource_uri = False
+        fields = ('name',)
+
+
+# -----------------------------------------------------------------------------
 # Cellline
 
 class CelllineResource(ModelResource):
@@ -110,11 +147,14 @@ class CelllineResource(ModelResource):
     alternate_names = fields.CharField('celllinenamesynonyms')
 
     cell_type = fields.CharField('celllinecelltype', null=True)
-    culture_conditions = fields.ToOneField(CelllineCultureConditionsResource, 'celllinecultureconditions', full=True)
     primary_disease = fields.ToOneField(DiseaseResource, 'celllineprimarydisease', null=True, full=True)
+    culture_conditions = fields.ToOneField(CelllineCultureConditionsResource, 'celllinecultureconditions', full=True)
+    cellline_karyotype = fields.ToOneField(CellLineKaryotypeResource, 'karyotype', null=True, full=True)
 
     donor_age = fields.CharField('donor_age', null=True)
     donor = fields.ToOneField(DonorResource, 'donor', full=True)
+
+    depositor = fields.ToOneField(OrganizationResource, 'generator', null=True, full=True)
 
     reprogramming_method = fields.DictField(null=True)
 
