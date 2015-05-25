@@ -54,7 +54,7 @@ class CustomIndexDashboard(Dashboard):
                     collapsible=True,
                     column=1,
                     css_classes=('collapse closed',),
-                    models=('ebisc.celllines.models.Approveduse', 'ebisc.celllines.models.Celllineannotation', 'ebisc.celllines.models.Celllinecomments', 'ebisc.celllines.models.Celllinelegal', 'ebisc.celllines.models.Celllinepublication', 'ebisc.celllines.models.Celllinestatus', 'ebisc.celllines.models.Celllinevalue', 'ebisc.celllines.models.Document', 'ebisc.celllines.models.Documenttype', 'ebisc.celllines.models.Ebisckeyword', 'ebisc.celllines.models.Keyword', 'ebisc.celllines.models.Publisher',),
+                    models=('ebisc.celllines.models.Approveduse', 'ebisc.celllines.models.Celllineannotation', 'ebisc.celllines.models.Celllinecomments', 'ebisc.celllines.models.Celllinelegal', 'ebisc.celllines.models.CelllinePublication', 'ebisc.celllines.models.Celllinestatus', 'ebisc.celllines.models.Celllinevalue', 'ebisc.celllines.models.Document', 'ebisc.celllines.models.Documenttype', 'ebisc.celllines.models.Ebisckeyword', 'ebisc.celllines.models.Keyword', 'ebisc.celllines.models.Publisher',),
                 ),
                 modules.ModelList(
                     _('User Accounts, Organisations, Contacts'),

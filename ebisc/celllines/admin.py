@@ -246,10 +246,12 @@ class CelllineorgtypeAdmin(admin.ModelAdmin):
 admin.site.register(Celllineorgtype, CelllineorgtypeAdmin)
 
 
-class CelllinepublicationAdmin(admin.ModelAdmin):
-    pass
+class CellLinePublicationAdmin(admin.ModelAdmin):
+    list_display = ['cell_line', 'reference_type', 'reference_title', 'reference_url']
+    list_display_links = ['cell_line']
+    list_filter = ['reference_type']
 
-admin.site.register(Celllinepublication, CelllinepublicationAdmin)
+admin.site.register(CellLinePublication, CellLinePublicationAdmin)
 
 
 class CelllinesnpAdmin(admin.ModelAdmin):

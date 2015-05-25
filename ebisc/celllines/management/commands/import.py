@@ -21,7 +21,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         if options['init']:
-            for model in [Disease, Celltype, Celllineorgtype, Organization, Cellline]:
+            for model in [Disease, Celltype, Celllineorgtype, Organization, Cellline, NonIntegratingVector]:
                 model.objects.all().delete()
 
         hotstart.import_data(args[0])

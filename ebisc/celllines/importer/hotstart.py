@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import functools
 
@@ -214,17 +215,49 @@ def parse_integrating_vector(valuef, source, cell_line):
     vector.save()
 
 
+def parse_gene(gene_string):
+
+    (catalog_id, name, catalog, kind) = re.split(r'###', gene_string)
+
+    if catalog and catalog_id:
+        gene, created = Gene.objects.get_or_create(name=name, kind=kind, catalog=catalog, catalog_id=catalog_id)
+    else:
+        gene, created = Gene.objects.get_or_create(name=name, kind=kind)
+
+    if created:
+        logger.info('Created new gene: %s' % gene)
+
+    return gene
+
+
 @inject_valuef
 def parse_non_integrating_vector(valuef, source, cell_line):
 
-    vector = CellLineNonIntegratingVector(
+    if valuef('non_integrating_vector') == 'other':
+        if valuef('non_integrating_vector_other') is not None:
+            vector_name = valuef('non_integrating_vector_other')
+        else:
+            vector_name = u'Other'
+    else:
+        vector_name = valuef('non_integrating_vector')
+
+    vector, created = NonIntegratingVector.objects.get_or_create(name=vector_name)
+
+    if created:
+        logger.info('Added non-integrating vector: %s' % vector)
+
+    cell_line_vector = CellLineNonIntegratingVector(
         cell_line=cell_line,
-        vector=term_list_value_of_json(source, 'non_integrating_vector', NonIntegratingVector),
+        vector=vector,
     )
 
-    logger.info('Added non-integrating vector: %s' % vector)
+    cell_line_vector.save()
 
-    vector.save()
+    for gene in [parse_gene(g) for g in source.get('non_integrating_vector_gene_list', [])]:
+        logger.info('Added gene: %s' % gene)
+        cell_line_vector.genes.add(gene)
+
+    logger.info('Added non-integrationg vector %s to cell line %s' % (vector, cell_line))
 
 
 @inject_valuef
@@ -322,6 +355,20 @@ def parse_karyotyping(valuef, source, cell_line):
         logger.info('Added cell line karyotype: %s' % cell_line_karyotype)
 
 
+@inject_valuef
+def parse_publications(valuef, source, cell_line):
+
+    if valuef('registration_reference_publication_pubmed_id', 'int'):
+        # PubMed
+        CellLinePublication(
+            cell_line=cell_line,
+            reference_type='pubmed',
+            reference_id=valuef('registration_reference_publication_pubmed_id', 'int'),
+            reference_url=CellLinePublication.pubmed_url_from_id(valuef('registration_reference_publication_pubmed_id', 'int')),
+            reference_title=valuef('registration_reference'),
+        ).save()
+
+
 # -----------------------------------------------------------------------------
 #  Importer
 
@@ -374,9 +421,6 @@ def import_data(basedir):
                 if created:
                     logger.info('Added organization %s as %s' % (organization, organization_role))
 
-            # Legal
-            parse_legal(source, cell_line)
-
             # Vector
 
             if valuef('vector_type') == 'integrating':
@@ -385,14 +429,11 @@ def import_data(basedir):
             if valuef('vector_type') == 'non_integrating':
                 parse_non_integrating_vector(source, cell_line)
 
-            # Derivation
+            parse_legal(source, cell_line)
             parse_derivation(source, cell_line)
-
-            # Culture conditions
             parse_culture_condions(source, cell_line)
-
-            # Karyotyping
             parse_karyotyping(source, cell_line)
+            parse_publications(source, cell_line)
 
             # Final save
             cell_line.save()

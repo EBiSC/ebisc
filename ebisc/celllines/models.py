@@ -586,19 +586,31 @@ class Celllineorgtype(models.Model):
         return u'%s' % (self.celllineorgtype,)
 
 
-class Celllinepublication(models.Model):
-    publicationcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), blank=True, null=True)
-    pubmedreference = models.CharField(_(u'Pubmed reference'), max_length=45, blank=True)
-    celllinepublicationdoiurl = models.URLField(_(u'Cell line publication doi url'), blank=True, null=True)
-    celllinepublisher = models.ForeignKey('Publisher', verbose_name=_(u'Publisher'), blank=True, null=True)
+class CellLinePublication(models.Model):
+
+    REFERENCE_TYPE_CHOICES = (
+        ('pubmed', 'PubMed'),
+    )
+
+    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), blank=True, null=True)
+
+    reference_type = models.CharField(u'Type', max_length=100, choices=REFERENCE_TYPE_CHOICES)
+    reference_id = models.CharField(u'ID', max_length=100, null=True, blank=True)
+    reference_url = models.URLField(u'URL')
+    reference_title = models.CharField(u'Title', max_length=500)
 
     class Meta:
         verbose_name = _(u'Cell line publication')
         verbose_name_plural = _(u'Cell line publications')
-        ordering = []
+        unique_together = (('cell_line', 'reference_url'),)
+        ordering = ('reference_title',)
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return self.reference_title
+
+    @staticmethod
+    def pubmed_url_from_id(id):
+        return 'http://www.ncbi.nlm.nih.gov/pubmed/%s' % id
 
 
 class Celllinesnp(models.Model):
@@ -1224,8 +1236,27 @@ class Vectorfreereprogramfactor(models.Model):
 # -----------------------------------------------------------------------------
 # Cell line vector
 
+class Gene(models.Model):
+
+    name = models.CharField(u'name', max_length=20, unique=True)
+
+    kind = models.CharField(u'Kind', max_length=20, choices=(('gene', u'Gene'), ('protein', u'Protein')))
+
+    catalog = models.CharField(u'Gene ID source', max_length=20, choices=(('entrez', u'Entrez'), ('ensembl', u'Ensembl')), null=True, blank=True)
+    catalog_id = models.CharField(u'ID', max_length=20, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Gene')
+        verbose_name_plural = _(u'Genes')
+        ordering = ['name']
+        unique_together = [('catalog', 'catalog_id')]
+
+    def __unicode__(self):
+        return self.name
+
+
 class NonIntegratingVector(models.Model):
-    name = models.CharField(_(u'Non-integrating vector'), max_length=20, unique=True)
+    name = models.CharField(_(u'Non-integrating vector'), max_length=100, unique=True)
 
     class Meta:
         verbose_name = _(u'Non-integrating vector')
@@ -1237,7 +1268,7 @@ class NonIntegratingVector(models.Model):
 
 
 class IntegratingVector(models.Model):
-    name = models.CharField(_(u'Integrating vector'), max_length=20, unique=True)
+    name = models.CharField(_(u'Integrating vector'), max_length=100, unique=True)
 
     class Meta:
         verbose_name = _(u'Integrating vector')
@@ -1249,7 +1280,7 @@ class IntegratingVector(models.Model):
 
 
 class Virus(models.Model):
-    name = models.CharField(_(u'Virus'), max_length=20, unique=True)
+    name = models.CharField(_(u'Virus'), max_length=100, unique=True)
 
     class Meta:
         verbose_name = _(u'Virus')
@@ -1261,7 +1292,7 @@ class Virus(models.Model):
 
 
 class Transposon(models.Model):
-    name = models.CharField(_(u'Transposon'), max_length=45, blank=True)
+    name = models.CharField(_(u'Transposon'), max_length=100, blank=True)
 
     class Meta:
         verbose_name = _(u'Transposon')
@@ -1277,12 +1308,14 @@ class CellLineNonIntegratingVector(models.Model):
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='non_integrating_vector')
     vector = models.ForeignKey(NonIntegratingVector, verbose_name=_(u'Non-integrating vector'), blank=True, null=True)
 
+    genes = models.ManyToManyField(Gene, null=True, blank=True)
+
     class Meta:
         verbose_name = _(u'Cell line non integrating vector')
         verbose_name_plural = _(u'Cell line non integrating vectors')
 
     def __unicode__(self):
-        return self.vector
+        return unicode(self.vector)
 
 
 class CellLineIntegratingVector(models.Model):
@@ -1295,11 +1328,13 @@ class CellLineIntegratingVector(models.Model):
 
     excisable = models.NullBooleanField(_(u'Excisable'), default=None, null=True, blank=True)
 
+    genes = models.ManyToManyField(Gene, null=True, blank=True)
+
     class Meta:
         verbose_name = _(u'Cell line integrating vector')
         verbose_name_plural = _(u'Cell line integrating vectors')
 
     def __unicode__(self):
-        return u'%s' % (self.vector,)
+        return unicode(self.vector)
 
 # -----------------------------------------------------------------------------
