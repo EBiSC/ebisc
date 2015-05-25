@@ -1,5 +1,6 @@
 import re
 
+from django.http import Http404
 from tastypie.resources import ModelResource
 from tastypie.authentication import SessionAuthentication
 from tastypie.authorization import DjangoAuthorization
@@ -174,6 +175,9 @@ class CelllineResource(ModelResource):
         serializer = IndentedJSONSerializer()
 
         fields = ('biosamples_id', 'name')
+
+    def get_schema(self, request, **kwargs):
+        raise Http404
 
     def dehydrate_alternate_names(self, bundle):
         return value_list_of_string(bundle.obj.celllinenamesynonyms)
