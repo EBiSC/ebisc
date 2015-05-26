@@ -202,17 +202,34 @@ def parse_legal(valuef, source, cell_line):
 @inject_valuef
 def parse_integrating_vector(valuef, source, cell_line):
 
-    vector = CellLineIntegratingVector(
+    if valuef('integrating_vector') == 'other':
+        if valuef('integrating_vector_other') is not None:
+            vector_name = valuef('integrating_vector_other')
+        else:
+            vector_name = u'Other'
+    else:
+        vector_name = valuef('integrating_vector')
+
+    vector, created = IntegratingVector.objects.get_or_create(name=vector_name)
+
+    if created:
+        logger.info('Added integrating vector: %s' % vector)
+
+    cell_line_vector = CellLineIntegratingVector(
         cell_line=cell_line,
-        vector=term_list_value_of_json(source, 'integrating_vector', IntegratingVector),
+        vector=vector,
         virus=term_list_value_of_json(source, 'integrating_vector_virus_type', Virus),
         transposon=term_list_value_of_json(source, 'integrating_vector_transposon_type', Transposon),
         excisable=valuef('excisable_vector_flag', 'bool'),
     )
 
-    logger.info('Added integrating vector: %s' % vector)
+    cell_line_vector.save()
 
-    vector.save()
+    for gene in [parse_gene(g) for g in source.get('integrating_vector_gene_list', [])]:
+        logger.info('Added gene: %s' % gene)
+        cell_line_vector.genes.add(gene)
+
+    logger.info('Added integrating vector: %s to cell line %s' % (vector, cell_line))
 
 
 def parse_gene(gene_string):
