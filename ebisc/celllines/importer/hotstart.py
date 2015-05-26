@@ -29,17 +29,18 @@ def value_of_json(source, field, cast=None):
     elif cast == 'int':
 
         try:
-            return int(source.get(field))
+            return int(source[field])
         except KeyError:
-            return None
+            pass
         except:
             logger.warn('Invalid field value for int: %s=%s' % (field, source.get(field)))
-            return None
+
+        return None
 
     elif cast == 'gender':
 
         try:
-            return Gender.objects.get(name=source.get(field))
+            return Gender.objects.get(name=source[field])
         except KeyError:
             pass
         except Gender.DoesNotExist:
@@ -50,7 +51,7 @@ def value_of_json(source, field, cast=None):
     elif cast == 'age_range':
 
         try:
-            return AgeRange.objects.get(name=source.get(field))
+            return AgeRange.objects.get(name=source[field])
         except KeyError:
             pass
         except AgeRange.DoesNotExist:
@@ -364,7 +365,7 @@ def parse_karyotyping(valuef, source, cell_line):
             cell_line=cell_line,
             karyotype=valuef('karyotyping_karyotype'),
             karyotype_method=term_list_value_of_json(source, 'karyotyping_method', KaryotypeMethod),
-            passage_number=valuef('karyotyping_number_passages', 'int'),
+            passage_number=valuef('karyotyping_number_passages'),
         )
 
         cell_line_karyotype.save()
@@ -383,6 +384,28 @@ def parse_publications(valuef, source, cell_line):
             reference_id=valuef('registration_reference_publication_pubmed_id', 'int'),
             reference_url=CellLinePublication.pubmed_url_from_id(valuef('registration_reference_publication_pubmed_id', 'int')),
             reference_title=valuef('registration_reference'),
+        ).save()
+
+
+@inject_valuef
+def parse_characterization(valuef, source, cell_line):
+
+    certificate_of_analysis_passage_number = valuef('certificate_of_analysis_passage_number')
+    screening_hiv1 = valuef('virology_screening_hiv_1_result')
+    screening_hiv2 = valuef('virology_screening_hiv_2_result')
+    screening_hepatitis_b = valuef('virology_screening_hbv_result')
+    screening_hepatitis_c = valuef('virology_screening_hcv_result')
+    screening_mycoplasma = valuef('virology_screening_mycoplasma_result')
+
+    if len([x for x in (certificate_of_analysis_passage_number, screening_hiv1, screening_hiv2, screening_hepatitis_b, screening_hepatitis_c, screening_mycoplasma) if x is not None]):
+        CellLineCharacterization(
+            cell_line=cell_line,
+            certificate_of_analysis_passage_number=certificate_of_analysis_passage_number,
+            screening_hiv1=screening_hiv1,
+            screening_hiv2=screening_hiv2,
+            screening_hepatitis_b=screening_hepatitis_b,
+            screening_hepatitis_c=screening_hepatitis_c,
+            screening_mycoplasma=screening_mycoplasma,
         ).save()
 
 
@@ -451,6 +474,7 @@ def import_data(basedir):
             parse_culture_condions(source, cell_line)
             parse_karyotyping(source, cell_line)
             parse_publications(source, cell_line)
+            parse_characterization(source, cell_line)
 
             # Final save
             cell_line.save()

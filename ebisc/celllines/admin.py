@@ -39,8 +39,8 @@ class BatchstatusAdmin(admin.ModelAdmin):
 admin.site.register(Batchstatus, BatchstatusAdmin)
 
 
-class CelllinecharacterizationInline(admin.StackedInline):
-    model = Celllinecharacterization
+class CellLineCharacterizationInline(admin.StackedInline):
+    model = CellLineCharacterization
     min_num = 1
     max_num = 1
     extra = 0
@@ -115,7 +115,7 @@ class CelllineAdmin(admin.ModelAdmin):
 
     list_display = ['biosamplesid', 'celllinename', 'donor', 'celllineprimarydisease', 'celllinestatus', 'celllinecelltype', 'celllinecollection', 'celllinetissuesource', 'celllinetissuetreatment', 'celllinetissuedate', 'celllinenamesynonyms', 'celllineecaccurl']
     inlines = (
-        CelllinecharacterizationInline,
+        CellLineCharacterizationInline,
         CelllinechecklistInline,
         CelllinecultureconditionsInline,
         CelllinederivationInline,
