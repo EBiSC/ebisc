@@ -15,22 +15,10 @@ class AgeRangeAdmin(admin.ModelAdmin):
 admin.site.register(AgeRange, AgeRangeAdmin)
 
 
-class AccesslevelAdmin(admin.ModelAdmin):
+class ApprovedUseAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(Accesslevel, AccesslevelAdmin)
-
-
-class AliquotstatusAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Aliquotstatus, AliquotstatusAdmin)
-
-
-class ApproveduseAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Approveduse, ApproveduseAdmin)
+admin.site.register(ApprovedUse, ApprovedUseAdmin)
 
 
 class BatchstatusAdmin(admin.ModelAdmin):
@@ -129,24 +117,6 @@ class CelllineAdmin(admin.ModelAdmin):
     list_filter = ('celllinestatus', 'celllineprimarydisease', 'celllinetissuesource', 'celllinecelltype')
 
 admin.site.register(Cellline, CelllineAdmin)
-
-
-class CelllinealiquotAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinealiquot, CelllinealiquotAdmin)
-
-
-class CelllineannotationAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllineannotation, CelllineannotationAdmin)
-
-
-class CelllinebatchAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinebatch, CelllinebatchAdmin)
 
 
 class CelllinecollectionAdmin(admin.ModelAdmin):
@@ -519,18 +489,6 @@ class UnitAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Unit, UnitAdmin)
-
-
-class UseraccountAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Useraccount, UseraccountAdmin)
-
-
-class UseraccounttypeAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Useraccounttype, UseraccounttypeAdmin)
 
 
 class VectorfreereprogramfactorAdmin(admin.ModelAdmin):

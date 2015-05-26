@@ -16,6 +16,20 @@ class Gender(models.Model):
         return self.name
 
 
+class Country(models.Model):
+
+    name = models.CharField(_(u'Country'), max_length=45, unique=True)
+    code = models.CharField(_(u'Country code'), max_length=3, unique=True, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Country')
+        verbose_name_plural = _(u'Countries')
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+
 class AgeRange(models.Model):
 
     name = models.CharField(_(u'Age range'), max_length=10, unique=True)
@@ -29,40 +43,17 @@ class AgeRange(models.Model):
         return self.name
 
 
-class Accesslevel(models.Model):
-    accesslevel = models.CharField(_(u'Access level'), max_length=20, blank=True)
+class ApprovedUse(models.Model):
 
-    class Meta:
-        verbose_name = _(u'Access level')
-        verbose_name_plural = _(u'Access levels')
-        ordering = ['accesslevel']
-
-    def __unicode__(self):
-        return u'%s' % (self.accesslevel,)
-
-
-class Aliquotstatus(models.Model):
-    aliquotstatus = models.CharField(_(u'Aliquot status'), max_length=20, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Aliquot status')
-        verbose_name_plural = _(u'Aliquot statuses')
-        ordering = ['aliquotstatus']
-
-    def __unicode__(self):
-        return u'%s' % (self.aliquotstatus,)
-
-
-class Approveduse(models.Model):
-    approveduse = models.CharField(_(u'Approved use'), max_length=60, blank=True)
+    name = models.CharField(_(u'Approved use'), max_length=60, blank=True)
 
     class Meta:
         verbose_name = _(u'Approved use')
         verbose_name_plural = _(u'Approved uses')
-        ordering = ['approveduse']
+        ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.approveduse,)
+        return u'%s' % (self.name,)
 
 
 class Batchstatus(models.Model):
@@ -77,17 +68,8 @@ class Batchstatus(models.Model):
         return u'%s' % (self.batchstatus,)
 
 
-class Binnedage(models.Model):
-    binnedage = models.CharField(_(u'Binned age'), max_length=5, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Binned age')
-        verbose_name_plural = _(u'Binned ages')
-        ordering = ['id']
-
-    def __unicode__(self):
-        return u'%s' % (self.binnedage,)
-
+# -----------------------------------------------------------------------------
+# Cell line
 
 class Cellline(models.Model):
 
@@ -149,51 +131,7 @@ class Cellline(models.Model):
         }
 
 
-class Celllinealiquot(models.Model):
-    aliquotcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    aliquotstatus = models.ForeignKey('Aliquotstatus', verbose_name=_(u'Aliquot status'), null=True, blank=True)
-    aliquotstatusdate = models.CharField(_(u'Aliquot status date'), max_length=20, blank=True)
-    aliquotupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'User account'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line aliquot')
-        verbose_name_plural = _(u'Cell line aliquotes')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class Celllineannotation(models.Model):
-    annotationcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    celllineannotationsource = models.CharField(_(u'Cell line annotation source'), max_length=45, blank=True)
-    celllineannotationsourceid = models.CharField(_(u'Cell line annotation source id'), max_length=45, blank=True)
-    celllineannotationsourceversion = models.CharField(_(u'Cell line annotation source version'), max_length=45, blank=True)
-    celllineannotation = models.TextField(_(u'Cell line annotation'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line annotation')
-        verbose_name_plural = _(u'Cell line annotations')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class Celllinebatch(models.Model):
-    batchcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    batchstatus = models.ForeignKey('Batchstatus', verbose_name=_(u'Batch status'), null=True, blank=True)
-    batchstatusdate = models.CharField(_(u'Batch status date'), max_length=20, blank=True)
-    batchstatusupdatedby = models.ForeignKey('Useraccount', verbose_name=_(u'User account'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line batch')
-        verbose_name_plural = _(u'Cell line batches')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
+# -----------------------------------------------------------------------------
 
 class CellLineCharacterization(models.Model):
 
@@ -535,23 +473,23 @@ class CellLineLegal(models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
 
-    q1donorconsent = models.NullBooleanField(_(u'Q1 donor consent'), default=None, null=True, blank=True)
-    q2donortrace = models.IntegerField(_(u'Q2 donor trace'), null=True, blank=True)
-    q3irbapproval = models.IntegerField(_(u'Q3 irb approval'), null=True, blank=True)
-    q4approveduse = models.ForeignKey('Approveduse', verbose_name=_(u'Approved use'), null=True, blank=True)
-    q5informedconsentreference = models.CharField(_(u'Q5 informed consent reference'), max_length=20, blank=True)
-    q6restrictions = models.TextField(_(u'Q6 restrictions'), null=True, blank=True)
-    q7iprestrictions = models.TextField(_(u'Q7 ip restrictions'), null=True, blank=True)
-    q8jurisdiction = models.ForeignKey('Country', verbose_name=_(u'Country'), null=True, blank=True)
-    q9applicablelegislationandregulation = models.TextField(_(u'Q9 applicable legislation and regulation'), null=True, blank=True)
-    q10managedaccess = models.TextField(_(u'Q10 managed access'), null=True, blank=True)
+    donor_consent = models.NullBooleanField(_(u'Donor consent'), default=None, null=True, blank=True)
+    donor_trace = models.IntegerField(_(u'Donor trace'), null=True, blank=True)
+    irb_approval = models.IntegerField(_(u'IRB approval'), null=True, blank=True)
+    approved_use = models.ForeignKey(ApprovedUse, verbose_name=_(u'Approved use'), null=True, blank=True)
+    informed_consent_reference = models.CharField(_(u'Informed consent reference'), max_length=20, blank=True)
+    restrictions = models.TextField(_(u'Restrictions'), null=True, blank=True)
+    ip_restrictions = models.TextField(_(u'IP restrictions'), null=True, blank=True)
+    jurisdiction = models.ForeignKey(Country, verbose_name=_(u'Jurisdiction'), null=True, blank=True)
+    applicable_legislation_and_regulation = models.TextField(_(u'Applicable legislation and regulation'), null=True, blank=True)
+    managed_access = models.TextField(_(u'Managed access'), null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line legal')
         verbose_name_plural = _(u'Cell line legal')
 
     def __unicode__(self):
-        return u'%s' % (self.cell_line,)
+        return unicode(self.cell_line)
 
 
 class Celllinemarker(models.Model):
@@ -769,19 +707,6 @@ class Contacttype(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.contacttype,)
-
-
-class Country(models.Model):
-    country = models.CharField(_(u'Country'), max_length=45, unique=True)
-    countrycode = models.CharField(_(u'Country code'), max_length=3, unique=True, null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Country')
-        verbose_name_plural = _(u'Countries')
-        ordering = ['country']
-
-    def __unicode__(self):
-        return u'%s' % (self.country,)
 
 
 class Culturesystem(models.Model):
@@ -1201,34 +1126,6 @@ class Unit(models.Model):
 
     def __unicode__(self):
         return self.name
-
-
-class Useraccount(models.Model):
-    username = models.CharField(_(u'Username'), max_length=45, blank=True)
-    useraccounttype = models.ForeignKey('Useraccounttype', verbose_name=_(u'User account type'), null=True, blank=True)
-    person = models.ForeignKey('Person', verbose_name=_(u'Person'), null=True, blank=True)
-    organization = models.ForeignKey('Organization', verbose_name=_(u'Organization'), null=True, blank=True)
-    accesslevel = models.ForeignKey('Accesslevel', verbose_name=_(u'Access level'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'User account')
-        verbose_name_plural = _(u'User accounts')
-        ordering = ['username']
-
-    def __unicode__(self):
-        return u'%s' % (self.username,)
-
-
-class Useraccounttype(models.Model):
-    useraccounttype = models.CharField(_(u'User account type'), max_length=15)
-
-    class Meta:
-        verbose_name = _(u'User account type')
-        verbose_name_plural = _(u'User account types')
-        ordering = ['useraccounttype']
-
-    def __unicode__(self):
-        return u'%s' % (self.useraccounttype,)
 
 
 class Vectorfreereprogramfactor(models.Model):

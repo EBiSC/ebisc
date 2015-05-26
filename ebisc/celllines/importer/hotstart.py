@@ -194,7 +194,7 @@ def parse_legal(valuef, source, cell_line):
 
         cell_line_legal = CellLineLegal(
             cell_line=cell_line,
-            q1donorconsent=valuef('informed_consent_flag', 'bool'),
+            donor_consent=valuef('informed_consent_flag', 'bool'),
         )
 
         cell_line_legal.save()
