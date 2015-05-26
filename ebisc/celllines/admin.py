@@ -161,12 +161,6 @@ class CelllinegenemutationsAdmin(admin.ModelAdmin):
 admin.site.register(Celllinegenemutations, CelllinegenemutationsAdmin)
 
 
-class CelllinegenemutationsmoleculeAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinegenemutationsmolecule, CelllinegenemutationsmoleculeAdmin)
-
-
 class CelllinegeneticmodAdmin(admin.ModelAdmin):
     pass
 
@@ -377,8 +371,15 @@ class MarkerAdmin(admin.ModelAdmin):
 admin.site.register(Marker, MarkerAdmin)
 
 
+class MoleculeReferenceInline(admin.StackedInline):
+    model = MoleculeReference
+    extra = 0
+
+
 class MoleculeAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['name', 'kind']
+    list_filter = ['kind']
+    inlines = [MoleculeReferenceInline]
 
 admin.site.register(Molecule, MoleculeAdmin)
 

@@ -123,3 +123,16 @@ class Aliquotstatus(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.aliquotstatus,)
+
+
+class Celllinegenemutationsmolecule(models.Model):
+    celllinegenemutations = models.ForeignKey('Celllinegenemutations', verbose_name=_(u'Cell line gene mutations'), null=True, blank=True)
+    genemutationsmolecule = models.ForeignKey('Molecule', verbose_name=_(u'Molecule'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line gene mutations molecule')
+        verbose_name_plural = _(u'Cell line gene mutations molecules')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)

@@ -251,19 +251,6 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Celllinegenemutationsmolecule',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('celllinegenemutations', models.ForeignKey(verbose_name='Cell line gene mutations', blank=True, to='celllines.Celllinegenemutations', null=True)),
-            ],
-            options={
-                'ordering': [],
-                'verbose_name': 'Cell line gene mutations molecule',
-                'verbose_name_plural': 'Cell line gene mutations molecules',
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
             name='Celllinegeneticmod',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -781,22 +768,6 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Gene',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=20, verbose_name='name')),
-                ('kind', models.CharField(max_length=20, verbose_name='Kind', choices=[(b'gene', 'Gene'), (b'protein', 'Protein')])),
-                ('catalog', models.CharField(blank=True, max_length=20, null=True, verbose_name='Gene ID source', choices=[(b'entrez', 'Entrez'), (b'ensembl', 'Ensembl')])),
-                ('catalog_id', models.CharField(max_length=20, null=True, verbose_name='ID', blank=True)),
-            ],
-            options={
-                'ordering': ['name'],
-                'verbose_name': 'Gene',
-                'verbose_name_plural': 'Genes',
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
             name='Germlayer',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -878,12 +849,13 @@ class Migration(migrations.Migration):
             name='Molecule',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('moleculename', models.CharField(max_length=45, verbose_name='Molecule name', blank=True)),
-                ('referencesource', models.CharField(max_length=45, verbose_name='Reference source', blank=True)),
-                ('referencesourceid', models.CharField(max_length=45, verbose_name='Reference source id', blank=True)),
+                ('name', models.CharField(unique=True, max_length=20, verbose_name='name')),
+                ('kind', models.CharField(max_length=20, verbose_name='Kind', choices=[(b'gene', 'Gene'), (b'protein', 'Protein')])),
+                ('catalog', models.CharField(blank=True, max_length=20, null=True, verbose_name='Molecule ID source', choices=[(b'entrez', 'Entrez'), (b'ensembl', 'Ensembl')])),
+                ('catalog_id', models.CharField(max_length=20, null=True, verbose_name='ID', blank=True)),
             ],
             options={
-                'ordering': ['moleculename'],
+                'ordering': ['name'],
                 'verbose_name': 'Molecule',
                 'verbose_name_plural': 'Molecules',
             },
@@ -1189,7 +1161,7 @@ class Migration(migrations.Migration):
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
-            name='gene',
+            name='molecule',
             unique_together=set([('catalog', 'catalog_id')]),
         ),
         migrations.AddField(
@@ -1317,7 +1289,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='celllinenonintegratingvector',
             name='genes',
-            field=models.ManyToManyField(to='celllines.Gene', null=True, blank=True),
+            field=models.ManyToManyField(to='celllines.Molecule', null=True, blank=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -1389,7 +1361,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='celllineintegratingvector',
             name='genes',
-            field=models.ManyToManyField(to='celllines.Gene', null=True, blank=True),
+            field=models.ManyToManyField(to='celllines.Molecule', null=True, blank=True),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -1420,12 +1392,6 @@ class Migration(migrations.Migration):
             model_name='celllinehlatyping',
             name='hlatypingcellline',
             field=models.ForeignKey(verbose_name='Cell line', blank=True, to='celllines.Cellline', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='celllinegenemutationsmolecule',
-            name='genemutationsmolecule',
-            field=models.ForeignKey(verbose_name='Molecule', blank=True, to='celllines.Molecule', null=True),
             preserve_default=True,
         ),
         migrations.AddField(

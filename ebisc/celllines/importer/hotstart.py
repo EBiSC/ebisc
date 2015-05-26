@@ -226,26 +226,41 @@ def parse_integrating_vector(valuef, source, cell_line):
 
     cell_line_vector.save()
 
-    for gene in [parse_gene(g) for g in source.get('integrating_vector_gene_list', [])]:
+    for gene in [parse_molecule(g) for g in source.get('integrating_vector_gene_list', [])]:
         logger.info('Added gene: %s' % gene)
         cell_line_vector.genes.add(gene)
 
     logger.info('Added integrating vector: %s to cell line %s' % (vector, cell_line))
 
 
-def parse_gene(gene_string):
+def parse_molecule(molecule_string):
 
-    (catalog_id, name, catalog, kind) = re.split(r'###', gene_string)
+    kind_map = {
+        'id_type_gene': 'gene',
+        'id_type_protein': 'protein'
+    }
 
-    if catalog and catalog_id:
-        gene, created = Gene.objects.get_or_create(name=name, kind=kind, catalog=catalog, catalog_id=catalog_id)
-    else:
-        gene, created = Gene.objects.get_or_create(name=name, kind=kind)
+    catalog_map = {
+        'entrez_id': 'entrez',
+        'ensembl_id': 'ensembl'
+    }
+
+    (catalog_id, name, catalog, kind) = re.split(r'###', molecule_string)
+
+    kind = kind_map[kind]
+    catalog = catalog_map[catalog]
+
+    molecule, created = Molecule.objects.get_or_create(name=name, kind=kind)
 
     if created:
-        logger.info('Created new gene: %s' % gene)
+        logger.info('Created new molecule: %s' % molecule)
 
-    return gene
+    if catalog and catalog_id:
+        reference, created = MoleculeReference.objects.get_or_create(molecule=molecule, catalog=catalog, catalog_id=catalog_id)
+        if created:
+            logger.info('Created new molecule reference: %s' % reference)
+
+    return molecule
 
 
 @inject_valuef
@@ -271,7 +286,7 @@ def parse_non_integrating_vector(valuef, source, cell_line):
 
     cell_line_vector.save()
 
-    for gene in [parse_gene(g) for g in source.get('non_integrating_vector_gene_list', [])]:
+    for gene in [parse_molecule(g) for g in source.get('non_integrating_vector_gene_list', [])]:
         logger.info('Added gene: %s' % gene)
         cell_line_vector.genes.add(gene)
 

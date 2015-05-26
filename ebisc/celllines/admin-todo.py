@@ -46,3 +46,8 @@ class AliquotstatusAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Aliquotstatus, AliquotstatusAdmin)
+
+class CelllinegenemutationsmoleculeAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Celllinegenemutationsmolecule, CelllinegenemutationsmoleculeAdmin)
