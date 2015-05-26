@@ -197,46 +197,6 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Celllinediffpotency',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('passagenumber', models.CharField(max_length=5, verbose_name='Passage number', blank=True)),
-                ('diffpotencycellline', models.ForeignKey(verbose_name='Cell line', blank=True, to='celllines.Cellline', null=True)),
-            ],
-            options={
-                'ordering': [],
-                'verbose_name': 'Cell line diff potency',
-                'verbose_name_plural': 'Cell line diff potencies',
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='Celllinediffpotencymarker',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('celllinediffpotency', models.ForeignKey(verbose_name='Cell line diff potency', blank=True, to='celllines.Celllinediffpotency', null=True)),
-            ],
-            options={
-                'ordering': [],
-                'verbose_name': 'Cell line diff potency marker',
-                'verbose_name_plural': 'Cell line diff potency markers',
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='Celllinediffpotencymolecule',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('celllinediffpotencymarker', models.IntegerField(null=True, verbose_name='Cell line diff potency marker', blank=True)),
-            ],
-            options={
-                'ordering': [],
-                'verbose_name': 'Cell line diff potency molecule',
-                'verbose_name_plural': 'Cell line diff potency molecules',
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
             name='Celllinegenemutations',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -372,18 +332,6 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Cell line legal',
                 'verbose_name_plural': 'Cell line legal',
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='Celllinemarker',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-            ],
-            options={
-                'ordering': [],
-                'verbose_name': 'Cell line marker',
-                'verbose_name_plural': 'Cell line markers',
             },
             bases=(models.Model,),
         ),
@@ -833,31 +781,31 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Marker',
+            name='Molecule',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('marker', models.CharField(max_length=20, verbose_name='Marker', blank=True)),
+                ('name', models.CharField(max_length=20, verbose_name='name')),
+                ('kind', models.CharField(max_length=20, verbose_name='Kind', choices=[(b'gene', 'Gene'), (b'protein', 'Protein')])),
             ],
             options={
-                'ordering': ['marker'],
-                'verbose_name': 'Marker',
-                'verbose_name_plural': 'Markers',
+                'ordering': ['name', 'kind'],
+                'verbose_name': 'Molecule',
+                'verbose_name_plural': 'Molecules',
             },
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Molecule',
+            name='MoleculeReference',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=20, verbose_name='name')),
-                ('kind', models.CharField(max_length=20, verbose_name='Kind', choices=[(b'gene', 'Gene'), (b'protein', 'Protein')])),
-                ('catalog', models.CharField(blank=True, max_length=20, null=True, verbose_name='Molecule ID source', choices=[(b'entrez', 'Entrez'), (b'ensembl', 'Ensembl')])),
-                ('catalog_id', models.CharField(max_length=20, null=True, verbose_name='ID', blank=True)),
+                ('catalog', models.CharField(max_length=20, verbose_name='Molecule ID source', choices=[(b'entrez', 'Entrez'), (b'ensembl', 'Ensembl')])),
+                ('catalog_id', models.CharField(max_length=20, verbose_name='ID')),
+                ('molecule', models.ForeignKey(verbose_name=b'Molecule', to='celllines.Molecule')),
             ],
             options={
-                'ordering': ['name'],
-                'verbose_name': 'Molecule',
-                'verbose_name_plural': 'Molecules',
+                'ordering': ['molecule', 'catalog'],
+                'verbose_name': 'Molecule reference',
+                'verbose_name_plural': 'Molecule references',
             },
             bases=(models.Model,),
         ),
@@ -1115,6 +1063,140 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
+            name='UndifferentiatedMorphologyMarkerExpressionProfile',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('method', models.CharField(max_length=100, null=True, verbose_name='Method', blank=True)),
+                ('passage_number', models.CharField(max_length=10, null=True, verbose_name='Passage number', blank=True)),
+                ('data_url', models.URLField(null=True, verbose_name='Data URL', blank=True)),
+                ('uploaded_data_url', models.URLField(null=True, verbose_name='Uploaded data URL', blank=True)),
+                ('cell_line', models.OneToOneField(related_name='undifferentiated_morphology_marker_expression_profile', verbose_name='Cell line', to='celllines.Cellline')),
+            ],
+            options={
+                'verbose_name': 'Markerd Undiff - Expression profile',
+                'verbose_name_plural': 'Markerd Undiff - Expression profile',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='UndifferentiatedMorphologyMarkerExpressionProfileMolecule',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('result', models.CharField(max_length=5, verbose_name='Result', choices=[(b'+', b'+'), (b'-', b'-'), (b'nd', b'n.d.')])),
+                ('marker', models.ForeignKey(related_name='molecules', verbose_name='Marker', to='celllines.UndifferentiatedMorphologyMarkerExpressionProfile')),
+                ('molecule', models.ForeignKey(to='celllines.Molecule')),
+            ],
+            options={
+                'ordering': ['molecule'],
+                'abstract': False,
+                'verbose_name': 'Marker molecule',
+                'verbose_name_plural': 'Marker molecules',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='UndifferentiatedMorphologyMarkerFacs',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('passage_number', models.CharField(max_length=10, null=True, verbose_name='Passage number', blank=True)),
+                ('cell_line', models.OneToOneField(related_name='undifferentiated_morphology_marker_facs', verbose_name='Cell line', to='celllines.Cellline')),
+            ],
+            options={
+                'verbose_name': 'Markerd Undiff - Facs',
+                'verbose_name_plural': 'Markerd Undiff - Facs',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='UndifferentiatedMorphologyMarkerFacsMolecule',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('result', models.CharField(max_length=5, verbose_name='Result', choices=[(b'+', b'+'), (b'-', b'-'), (b'nd', b'n.d.')])),
+                ('marker', models.ForeignKey(related_name='molecules', verbose_name='Marker', to='celllines.UndifferentiatedMorphologyMarkerFacs')),
+                ('molecule', models.ForeignKey(to='celllines.Molecule')),
+            ],
+            options={
+                'ordering': ['molecule'],
+                'abstract': False,
+                'verbose_name': 'Marker molecule',
+                'verbose_name_plural': 'Marker molecules',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='UndifferentiatedMorphologyMarkerImune',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('passage_number', models.CharField(max_length=10, null=True, verbose_name='Passage number', blank=True)),
+                ('cell_line', models.OneToOneField(related_name='undifferentiated_morphology_marker_imune', verbose_name='Cell line', to='celllines.Cellline')),
+            ],
+            options={
+                'verbose_name': 'Markerd Undiff - Imune',
+                'verbose_name_plural': 'Markerd Undiff - Imune',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='UndifferentiatedMorphologyMarkerImuneMolecule',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('result', models.CharField(max_length=5, verbose_name='Result', choices=[(b'+', b'+'), (b'-', b'-'), (b'nd', b'n.d.')])),
+                ('marker', models.ForeignKey(related_name='molecules', verbose_name='Marker', to='celllines.UndifferentiatedMorphologyMarkerImune')),
+                ('molecule', models.ForeignKey(to='celllines.Molecule')),
+            ],
+            options={
+                'ordering': ['molecule'],
+                'abstract': False,
+                'verbose_name': 'Marker molecule',
+                'verbose_name_plural': 'Marker molecules',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='UndifferentiatedMorphologyMarkerMorphology',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('passage_number', models.CharField(max_length=10, null=True, verbose_name='Passage number', blank=True)),
+                ('description', models.TextField(null=True, verbose_name='Description', blank=True)),
+                ('data_url', models.URLField(null=True, verbose_name='URL', blank=True)),
+                ('cell_line', models.OneToOneField(related_name='undifferentiated_morphology_marker_morphology', verbose_name='Cell line', to='celllines.Cellline')),
+            ],
+            options={
+                'verbose_name': 'Markerd Undiff - Morphology',
+                'verbose_name_plural': 'Markerd Undiff - Morphology',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='UndifferentiatedMorphologyMarkerRtPcr',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('passage_number', models.CharField(max_length=10, null=True, verbose_name='Passage number', blank=True)),
+                ('cell_line', models.OneToOneField(related_name='undifferentiated_morphology_marker_rtpcr', verbose_name='Cell line', to='celllines.Cellline')),
+            ],
+            options={
+                'verbose_name': 'Markerd Undiff - RtPcr',
+                'verbose_name_plural': 'Markerd Undiff - RtPcr',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='UndifferentiatedMorphologyMarkerRtPcrMolecule',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('result', models.CharField(max_length=5, verbose_name='Result', choices=[(b'+', b'+'), (b'-', b'-'), (b'nd', b'n.d.')])),
+                ('marker', models.ForeignKey(related_name='molecules', verbose_name='Marker', to='celllines.UndifferentiatedMorphologyMarkerRtPcr')),
+                ('molecule', models.ForeignKey(to='celllines.Molecule')),
+            ],
+            options={
+                'ordering': ['molecule'],
+                'abstract': False,
+                'verbose_name': 'Marker molecule',
+                'verbose_name_plural': 'Marker molecules',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='Unit',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -1161,8 +1243,12 @@ class Migration(migrations.Migration):
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
+            name='moleculereference',
+            unique_together=set([('molecule', 'catalog')]),
+        ),
+        migrations.AlterUniqueTogether(
             name='molecule',
-            unique_together=set([('catalog', 'catalog_id')]),
+            unique_together=set([('name', 'kind')]),
         ),
         migrations.AddField(
             model_name='ebisckeyword',
@@ -1299,24 +1385,6 @@ class Migration(migrations.Migration):
             preserve_default=True,
         ),
         migrations.AddField(
-            model_name='celllinemarker',
-            name='celllinemarker',
-            field=models.ForeignKey(verbose_name='Marker', blank=True, to='celllines.Marker', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='celllinemarker',
-            name='markercellline',
-            field=models.ForeignKey(verbose_name='Cell line', to='celllines.Cellline', unique=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='celllinemarker',
-            name='morphologymethod',
-            field=models.ForeignKey(verbose_name='Morphology method', blank=True, to='celllines.Morphologymethod', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
             model_name='celllinelegal',
             name='jurisdiction',
             field=models.ForeignKey(verbose_name='Jurisdiction', blank=True, to='celllines.Country', null=True),
@@ -1392,24 +1460,6 @@ class Migration(migrations.Migration):
             model_name='celllinehlatyping',
             name='hlatypingcellline',
             field=models.ForeignKey(verbose_name='Cell line', blank=True, to='celllines.Cellline', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='celllinediffpotencymolecule',
-            name='diffpotencymolecule',
-            field=models.ForeignKey(verbose_name='Molecule', blank=True, to='celllines.Molecule', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='celllinediffpotencymarker',
-            name='morphologymethod',
-            field=models.ForeignKey(verbose_name='Morphology method', blank=True, to='celllines.Morphologymethod', null=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='celllinediffpotency',
-            name='germlayer',
-            field=models.ForeignKey(verbose_name='Germlayer', blank=True, to='celllines.Germlayer', null=True),
             preserve_default=True,
         ),
         migrations.AddField(

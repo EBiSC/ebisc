@@ -137,24 +137,6 @@ class CellLineCultureMediumSupplementAdmin(admin.ModelAdmin):
 admin.site.register(CellLineCultureMediumSupplement, CellLineCultureMediumSupplementAdmin)
 
 
-class CelllinediffpotencyAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinediffpotency, CelllinediffpotencyAdmin)
-
-
-class CelllinediffpotencymarkerAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinediffpotencymarker, CelllinediffpotencymarkerAdmin)
-
-
-class CelllinediffpotencymoleculeAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinediffpotencymolecule, CelllinediffpotencymoleculeAdmin)
-
-
 class CelllinegenemutationsAdmin(admin.ModelAdmin):
     pass
 
@@ -189,12 +171,6 @@ class CellLineKaryotypeAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(CellLineKaryotype, CellLineKaryotypeAdmin)
-
-
-class CelllinemarkerAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinemarker, CelllinemarkerAdmin)
 
 
 class CelllineorganizationAdmin(admin.ModelAdmin):
@@ -363,12 +339,6 @@ class KeywordAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Keyword, KeywordAdmin)
-
-
-class MarkerAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Marker, MarkerAdmin)
 
 
 class MoleculeReferenceInline(admin.StackedInline):

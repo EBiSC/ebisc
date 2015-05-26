@@ -1,1 +1,147 @@
-{ "form_finished_flag": "1", "final_name_generated_flag": "1", "id": "1090", "validation_status": "1", "name": "ESi003-A", "biosample_id": "SAMEA3303029", "alternate_name": [ "[CRTRd]FiPS3819-4F-2" ], "type_name": "hiPSC", "internal_donor_id": ["1090", "hPC1014"], "donor_biosample_id": "SAMEA3303031", "available_flag": "1", "same_donor_cell_line_flag": "0", "same_donor_derived_from_flag": "0", "informed_consent_flag": "1", "consent_form_file": "Blank_Informed_consent.pdf", "consent_form_file_enc": "d770a6e428b24184b602f6e4d45a29b2.pdf", "approval_flag": "1", "approval_auth_name": "Ethics Board of the Center of Regenerative Medicine in Barcelona", "vector_type": "integrating", "integrating_vector": "virus", "integrating_vector_virus_type": "retrovirus", "integrating_vector_gene_list": [ "5460###POU5F1###entrez_id###id_type_gene", "6657###SOX2###entrez_id###id_type_gene", "9314###KLF4###entrez_id###id_type_gene", "4609###MYC###entrez_id###id_type_gene" ], "dev_stage_primary_cell": "adult", "donor_age": "---", "gender_primary_cell": "male", "disease_flag": "1", "disease_doid": "DOID:0050800", "disease_doid_name": "creatine transporter deficiency", "disease_doid_synonyms": "CEREBRAL CREATINE DEFICIENCY SYNDROME 1 EXACT ,SLC6A8 deficiency EXACT ", "disease_purl": "http://www.orpha.net/ORDO/Orphanet_52503", "disease_control_cellline_phenotype": "CRTR deficiency 1396 G>A", "disease_control_cellline_abnormal_karyotype": "0", "excisable_vector_flag": "0", "primary_celltype_ont_id": "EFO_0000057", "primary_celltype_name": "Fibroblasts ", "primary_celltype_purl": "http://purl.obolibrary.org/obo/CL_0000057", "primary_celltype_ont_name": "fibroblast", "derivation_gmp_ips_flag": "0", "available_clinical_grade_ips_flag": "0", "derivation_xeno_graft_free_flag": "0", "vector_free_types": [ "vector_free_types_none" ], "surface_coating": "gelatine", "feeder_cells_flag": "1", "feeder_cells_name": "Human foreskin fibroblasts", "feeder_cells_ont_id": "CELDA_000001419", "passage_method": "mechanically", "co2_concentration": "5", "culture_conditions_medium_culture_medium": "other_medium", "culture_conditions_medium_culture_medium_other_base": "Knockout Dulbecco's Modified Eagle's medium ", "culture_conditions_medium_culture_medium_other_protein_source": "knockout_serum_replacement", "culture_conditions_medium_culture_medium_other_concentration": "20", "culture_conditions_medium_culture_medium_other_supplements": [ "Glutamax###2###millimeter", "2-Mercaptoethanol###0,05###millimeter", "bFGF###8###nanogram_millilitre", "NEAA###1###percent", "Penicillin-Streptomycin ###0,5###percent" ], "certificate_of_analysis_flag": "1", "certificate_of_analysis_file": "CRTRd_FiPS3819_4F_2_certificate_of_Analysis_.pdf", "certificate_of_analysis_file_enc": "ccc0b07e15f0fa9aa11a70162ebc6828.pdf", "undiff_immstain_marker": [ "alpl###+", "nanog###+", "pou5f1###+", "ssea3###+", "ssea4###+", "tra160###+", "tra181###+", "ENSG00000181449###+###Sox2###ensembl_id###id_type_gene" ], "undiff_immstain_marker_passage_number": "4", "virology_screening_flag": "1", "virology_screening_mycoplasma_flag": "1", "virology_screening_mycoplasma_result": "negative", "embryoid_body_differentiation_flag": "1", "embryoid_body_passage_number": "8", "embryoid_body_endo_flag": "1", "embryoid_body_endo_marker_immstain_marker": [ "###+###AFP###entrez_id###id_type_protein", "###+###FoxA2###entrez_id###id_type_protein" ], "embryoid_body_meso_flag": "1", "embryoid_body_meso_marker_immstain_marker": [ "###+###Gata4###entrez_id###id_type_protein", "###+###AAS###entrez_id###id_type_protein" ], "embryoid_body_ekto_flag": "1", "embryoid_body_ekto_marker_immstain_marker": [ "###+###Tuj1###entrez_id###id_type_protein" ], "teratoma_formation_differentiation_flag": "1", "teratoma_formation_passage_number": "12", "teratoma_formation_endo_flag": "1", "teratoma_formation_meso_flag": "1", "teratoma_formation_ekto_flag": "1", "karyotyping_flag": "1", "karyotyping_number_passages": "19", "karyotyping_karyotype": "46,XY", "karyotyping_image_upload_file": "CRTRd_FiPS3819_4F_2_Karyotype_.pdf", "karyotyping_image_upload_file_enc": "246277007e2d9c66470650c44df36679.pdf", "karyotyping_method": "g_banding", "hla_flag": "1", "hla_i_a_all1": "24:02", "hla_i_a_all2": "30:02", "hla_i_b_all1": "18:01", "hla_i_b_all2": "35:03", "hla_i_c_all1": "04:01", "hla_i_c_all2": "05:01", "hla_ii_dq_all1": "B1*02:01", "hla_ii_dq_all2": "B1*02:02", "hla_ii_dr_all1": "B1*03:01", "hla_ii_dr_all2": "B1*07:01", "derivation_country": "Spain", "providers": [ { "id": "427", "name": "Spanish Stem Cell Bank", "contact_person_fullname": "", "adress": ", ", "role": "Generator" }, { "id": "360", "name": "Centre of Regenerative Medicine in Barcelona - Banc de Linies Cellulars", "contact_person_id": "7", "contact_person_fullname": "Dr. Anna Veiga", "adress": ", ", "role": "Contact institution \/ working group", "workinggroup_id": "17", "workinggroup_name": "Banc de Linies Cellulars" } ]}
+{
+  "form_finished_flag": "1",
+  "final_name_generated_flag": "1",
+  "id": "1090",
+  "validation_status": "1",
+  "name": "ESi003-A",
+  "biosample_id": "SAMEA3303029",
+  "alternate_name": [
+    "[CRTRd]FiPS3819-4F-2"
+  ],
+  "type_name": "hiPSC",
+  "internal_donor_id": [
+    "1090",
+    "hPC1014"
+  ],
+  "donor_biosample_id": "SAMEA3303031",
+  "available_flag": "1",
+  "same_donor_cell_line_flag": "0",
+  "same_donor_derived_from_flag": "0",
+  "informed_consent_flag": "1",
+  "consent_form_file": "Blank_Informed_consent.pdf",
+  "consent_form_file_enc": "d770a6e428b24184b602f6e4d45a29b2.pdf",
+  "approval_flag": "1",
+  "approval_auth_name": "Ethics Board of the Center of Regenerative Medicine in Barcelona",
+  "vector_type": "integrating",
+  "integrating_vector": "virus",
+  "integrating_vector_virus_type": "retrovirus",
+  "integrating_vector_gene_list": [
+    "5460###POU5F1###entrez_id###id_type_gene",
+    "6657###SOX2###entrez_id###id_type_gene",
+    "9314###KLF4###entrez_id###id_type_gene",
+    "4609###MYC###entrez_id###id_type_gene"
+  ],
+  "dev_stage_primary_cell": "adult",
+  "donor_age": "---",
+  "gender_primary_cell": "male",
+  "disease_flag": "1",
+  "disease_doid": "DOID:0050800",
+  "disease_doid_name": "creatine transporter deficiency",
+  "disease_doid_synonyms": "CEREBRAL CREATINE DEFICIENCY SYNDROME 1 EXACT ,SLC6A8 deficiency EXACT ",
+  "disease_purl": "http://www.orpha.net/ORDO/Orphanet_52503",
+  "disease_control_cellline_phenotype": "CRTR deficiency 1396 G>A",
+  "disease_control_cellline_abnormal_karyotype": "0",
+  "excisable_vector_flag": "0",
+  "primary_celltype_ont_id": "EFO_0000057",
+  "primary_celltype_name": "Fibroblasts ",
+  "primary_celltype_purl": "http://purl.obolibrary.org/obo/CL_0000057",
+  "primary_celltype_ont_name": "fibroblast",
+  "derivation_gmp_ips_flag": "0",
+  "available_clinical_grade_ips_flag": "0",
+  "derivation_xeno_graft_free_flag": "0",
+  "vector_free_types": [
+    "vector_free_types_none"
+  ],
+  "surface_coating": "gelatine",
+  "feeder_cells_flag": "1",
+  "feeder_cells_name": "Human foreskin fibroblasts",
+  "feeder_cells_ont_id": "CELDA_000001419",
+  "passage_method": "mechanically",
+  "co2_concentration": "5",
+  "culture_conditions_medium_culture_medium": "other_medium",
+  "culture_conditions_medium_culture_medium_other_base": "Knockout Dulbecco's Modified Eagle's medium ",
+  "culture_conditions_medium_culture_medium_other_protein_source": "knockout_serum_replacement",
+  "culture_conditions_medium_culture_medium_other_concentration": "20",
+  "culture_conditions_medium_culture_medium_other_supplements": [
+    "Glutamax###2###millimeter",
+    "2-Mercaptoethanol###0,05###millimeter",
+    "bFGF###8###nanogram_millilitre",
+    "NEAA###1###percent",
+    "Penicillin-Streptomycin ###0,5###percent"
+  ],
+  "certificate_of_analysis_flag": "1",
+  "certificate_of_analysis_file": "CRTRd_FiPS3819_4F_2_certificate_of_Analysis_.pdf",
+  "certificate_of_analysis_file_enc": "ccc0b07e15f0fa9aa11a70162ebc6828.pdf",
+  "undiff_immstain_marker": [
+    "alpl###+",
+    "nanog###+",
+    "pou5f1###+",
+    "ssea3###+",
+    "ssea4###+",
+    "tra160###+",
+    "tra181###+",
+    "ENSG00000181449###+###Sox2###ensembl_id###id_type_gene"
+  ],
+  "undiff_immstain_marker_passage_number": "4",
+  "virology_screening_flag": "1",
+  "virology_screening_mycoplasma_flag": "1",
+  "virology_screening_mycoplasma_result": "negative",
+  "embryoid_body_differentiation_flag": "1",
+  "embryoid_body_passage_number": "8",
+  "embryoid_body_endo_flag": "1",
+  "embryoid_body_endo_marker_immstain_marker": [
+    "###+###AFP###entrez_id###id_type_protein",
+    "###+###FoxA2###entrez_id###id_type_protein"
+  ],
+  "embryoid_body_meso_flag": "1",
+  "embryoid_body_meso_marker_immstain_marker": [
+    "###+###Gata4###entrez_id###id_type_protein",
+    "###+###AAS###entrez_id###id_type_protein"
+  ],
+  "embryoid_body_ekto_flag": "1",
+  "embryoid_body_ekto_marker_immstain_marker": [
+    "###+###Tuj1###entrez_id###id_type_protein"
+  ],
+  "teratoma_formation_differentiation_flag": "1",
+  "teratoma_formation_passage_number": "12",
+  "teratoma_formation_endo_flag": "1",
+  "teratoma_formation_meso_flag": "1",
+  "teratoma_formation_ekto_flag": "1",
+  "karyotyping_flag": "1",
+  "karyotyping_number_passages": "19",
+  "karyotyping_karyotype": "46,XY",
+  "karyotyping_image_upload_file": "CRTRd_FiPS3819_4F_2_Karyotype_.pdf",
+  "karyotyping_image_upload_file_enc": "246277007e2d9c66470650c44df36679.pdf",
+  "karyotyping_method": "g_banding",
+  "hla_flag": "1",
+  "hla_i_a_all1": "24:02",
+  "hla_i_a_all2": "30:02",
+  "hla_i_b_all1": "18:01",
+  "hla_i_b_all2": "35:03",
+  "hla_i_c_all1": "04:01",
+  "hla_i_c_all2": "05:01",
+  "hla_ii_dq_all1": "B1*02:01",
+  "hla_ii_dq_all2": "B1*02:02",
+  "hla_ii_dr_all1": "B1*03:01",
+  "hla_ii_dr_all2": "B1*07:01",
+  "derivation_country": "Spain",
+  "providers": [
+    {
+      "id": "427",
+      "name": "Spanish Stem Cell Bank",
+      "contact_person_fullname": "",
+      "adress": ", ",
+      "role": "Generator"
+    },
+    {
+      "id": "360",
+      "name": "Centre of Regenerative Medicine in Barcelona - Banc de Linies Cellulars",
+      "contact_person_id": "7",
+      "contact_person_fullname": "Dr. Anna Veiga",
+      "adress": ", ",
+      "role": "Contact institution / working group",
+      "workinggroup_id": "17",
+      "workinggroup_name": "Banc de Linies Cellulars"
+    }
+  ]
+}

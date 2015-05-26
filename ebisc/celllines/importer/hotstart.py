@@ -51,7 +51,10 @@ def value_of_json(source, field, cast=None):
     elif cast == 'age_range':
 
         try:
-            return AgeRange.objects.get(name=source[field])
+            value = source[field]
+            if value == '---':
+                return None
+            return AgeRange.objects.get(name=value)
         except KeyError:
             pass
         except AgeRange.DoesNotExist:
@@ -235,6 +238,17 @@ def parse_integrating_vector(valuef, source, cell_line):
 
 def parse_molecule(molecule_string):
 
+    (catalog_id, name, catalog, kind) = re.split(r'###', molecule_string)
+
+    return get_or_create_molecule(name, kind, catalog, catalog_id)
+
+
+class InvalidMoleculeDataException(Exception):
+    pass
+
+
+def get_or_create_molecule(name, kind, catalog, catalog_id):
+
     kind_map = {
         'id_type_gene': 'gene',
         'id_type_protein': 'protein'
@@ -245,10 +259,25 @@ def parse_molecule(molecule_string):
         'ensembl_id': 'ensembl'
     }
 
-    (catalog_id, name, catalog, kind) = re.split(r'###', molecule_string)
+    name = name.strip()
+    name = name if name else None
 
-    kind = kind_map[kind]
-    catalog = catalog_map[catalog]
+    if name is None:
+        logger.warn('Missing molecule name')
+        raise InvalidMoleculeDataException
+
+    try:
+        kind = kind_map[kind]
+    except KeyError:
+        logger.warn('Invalid molecule kind: %s' % kind)
+        raise InvalidMoleculeDataException
+
+    if catalog is not None:
+        try:
+            catalog = catalog_map[catalog]
+        except KeyError:
+            logger.warn('Invalid molecule catalog: %s' % catalog)
+            raise InvalidMoleculeDataException
 
     molecule, created = Molecule.objects.get_or_create(name=name, kind=kind)
 
@@ -424,6 +453,97 @@ def parse_characterization(valuef, source, cell_line):
         ).save()
 
 
+@inject_valuef
+def parse_characterization_markers(valuef, source, cell_line):
+
+    def aux_hescreg_data_url(filename):
+        if filename is None:
+            return None
+        else:
+            # TODO: add url prefix
+            return '%s' % valuef('undiff_morphology_markers_enc_filename')
+
+    def aux_imune_rtpcr_facs(hescreg_slug, hescreg_slug_passage_number, marker_model, marker_molecule_model):
+
+        if valuef(hescreg_slug) is not None:
+            marker = marker_model(
+                cell_line=cell_line,
+                passage_number=valuef(hescreg_slug_passage_number)
+            )
+            marker.save()
+
+            for string in valuef(hescreg_slug):
+                aux_molecule_result(marker, marker_molecule_model, string)
+
+    def aux_molecule_result(marker, marker_molecule_model, string):
+
+        if len(string.split('###')) == 2:
+            # TODO
+            pass
+        else:
+            (molecule_catalog_id, result, molecule_name, molecule_catalog, molecule_kind) = string.split('###')
+            try:
+                molecule = get_or_create_molecule(molecule_name, molecule_kind, molecule_catalog, molecule_catalog_id)
+                marker_molecule_model(
+                    marker=marker,
+                    molecule=molecule,
+                    result=result).save()
+            except InvalidMoleculeDataException:
+                pass
+
+    # UndifferentiatedMorphologyMarkerImune, UndifferentiatedMorphologyMarkerRtPcr, UndifferentiatedMorphologyMarkerFacs
+
+    undiff_types = (
+        ('undiff_immstain_marker', 'undiff_immstain_marker_passage_number', UndifferentiatedMorphologyMarkerImune, UndifferentiatedMorphologyMarkerImuneMolecule),
+        ('undiff_rtpcr_marker', 'undiff_rtpcr_marker_passage_number', UndifferentiatedMorphologyMarkerRtPcr, UndifferentiatedMorphologyMarkerRtPcrMolecule),
+        ('undiff_facs_marker', 'undiff_facs_marker_passage_number', UndifferentiatedMorphologyMarkerFacs, UndifferentiatedMorphologyMarkerFacsMolecule),
+    )
+
+    for (hescreg_slug, hescreg_slug_passage_number, marker_model, marker_molecule_model) in undiff_types:
+        aux_imune_rtpcr_facs(hescreg_slug, hescreg_slug_passage_number, marker_model, marker_molecule_model)
+
+    # UndifferentiatedMorphologyMarkerMorphology
+
+    if any([valuef(x) for x in (
+        'undiff_morphology_markers_passage_number',
+        'undiff_morphology_markers_description',
+        'undiff_morphology_markers_enc_filename'
+    )]):
+
+        UndifferentiatedMorphologyMarkerMorphology(
+            cell_line=cell_line,
+            passage_number=valuef('undiff_morphology_markers_passage_number'),
+            description=valuef('undiff_morphology_markers_description'),
+            data_url=aux_hescreg_data_url(valuef('undiff_morphology_markers_enc_filename')),
+        ).save()
+
+    # UndifferentiatedMorphologyMarkerExpressionProfile
+
+    if any([valuef(x) for x in (
+        'undiff_exprof_markers_method_name',
+        'undiff_exprof_markers_weblink',
+        'undiff_exprof_markers_enc_filename',
+        'undiff_exprof_markers_passage_number',
+    )]):
+
+        marker = UndifferentiatedMorphologyMarkerExpressionProfile(
+            cell_line=cell_line,
+            method=valuef('undiff_exprof_markers_method_name'),
+            passage_number=valuef('undiff_exprof_markers_passage_number'),
+            data_url=valuef('undiff_exprof_markers_weblink'),
+            uploaded_data_url=aux_hescreg_data_url(valuef('undiff_exprof_markers_enc_filename')),
+        )
+
+        marker.save()
+
+        if valuef('undiff_exprof_expression_array_marker'):
+            aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_expression_array_marker'))
+        elif valuef('undiff_exprof_rna_sequencing_marker'):
+            aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_rna_sequencing_marker'))
+        elif valuef('undiff_exprof_proteomics_marker'):
+            aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_proteomics_marker'))
+
+
 # -----------------------------------------------------------------------------
 #  Importer
 
@@ -490,6 +610,7 @@ def import_data(basedir):
             parse_karyotyping(source, cell_line)
             parse_publications(source, cell_line)
             parse_characterization(source, cell_line)
+            parse_characterization_markers(source, cell_line)
 
             # Final save
             cell_line.save()

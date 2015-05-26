@@ -101,7 +101,7 @@
     <tr><td class="label">Passage number:</td><td>{{ cellline.karyotype.passage_number|default:"-" }}</td></tr>
     {% endif %}
 
-    <!-- <tr><th colspan="2" class="title"><h2>Characterization</h2></th></tr> -->
+    <tr><th colspan="2" class="title"><h2>Characterization</h2></th></tr>
 
 <!--     <tr><td class="label">Certificate of analysis passage:</td><td>{{ cellline.celllinecharacterization.certificateofanalysispassage|default:"-" }}</td></tr> -->
 <!--     <tr><td class="label">HIV1 screening:</td><td>{{ cellline.celllinecharacterization.hiv1screening|default:"-" }}</td></tr> -->
@@ -109,6 +109,14 @@
 <!--     <tr><td class="label">Hepatitis b:</td><td>{{ cellline.celllinecharacterization.hepititusb|default:"-" }}</td></tr> -->
 <!--     <tr><td class="label">Hepatitis c:</td><td>{{ cellline.celllinecharacterization.hepititusc|default:"-" }}</td></tr> -->
 <!--     <tr><td class="label">Mycoplasma:</td><td>{{ cellline.celllinecharacterization.mycoplasma|default:"-" }}</td></tr> -->
+
+    {% if cellline.undifferentiated_morphology_marker_imune %}
+    <tr><td colspan="2"><h3>Imune - marker staining</h3></td></tr>
+    <tr><td class="label">Passage number:</td><td>{{ cellline.undifferentiated_morphology_marker_imune.passage_number }}</td></tr>
+    {% for molecule in cellline.undifferentiated_morphology_marker_imune.molecules.all %}
+    <tr><td class="label">{{ molecule.molecule.name }} {{ molecule.molecule.kind }}:</td><td>{{ molecule.result }}</td></tr>
+    {% endfor %}
+    {% endif %}
 
     <!-- <tr><th colspan="2" class="title"><h2>Labs</h2></th></tr> -->
 
