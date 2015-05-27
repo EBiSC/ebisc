@@ -431,7 +431,7 @@ class CellLineKaryotype(models.Model):
         ordering = []
 
     def __unicode__(self):
-        return u'%s' % (self.id,)
+        return unicode(self.karyotype)
 
 
 class Celllinelab(models.Model):
@@ -515,7 +515,7 @@ class CellLinePublication(models.Model):
         ('pubmed', 'PubMed'),
     )
 
-    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
+    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True, related_name='publications')
 
     reference_type = models.CharField(u'Type', max_length=100, choices=REFERENCE_TYPE_CHOICES)
     reference_id = models.CharField(u'ID', max_length=100, null=True, blank=True)
