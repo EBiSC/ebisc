@@ -154,18 +154,11 @@ class Cellline(models.Model):
 
     def to_elastic(self):
 
-        try:
-            disease = self.celllineprimarydisease and self.celllineprimarydisease.disease or None
-            disease_synonyms = self.celllineprimarydisease and [s.strip() for s in self.celllineprimarydisease.synonyms.split(',')] or None
-        except ObjectDoesNotExist:
-            disease = None
-            disease_synonyms = None
-
         return {
             'biosamplesid': self.biosamplesid,
             'celllinename': self.celllinename,
-            'celllineprimarydisease': disease,
-            'celllineprimarydisease_synonyms': disease_synonyms,
+            'celllineprimarydisease': self.celllineprimarydisease.disease if self.celllineprimarydisease else 'control',
+            'celllineprimarydisease_synonyms': [s.strip() for s in self.celllineprimarydisease.synonyms.split(',')] if self.celllineprimarydisease else None,
             'depositor': self.generator.organizationname,
             'celllinecelltype': self.celllinecelltype.celltype,
             'celllinenamesynonyms': self.celllinenamesynonyms,
