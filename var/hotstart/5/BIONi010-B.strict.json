@@ -1,0 +1,193 @@
+{
+  "alternate_name": [
+    "K2P53"
+  ],
+  "availability_restrictions": "without_restrictions",
+  "available_clinical_grade_ips_flag": "0",
+  "available_flag": "1",
+  "biosamples_donor_id": "SAMEA3105780",
+  "biosamples_id": "SAMEA3158000",
+  "certificate_of_analysis_flag": "0",
+  "co2_concentration": "5",
+  "comparator_cell_line_id": "1230",
+  "comparator_cell_line_type": "same_donor",
+  "culture_conditions_medium_culture_medium": "mtesr_1",
+  "derivation_country": "Denmark",
+  "derivation_gmp_ips_flag": "0",
+  "derivation_xeno_graft_free_flag": "0",
+  "dev_stage_primary_cell": "adult",
+  "directed_differentiation_flag": "1",
+  "directed_ekto_flag": "1",
+  "directed_ekto_marker_immstain_marker": [
+    "###+###Nestin###entrez_id###id_type_gene",
+    "###+###Vimentin###entrez_id###id_type_gene",
+    "###+###TUJ1###entrez_id###id_type_gene",
+    "###+###vGLUT1###entrez_id###id_type_gene"
+  ],
+  "directed_ekto_name": "Neurons",
+  "directed_passage_number": "10",
+  "disease_flag": "0",
+  "disease_doid_name": "control",
+  "donor_age": "15-19",
+  "embryoid_body_differentiation_flag": "1",
+  "embryoid_body_ekto_flag": "1",
+  "embryoid_body_ekto_marker_immstain_marker": [
+    "###+###TUJ1###entrez_id###id_type_gene"
+  ],
+  "embryoid_body_endo_flag": "1",
+  "embryoid_body_endo_marker_immstain_marker": [
+    "###+###AFP###entrez_id###id_type_gene"
+  ],
+  "embryoid_body_meso_flag": "1",
+  "embryoid_body_meso_marker_immstain_marker": [
+    "###+###SMA###entrez_id###id_type_gene"
+  ],
+  "embryoid_body_passage_number": "10",
+  "feeder_cells_flag": "0",
+  "final_name_generated_flag": "1",
+  "fingerprinting_flag": "0",
+  "form_finished_flag": "1",
+  "gender_primary_cell": "male",
+  "genetic_information_associated_flag": "0",
+  "genetic_modification_flag": "0",
+  "genome_wide_genotyping_flag": "0",
+  "hips_consent_form_file": "Dermal_fibroblast_consent_Lonza.jpg",
+  "hips_consent_form_file_enc": "629037a03c072de26c80d207fd3705b8.jpg",
+  "hips_consent_obtained_from_donor_of_tissue_flag": "1",
+  "hips_informed_consent_flag": "1",
+  "hips_no_inducement_stat_flag": "1",
+  "hips_no_pressure_stat_flag": "1",
+  "hla_flag": "0",
+  "id": "1231",
+  "internal_donor_id": [
+    "hOSKUL"
+  ],
+  "karyotyping_flag": "1",
+  "karyotyping_image_upload_file": "O15-0116SLIDE1Q35.jpg",
+  "karyotyping_image_upload_file_enc": "56b2b1d4e3d1572d67f495c60bbb9d4d.jpg",
+  "karyotyping_method": "g_banding",
+  "karyotyping_number_passages": "18",
+  "name": "BIONi010-B",
+  "non_integrating_vector": "episomal",
+  "non_integrating_vector_gene_list": [
+    "5460###POU5F1###entrez_id###id_type_gene",
+    "6657###SOX2###entrez_id###id_type_gene",
+    "9314###KLF4###entrez_id###id_type_gene",
+    "4609###MYC###entrez_id###id_type_gene",
+    "###Lin28###entrez_id###id_type_gene",
+    "###shP53###entrez_id###id_type_gene"
+  ],
+  "o2_concentration": "5",
+  "passage_method": "enzymatically",
+  "passage_method_enzymatic": "dispase",
+  "primary_celltype_name": "NHDF-Ad-Der Fibroblasts",
+  "primary_celltype_purl": "http://purl.obolibrary.org/obo/CL_0002551",
+  "primary_celltype_ont_name": "fibroblast of dermis",
+  "providers": [
+    {
+      "adress": ", ",
+      "contact_person_fullname": "",
+      "id": "435",
+      "name": "Bioneer",
+      "role": "Generator"
+    },
+    {
+      "adress": "Kogle Alle  2, 2970 Hoersholm",
+      "contact_person_fullname": "Bjorn Holst",
+      "contact_person_id": "190",
+      "email": "bho@bioneer.dk",
+      "fax": "+45 45 16 04 55",
+      "id": "471",
+      "name": "Bioneer A/S",
+      "phone": "+45 45 16 04 44",
+      "role": "Contact institution / working group",
+      "website": "http://www.bioneer.dk"
+    },
+    {
+      "adress": "Kogle Alle  2, 2970 Hoersholm",
+      "contact_person_fullname": "Bjorn Holst",
+      "contact_person_id": "190",
+      "email": "bho@bioneer.dk",
+      "fax": "+45 45 16 04 55",
+      "id": "471",
+      "name": "Bioneer A/S",
+      "phone": "+45 45 16 04 44",
+      "role": "Owner",
+      "website": "http://www.bioneer.dk"
+    },
+    {
+      "adress": "Kogle Alle  2, 2970 Hoersholm",
+      "contact_person_fullname": "Bjorn Holst",
+      "contact_person_id": "190",
+      "email": "bho@bioneer.dk",
+      "fax": "+45 45 16 04 55",
+      "id": "471",
+      "name": "Bioneer A/S",
+      "phone": "+45 45 16 04 44",
+      "role": "Distributor",
+      "website": "http://www.bioneer.dk"
+    }
+  ],
+  "registration_reference": "Rasmussen MA et al. Transient p53 suppression increases reprogramming of human fibroblasts without affecting apoptosis and DNA damage. Stem Cell Reports. 2014 Sep 9;3(3):404-13.",
+  "registration_reference_publication_pubmed_id": "25241739",
+  "same_donor_cell_line_flag": "1",
+  "same_donor_cell_line_id": "1230",
+  "same_donor_derived_from_flag": "0",
+  "source_platform": "hescreg",
+  "spontaneous_differentiation_flag": "1",
+  "spontaneous_ekto_flag": "1",
+  "spontaneous_ekto_marker_immstain_marker": [
+    "###+###TUJ1###entrez_id###id_type_gene"
+  ],
+  "spontaneous_endo_flag": "1",
+  "spontaneous_endo_marker_immstain_marker": [
+    "###+###AFP###entrez_id###id_type_gene"
+  ],
+  "spontaneous_meso_flag": "1",
+  "spontaneous_meso_marker_immstain_marker": [
+    "###+###SMA###entrez_id###id_type_gene"
+  ],
+  "surface_coating": "matrigel",
+  "teratoma_formation_differentiation_flag": "0",
+  "type": "1",
+  "type_name": "hiPSC",
+  "undiff_immstain_marker": [
+    "alpl###nd",
+    "nanog###+",
+    "pou5f1###+",
+    "ssea3###+",
+    "ssea4###+",
+    "tra160###+",
+    "tra181###+",
+    "zfp42###nd"
+  ],
+  "undiff_immstain_marker_passage_number": "10",
+  "undiff_rtpcr_marker": [
+    "alpl###nd",
+    "dnmt3b###+",
+    "gdf3###nd",
+    "nodal###nd",
+    "zfp42###+",
+    "podxl###nd",
+    "xist###nd",
+    "lefty1###nd",
+    "foxd3###nd",
+    "###+###POU5F1###entrez_id###id_type_gene",
+    "###+###Sox2###entrez_id###id_type_gene",
+    "###+###Nanog###entrez_id###id_type_gene"
+  ],
+  "undiff_rtpcr_marker_passage_number": "10",
+  "validation_status": "1",
+  "vector_type": "non_integrating",
+  "virology_screening_flag": "1",
+  "virology_screening_hbv_flag": "1",
+  "virology_screening_hbv_result": "negative",
+  "virology_screening_hcv_flag": "1",
+  "virology_screening_hcv_result": "negative",
+  "virology_screening_hiv_1_flag": "1",
+  "virology_screening_hiv_1_result": "negative",
+  "virology_screening_hiv_2_flag": "1",
+  "virology_screening_hiv_2_result": "negative",
+  "virology_screening_mycoplasma_flag": "1",
+  "virology_screening_mycoplasma_result": "negative"
+}

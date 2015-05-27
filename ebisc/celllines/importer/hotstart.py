@@ -173,7 +173,7 @@ def parse_donor(valuef, source):
     gender = valuef('gender_primary_cell', 'gender')
 
     try:
-        donor = Donor.objects.get(biosamplesid=valuef('donor_biosample_id'))
+        donor = Donor.objects.get(biosamplesid=valuef('biosamples_donor_id'))
 
         if donor.gender != gender:
             logger.warn('Changing donor gender from %s to %s' % (donor.gender, gender))
@@ -181,7 +181,7 @@ def parse_donor(valuef, source):
 
     except Donor.DoesNotExist:
         donor = Donor(
-            biosamplesid=valuef('donor_biosample_id'),
+            biosamplesid=valuef('biosamples_donor_id'),
             gender=gender
         )
 
@@ -561,11 +561,11 @@ def import_data(basedir):
             logger.info('Importing cell line %s' % valuef('name'))
 
             cell_line = Cellline(
-                biosamplesid=valuef('biosample_id'),
+                biosamplesid=valuef('biosamples_id'),
                 celllinename=valuef('name'),
                 celllineprimarydisease=parse_disease(source),
                 celllinecelltype=parse_cell_type(source),
-                celllinenamesynonyms=', '.join(valuef('alternate_name')),
+                celllinenamesynonyms=', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else '',
                 donor=parse_donor(source),
                 donor_age=valuef('donor_age', 'age_range'),
             )
