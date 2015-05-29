@@ -35,6 +35,14 @@ h2 {
   }
 }
 
+h3 {
+  font-size: $base-font-size * 1.1;
+
+  @include breakpoint(map-get($breakpoints, small)) {
+    font-size: $base-font-size * 1;
+  }
+}
+
 p {
   margin: 0 0 $small-spacing;
 }

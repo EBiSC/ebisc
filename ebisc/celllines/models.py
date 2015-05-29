@@ -172,7 +172,7 @@ class CellLineCharacterization(models.Model):
     SCREENING_CHOICES = (
         ('positive', u'Positive'),
         ('negative', u'Negative'),
-        ('not-done', u'Not done'),
+        ('not_done', u'Not done'),
     )
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))

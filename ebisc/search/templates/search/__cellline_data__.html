@@ -3,12 +3,24 @@
     <tr><th colspan="2" class="title"><h2>General Information</h2></th></tr>
     <tr><td class="label">Biosamples ID:</td><td>{{ cellline.biosamplesid|default:"-" }}</td></tr>
     <tr><td class="label">Cell line name:</td><td>{{ cellline.celllinename|default:"-" }}</td></tr>
-    <tr><td class="label">Cell line name synonyms:</td><td>{{ cellline.celllinenamesynonyms|default:"-" }}</td></tr>
-    <tr><td class="label">Disease:</td><td>{{ cellline.celllineprimarydisease|default:"-" }}</td></tr>
+    <tr><td class="label">Cell line alternative names:</td><td>{{ cellline.celllinenamesynonyms|default:"-" }}</td></tr>
+
+    {% if cellline.publications.all|length %}
+    <tr>
+        <td class="label">Reference publications:</td>
+        <td>
+            <ul>
+                {% for pub in cellline.publications.all %}
+                <li><a href="{{ pub.reference_url }}">{{ pub.reference_title }}</a></li>
+                {% endfor%}
+            </ul>
+        </td>
+    </tr>
+    {% endif %}
+
     <!-- <tr><td class="label">Mutant gene:</td><td>{{ cellline.celllinelab.mutagene|default:"-" }}</td></tr> -->
     <!-- <tr><td class="label">Cell line disease info:</td><td>{{ cellline.celllinediseaseaddinfo|default:"-" }}</td></tr> -->
     <!-- <tr><td class="label">Cell line status:</td><td>{{ cellline.celllinestatus|default:"-" }}</td></tr> -->
-    <tr><td class="label">Cell type:</td><td>{{ cellline.celllinecelltype|default:"-" }}</td></tr>
     <!-- <tr><td class="label">Tissue source:</td><td>{{ cellline.celllinetissuesource|default:"-" }}</td></tr> -->
     <!-- <tr><td class="label">Cell line collection:</td><td>{{ cellline.celllinecollection|default:"-" }}</td></tr> -->
     <!-- <tr><td class="label">Clinical treatment before donation:</td><td>{{ cellline.celllinetissuetreatment|default:"-" }}</td></tr> -->
@@ -19,13 +31,13 @@
     <!-- <tr><td class="label">Last update type:</td><td>{{ cellline.celllineupdatetype|default:"-" }}</td></tr> -->
     <!-- <tr><td class="label">Cell line ECACC URL:</td><td>{{ cellline.celllineecaccurl|default:"-" }}</td></tr> -->
 
-    <tr><th colspan="2" class="title"><h2>Donor</h2></th></tr>
+    <tr><th class="sub-title"><h3>Donor information</h3></th><th></th></tr>
     <tr><td class="label">Biosamples ID:</td><td>{{ cellline.donor.biosamplesid|default:"-" }}</td></tr>
+    <tr><td class="label">Diagnosed disease:</td><td>{{ cellline.celllineprimarydisease|default:"-" }}</td></tr>
     <tr><td class="label">Gender:</td><td>{{ cellline.donor.gender|default:"-" }}</td></tr>
     <tr><td class="label">Age:</td><td>{{ cellline.donor_age|default:"-" }}</td></tr>
 
-
-    <tr><th colspan="2" class="title"><h2>Depositor</h2></th></tr>
+    <tr><th class="sub-title"><h3>Depositor</h3></th><th></th></tr>
 
     <tr><td class="label">Depositor:</td><td>{{ cellline.generator.organizationname|default:"-" }}</td></tr>
     <!-- <tr><td class="label">Depositors cell line URI:</td><td>{{ cellline.depositorscelllineuri|default:"-" }}</td></tr> -->
@@ -33,34 +45,76 @@
 
     <tr><th colspan="2" class="title"><h2>Derivation</h2></th></tr>
 
+    <tr><td class="label">Primary cell type:</td><td>{{ cellline.celllinederivation.primarycelltypename|default:"-" }}</td></tr>
+    <tr><td class="label">Primary cell developmental stage :</td><td>{{ cellline.celllinederivation.primarycelldevelopmentalstage|default:"-" }}</td></tr>
+
+    <tr><th class="sub-title"><h3>Reprogramming method</h3></th><th></th></tr>
+
     {% if cellline.integrating_vector %}
         <tr><td class="label">Vector type:</td><td>integrating</td></tr>
         {% if cellline.integrating_vector.vector %}<tr><td class="label">Vector:</td><td>{{ cellline.integrating_vector.vector }}</td></tr>{% endif %}
         {% if cellline.integrating_vector.virus %}<tr><td class="label">Virus type:</td><td>{{ cellline.integrating_vector.virus }}</td></tr>{% endif %}
         {% if cellline.integrating_vector.transposon %}<tr><td class="label">Transposon:</td><td>{{ cellline.integrating_vector.transposon }}</td></tr>{% endif %}
-        {% if cellline.integrating_vector.excisable %}<tr><td class="label">Excisable:</td><td>{{ cellline.integrating_vector.excisable|yesno:"yes,no" }}</td></tr>{% endif %}
+
+        {% if cellline.integrating_vector.genes.all|length %}
+        <tr>
+            <td class="label">Gene list:</td>
+            <td>
+                <ul>
+                    {% for gene in cellline.integrating_vector.genes.all %}
+                    <li>{{ gene.name }}</li>
+                    {% endfor%}
+                </ul>
+            </td>
+        </tr>
+        {% endif %}
+
+        {% if cellline.integrating_vector.excisable %}<tr><td class="label">Is the used vector excisable?:</td><td>{{ cellline.integrating_vector.excisable|yesno:"yes,no" }}</td></tr>{% endif %}
     {% endif %}
 
     {% if cellline.non_integrating_vector %}
         <tr><td class="label">Vector type:</td><td>non-integrating</td></tr>
         {% if cellline.non_integrating_vector %}<tr><td class="label">Vector:</td><td>{{ cellline.non_integrating_vector }}</td></tr>{% endif %}
+
+        {% if cellline.non_integrating_vector.genes.all|length %}
+        <tr>
+            <td class="label">Gene list:</td>
+            <td>
+                <ul>
+                    {% for gene in cellline.non_integrating_vector.genes.all %}
+                    <li>{{ gene.name }}</li>
+                    {% endfor%}
+                </ul>
+            </td>
+        </tr>
+        {% endif %}
+
     {% endif %}
 
-    <tr><td class="label">Primary cell type name:</td><td>{{ cellline.celllinederivation.primarycelltypename|default:"-" }}</td></tr>
-    <!-- <tr><td class="label">Primary cell type cell finder ID:</td><td>{{ cellline.celllinederivation.primarycelltypecellfinderid|default:"-" }}</td></tr> -->
-    <tr><td class="label">Primary cell developmental stage:</td><td>{{ cellline.celllinederivation.primarycelldevelopmentalstage|default:"-" }}</td></tr>
+    <tr><th class="sub-title"><h3>Derivation</h3></th><th></th></tr>
+
     <tr><td class="label">Selection criteria for clones:</td><td>{{ cellline.celllinederivation.selectioncriteriaforclones|default:"-" }}</td></tr>
     <tr><td class="label">Xeno free conditions:</td><td>{{ cellline.celllinederivation.xenofreeconditions|yesno:"yes,no"|default:"-" }}</td></tr>
     <tr><td class="label">Derived under gmp:</td><td>{{ cellline.celllinederivation.derivedundergmp|yesno:"yes,no"|default:"-" }}</td></tr>
 
     <tr><th colspan="2" class="title"><h2>Culture Conditions</h2></th></tr>
 
+    {% if cellline.celllinecultureconditions.surfacecoating %}
     <tr><td class="label">Surface coating:</td><td>{{ cellline.celllinecultureconditions.surfacecoating|default:"-" }}</td></tr>
+    {% endif %}
+    {% if cellline.celllinecultureconditions.feedercelltype %}
     <tr><td class="label">Feeder cell type:</td><td>{{ cellline.celllinecultureconditions.feedercelltype|default:"-" }}</td></tr>
-    <tr><td class="label">Feeder cell ID:</td><td>{{ cellline.celllinecultureconditions.feedercellid|default:"-" }}</td></tr>
+    {% endif %}
+    <!-- <tr><td class="label">Feeder cell ID:</td><td>{{ cellline.celllinecultureconditions.feedercellid|default:"-" }}</td></tr> -->
+    {% if cellline.celllinecultureconditions.passagemethod %}
     <tr><td class="label">Passage method:</td><td>{{ cellline.celllinecultureconditions.passagemethod|default:"-" }}</td></tr>
+    {% endif %}
+    {% if cellline.celllinecultureconditions.enzymatically %}
     <tr><td class="label">Enzymatically:</td><td>{{ cellline.celllinecultureconditions.enzymatically|default:"-" }}</td></tr>
+    {% endif %}
+    {% if cellline.celllinecultureconditions.enzymefree %}
     <tr><td class="label">Enzyme free:</td><td>{{ cellline.celllinecultureconditions.enzymefree|default:"-" }}</td></tr>
+    {% endif %}
     {% if cellline.celllinecultureconditions.o2concentration %}
     <tr><td class="label">O<sub>2</sub> concentration:</td><td>{{ cellline.celllinecultureconditions.o2concentration }}%</td></tr>
     {% endif %}
@@ -73,8 +127,8 @@
     {% endif %}
 
     {% if cellline.celllinecultureconditions.culture_medium_other %}
-    <tr><td class="label">Culture medium base:</td><td>{{ cellline.celllinecultureconditions.culture_medium_other.base }}</td></tr>
-    <tr><td class="label">ProteinSource:</td><td>{{ cellline.celllinecultureconditions.culture_medium_other.protein_source|default:"-" }}</td></tr>
+    <tr><td class="label">Culture base medium:</td><td>{{ cellline.celllinecultureconditions.culture_medium_other.base }}</td></tr>
+    <tr><td class="label">Main protein source:</td><td>{{ cellline.celllinecultureconditions.culture_medium_other.protein_source|default:"-" }}</td></tr>
     {% if cellline.celllinecultureconditions.culture_medium_other.serum_concentration %}
     <tr><td class="label">Serum concentration:</td><td>{{ cellline.celllinecultureconditions.culture_medium_other.serum_concentration }}%</td></tr>
     {% endif %}
@@ -93,62 +147,68 @@
     </tr>
     {% endif %}
 
+    <tr><th colspan="2" class="title"><h2>Characterization</h2></th></tr>
+
+    {% if cellline.celllinecharacterization.certificate_of_analysis_passage_number %}
+    <tr><td class="label">Certificate of analysis passage number:</td><td>{{ cellline.celllinecharacterization.certificate_of_analysis_passage_number|default:"-" }}</td></tr>
+    {% endif %}
+
+    <tr>
+        <td class="label">Microbiology / Virology Screening:</td>
+        <td>
+            <table>
+                <tr>
+                    <td>HIV 1:</td>
+                    <td>{{ cellline.celllinecharacterization.get_screening_hiv1_display|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <td>HIV 2:</td>
+                    <td>{{ cellline.celllinecharacterization.get_screening_hiv2_display|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <td>Hepatitis B:</td>
+                    <td>{{ cellline.celllinecharacterization.get_screening_hepatitis_b_display|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <td>Hepatitis C:</td>
+                    <td>{{ cellline.celllinecharacterization.get_screening_hepatitis_c_display|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <td>Mycoplasma:</td>
+                    <td>{{ cellline.celllinecharacterization.get_screening_mycoplasma_display|default:"-" }}</td>
+                </tr>
+            </table>            
+        </td>
+    </tr>
+
+<!--     {% if cellline.undifferentiated_morphology_marker_imune %}
+    <tr><th class="sub-title"><h3>Undifferentiated cells</h3></th></tr>
+
+    <tr>
+        <td class="label">Morphology and Marker expression:</td>
+        <td>
+            Passage number: {{ cellline.undifferentiated_morphology_marker_imune.passage_number }}
+            <ul>
+            {% for molecule in cellline.undifferentiated_morphology_marker_imune.molecules.all %}
+            <li>{{ molecule.molecule.name }} {{ molecule.molecule.kind }}: {{ molecule.result }}</li>
+            {% endfor %}
+            </ul>
+        </td>
+    </tr>
+    {% endif %}
+ -->
     {% if cellline.karyotype %}
     <tr><th colspan="2" class="title"><h2>Genotyping</h2></th></tr>
 
-    <tr><td class="label">Cell line karyotype:</td><td>{{ cellline.karyotype.karyotype|default:"-" }}</td></tr>
-    <tr><td class="label">Karyotyping method:</td><td>{{ cellline.karyotype.karyotype_method|default:"-" }}</td></tr>
+    {% if cellline.karyotype.passage_number %}
     <tr><td class="label">Passage number:</td><td>{{ cellline.karyotype.passage_number|default:"-" }}</td></tr>
     {% endif %}
-
-    <tr><th colspan="2" class="title"><h2>Characterization</h2></th></tr>
-
-<!--     <tr><td class="label">Certificate of analysis passage:</td><td>{{ cellline.celllinecharacterization.certificateofanalysispassage|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">HIV1 screening:</td><td>{{ cellline.celllinecharacterization.hiv1screening|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">HIV2 screening:</td><td>{{ cellline.celllinecharacterization.hiv2screening|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Hepatitis b:</td><td>{{ cellline.celllinecharacterization.hepititusb|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Hepatitis c:</td><td>{{ cellline.celllinecharacterization.hepititusc|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Mycoplasma:</td><td>{{ cellline.celllinecharacterization.mycoplasma|default:"-" }}</td></tr> -->
-
-    {% if cellline.undifferentiated_morphology_marker_imune %}
-    <tr><td colspan="2"><h3>Imune - marker staining</h3></td></tr>
-    <tr><td class="label">Passage number:</td><td>{{ cellline.undifferentiated_morphology_marker_imune.passage_number }}</td></tr>
-    {% for molecule in cellline.undifferentiated_morphology_marker_imune.molecules.all %}
-    <tr><td class="label">{{ molecule.molecule.name }} {{ molecule.molecule.kind }}:</td><td>{{ molecule.result }}</td></tr>
-    {% endfor %}
+    <tr><td class="label">Cell line karyotype:</td><td>{{ cellline.karyotype.karyotype|default:"-" }}</td></tr>
+    <tr><td class="label">Karyotyping method:</td><td>{{ cellline.karyotype.karyotype_method|default:"-" }}</td></tr>
     {% endif %}
-
-    <!-- <tr><th colspan="2" class="title"><h2>Labs</h2></th></tr> -->
-
-<!--     <tr><td class="label">Cryodate:</td><td>{{ cellline.celllinelab.cryodate|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Expansion in progress:</td><td>{{ cellline.celllinelab.expansioninprogress|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Funder:</td><td>{{ cellline.celllinelab.funder|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Reprogramming method 1:</td><td>{{ cellline.celllinelab.reprogrammingmethod1|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Reprogramming method 2:</td><td>{{ cellline.celllinelab.reprogrammingmethod2|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Reprogramming method 3:</td><td>{{ cellline.celllinelab.reprogrammingmethod3|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Clone number:</td><td>{{ cellline.celllinelab.clonenumber|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Passage number:</td><td>{{ cellline.celllinelab.passagenumber|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Culture system:</td><td>{{ cellline.celllinelab.culturesystem|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Culture system comment:</td><td>{{ cellline.celllinelab.culturesystemcomment|default:"-" }}</td></tr> -->
 
     <tr><th colspan="2" class="title"><h2>Ethics</h2></th></tr>
 
     <tr><td class="label">Donor consent:</td><td>{{ cellline.celllinelegal.q1donorconsent|yesno:"yes,no"|default:"-" }}</td></tr>
-<!--     <tr><td class="label">Donor trace:</td><td>{{ cellline.celllinelegal.q2donortrace|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">IRB approval:</td><td>{{ cellline.celllinelegal.q3irbapproval|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Approved use:</td><td>{{ cellline.celllinelegal.q4approveduse|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Informed consent reference:</td><td>{{ cellline.celllinelegal.q5informedconsentreference|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Restrictions:</td><td>{{ cellline.celllinelegal.q6restrictions|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">IP restrictions:</td><td>{{ cellline.celllinelegal.q7iprestrictions|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Country:</td><td>{{ cellline.celllinelegal.q8jurisdiction|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Applicable legislation and regulation:</td><td>{{ cellline.celllinelegal.q9applicablelegislationandregulation|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Managed access:</td><td>{{ cellline.celllinelegal.q10managedaccess|default:"-" }}</td></tr> -->
-
-    <!-- <tr><th colspan="2" class="title"><h2>Values</h2></th></tr> -->
-
-<!--     <tr><td class="label">Potential use:</td><td>{{ cellline.celllinevalue.potentialuse|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Value to society:</td><td>{{ cellline.celllinevalue.valuetosociety|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Value to research:</td><td>{{ cellline.celllinevalue.valuetoresearch|default:"-" }}</td></tr> -->
-<!--     <tr><td class="label">Other value:</td><td>{{ cellline.celllinevalue.othervalue|default:"-" }}</td></tr> -->
 
 </table>
