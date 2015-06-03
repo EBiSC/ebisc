@@ -207,8 +207,12 @@
     <tr><td class="label">Karyotyping method:</td><td>{{ cellline.karyotype.karyotype_method|default:"-" }}</td></tr>
     {% endif %}
 
+    {% if cellline.celllinelegal.donor_consent %}
+
     <tr><th colspan="2" class="title"><h2>Ethics</h2></th></tr>
 
     <tr><td class="label">Donor consent:</td><td>{{ cellline.celllinelegal.donor_consent|yesno:"yes,no"|default:"-" }}</td></tr>
+
+    {% endif %}
 
 </table>
