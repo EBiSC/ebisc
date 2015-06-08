@@ -2,8 +2,8 @@ import re
 
 from django.http import Http404
 from tastypie.resources import ModelResource
-from tastypie.authentication import SessionAuthentication
-from tastypie.authorization import DjangoAuthorization
+from tastypie.authentication import ApiKeyAuthentication
+from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
@@ -169,8 +169,8 @@ class CelllineResource(ModelResource):
 
         detail_uri_name = 'biosamplesid'
 
-        authentication = SessionAuthentication()
-        authorization = DjangoAuthorization()
+        authentication = ApiKeyAuthentication()
+        authorization = ReadOnlyAuthorization()
 
         serializer = IndentedJSONSerializer()
 

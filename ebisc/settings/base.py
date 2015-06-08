@@ -105,6 +105,7 @@ LOGIN_REDIRECT_URL = '/'
 # -----------------------------------------------------------------------------
 # Tastypie
 
+TASTYPIE_DEFAULT_FORMATS = ['json']
 TASTYPIE_ALLOW_MISSING_SLASH = True
 API_LIMIT_PER_PAGE = 50
 
