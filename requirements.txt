@@ -5,3 +5,4 @@ django-grappelli==2.6.3
 django-tastypie==0.12.1
 defusedxml==0.4.1
 elasticsearch==1.4.0
+django-extensions==1.5.5

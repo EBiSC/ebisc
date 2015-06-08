@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'django_cleanup',
     'grappelli.dashboard',
     'grappelli',
+    'django_extensions',
 
     'django.contrib.admin',
     'django.contrib.auth',
