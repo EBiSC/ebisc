@@ -75,3 +75,20 @@ def sync_db():
 
 
 # -----------------------------------------------------------------------------
+# Model visualizations
+
+@task
+def visualize_model(group, layout='dot'):
+
+    input_file = 'etc/mviz/%s.txt' % group
+
+    output_dir = 'var/mviz'
+    output_file = '%s/%s.png' % (output_dir, group)
+
+    header_bgcolor = 'hotpink'
+    body_bgcolor = 'lightblue'
+
+    local('mkdir -p %s' % output_dir)
+    local('./manage.py graph_models celllines --verbose-names --include-models=%s | sed s/BGCOLOR=\\"olivedrab4\\"/BGCOLOR=\\"%s\\"/g | sed s/BGCOLOR=\\"palegoldenrod\\"/BGCOLOR=\\"%s\\"/g | %s -Tpng -o %s' % (input_file, header_bgcolor, body_bgcolor, layout, output_file))
+
+# -----------------------------------------------------------------------------
