@@ -182,7 +182,8 @@ def parse_donor(valuef, source):
     except Donor.DoesNotExist:
         donor = Donor(
             biosamplesid=valuef('biosamples_donor_id'),
-            gender=gender
+            providerdonorid=', '.join(valuef('internal_donor_id')) if valuef('internal_donor_id') is not None else '',
+            gender=gender,
         )
 
     donor.save()
@@ -562,6 +563,7 @@ def import_data(basedir):
 
             cell_line = Cellline(
                 biosamplesid=valuef('biosamples_id'),
+                hescregid=valuef('id'),
                 celllinename=valuef('name'),
                 celllineprimarydisease=parse_disease(source),
                 celllinecelltype=parse_cell_type(source),
