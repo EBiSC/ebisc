@@ -121,6 +121,7 @@ class Cellline(models.Model):
 
     generator = models.ForeignKey('Organization', verbose_name=_(u'Generator'), related_name='generator_of_cell_lines')
     owner = models.ForeignKey('Organization', verbose_name=_(u'Owner'), null=True, blank=True, related_name='owner_of_cell_lines')
+    derivation_country = models.ForeignKey('Country', verbose_name=_(u'Derivation country'), null=True, blank=True)
 
     celllineprimarydisease = models.ForeignKey('Disease', verbose_name=_(u'Disease'), null=True, blank=True)
     celllinediseaseaddinfo = models.CharField(_(u'Cell line disease info'), max_length=100, null=True, blank=True)
