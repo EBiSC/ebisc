@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.contrib.postgres.fields import ArrayField
 
 
 EXTENDED_BOOL_CHOICES = (
@@ -820,12 +821,13 @@ class Donor(models.Model):
     biosamplesid = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
     gender = models.ForeignKey(Gender, verbose_name=_(u'Gender'), null=True, blank=True)
 
-    countryoforigin = models.ForeignKey('Country', verbose_name=_(u'Country'), null=True, blank=True)
+    provider_donor_ids = ArrayField(models.CharField(max_length=20), verbose_name=_(u'Provider donor ids'), null=True)
+    countryoforigin = models.ForeignKey('Country', verbose_name=_(u'Country of origin'), null=True, blank=True)
+
     primarydisease = models.ForeignKey('Disease', verbose_name=_(u'Disease'), null=True, blank=True)
     diseaseadditionalinfo = models.CharField(_(u'Disease additional info'), max_length=45, blank=True)
     othercelllinefromdonor = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='celllines_othercelllinefromdonor', null=True, blank=True)
     parentcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='celllines_parentcellline', null=True, blank=True)
-    providerdonorid = models.CharField(_(u'Provider donor id'), max_length=45, blank=True)
     cellabnormalkaryotype = models.CharField(_(u'Cell abnormal karyotype'), max_length=45, blank=True)
     donorabnormalkaryotype = models.CharField(_(u'Donor abnormal karyotype'), max_length=45, blank=True)
     otherclinicalinformation = models.CharField(_(u'Other clinical information'), max_length=100, blank=True)

@@ -182,7 +182,7 @@ def parse_donor(valuef, source):
     except Donor.DoesNotExist:
         donor = Donor(
             biosamplesid=valuef('biosamples_donor_id'),
-            providerdonorid=', '.join(valuef('internal_donor_id')) if valuef('internal_donor_id') is not None else '',
+            provider_donor_ids=valuef('internal_donor_id'),
             gender=gender,
         )
 

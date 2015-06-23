@@ -280,7 +280,7 @@ admin.site.register(Documenttype, DocumenttypeAdmin)
 
 class DonorAdmin(admin.ModelAdmin):
 
-    list_display = ['biosamplesid', 'gender', 'countryoforigin', 'primarydisease', 'diseaseadditionalinfo', 'providerdonorid']
+    list_display = ['biosamplesid', 'gender', 'countryoforigin', 'primarydisease', 'diseaseadditionalinfo', 'provider_donor_ids']
     list_display_links = ['biosamplesid']
     list_filter = ['gender', 'countryoforigin']
 

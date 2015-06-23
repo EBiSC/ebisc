@@ -33,7 +33,7 @@
 
     <tr><th class="sub-title"><h3>Donor information</h3></th><th></th></tr>
     <tr><td class="label">Biosamples ID:</td><td>{{ cellline.donor.biosamplesid|default:"-" }}</td></tr>
-    <tr><td class="label">Internal donor ID:</td><td>{{ cellline.donor.providerdonorid|default:"-" }}</td></tr>
+    <tr><td class="label">Internal donor ID:</td><td>{{ cellline.donor.provider_donor_ids|default:"-"|join:", " }}</td></tr>
     <tr><td class="label">Diagnosed disease:</td><td>{{ cellline.celllineprimarydisease|default:"-" }}</td></tr>
     <tr><td class="label">Gender:</td><td>{{ cellline.donor.gender|default:"-" }}</td></tr>
     <tr><td class="label">Age:</td><td>{{ cellline.donor_age|default:"-" }}</td></tr>
