@@ -1251,6 +1251,19 @@ class CellLineIntegratingVector(models.Model):
         return unicode(self.vector)
 
 
+class CellLineVectorFreeReprogrammingFactors(models.Model):
+
+    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='vector_free_reprogramming_factors')
+    factor = models.ForeignKey(Vectorfreereprogramfactor, verbose_name=_(u'Vector-free reprogramming factor'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line Vector-free Programming Factor')
+        verbose_name_plural = _(u'Cell line Vector-free Programming Factors')
+
+    def __unicode__(self):
+        return unicode(self.factor)
+
+
 # -----------------------------------------------------------------------------
 # Cell line differentation
 
