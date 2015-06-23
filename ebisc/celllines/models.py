@@ -1219,7 +1219,7 @@ class CellLineNonIntegratingVector(models.Model):
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='non_integrating_vector')
     vector = models.ForeignKey(NonIntegratingVector, verbose_name=_(u'Non-integrating vector'), null=True, blank=True)
 
-    genes = models.ManyToManyField(Molecule, null=True, blank=True)
+    genes = models.ManyToManyField(Molecule, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line non integrating vector')
@@ -1239,7 +1239,7 @@ class CellLineIntegratingVector(models.Model):
 
     excisable = models.NullBooleanField(_(u'Excisable'), default=None, null=True, blank=True)
 
-    genes = models.ManyToManyField(Molecule, null=True, blank=True)
+    genes = models.ManyToManyField(Molecule, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line integrating vector')

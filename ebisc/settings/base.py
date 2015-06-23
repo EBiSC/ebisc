@@ -24,6 +24,13 @@ ADMINS = (
 # Application definition
 
 INSTALLED_APPS = (
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+
     'ebisc',
     'ebisc.site',
     'ebisc.celllines',
@@ -35,13 +42,6 @@ INSTALLED_APPS = (
     'grappelli.dashboard',
     'grappelli',
     'django_extensions',
-
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
 )
 
 MIDDLEWARE_CLASSES = (
