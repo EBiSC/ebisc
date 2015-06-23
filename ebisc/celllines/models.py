@@ -97,18 +97,6 @@ class ApprovedUse(models.Model):
         return u'%s' % (self.name,)
 
 
-class Batchstatus(models.Model):
-    batchstatus = models.CharField(_(u'Batch status'), max_length=20, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Batch status')
-        verbose_name_plural = _(u'Batch statuses')
-        ordering = ['batchstatus']
-
-    def __unicode__(self):
-        return u'%s' % (self.batchstatus,)
-
-
 # -----------------------------------------------------------------------------
 # Cell line
 
@@ -163,6 +151,43 @@ class Cellline(models.Model):
             'celllinecelltype': self.celllinecelltype.celltype,
             'celllinenamesynonyms': self.celllinenamesynonyms,
         }
+
+
+# -----------------------------------------------------------------------------
+# Batch: CellLine -> Batch(es) -> Aliquot(s)
+
+class CelllineBatch(models.Model):
+
+    STATUS_CHOICES = ()
+
+    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'))
+    biosamplesid = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    status = models.CharField(_(u'Status'), max_length=10, choices=STATUS_CHOICES)
+
+    class Meta:
+        verbose_name = _(u'Cell line batch')
+        verbose_name_plural = _(u'Cell line batches')
+        ordering = ['biosamplesid']
+
+    def __unicode__(self):
+        return u'%s' % (self.biosamplesid,)
+
+
+class CelllineAliquot(models.Model):
+
+    STATUS_CHOICES = ()
+
+    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'))
+    biosamplesid = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    status = models.CharField(_(u'Status'), max_length=10, choices=STATUS_CHOICES)
+
+    class Meta:
+        verbose_name = _(u'Cell line aliquot')
+        verbose_name_plural = _(u'Cell line aliquotes')
+        ordering = ['biosamplesid']
+
+    def __unicode__(self):
+        return u'%s' % (self.biosamplesid,)
 
 
 # -----------------------------------------------------------------------------

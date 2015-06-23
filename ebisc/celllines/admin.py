@@ -21,12 +21,6 @@ class ApprovedUseAdmin(admin.ModelAdmin):
 admin.site.register(ApprovedUse, ApprovedUseAdmin)
 
 
-class BatchstatusAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Batchstatus, BatchstatusAdmin)
-
-
 class CellLineCharacterizationInline(admin.StackedInline):
     model = CellLineCharacterization
     min_num = 1
