@@ -109,46 +109,6 @@ class Batchstatus(models.Model):
         return u'%s' % (self.batchstatus,)
 
 
-class Aliquotstatus(models.Model):
-    aliquotstatus = models.CharField(_(u'Aliquot status'), max_length=20, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Aliquot status')
-        verbose_name_plural = _(u'Aliquot statuses')
-        ordering = ['aliquotstatus']
-
-    def __unicode__(self):
-        return u'%s' % (self.aliquotstatus,)
-
-
-class Celllinebatch(models.Model):
-    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    biosamplesid = models.CharField(_(u'Biosamples ID'), unique=True, max_length=12)
-    batchstatus = models.ForeignKey('Batchstatus', verbose_name=_(u'Batch status'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line batch')
-        verbose_name_plural = _(u'Cell line batches')
-        ordering = ['biosamplesid']
-
-    def __unicode__(self):
-        return u'%s' % (self.biosamplesid,)
-
-
-class Celllinealiquot(models.Model):
-    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    biosamplesid = models.CharField(_(u'Biosamples ID'), unique=True, max_length=12)
-    aliquotstatus = models.ForeignKey('Aliquotstatus', verbose_name=_(u'Aliquot status'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line aliquot')
-        verbose_name_plural = _(u'Cell line aliquotes')
-        ordering = ['biosamplesid']
-
-    def __unicode__(self):
-        return u'%s' % (self.biosamplesid,)
-
-
 # -----------------------------------------------------------------------------
 # Cell line
 
@@ -163,8 +123,6 @@ class Cellline(models.Model):
     celllineaccepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
 
     biosamplesid = models.CharField(_(u'Biosamples ID'), unique=True, max_length=12)
-    hescregid = models.CharField(_(u'hESCreg ID'), max_length=12, null=True, blank=True)
-    ecaccid = models.CharField(_(u'ECACC ID'), max_length=12, null=True, blank=True)
     celllinename = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
 
     donor = models.ForeignKey('Donor', verbose_name=_(u'Donor'), null=True, blank=True)
@@ -172,7 +130,6 @@ class Cellline(models.Model):
 
     generator = models.ForeignKey('Organization', verbose_name=_(u'Generator'), related_name='generator_of_cell_lines')
     owner = models.ForeignKey('Organization', verbose_name=_(u'Owner'), null=True, blank=True, related_name='owner_of_cell_lines')
-    derivation_country = models.ForeignKey('Country', verbose_name=_(u'Country'), null=True, blank=True)
 
     celllineprimarydisease = models.ForeignKey('Disease', verbose_name=_(u'Disease'), null=True, blank=True)
     celllinediseaseaddinfo = models.CharField(_(u'Cell line disease info'), max_length=100, null=True, blank=True)
@@ -281,7 +238,7 @@ class Celllinecollection(models.Model):
 
 class Celllinecomments(models.Model):
     commentscellline = models.IntegerField(_(u'Comments cell line'), null=True, blank=True)
-    celllinecomments = models.TextField(_(u'Cell line comments'), blank=True)
+    celllinecomments = models.TextField(blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line comments')
@@ -304,6 +261,7 @@ class Celllinecultureconditions(models.Model):
     enzymefree = models.ForeignKey('EnzymeFree', verbose_name=_(u'Enzyme free'), null=True, blank=True)
     o2concentration = models.IntegerField(_(u'O2 concentration'), null=True, blank=True)
     co2concentration = models.IntegerField(_(u'Co2 concentration'), null=True, blank=True)
+
     culture_medium = models.ForeignKey('CultureMedium', verbose_name=_(u'Culture medium'), null=True, blank=True)
 
     class Meta:
@@ -494,79 +452,18 @@ class Celllinelab(models.Model):
 
 class CellLineLegal(models.Model):
 
-    ACCESS_POLICY_CHOICES = (
-        ('open_access', 'Open access'),
-        ('controlled_access', 'Controlled access'),
-        ('no_information', 'No information'),
-    )
-
-    BOOL_EXTENDED_CHOICES = (
-        ('yes', 'Yes'),
-        ('no', 'No'),
-        ('unknown', 'Unknown'),
-    )
-
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
 
     donor_consent = models.NullBooleanField(_(u'Donor consent'), default=None, null=True, blank=True)
-    no_pressure_statement = models.NullBooleanField(_(u'No pressure statement'), default=None, null=True, blank=True)
-    no_inducement_statement = models.NullBooleanField(_(u'No inducement statement'), default=None, null=True, blank=True)
-    donor_consent_form = models.NullBooleanField(_(u'Copy of consent form'), default=None, null=True, blank=True)
-    donor_consent_form_url = models.URLField(u'URL of donor consent form', null=True, blank=True)
-    known_location_of_consent_form = models.NullBooleanField(_(u'Do you know who holds the consent form'), default=None, null=True, blank=True)
-    copy_of_consent_form_obtainable = models.NullBooleanField(_(u'Is copy of consent form obtainable'), default=None, null=True, blank=True)
-    obtain_new_consent_form = models.NullBooleanField(_(u'Is new form obtainable'), default=None, null=True, blank=True)
-    donor_recontact_agreement = models.NullBooleanField(_(u'Has the donor agreed to be recontacted'), default=None, null=True, blank=True)
-    consent_anticipates_donor_notification_research_results = models.NullBooleanField(_(u'Consent anticipates the donor will be notified of results of research involving the donated samples or derived cells'), default=None, null=True, blank=True)
-    donor_expects_notification_health_implications = models.NullBooleanField(_(u'Donor expects to be informed if, during use of donated material, something with significant health implications for the donor is discovered'), default=None, null=True, blank=True)
-    copy_of_donor_consent_information_english_obtainable = models.NullBooleanField(_(u'Is copy of consent information obtainable in English'), default=None, null=True, blank=True)
-    copy_of_donor_consent_information_english_url = models.URLField(u'URL of donor consent information in English', null=True, blank=True)
-    copy_of_donor_consent_form_english_obtainable = models.NullBooleanField(_(u'Is copy of consent form obtainable in English'), default=None, null=True, blank=True)
-    copy_of_donor_consent_form_english_url = models.URLField(u'URL of donor consent form in English', null=True, blank=True)
-    consent_permits_ips_derivation = models.NullBooleanField(_(u'Consent expressly permits derivation of iPS cells'), default=None, null=True, blank=True)
-    consent_pertains_specific_research_project = models.NullBooleanField(_(u'Consent pertains to one specific research project'), default=None, null=True, blank=True)
-    consent_permits_future_research = models.NullBooleanField(_(u'Consent permits unforeseen future research'), default=None, null=True, blank=True)
-    future_research_permitted_specified_areas = models.NullBooleanField(_(u'Future research is permitted only in relation to specified areas or types of research'), default=None, null=True, blank=True)
-    future_research_permitted_areas = models.TextField(_(u'Future research permitted areas or types'), null=True, blank=True)
-    consent_permits_clinical_treatment = models.NullBooleanField(_(u'Consent permits uses for clinical treatment or human applications'), default=None, null=True, blank=True)
-    formal_permission_for_distribution = models.NullBooleanField(_(u'Formal permission from the owner for distribution'), default=None, null=True, blank=True)
-    consent_permits_research_by_academic_institution = models.NullBooleanField(_(u'Consent permits research by academic institution'), default=None, null=True, blank=True)
-    consent_permits_research_by_org = models.NullBooleanField(_(u'Consent permits research by public organization'), default=None, null=True, blank=True)
-    consent_permits_research_by_non_profit_company = models.NullBooleanField(_(u'Consent permits research by non-profit company'), default=None, null=True, blank=True)
-    consent_permits_research_by_for_profit_company = models.NullBooleanField(_(u'Consent permits research by for-profit company'), default=None, null=True, blank=True)
-    consent_permits_development_of_commercial_products = models.NullBooleanField(_(u'Consent permits development of commercial products'), default=None, null=True, blank=True)
-    consent_expressly_prevents_commercial_development = models.NullBooleanField(_(u'Consent expressly prevents commercial development'), default=None, null=True, blank=True)
-    consent_expressly_prevents_financial_gain = models.NullBooleanField(_(u'Consent expressly prevents financial gain'), default=None, null=True, blank=True)
-    further_constraints_on_use = models.NullBooleanField(_(u'Any further constraints on use'), default=None, null=True, blank=True)
-    further_constraints_on_use_desc = models.TextField(_(u'Further constraints on use'), null=True, blank=True)
-    consent_expressly_permits_indefinite_storage = models.NullBooleanField(_(u'Consent expressly permits indefinite storage'), default=None, null=True, blank=True)
-    consent_prevents_availiability_to_worldwide_research = models.NullBooleanField(_(u'Consent prevents availiability to worldwide research'), default=None, null=True, blank=True)
-    consent_permits_genetic_testing = models.NullBooleanField(_(u'Consent permits genetic testing'), default=None, null=True, blank=True)
-    consent_permits_testing_microbiological_agents_pathogens = models.NullBooleanField(_(u'Consent permits testing for microbiological agents pathogens'), default=None, null=True, blank=True)
-    derived_information_influence_personal_future_treatment = models.NullBooleanField(_(u'Derived information may influence personal future treatment'), default=None, null=True, blank=True)
-    donor_data_protection_informed = models.NullBooleanField(_(u'Donor informed about data protection'), default=None, null=True, blank=True)
-    donated_material_code = models.NullBooleanField(_(u'Donated material is coded'), default=None, null=True, blank=True)
-    donated_material_rendered_unidentifiable = models.NullBooleanField(_(u'Donated material has been rendered unidentifiable'), default=None, null=True, blank=True)
-    donor_identity_protected_rare_disease = models.CharField(u'Donor identity protected', max_length=100, null=True, blank=True, choices=BOOL_EXTENDED_CHOICES)
-    genetic_information_exists = models.NullBooleanField(_(u'Is there genetic information associated with the cell line'), default=None, null=True, blank=True)
-    genetic_information_access_policy = models.CharField(u'Access policy for genetic information derived from the cell line', max_length=100, null=True, blank=True, choices=ACCESS_POLICY_CHOICES)
-    genetic_information_available = models.NullBooleanField(_(u'Is genetic information associated with the cell line available'), default=None, null=True, blank=True)
-    consent_permits_access_medical_records = models.NullBooleanField(_(u'Consent permits access to medical records'), default=None, null=True, blank=True)
-    consent_permits_access_other_clinical_source = models.NullBooleanField(_(u'Consent permits access to other clinical sources'), default=None, null=True, blank=True)
-    medical_records_access_consented = models.NullBooleanField(_(u'Access to ongoing medical records has been consented'), default=None, null=True, blank=True)
-    medical_records_access_consented_organisation_name = models.TextField(_(u'Organisation holding medical records'), null=True, blank=True)
-    consent_permits_stop_of_derived_material_use = models.NullBooleanField(_(u'Consent permits stopping the use of derived material'), default=None, null=True, blank=True)
-    consent_permits_stop_of_delivery_of_information_and_data = models.NullBooleanField(_(u'Consent permits stopping delivery or use of information and data about donor'), default=None, null=True, blank=True)
-    authority_approval = models.NullBooleanField(_(u'Institutional review board/competent authority approval'), default=None, null=True, blank=True)
-    approval_authority_name = models.TextField(_(u'Name of accrediting authority'), null=True, blank=True)
-    approval_number = models.CharField(_(u'Approval number'), max_length=100, null=True, blank=True)
-    ethics_review_panel_opinion_relation_consent_form = models.NullBooleanField(_(u'Ethics review panel provided a favourable opinion in relation of the form of consent'), default=None, null=True, blank=True)
-    ethics_review_panel_opinion_project_proposed_use = models.NullBooleanField(_(u'Ethics review panel provided a favourable opinion in relation to the project'), default=None, null=True, blank=True)
-    recombined_dna_vectors_supplier = models.TextField(_(u'Recombined DNA vectors supplier'), null=True, blank=True)
-    use_or_distribution_constraints = models.NullBooleanField(_(u'Any use or distribution constraints'), default=None, null=True, blank=True)
-    use_or_distribution_constraints_desc = models.TextField(_(u'Use or distribution constraints'), null=True, blank=True)
-    third_party_obligations = models.NullBooleanField(_(u'Any third party obligations'), default=None, null=True, blank=True)
-    third_party_obligations_desc = models.TextField(_(u'Third party obligations'), null=True, blank=True)
+    donor_trace = models.IntegerField(_(u'Donor trace'), null=True, blank=True)
+    irb_approval = models.IntegerField(_(u'IRB approval'), null=True, blank=True)
+    approved_use = models.ForeignKey(ApprovedUse, verbose_name=_(u'Approved use'), null=True, blank=True)
+    informed_consent_reference = models.CharField(_(u'Informed consent reference'), max_length=20, blank=True)
+    restrictions = models.TextField(_(u'Restrictions'), null=True, blank=True)
+    ip_restrictions = models.TextField(_(u'IP restrictions'), null=True, blank=True)
+    jurisdiction = models.ForeignKey(Country, verbose_name=_(u'Jurisdiction'), null=True, blank=True)
+    applicable_legislation_and_regulation = models.TextField(_(u'Applicable legislation and regulation'), null=True, blank=True)
+    managed_access = models.TextField(_(u'Managed access'), null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line legal')
@@ -842,13 +739,12 @@ class Donor(models.Model):
     biosamplesid = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
     gender = models.ForeignKey(Gender, verbose_name=_(u'Gender'), null=True, blank=True)
 
-    providerdonorid = models.CharField(_(u'Provider donor id'), max_length=100, null=True, blank=True)
     countryoforigin = models.ForeignKey('Country', verbose_name=_(u'Country'), null=True, blank=True)
-
     primarydisease = models.ForeignKey('Disease', verbose_name=_(u'Disease'), null=True, blank=True)
     diseaseadditionalinfo = models.CharField(_(u'Disease additional info'), max_length=45, blank=True)
     othercelllinefromdonor = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='celllines_othercelllinefromdonor', null=True, blank=True)
     parentcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='celllines_parentcellline', null=True, blank=True)
+    providerdonorid = models.CharField(_(u'Provider donor id'), max_length=45, blank=True)
     cellabnormalkaryotype = models.CharField(_(u'Cell abnormal karyotype'), max_length=45, blank=True)
     donorabnormalkaryotype = models.CharField(_(u'Donor abnormal karyotype'), max_length=45, blank=True)
     otherclinicalinformation = models.CharField(_(u'Other clinical information'), max_length=100, blank=True)
@@ -1272,19 +1168,6 @@ class CellLineIntegratingVector(models.Model):
         return unicode(self.vector)
 
 
-class CellLineVectorfreereprogramfactors(models.Model):
-
-    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='vector_free_reprogramming_factors')
-    factor = models.ForeignKey(Vectorfreereprogramfactor, verbose_name=_(u'Vector-free reprogramming factor'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line Vector-free Programming Factor')
-        verbose_name_plural = _(u'Cell line Vector-free Programming Factors')
-
-    def __unicode__(self):
-        return unicode(self.factor)
-
-
 # -----------------------------------------------------------------------------
 # Cell line differentation
 
@@ -1404,94 +1287,70 @@ class UndifferentiatedMorphologyMarkerExpressionProfileMolecule(MarkerMoleculeBa
 
 # -------------------------
 
-class Marker(models.Model):
+# class Marker(models.Model):
 
-    name = models.CharField(_(u'Marker'), max_length=20, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Marker')
-        verbose_name_plural = _(u'Markers')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class Celllinediffpotency(models.Model):
-    diffpotencycellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    passagenumber = models.CharField(_(u'Passage number'), max_length=5, blank=True)
-    germlayer = models.ForeignKey('Germlayer', verbose_name=_(u'Germlayer'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line diff potency')
-        verbose_name_plural = _(u'Cell line diff potencies')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class Celllinediffpotencymarker(models.Model):
-    celllinediffpotency = models.ForeignKey('Celllinediffpotency', verbose_name=_(u'Cell line diff potency'), null=True, blank=True)
-    morphologymethod = models.ForeignKey('Morphologymethod', verbose_name=_(u'Morphology method'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line diff potency marker')
-        verbose_name_plural = _(u'Cell line diff potency markers')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class Celllinediffpotencymolecule(models.Model):
-    celllinediffpotencymarker = models.IntegerField(_(u'Cell line diff potency marker'), null=True, blank=True)
-    diffpotencymolecule = models.ForeignKey('Molecule', verbose_name=_(u'Molecule'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line diff potency molecule')
-        verbose_name_plural = _(u'Cell line diff potency molecules')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class Celllinemarker(models.Model):
-    markercellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), unique=True)
-    morphologymethod = models.ForeignKey('Morphologymethod', verbose_name=_(u'Morphology method'), null=True, blank=True)
-    celllinemarker = models.ForeignKey('Marker', verbose_name=_(u'Marker'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line marker')
-        verbose_name_plural = _(u'Cell line markers')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-# -----------------------------------------------------------------------------
-
-# class CellLineLegal(models.Model):
-
-#     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
-
-#     donor_consent = models.NullBooleanField(_(u'Donor consent'), default=None, null=True, blank=True)
-#     donor_trace = models.IntegerField(_(u'Donor trace'), null=True, blank=True)
-#     irb_approval = models.IntegerField(_(u'IRB approval'), null=True, blank=True)
-#     approved_use = models.ForeignKey(ApprovedUse, verbose_name=_(u'Approved use'), null=True, blank=True)
-#     informed_consent_reference = models.CharField(_(u'Informed consent reference'), max_length=20, blank=True)
-#     restrictions = models.TextField(_(u'Restrictions'), null=True, blank=True)
-#     ip_restrictions = models.TextField(_(u'IP restrictions'), null=True, blank=True)
-#     jurisdiction = models.ForeignKey(Country, verbose_name=_(u'Jurisdiction'), null=True, blank=True)
-#     applicable_legislation_and_regulation = models.TextField(_(u'Applicable legislation and regulation'), null=True, blank=True)
-#     managed_access = models.TextField(_(u'Managed access'), null=True, blank=True)
+#     name = models.CharField(_(u'Marker'), max_length=20, blank=True)
 
 #     class Meta:
-#         verbose_name = _(u'Cell line legal')
-#         verbose_name_plural = _(u'Cell line legal')
+#         verbose_name = _(u'Marker')
+#         verbose_name_plural = _(u'Markers')
+#         ordering = ['name']
 
 #     def __unicode__(self):
-#         return unicode(self.cell_line)
+#         return self.name
+
+
+# class Celllinediffpotency(models.Model):
+#     diffpotencycellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
+#     passagenumber = models.CharField(_(u'Passage number'), max_length=5, blank=True)
+#     germlayer = models.ForeignKey('Germlayer', verbose_name=_(u'Germlayer'), null=True, blank=True)
+
+#     class Meta:
+#         verbose_name = _(u'Cell line diff potency')
+#         verbose_name_plural = _(u'Cell line diff potencies')
+#         ordering = []
+
+#     def __unicode__(self):
+#         return u'%s' % (self.id,)
+
+
+# class Celllinediffpotencymarker(models.Model):
+#     celllinediffpotency = models.ForeignKey('Celllinediffpotency', verbose_name=_(u'Cell line diff potency'), null=True, blank=True)
+#     morphologymethod = models.ForeignKey('Morphologymethod', verbose_name=_(u'Morphology method'), null=True, blank=True)
+
+#     class Meta:
+#         verbose_name = _(u'Cell line diff potency marker')
+#         verbose_name_plural = _(u'Cell line diff potency markers')
+#         ordering = []
+
+#     def __unicode__(self):
+#         return u'%s' % (self.id,)
+
+
+# class Celllinediffpotencymolecule(models.Model):
+#     celllinediffpotencymarker = models.IntegerField(_(u'Cell line diff potency marker'), null=True, blank=True)
+#     diffpotencymolecule = models.ForeignKey('Molecule', verbose_name=_(u'Molecule'), null=True, blank=True)
+
+#     class Meta:
+#         verbose_name = _(u'Cell line diff potency molecule')
+#         verbose_name_plural = _(u'Cell line diff potency molecules')
+#         ordering = []
+
+#     def __unicode__(self):
+#         return u'%s' % (self.id,)
+
+
+# class Celllinemarker(models.Model):
+#     markercellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), unique=True)
+#     morphologymethod = models.ForeignKey('Morphologymethod', verbose_name=_(u'Morphology method'), null=True, blank=True)
+#     celllinemarker = models.ForeignKey('Marker', verbose_name=_(u'Marker'), null=True, blank=True)
+
+#     class Meta:
+#         verbose_name = _(u'Cell line marker')
+#         verbose_name_plural = _(u'Cell line markers')
+#         ordering = []
+
+#     def __unicode__(self):
+#         return u'%s' % (self.id,)
 
 # -----------------------------------------------------------------------------
