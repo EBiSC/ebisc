@@ -110,8 +110,11 @@ class Cellline(models.Model):
 
     celllineaccepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
 
-    biosamplesid = models.CharField(_(u'Biosamples ID'), unique=True, max_length=12)
     celllinename = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
+
+    biosamplesid = models.CharField(_(u'Biosamples ID'), unique=True, max_length=12)
+    hescregid = models.CharField(_(u'hESCreg ID'), unique=True, max_length=10, null=True, blank=True)
+    ecaccid = models.CharField(_(u'ECACC ID'), unique=True, max_length=10, null=True, blank=True)
 
     donor = models.ForeignKey('Donor', verbose_name=_(u'Donor'), null=True, blank=True)
     donor_age = models.ForeignKey(AgeRange, verbose_name=_(u'Age'), null=True, blank=True)
