@@ -133,7 +133,6 @@ class Cellline(models.Model):
     celllinetissuedate = models.DateField(_(u'Cell line tissue date'), null=True, blank=True)
     celllinenamesynonyms = models.CharField(_(u'Cell line name synonyms'), max_length=500, null=True, blank=True)
     depositorscelllineuri = models.CharField(_(u'Depositors cell line URI'), max_length=45, blank=True)
-    celllineecaccurl = models.URLField(_(u'Cell line ECACC URL'), null=True, blank=True)
 
     comments = models.TextField(_(u'Comments'), null=True, blank=True)
 
@@ -144,6 +143,10 @@ class Cellline(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.biosamplesid,)
+
+    @property
+    def ecacc_url(self):
+        return 'https://www.phe-culturecollections.org.uk/products/celllines/generalcell/detail.jsp?refId=%s&collection=ecacc_gc' % self.ecaccid
 
     def to_elastic(self):
 

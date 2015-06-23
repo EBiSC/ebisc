@@ -95,7 +95,7 @@ class CellLineNonIntegratingVectorInline(admin.StackedInline):
 
 class CelllineAdmin(admin.ModelAdmin):
 
-    list_display = ['biosamplesid', 'celllinename', 'donor', 'celllineprimarydisease', 'celllinestatus', 'celllinecelltype', 'celllinecollection', 'celllinetissuesource', 'celllinetissuetreatment', 'celllinetissuedate', 'celllinenamesynonyms', 'celllineecaccurl']
+    list_display = ['biosamplesid', 'celllinename', 'donor', 'celllineprimarydisease', 'celllinestatus', 'celllinecelltype', 'celllinecollection', 'celllinetissuesource', 'celllinetissuetreatment', 'celllinetissuedate', 'celllinenamesynonyms']
     inlines = (
         CellLineCharacterizationInline,
         CelllinechecklistInline,
