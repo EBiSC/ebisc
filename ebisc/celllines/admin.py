@@ -119,12 +119,6 @@ class CelllinecollectionAdmin(admin.ModelAdmin):
 admin.site.register(Celllinecollection, CelllinecollectionAdmin)
 
 
-class CelllinecommentsAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Celllinecomments, CelllinecommentsAdmin)
-
-
 class CellLineCultureMediumSupplementAdmin(admin.ModelAdmin):
     pass
 

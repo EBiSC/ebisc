@@ -133,8 +133,9 @@ class Cellline(models.Model):
     celllinetissuedate = models.DateField(_(u'Cell line tissue date'), null=True, blank=True)
     celllinenamesynonyms = models.CharField(_(u'Cell line name synonyms'), max_length=500, null=True, blank=True)
     depositorscelllineuri = models.CharField(_(u'Depositors cell line URI'), max_length=45, blank=True)
-    celllinecomments = models.TextField(_(u'Cell line comments'), null=True, blank=True)
     celllineecaccurl = models.URLField(_(u'Cell line ECACC URL'), null=True, blank=True)
+
+    comments = models.TextField(_(u'Comments'), null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line')
@@ -263,19 +264,6 @@ class Celllinecollection(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.celllinecollectiontotal,)
-
-
-class Celllinecomments(models.Model):
-    commentscellline = models.IntegerField(_(u'Comments cell line'), null=True, blank=True)
-    celllinecomments = models.TextField(blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line comments')
-        verbose_name_plural = _(u'Cell line comments')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
 
 
 class Celllinecultureconditions(models.Model):
