@@ -233,12 +233,14 @@
         <tr><td class="label">Depositor can obtain a copy of consent form:</td><td>{{ cellline.celllinelegal.copy_of_consent_form_obtainable|yesno:"yes,no,-" }}</td></tr>
         <tr><td class="label">Depositor can arrange to obtain a new form of consent from the donor:</td><td>{{ cellline.celllinelegal.obtain_new_consent_form|yesno:"yes,no,-" }}</td></tr>
         <tr><td class="label">Donor has agreed to be re-contacted for re-consenting:</td><td>{{ cellline.celllinelegal.donor_recontact_agreement|yesno:"yes,no,-" }}</td></tr>
-        <tr><td class="label">Consent anticipates that the donor will be notified of research results:</td><td>{{ cellline.celllinelegal.consent_anticipates_donor_notification_research_results|yesno:"yes,no,-" }}</td></tr>
-        <tr><td class="label">Donor expects to be notified if significant health implications are discovered:</td><td>{{ cellline.celllinelegal.donor_expects_notification_health_implications|yesno:"yes,no,-" }}</td></tr>
+        {% if cellline.celllinelegal.donor_recontact_agreement %}
+            <tr><td class="label">Consent anticipates that the donor will be notified of research results:</td><td>{{ cellline.celllinelegal.consent_anticipates_donor_notification_research_results|yesno:"yes,no,-" }}</td></tr>
+            <tr><td class="label">Donor expects to be notified if significant health implications are discovered:</td><td>{{ cellline.celllinelegal.donor_expects_notification_health_implications|yesno:"yes,no,-" }}</td></tr>
+        {% endif %}
     {% endif %}
 
     <tr>
-        <td class="label">Depositor can provide a copy of consent information provided to donor (in English):</td>
+        <td class="label">Depositor can provide a copy of consent<br/>information provided to donor (in English):</td>
         <td>{{ cellline.celllinelegal.copy_of_donor_consent_information_english_obtainable|yesno:"yes,no,-" }}
         {% if cellline.celllinelegal.copy_of_donor_consent_information_english_url %}
             <i>file</i>
@@ -247,7 +249,7 @@
     </tr>
     
     <tr>
-        <td class="label">Depositor can provide a copy of consent form (in English):</td>
+        <td class="label">Depositor can provide a copy<br/>of consent form (in English):</td>
         <td>{{ cellline.celllinelegal.copy_of_donor_consent_form_english_obtainable|yesno:"yes,no,-" }}
         {% if cellline.celllinelegal.copy_of_donor_consent_form_english_url %}
             <i>file</i>
@@ -258,8 +260,11 @@
     <tr><th class="sub-title"><h3>Consent Permissions and Restrictions</h3></th><th></th></tr>
 
     <tr><td class="label">Consent expressly permits derivation of iPS cells:</td><td>{{ cellline.celllinelegal.consent_permits_ips_derivation|yesno:"yes,no,-" }}</td></tr>
+
     <tr><td class="label">Consent pertains to one specific research project:</td><td>{{ cellline.celllinelegal.consent_pertains_specific_research_project|yesno:"yes,no,-" }}</td></tr>
+
     <tr><td class="label">Consent permits unforeseen future research:</td><td>{{ cellline.celllinelegal.consent_permits_future_research|yesno:"yes,no,-" }}</td></tr>
+
     <tr><td class="label">Future research is permitted only in some areas or types of research:</td><td>{{ cellline.celllinelegal.future_research_permitted_specified_areas|yesno:"yes,no,-" }}
     {% if cellline.celllinelegal.future_research_permitted_areas %}
      - {{ cellline.celllinelegal.future_research_permitted_areas }}
@@ -268,6 +273,7 @@
     </tr>
 
     <tr><td class="label">Consent permits uses for clinical treatment or human applications:</td><td>{{ cellline.celllinelegal.consent_permits_clinical_treatment|yesno:"yes,no,-" }}</td></tr>
+
     <tr><td class="label">Formal permission from the owner for distribution:</td><td>{{ cellline.celllinelegal.formal_permission_for_distribution|yesno:"yes,no,-" }}</td></tr>
 
     <tr>
@@ -301,8 +307,8 @@
 
     <tr><th class="sub-title"><h3>Storage of and Access to Material</h3></th><th></th></tr>
 
-    <tr><td class="label">Consent expressly permits indefinite storage of donated material and derived cells:</td><td>{{ cellline.celllinelegal.consent_expressly_permits_indefinite_storage|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Does consent prevent donated material and derived cells from being made available to research anywhere in the world?</td><td>{{ cellline.celllinelegal.consent_prevents_availiability_to_worldwide_research|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Consent expressly permits indefinite storage of<br/>donated material and derived cells:</td><td>{{ cellline.celllinelegal.consent_expressly_permits_indefinite_storage|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Does consent prevent donated material and derived<br/>cells from being made available to research anywhere in the world?</td><td>{{ cellline.celllinelegal.consent_prevents_availiability_to_worldwide_research|yesno:"yes,no,-" }}</td></tr>
 
     <tr><th class="sub-title"><h3>Genetic and microbiological testing</h3></th><th></th></tr>
 
@@ -335,8 +341,8 @@
 
     <tr><th class="sub-title"><h3>Withdrawal</h3></th><th></th></tr>
 
-    <tr><td class="label">Consent permits the donor, upon withdrawal of consent, to stop the use of derived material:</td><td>{{ cellline.celllinelegal.consent_permits_stop_of_derived_material_use|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Consent permits the donor, upon withdrawal of consent, to stop delivery or use of information and data about donor:</td><td>{{ cellline.celllinelegal.consent_permits_stop_of_delivery_of_information_and_data|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Consent permits the donor, upon withdrawal of consent,<br/>to stop the use of derived material:</td><td>{{ cellline.celllinelegal.consent_permits_stop_of_derived_material_use|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Consent permits the donor, upon withdrawal of consent,<br/>to stop delivery or use of information and data about donor:</td><td>{{ cellline.celllinelegal.consent_permits_stop_of_delivery_of_information_and_data|yesno:"yes,no,-" }}</td></tr>
 
     <tr><th class="sub-title"><h3>Ethics Review Panel Details</h3></th><th></th></tr>
 
@@ -346,8 +352,8 @@
     <tr><td class="label">Approval number:</td><td>{{ cellline.celllinelegal.approval_number|default:"-" }}</td></tr>
     {% endif%}
 
-    <tr><td class="label">Ethics review panel provided a favourable opinion in relation of the form of consent:</td><td>{{ cellline.celllinelegal.ethics_review_panel_opinion_relation_consent_form|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Ethics review panel provided a favourable opinion in relation to the project:</td><td>{{ cellline.celllinelegal.ethics_review_panel_opinion_project_proposed_use|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Ethics review panel provided a favourable<br/>opinion in relation of the form of consent:</td><td>{{ cellline.celllinelegal.ethics_review_panel_opinion_relation_consent_form|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Ethics review panel provided a favourable<br/>opinion in relation to the project:</td><td>{{ cellline.celllinelegal.ethics_review_panel_opinion_project_proposed_use|yesno:"yes,no,-" }}</td></tr>
 
     <tr><th class="sub-title"><h3>Constraints to Line Usage</h3></th><th></th></tr>
 
