@@ -823,6 +823,7 @@ class Donor(models.Model):
 
     provider_donor_ids = ArrayField(models.CharField(max_length=20), verbose_name=_(u'Provider donor ids'), null=True)
     countryoforigin = models.ForeignKey('Country', verbose_name=_(u'Country of origin'), null=True, blank=True)
+    ethnicity = models.CharField(_(u'Ethnicity'), max_length=100, null=True, blank=True)
 
     primarydisease = models.ForeignKey('Disease', verbose_name=_(u'Disease'), null=True, blank=True)
     diseaseadditionalinfo = models.CharField(_(u'Disease additional info'), max_length=45, blank=True)
