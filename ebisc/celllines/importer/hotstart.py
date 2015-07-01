@@ -26,6 +26,15 @@ def value_of_json(source, field, cast=None):
         else:
             return False
 
+    elif cast == 'nullbool':
+
+        if source.get(field, None) == '1':
+            return True
+        elif source.get(field, None) == '0':
+            return False
+        else:
+            return None
+
     elif cast == 'int':
 
         try:
@@ -194,14 +203,76 @@ def parse_donor(valuef, source):
 @inject_valuef
 def parse_legal(valuef, source, cell_line):
 
-    if valuef('informed_consent_flag', 'bool'):
+    cell_line_legal = CellLineLegal(
+        cell_line=cell_line,
+        donor_consent=valuef('hips_consent_obtained_from_donor_of_tissue_flag', 'nullbool'),
+        no_pressure_statement=valuef('hips_no_pressure_stat_flag', 'nullbool'),
+        no_inducement_statement=valuef('hips_no_inducement_stat_flag', 'nullbool'),
+        donor_consent_form=valuef('hips_informed_consent_flag', 'nullbool'),
+        known_location_of_consent_form=valuef('hips_holding_original_donor_consent_flag', 'nullbool'),
+        copy_of_consent_form_obtainable=valuef('hips_holding_original_donor_consent_copy_of_existing_flag', 'nullbool'),
+        obtain_new_consent_form=valuef('hips_arrange_obtain_new_consent_form_flag', 'nullbool'),
+        donor_recontact_agreement=valuef('hips_donor_recontact_agreement_flag', 'nullbool'),
+        consent_anticipates_donor_notification_research_results=valuef('hips_consent_anticipates_donor_notification_research_results_flag', 'nullbool'),
+        donor_expects_notification_health_implications=valuef('hips_donor_expects_notification_health_implications_flag', 'nullbool'),
+        copy_of_donor_consent_information_english_obtainable=valuef('hips_provide_copy_of_donor_consent_information_english_flag', 'nullbool'),
+        copy_of_donor_consent_form_english_obtainable=valuef('hips_provide_copy_of_donor_consent_english_flag', 'nullbool'),
 
-        cell_line_legal = CellLineLegal(
-            cell_line=cell_line,
-            donor_consent=valuef('informed_consent_flag', 'bool'),
-        )
+        consent_permits_ips_derivation=valuef('hips_consent_permits_ips_derivation_flag', 'nullbool'),
+        consent_pertains_specific_research_project=valuef('hips_consent_pertains_specific_research_project_flag', 'nullbool'),
+        consent_permits_future_research=valuef('hips_consent_permits_future_research_flag', 'nullbool'),
+        future_research_permitted_specified_areas=valuef('hips_future_research_permitted_specified_areas_flag', 'nullbool'),
+        future_research_permitted_areas=valuef('hips_future_research_permitted_areas'),
+        consent_permits_clinical_treatment=valuef('hips_consent_permits_clinical_treatment_flag', 'nullbool'),
+        formal_permission_for_distribution=valuef('hips_formal_permission_for_distribution_flag', 'nullbool'),
+        consent_permits_research_by_academic_institution=valuef('hips_consent_permits_research_by_academic_institution_flag', 'nullbool'),
+        consent_permits_research_by_org=valuef('hips_consent_permits_research_by_org_flag', 'nullbool'),
+        consent_permits_research_by_non_profit_company=valuef('hips_consent_permits_research_by_non_profit_company_flag', 'nullbool'),
+        consent_permits_research_by_for_profit_company=valuef('hips_consent_permits_research_by_for_profit_company_flag', 'nullbool'),
+        consent_permits_development_of_commercial_products=valuef('hips_consent_permits_development_of_commercial_products_flag', 'nullbool'),
+        consent_expressly_prevents_commercial_development=valuef('hips_consent_expressly_prevents_commercial_development_flag', 'nullbool'),
+        consent_expressly_prevents_financial_gain=valuef('hips_consent_expressly_prevents_financial_gain_flag', 'nullbool'),
+        further_constraints_on_use=valuef('hips_further_constraints_on_use_flag', 'nullbool'),
+        further_constraints_on_use_desc=valuef('hips_further_constraints_on_use'),
 
-        cell_line_legal.save()
+        consent_expressly_permits_indefinite_storage=valuef('hips_consent_expressly_permits_indefinite_storage_flag', 'nullbool'),
+        consent_prevents_availiability_to_worldwide_research=valuef('hips_consent_prevents_availiability_to_worldwide_research_flag', 'nullbool'),
+
+        consent_permits_genetic_testing=valuef('hips_consent_permits_genetic_testing_flag', 'nullbool'),
+        consent_permits_testing_microbiological_agents_pathogens=valuef('hips_consent_permits_testing_microbiological_agents_pathogens_flag', 'nullbool'),
+        derived_information_influence_personal_future_treatment=valuef('hips_derived_information_influence_personal_future_treatment_flag', 'nullbool'),
+
+        donor_data_protection_informed=valuef('hips_donor_data_protection_informed_flag', 'nullbool'),
+        donated_material_code=valuef('hips_donated_material_code_flag', 'nullbool'),
+        donated_material_rendered_unidentifiable=valuef('hips_donated_material_rendered_unidentifiable_flag', 'nullbool'),
+        genetic_information_exists=valuef('genetic_information_associated_flag', 'nullbool'),
+        genetic_information_access_policy=valuef('hips_genetic_information_access_policy'),
+        genetic_information_available=valuef('genetic_information_available_flag', 'nullbool'),
+
+        consent_permits_access_medical_records=valuef('hips_consent_permits_access_medical_records_flag', 'nullbool'),
+        consent_permits_access_other_clinical_source=valuef('hips_consent_permits_access_other_clinical_source_flag', 'nullbool'),
+        medical_records_access_consented=valuef('hips_medical_records_access_consented_flag', 'nullbool'),
+        medical_records_access_consented_organisation_name=valuef('hips_medical_records_access_consented_organisation_name'),
+
+        consent_permits_stop_of_derived_material_use=valuef('hips_consent_permits_stop_of_derived_material_use_flag', 'nullbool'),
+        consent_permits_stop_of_delivery_of_information_and_data=valuef('hips_consent_permits_delivery_of_information_and_data_flag', 'nullbool'),
+
+        authority_approval=valuef('hips_approval_flag', 'nullbool'),
+        approval_authority_name=valuef('hips_approval_auth_name'),
+        approval_number=valuef('hips_approval_number'),
+        ethics_review_panel_opinion_relation_consent_form=valuef('hips_ethics_review_panel_opinion_relation_consent_form_flag', 'nullbool'),
+        ethics_review_panel_opinion_project_proposed_use=valuef('hips_ethics_review_panel_opinion_project_proposed_use_flag', 'nullbool'),
+
+        recombined_dna_vectors_supplier=valuef('hips_recombined_dna_vectors_supplier'),
+        use_or_distribution_constraints=valuef('hips_use_or_distribution_constraints_flag', 'nullbool'),
+        use_or_distribution_constraints_desc=valuef('hips_use_or_distribution_constraints'),
+        third_party_obligations=valuef('hips_third_party_obligations_flag', 'nullbool'),
+        third_party_obligations_desc=valuef('hips_third_party_obligations'),
+    )
+
+    logger.info('Added cell line legal: %s' % cell_line_legal)
+
+    cell_line_legal.save()
 
 
 @inject_valuef

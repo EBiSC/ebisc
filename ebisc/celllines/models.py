@@ -502,6 +502,7 @@ class CellLineLegal(models.Model):
     copy_of_donor_consent_information_english_url = models.URLField(u'URL of donor consent information in English', null=True, blank=True)
     copy_of_donor_consent_form_english_obtainable = models.NullBooleanField(_(u'Is copy of consent form obtainable in English'))
     copy_of_donor_consent_form_english_url = models.URLField(u'URL of donor consent form in English', null=True, blank=True)
+
     consent_permits_ips_derivation = models.NullBooleanField(_(u'Consent expressly permits derivation of iPS cells'))
     consent_pertains_specific_research_project = models.NullBooleanField(_(u'Consent pertains to one specific research project'))
     consent_permits_future_research = models.NullBooleanField(_(u'Consent permits unforeseen future research'))
@@ -518,11 +519,14 @@ class CellLineLegal(models.Model):
     consent_expressly_prevents_financial_gain = models.NullBooleanField(_(u'Consent expressly prevents financial gain'))
     further_constraints_on_use = models.NullBooleanField(_(u'Any further constraints on use'))
     further_constraints_on_use_desc = models.TextField(_(u'Further constraints on use'), null=True, blank=True)
+
     consent_expressly_permits_indefinite_storage = models.NullBooleanField(_(u'Consent expressly permits indefinite storage'))
     consent_prevents_availiability_to_worldwide_research = models.NullBooleanField(_(u'Consent prevents availiability to worldwide research'))
+
     consent_permits_genetic_testing = models.NullBooleanField(_(u'Consent permits genetic testing'))
     consent_permits_testing_microbiological_agents_pathogens = models.NullBooleanField(_(u'Consent permits testing for microbiological agents pathogens'))
     derived_information_influence_personal_future_treatment = models.NullBooleanField(_(u'Derived information may influence personal future treatment'))
+
     donor_data_protection_informed = models.NullBooleanField(_(u'Donor informed about data protection'))
     donated_material_code = models.NullBooleanField(_(u'Donated material is coded'))
     donated_material_rendered_unidentifiable = models.NullBooleanField(_(u'Donated material has been rendered unidentifiable'))
@@ -530,17 +534,21 @@ class CellLineLegal(models.Model):
     genetic_information_exists = models.NullBooleanField(_(u'Is there genetic information associated with the cell line'))
     genetic_information_access_policy = models.CharField(u'Access policy for genetic information derived from the cell line', max_length=50, null=True, blank=True, choices=ACCESS_POLICY_CHOICES)
     genetic_information_available = models.NullBooleanField(_(u'Is genetic information associated with the cell line available'))
+
     consent_permits_access_medical_records = models.NullBooleanField(_(u'Consent permits access to medical records'))
     consent_permits_access_other_clinical_source = models.NullBooleanField(_(u'Consent permits access to other clinical sources'))
     medical_records_access_consented = models.NullBooleanField(_(u'Access to ongoing medical records has been consented'))
     medical_records_access_consented_organisation_name = models.TextField(_(u'Organisation holding medical records'), null=True, blank=True)
+
     consent_permits_stop_of_derived_material_use = models.NullBooleanField(_(u'Consent permits stopping the use of derived material'))
     consent_permits_stop_of_delivery_of_information_and_data = models.NullBooleanField(_(u'Consent permits stopping delivery or use of information and data about donor'))
+
     authority_approval = models.NullBooleanField(_(u'Institutional review board/competent authority approval'))
     approval_authority_name = models.TextField(_(u'Name of accrediting authority'), null=True, blank=True)
     approval_number = models.CharField(_(u'Approval number'), max_length=100, null=True, blank=True)
     ethics_review_panel_opinion_relation_consent_form = models.NullBooleanField(_(u'Ethics review panel provided a favourable opinion in relation of the form of consent'))
     ethics_review_panel_opinion_project_proposed_use = models.NullBooleanField(_(u'Ethics review panel provided a favourable opinion in relation to the project'))
+
     recombined_dna_vectors_supplier = models.TextField(_(u'Recombined DNA vectors supplier'), null=True, blank=True)
     use_or_distribution_constraints = models.NullBooleanField(_(u'Any use or distribution constraints'))
     use_or_distribution_constraints_desc = models.TextField(_(u'Use or distribution constraints'), null=True, blank=True)
