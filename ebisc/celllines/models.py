@@ -177,7 +177,7 @@ class CelllineBatch(models.Model):
 
     cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'))
     biosamplesid = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
-    batchid = models.CharField(_(u'Batch ID'), max_length=10, unique=True)
+    batchid = models.CharField(_(u'Batch ID'), max_length=10, unique=True, null=True, blank=True)
     status = models.CharField(_(u'Status'), max_length=10, choices=STATUS_CHOICES)
 
     class Meta:
