@@ -173,17 +173,15 @@ class Cellline(models.Model):
 
 class CelllineBatch(models.Model):
 
-    STATUS_CHOICES = ()
-
     cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'))
+    batch_id = models.CharField(_(u'Batch ID'), max_length=12)
     biosamplesid = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
-    batchid = models.CharField(_(u'Batch ID'), max_length=10, unique=True, null=True, blank=True)
-    status = models.CharField(_(u'Status'), max_length=10, choices=STATUS_CHOICES)
 
     class Meta:
         verbose_name = _(u'Cell line batch')
         verbose_name_plural = _(u'Cell line batches')
         ordering = ['biosamplesid']
+        unique_together = (('cell_line', 'batch_id'))
 
     def __unicode__(self):
         return u'%s' % (self.biosamplesid,)
@@ -191,12 +189,10 @@ class CelllineBatch(models.Model):
 
 class CelllineAliquot(models.Model):
 
-    STATUS_CHOICES = ()
-
     batch = models.ForeignKey('CelllineBatch', verbose_name=_(u'Cell line'))
     biosamplesid = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
-    derived_from = models.CharField(_(u'Derived from'), max_length=12)
-    status = models.CharField(_(u'Status'), max_length=10, choices=STATUS_CHOICES)
+
+    derived_from_aliqot = models.ForeignKey('self', verbose_name=_(u'Derived from aliquot'), null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line aliquot')
