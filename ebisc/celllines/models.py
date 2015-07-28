@@ -177,6 +177,13 @@ class CelllineBatch(models.Model):
     batch_id = models.CharField(_(u'Batch ID'), max_length=12)
     biosamplesid = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
 
+    passage_number = models.IntegerField(_(u'Passage number'), null=True, blank=True)
+    cells_per_vial = models.CharField(_(u'Cells per vial'), max_length=50, null=True, blank=True)
+
+    vials_at_roslin = models.IntegerField(_(u'Vials at Central facility'), null=True, blank=True)
+    vials_shipped_to_ecacc = models.IntegerField(_(u'Vials shipped to ECACC'), null=True, blank=True)
+    vials_shipped_to_fraunhoffer = models.IntegerField(_(u'Vials shipped to Fraunhoffer'), null=True, blank=True)
+
     class Meta:
         verbose_name = _(u'Cell line batch')
         verbose_name_plural = _(u'Cell line batches')
@@ -292,6 +299,23 @@ class Celllinecultureconditions(models.Model):
     class Meta:
         verbose_name = _(u'Cell line culture conditions')
         verbose_name_plural = _(u'Cell line culture conditions')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class Batchcultureconditions(models.Model):
+
+    batch = models.OneToOneField(CelllineBatch, verbose_name=_(u'Batch'))
+
+    culture_medium = models.ForeignKey('CultureMedium', verbose_name=_(u'Culture medium'), null=True, blank=True)
+    surface_coating = models.ForeignKey('SurfaceCoating', verbose_name=_(u'Matrix'), null=True, blank=True)
+    passagemethod = models.CharField(_(u'Passage method'), max_length=100, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Batch culture conditions')
+        verbose_name_plural = _(u'Batch culture conditions')
         ordering = []
 
     def __unicode__(self):
