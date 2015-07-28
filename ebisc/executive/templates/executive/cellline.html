@@ -22,12 +22,7 @@
     {% for batch in cellline.batch.all %}
     <li><a href="javascript:void(0)" class="js-accordion-trigger">{{ batch.biosamplesid }} <small>({{ batch.aliquot.count }} vials)</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
         <div class="content">
-        <p>Vial Biosample IDS</p>
-        <ul class="biosample-ids">
-        {% for aliquot in batch.aliquot.all %}
-            <li>{{ aliquot.biosamplesid }}</li>
-        {% endfor %}
-        </ul>
+        <a href="{% url 'executive:batch_data' cellline.biosamplesid batch.biosamplesid %}">Download vial Biosample IDs</a>
         </div>
     </li>
     {% endfor%}

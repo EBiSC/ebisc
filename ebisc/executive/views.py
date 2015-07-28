@@ -1,3 +1,6 @@
+import csv
+
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.shortcuts import redirect
@@ -7,7 +10,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import permission_required
 
 from ebisc.site.views import render
-from ebisc.celllines.models import Cellline
+from ebisc.celllines.models import Cellline, CelllineBatch
 
 
 @permission_required('site.can_view_executive_dashboard', raise_exception=True)
@@ -78,6 +81,26 @@ def cellline(request, biosamples_id):
     return render(request, 'executive/cellline.html', {
         'cellline': get_object_or_404(Cellline, biosamplesid=biosamples_id)
     })
+
+
+@permission_required('site.can_view_executive_dashboard', raise_exception=True)
+def batch_data(request, biosamples_id, batch_biosample_id):
+
+    '''Return batch data as CSV file.'''
+
+    batch = get_object_or_404(CelllineBatch, biosamplesid=batch_biosample_id, cell_line__biosamplesid=biosamples_id)
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="{}_{}.csv"'.format(batch.cell_line.celllinename, batch.batch_id)
+
+    writer = csv.writer(response)
+
+    writer.writerow(['Cell line Biosample ID', 'Cell line name', 'Batch Biosample ID', 'Batch ID', 'Vial Biosample ID'])
+
+    for aliquot in batch.aliquot.all():
+        writer.writerow([batch.cell_line.biosamplesid, batch.cell_line.celllinename, batch.biosamplesid, batch.batch_id, aliquot.biosamplesid])
+
+    return response
 
 
 @permission_required('site.can_manage_executive_dashboard', raise_exception=True)
