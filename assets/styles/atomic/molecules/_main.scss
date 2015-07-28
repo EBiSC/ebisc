@@ -76,6 +76,14 @@
   @extend %card;
 }
 
+.batches {
+  @extend %card;
+  margin-top: 10px;
+
+  h2 {
+    margin-top: 0;
+  }
+}
 
 // Accepted status
 

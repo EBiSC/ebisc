@@ -4,7 +4,7 @@
 
 {% block article %}
 
-<h1>Executive dashboard <small>Cell line {{ cellline.celllinename }}</small></h1>
+<h1>{{ cellline.celllinename }} <small>{{ cellline.biosamplesid }}</small></h1>
 
 <div class="status">
     {% if cellline.celllineaccepted == 'accepted' or not perms.site.can_manage_executive_dashboard %}
@@ -15,6 +15,26 @@
     {% include 'executive/accepted-status.html' %}
 </div>
 
+<div class="batches">
+    <h2>Batches</h2>
+
+    <ul class="accordion">
+    {% for batch in cellline.batch.all %}
+    <li><a href="javascript:void(0)" class="js-accordion-trigger">{{ batch.biosamplesid }} <small>({{ batch.aliquot.count }} vials)</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
+        <div class="content">
+        <p>Vial Biosample IDS</p>
+        <ul class="biosample-ids">
+        {% for aliquot in batch.aliquot.all %}
+            <li>{{ aliquot.biosamplesid }}</li>
+        {% endfor %}
+        </ul>
+        </div>
+    </li>
+    {% endfor%}
+    </ul>
+
+</div>
+
 {% include 'search/__cellline_data__.html' %}
 
 {% endblock %}
@@ -23,4 +43,11 @@
 {% if perms.site.can_manage_executive_dashboard %}
 {% include 'executive/accepted-script.html' %}
 {% endif %}
+<script>
+$('.js-accordion-trigger').bind('click', function(e){
+  jQuery(this).parent().find('.content').slideToggle('fast');  // apply the toggle to the ul
+  jQuery(this).parent().toggleClass('is-expanded');
+  e.preventDefault();
+});
+</script>
 {% endblock %}

@@ -21,6 +21,7 @@ def dashboard(request):
         ('disease', 'Disease', 'celllineprimarydisease'),
         ('registrationDate', 'Date of Registration', None),
         ('depositor', 'Depositor', 'generator__organizationname'),
+        ('batches', 'Batches', None),
         ('quantity', 'QTY', None),
         ('sold', 'Sold', None),
         ('accepted', 'Accepted', 'celllineaccepted'),
