@@ -208,7 +208,7 @@ Grouping of cell line info (not to be done yet, wait for hESCreg??):
 
 - Protocols (available in SOP format)? Kevin said would provide human readable format - there is a video for ToxBank protocol management
 
-? - Passage Number (measured from Reprogramming)
+- Passage Number (measured from Reprogramming)
 
 ## Biosamples IDs
 
@@ -229,3 +229,108 @@ Grouping of cell line info (not to be done yet, wait for hESCreg??):
 - Other clinical info
 - Ethnicity
 - Country of origin
+
+## Sprints
+
+### August 
+
+1) As an IMS developer I want to query pseudo LIMS API and begin importing data from the Central facility (interim solution)
+
+Connect to LIMS API.
+Import sample batch data from EBI "LIMS" API.
+
+2) As an IMS developer I want to query hPSCreg API and automate import of depositor data into the IMS
+
+Use hPSCreg API for data import.
+
+3) As an IMS developer I want to document authority for each field in the IMS
+
+Collect:
+    - info on who holds authority for each field in the IMS
+    - API field names for data exchange
+    - ...
+
+4) As an IMS developer I want to document how data updates are recorded in the IMS 
+
+Define how IMS is recording data updates, audit trail, level of granularity.
+
+
+### August/September
+
+I as an IMS developer need to track the number of vials at Core facility and IMBT in order to track stock levels. The IMS needs to track this information.  Ian/maja    
+
+### September
+
+1) As an IMS developer I want to display and export batch data
+
+Display batch data on EBiSC cell line catalogue.
+Display batch data on EBiSC executive dashboard.
+Export batch data in IMS API.
+
+2) Ontologies
+
+?
+
+3) Querying for batch and vial Biosample IDs
+
+
+September
+
+WORK ON API !!! (all data, additional endpoints - donor, batch, transaction log)
+
+Complete single sign on between IMS and Hpscreg Steffi/Maja/Rok
+
+Allow users to assign embargos/hold untill publication dates for cellular data  Steffi/Maja 
+In ECACC if there is no disease specified, it should display ‘Normal’ not ‘CONTROL’. Fix in IMS export. Maja
+IMS to take in LIMs culture conditions and export them to ECACC.    Maja
+
+IMS needs to assemble AUA (MTA) from standard EBiSC template and user specified restrictions in order to provide to ECACC as single per line PDF. ??? (Kevin: not to done automatically)
+- AUA (MTA) – get manually input into IMS by someone within EBiSC . EBiSC exec will add 3rd party restrictions to AUA template and upload it to IMS. IMS will send AUA via API to ECACC.
+
+- Availability (ETA … in 5 months). ECACC needs to pull even if not shipped to them. (flag?) – linked to cell line because some may not even have first batches made.
+
+
+### September, October
+
+IMS needs to pull donor / line updates from hPSCReg?
+
+
+### October/November
+
+As the IMS I need to track the latest image thumbnail with "some" meta data for morphology
+
+
+### November
+
+For automation of (i) IMS - HpscReg exchange process and (ii) LIMS - IMS BioSample batch IDs exchange define synch dates. (Define synch dates for non linear data flow processes within IMS/WP7 data flow)
+
+
+### December
+
+I as an EBiSC catalog user need a walk-through for key tasks.   Maja    December
+
+
+### 2016
+
+I as an EBiSC catalogue user want to know time to ship for an individual cell line to enable purchase decision making   DC  2016
+
+
+### Not assigned dates
+
+- Import ECACC data from ftp
+
+- Cell lines related to this line (isogenic,... same donor line ... connect these)
+- Gene edited lines (also use disease phenotype even if it has been edited so that the cell line has no more phenotype) Maybe an icon for gene edited lines.
+
+- "These tests have been performed on all our cell lines" - this should be part of every cell line (same for all).
+- INFO on the website: our cell lines go through these protocols, QC.
+
+- Protocols for QC - in principle they need to be available to users (as pdfs).
+- Culture protocols are being prepared as user manuals. They will be shared with users. Alex sets this as top protocols (cellluler phenotypes and differentation)
+
+- Intent to deposit
+
+
+
+
+
