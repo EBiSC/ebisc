@@ -1,27 +1,44 @@
-from optparse import make_option
+from django_docopt_command import DocOptCommand
 
-from django.core.management.base import BaseCommand, CommandError
+import logging
+logger = logging.getLogger('management.commands')
 
-from ...importer import hotstart
-from ...models import *
+from django.core.management.base import CommandError
+
+from ebisc.celllines import importer
+from ebisc.celllines.models import *
 
 
-class Command(BaseCommand):
+DOCS = '''
+Usage:
+  import hotstart [--init] <directory>
+  import lims
+  import batches <filename>
+  import toelastic
+'''
 
-    args = '<directory>'
-    help = 'Import hot start cell line data'
 
-    option_list = BaseCommand.option_list + (
-        make_option('--init',
-            action='store_true',
-            dest='init',
-            default=False,
-            help='Delete existing records before the import'),)
+class Command(DocOptCommand):
 
-    def handle(self, *args, **options):
+    docs = DOCS
+    help = 'EBISC data importer'
 
-        if options['init']:
-            for model in [Disease, Celltype, Celllineorgtype, Organization, Cellline, NonIntegratingVector]:
-                model.objects.all().delete()
+    def handle_docopt(self, args):
 
-        hotstart.import_data(args[0])
+        if args.get('hotstart'):
+
+            if args.get('--init'):
+                logger.info('Initializing database')
+                for model in [Disease, Celltype, Celllineorgtype, Organization, Cellline, NonIntegratingVector]:
+                    model.objects.all().delete()
+
+            importer.hotstart.run(args.get('<directory>'))
+
+        if args.get('lims'):
+            importer.lims.run()
+
+        if args.get('batches'):
+            importer.batches.run(args.get('<filename>'))
+
+        if args.get('toelastic'):
+            importer.toelastic.run()

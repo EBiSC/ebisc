@@ -6,12 +6,85 @@ import functools
 import logging
 logger = logging.getLogger('management.commands')
 
-from ..models import *
+from ebisc.celllines.models import *
 
 
 '''
-This is HotsStart JSON data importer.
+HotsStart JSON data importer.
 '''
+
+
+# -----------------------------------------------------------------------------
+#  Run
+
+def run(basedir):
+
+    for f in os.listdir(basedir):
+
+        logger.info('Importing %s' % f)
+
+        with open(os.path.join(basedir, f), 'r') as fi:
+
+            source = json.load(fi)
+            valuef = functools.partial(value_of_json, source)
+
+            logger.info('Importing cell line %s' % valuef('name'))
+
+            cell_line = Cellline(
+                biosamplesid=valuef('biosamples_id'),
+                hescregid=valuef('id'),
+                celllinename=valuef('name'),
+                celllineprimarydisease=parse_disease(source),
+                celllinecelltype=parse_cell_type(source),
+                celllinenamesynonyms=', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else '',
+                donor=parse_donor(source),
+                donor_age=valuef('donor_age', 'age_range'),
+            )
+
+            # Organizations
+
+            organizations = []
+
+            for org in valuef('providers'):
+                organization, role = parse_organization(org)
+
+                if role == 'generator':
+                    cell_line.generator = organization
+                elif role == 'owner':
+                    cell_line.owner = organization
+                else:
+                    organizations.append((organization, role))
+
+            cell_line.save()
+
+            for organization, organization_role in organizations:
+
+                cell_line_organization, created = Celllineorganization.objects.get_or_create(
+                    orgcellline=cell_line,
+                    organization=organization,
+                    celllineorgtype=organization_role,
+                )
+                if created:
+                    logger.info('Added organization %s as %s' % (organization, organization_role))
+
+            # Vector
+
+            if valuef('vector_type') == 'integrating':
+                parse_integrating_vector(source, cell_line)
+
+            if valuef('vector_type') == 'non_integrating':
+                parse_non_integrating_vector(source, cell_line)
+
+            parse_legal(source, cell_line)
+            parse_derivation(source, cell_line)
+            parse_culture_condions(source, cell_line)
+            parse_karyotyping(source, cell_line)
+            parse_publications(source, cell_line)
+            parse_characterization(source, cell_line)
+            parse_characterization_markers(source, cell_line)
+
+            # Final save
+            cell_line.save()
 
 
 # -----------------------------------------------------------------------------
@@ -614,78 +687,5 @@ def parse_characterization_markers(valuef, source, cell_line):
             aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_rna_sequencing_marker'))
         elif valuef('undiff_exprof_proteomics_marker'):
             aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_proteomics_marker'))
-
-
-# -----------------------------------------------------------------------------
-#  Importer
-
-def import_data(basedir):
-
-    for f in os.listdir(basedir):
-
-        logger.info('Importing %s' % f)
-
-        with open(os.path.join(basedir, f), 'r') as fi:
-
-            source = json.load(fi)
-            valuef = functools.partial(value_of_json, source)
-
-            logger.info('Importing cell line %s' % valuef('name'))
-
-            cell_line = Cellline(
-                biosamplesid=valuef('biosamples_id'),
-                hescregid=valuef('id'),
-                celllinename=valuef('name'),
-                celllineprimarydisease=parse_disease(source),
-                celllinecelltype=parse_cell_type(source),
-                celllinenamesynonyms=', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else '',
-                donor=parse_donor(source),
-                donor_age=valuef('donor_age', 'age_range'),
-            )
-
-            # Organizations
-
-            organizations = []
-
-            for org in valuef('providers'):
-                organization, role = parse_organization(org)
-
-                if role == 'generator':
-                    cell_line.generator = organization
-                elif role == 'owner':
-                    cell_line.owner = organization
-                else:
-                    organizations.append((organization, role))
-
-            cell_line.save()
-
-            for organization, organization_role in organizations:
-
-                cell_line_organization, created = Celllineorganization.objects.get_or_create(
-                    orgcellline=cell_line,
-                    organization=organization,
-                    celllineorgtype=organization_role,
-                )
-                if created:
-                    logger.info('Added organization %s as %s' % (organization, organization_role))
-
-            # Vector
-
-            if valuef('vector_type') == 'integrating':
-                parse_integrating_vector(source, cell_line)
-
-            if valuef('vector_type') == 'non_integrating':
-                parse_non_integrating_vector(source, cell_line)
-
-            parse_legal(source, cell_line)
-            parse_derivation(source, cell_line)
-            parse_culture_condions(source, cell_line)
-            parse_karyotyping(source, cell_line)
-            parse_publications(source, cell_line)
-            parse_characterization(source, cell_line)
-            parse_characterization_markers(source, cell_line)
-
-            # Final save
-            cell_line.save()
 
 # -----------------------------------------------------------------------------

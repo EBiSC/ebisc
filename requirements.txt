@@ -6,3 +6,6 @@ django-grappelli==2.6.3
 defusedxml==0.4.1
 elasticsearch==1.4.0
 django-extensions==1.5.5
+django-docopt-command==0.2.1
+requests==2.7.0
+easydict==1.6
