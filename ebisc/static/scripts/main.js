@@ -1,2 +1,2 @@
 (function(){$(document).ready(function(){return $(".dropdown-button").on("click",function(n){var t,e;return t=$(this),e=t.next(".dropdown-menu"),e.toggleClass("show-menu"),$(document).click(function(n){return 0===$(n.target).closest(e).length?e.removeClass("show-menu"):void 0}),n.stopPropagation()})})}).call(this),function(){$(document).ready(function(){return $(".collapsible-menu-toggle").each(function(n,t){var e,o;return e=$(t),o=$("#"+e.data("target")),e.on("click",function(n){return n.preventDefault(),o.slideToggle(function(){return o.is(":hidden")?o.removeAttr("style"):void 0})})})})}.call(this);
-//# sourceMappingURL=maps/main.js.map
+//# sourceMappingURL=main.js.map

@@ -36,7 +36,7 @@ processStyles = (src) ->
             errLogToConsole: true
             outputStyle: 'compressed'
         .on('error', onError)
-        .pipe sourcemaps.write('maps')
+        .pipe sourcemaps.write('./')
         .pipe gulp.dest("#{PROJECT}/static/styles/")
         .pipe browserSync.reload(stream: true)
 
@@ -60,7 +60,7 @@ processScripts = (src, target) ->
         .on('error', onError)
         .pipe concat(target)
         .pipe uglify()
-        .pipe sourcemaps.write('maps')
+        .pipe sourcemaps.write('./')
         .pipe gulp.dest("#{PROJECT}/static/scripts/")
         .pipe browserSync.reload(stream: true)
 
