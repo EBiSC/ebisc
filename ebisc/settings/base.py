@@ -39,9 +39,6 @@ INSTALLED_APPS = (
 
     'tastypie',
     'django_cleanup',
-    'grappelli.dashboard',
-    'grappelli',
-    'django_extensions',
 )
 
 MIDDLEWARE_CLASSES = (

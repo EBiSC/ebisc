@@ -6,7 +6,7 @@ logger = logging.getLogger('management.commands')
 
 from django.conf import settings
 
-from ebisc.celllines.models import Cellline, CelllineBatch
+from ebisc.celllines.models import CelllineBatch
 
 
 '''
@@ -19,25 +19,29 @@ LIMS batch data importer.
 
 def run():
 
-    logger.info('Synchronizing batch data with LIMS')
-
     for lims_batch in query(settings.LIMS.get('url')):
 
-        logger.info('Processing batch {}'.format(lims_batch.batch_id))
+        logger.info('Processing batch {} for cell line {}'.format(lims_batch.batch_id, lims_batch.cell_line))
 
         lims_batch_data = query(lims_batch.href)
 
-        cell_line = Cellline.objects.get(celllinename=lims_batch_data.cell_line)
+        if not lims_batch_data.biosamples_batch_id:
+            logger.warn('Missing biosamples ID ... skipping batch')
+            continue
 
-        batch, created = CelllineBatch.objects.get_or_create(
-            cell_line=cell_line,
-            biosamplesid=lims_batch_data.biosamples_batch_id
-        )
+        try:
+            batch = CelllineBatch.objects.get(biosamplesid=lims_batch_data.biosamples_batch_id)
 
-        if created:
-            logger.info('  Creating new batch {} for cell line {}'.format(batch, cell_line))
-        else:
-            logger.info('  Updating existing batch {} for cell line {}'.format(batch, cell_line))
+            # Update data
+            batch.batch_id = lims_batch_data.batch_id
+            batch.passage_number = lims_batch_data.passage_number
+            batch.cells_per_vial = lims_batch_data.cells_per_vial
+
+            # Save
+            batch.save()
+
+        except CelllineBatch.DoesNotExist:
+            logger.warn('Unknown batch with biosamples ID = {}'.format(lims_batch_data.biosamples_batch_id))
 
 
 # -----------------------------------------------------------------------------

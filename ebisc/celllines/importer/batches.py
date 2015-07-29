@@ -25,8 +25,8 @@ def run(filename):
             (vial_biosamples_id, _, _, cellline_biosamples_id, _, _, _, _, batch_biosamples_id) = row
 
             try:
-                cellline = Cellline.objects.get(biosamplesid=cellline_biosamples_id)
-                batch = create_batch(cellline, batch_biosamples_id)
+                cell_line = Cellline.objects.get(biosamplesid=cellline_biosamples_id)
+                batch = create_batch(cell_line, batch_biosamples_id)
                 create_aliquot(batch, vial_biosamples_id)
 
             except Cellline.DoesNotExist:
@@ -37,16 +37,16 @@ def run(filename):
 # -----------------------------------------------------------------------------
 #  Utils
 
-def create_batch(cellline, batch_biosamples_id):
+def create_batch(cell_line, batch_biosamples_id):
 
     batch, created = CelllineBatch.objects.get_or_create(
-        cell_line=cellline,
-        batch_id=batch_biosamples_id,
+        cell_line=cell_line,
+        batch_id=batch_biosamples_id,  # temporarily use batch_biosamples_id
         biosamplesid=batch_biosamples_id,
     )
 
     if created:
-        logger.info('Created batch {} for cell line {}' % (batch, cellline))
+        logger.info('Created batch {} for cell line {}'.format(batch, cell_line))
 
     return batch
 
@@ -59,7 +59,7 @@ def create_aliquot(batch, aliquot_biosamples_id):
     )
 
     if created:
-        logger.info('Created aliquot {} for cell line {} and batch {}' % (aliquot, batch.cellline, batch))
+        logger.info('Created aliquot {} for cell line {} and batch {}'.format(aliquot, batch.cell_line, batch))
 
     return aliquot
 

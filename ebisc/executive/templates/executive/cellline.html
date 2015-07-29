@@ -19,8 +19,8 @@
     <h2>Batches</h2>
 
     <ul class="accordion">
-    {% for batch in cellline.batch.all %}
-    <li><a href="javascript:void(0)" class="js-accordion-trigger">{{ batch.biosamplesid }} <small>({{ batch.aliquot.count }} vials)</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
+    {% for batch in cellline.batches.all %}
+    <li><a href="javascript:void(0)" class="js-accordion-trigger">{{ batch.biosamplesid }} <small>({{ batch.aliquots.all.count }} vials)</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
         <div class="content">
         <p><a href="{% url 'executive:batch_data' cellline.biosamplesid batch.biosamplesid %}">Download vial Biosample IDs</a></p>
         <p><i>No data available.</i></p>

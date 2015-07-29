@@ -173,9 +173,10 @@ class Cellline(models.Model):
 
 class CelllineBatch(models.Model):
 
-    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='batch')
-    batch_id = models.CharField(_(u'Batch ID'), max_length=12)
+    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='batches')
     biosamplesid = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+
+    batch_id = models.CharField(_(u'Batch ID'), max_length=12)
 
     passage_number = models.IntegerField(_(u'Passage number'), null=True, blank=True)
     cells_per_vial = models.CharField(_(u'Cells per vial'), max_length=50, null=True, blank=True)
@@ -196,7 +197,7 @@ class CelllineBatch(models.Model):
 
 class CelllineAliquot(models.Model):
 
-    batch = models.ForeignKey('CelllineBatch', verbose_name=_(u'Cell line'), related_name='aliquot')
+    batch = models.ForeignKey('CelllineBatch', verbose_name=_(u'Cell line'), related_name='aliquots')
     biosamplesid = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
 
     derived_from_aliqot = models.ForeignKey('self', verbose_name=_(u'Derived from aliquot'), null=True, blank=True)

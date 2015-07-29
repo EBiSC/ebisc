@@ -11,10 +11,10 @@ from ebisc.celllines.models import *
 
 DOCS = '''
 Usage:
-  import hotstart [--init] <directory>
-  import lims
-  import batches <filename>
-  import toelastic
+    import hotstart [--init] <directory>
+    import lims
+    import batches <filename>
+    import toelastic
 '''
 
 
@@ -35,6 +35,7 @@ class Command(DocOptCommand):
             importer.hotstart.run(args.get('<directory>'))
 
         if args.get('lims'):
+            logger.info('Synchronizing batch data with LIMS')
             importer.lims.run()
 
         if args.get('batches'):
