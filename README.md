@@ -234,30 +234,43 @@ Grouping of cell line info (not to be done yet, wait for hESCreg??):
 
 ### August 
 
-1) As an IMS developer I want to query pseudo LIMS API and begin importing data from the Central facility (interim solution)
 
-Connect to LIMS API.
-Import sample batch data from EBI "LIMS" API.
+1) As an IMS developer I want to start using hPSCreg API for importing depositor data into the IMS
 
-2) As an IMS developer I want to query hPSCreg API and automate import of depositor data into the IMS
+Update the importer to include all data exported from hPSCreg (except Characterization section).
 
-Use hPSCreg API for data import.
+Query hPSCreg API for data import.
 
-3) As an IMS developer I want to document authority for each field in the IMS
+2) As an IMS developer I want to document authority for each field in the IMS
 
 Collect:
     - info on who holds authority for each field in the IMS
-    - API field names for data exchange
+    - json names used in data exchange
     - ...
+
+3) Set up production server
+
+------------------------------
+
+3) As an IMS developer I want to query pseudo LIMS API and begin importing data from the Central facility (interim solution)
+
+Connect to LIMS API.
+Import sample batch data from EBI "LIMS" API.
 
 4) As an IMS developer I want to document how data updates are recorded in the IMS 
 
 Define how IMS is recording data updates, audit trail, level of granularity.
 
+5) As an IMS developer I want define sync dates for data exchange between different WP7 components
+
+Coordinate discussion with members of the dev team to define sync dates for automated data flows between all EBiSC components: hESCreg, IMS, ECACC, LIMS/RC and BioSamples.
+
+DOD: Document the reached decision and make the final document available on the ARTTIC website.
 
 ### August/September
 
-I as an IMS developer need to track the number of vials at Core facility and IMBT in order to track stock levels. The IMS needs to track this information.  Ian/maja    
+I as an IMS developer need to track the number of vials at Core facility and IMBT in order to track stock levels. 
+The IMS needs to track this information.  Ian/maja    
 
 ### September
 
@@ -273,6 +286,7 @@ Export batch data in IMS API.
 
 3) Querying for batch and vial Biosample IDs
 
+4) Change log for production server
 
 September
 
