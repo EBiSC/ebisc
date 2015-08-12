@@ -97,7 +97,7 @@ def batch_data(request, biosamples_id, batch_biosample_id):
 
     writer.writerow(['Cell line Biosample ID', 'Cell line name', 'Batch Biosample ID', 'Batch ID', 'Vial Biosample ID'])
 
-    for aliquot in batch.aliquot.all():
+    for aliquot in batch.aliquots.all():
         writer.writerow([batch.cell_line.biosamplesid, batch.cell_line.celllinename, batch.biosamplesid, batch.batch_id, aliquot.biosamplesid])
 
     return response

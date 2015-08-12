@@ -82,3 +82,8 @@ hr {
   }
 }
 
+.comment {
+  font-style: italic;
+  color: lighten($color-text, 30%);
+}
+

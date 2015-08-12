@@ -32,7 +32,7 @@
             <td>{{ cellline.celllineprimarydisease|default_if_none:"" }}</td>
             <td>{{ cellline.registration_name }}</td>
             <td>{{ cellline.generator.organizationname }}</td>
-            <td>{{ cellline.batch.count }}</td>
+            <td class="number">{{ cellline.batches.count }}</td>
             <td class="number {{ cellline.quantity|default:'empty' }}">{{ cellline.quantity|default:'-' }}</td>
             <td class="number {{ cellline.sold|default:'empty' }}">{{ cellline.sold|default:'-' }}</td>
             <td class="accepted">{% include 'executive/accepted-status.html' %}</td>

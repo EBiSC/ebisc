@@ -18,16 +18,28 @@
 <div class="batches">
     <h2>Batches</h2>
 
+    <div class="request-bisample-ids"><a href="./">Request new batch and vial Biosample IDs</a></div>
+
+    {% if cellline.batches.all|length %}
     <ul class="accordion">
     {% for batch in cellline.batches.all %}
-    <li><a href="javascript:void(0)" class="js-accordion-trigger">{{ batch.biosamplesid }} <small>({{ batch.aliquots.all.count }} vials)</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
+    <li><a href="javascript:void(0)" class="js-accordion-trigger"><b>{{ batch.batch_id }}</b> - {{ batch.biosamplesid }} <small>({{ batch.aliquots.all.count }} vials)</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
         <div class="content">
-        <p><a href="{% url 'executive:batch_data' cellline.biosamplesid batch.biosamplesid %}">Download vial Biosample IDs</a></p>
-        <p><i>No data available.</i></p>
+        {% if batch.passage_number %}
+        <p>Passage number: {{ batch.passage_number }}<br/>
+        Cells per vial: {{ batch.cells_per_vial }}<br/>
+        {% else %}
+        <p><span class="comment">No data available.</span></p>
+        {% endif %}
+
+        <div class="link-to-biosample-ids-file"><a href="{% url 'executive:batch_data' cellline.biosamplesid batch.biosamplesid %}"><i class="glyphicon glyphicon-download"></i>Download vial Biosample IDs file</a></div>
         </div>
     </li>
     {% endfor%}
     </ul>
+    {% else %}
+    <p><span class="comment">Cell line has no batches.</span></p>
+    {% endif %}
 
 </div>
 

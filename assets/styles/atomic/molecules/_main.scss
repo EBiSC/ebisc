@@ -83,6 +83,25 @@
   h2 {
     margin-top: 0;
   }
+
+  .request-bisample-ids {
+    margin: 1em 0 1.5em 0;
+  }
+
+  .accordion .content {
+    .link-to-biosample-ids-file {
+      display: inline-block;      
+      border-top: $base-border;
+      margin: 10px 0px;
+      padding-top: 15px;
+
+      .glyphicon {
+        float: none;
+        padding-right: 0.5em;
+        color: $action-color;
+      }
+    }
+  }
 }
 
 // Accepted status
