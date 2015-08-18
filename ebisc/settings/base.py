@@ -87,14 +87,6 @@ TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_TEMPLATE_CONTEXT_PROCESSORS + (
 )
 
 # -----------------------------------------------------------------------------
-# Admin
-
-from django.utils.translation import ugettext_lazy as _
-
-GRAPPELLI_ADMIN_TITLE = _(u'EBiSC Administration')
-GRAPPELLI_INDEX_DASHBOARD = 'ebisc.dashboard.CustomIndexDashboard'
-
-# -----------------------------------------------------------------------------
 # Authentication
 
 LOGIN_URL = '/login/'
@@ -131,6 +123,16 @@ LOGGING = {
             'level': 'DEBUG',
         },
     }
+}
+
+# -----------------------------------------------------------------------------
+# hPSCreg
+
+HPSCREG = {
+    'list_url': 'http://hpscreg.eu/api/full_list',
+    'cellline_url': 'http://hpscreg.eu/api/export/',
+    'username': 'maja',
+    'password': 'jh5!ghwe',
 }
 
 # -----------------------------------------------------------------------------

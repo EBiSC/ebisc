@@ -161,9 +161,9 @@ class Cellline(models.Model):
             'biosamplesid': self.biosamplesid,
             'celllinename': self.celllinename,
             'celllineprimarydisease': self.celllineprimarydisease.disease if self.celllineprimarydisease else 'control',
-            'celllineprimarydisease_synonyms': [s.strip() for s in self.celllineprimarydisease.synonyms.split(',')] if self.celllineprimarydisease else None,
+            'celllineprimarydisease_synonyms': [s.strip() for s in self.celllineprimarydisease.synonyms.split(',')] if self.celllineprimarydisease and self.celllineprimarydisease.synonyms else None,
             'depositor': self.generator.organizationname,
-            'celllinecelltype': self.celllinecelltype.celltype,
+            'celllinecelltype': self.celllinecelltype.celltype if self.celllinecelltype else None,
             'celllinenamesynonyms': self.celllinenamesynonyms,
         }
 

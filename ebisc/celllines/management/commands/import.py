@@ -1,16 +1,15 @@
 from django_docopt_command import DocOptCommand
 
-import logging
-logger = logging.getLogger('management.commands')
-
-from django.core.management.base import CommandError
-
 from ebisc.celllines import importer
 from ebisc.celllines.models import *
+
+import logging
+logger = logging.getLogger('management.commands')
 
 
 DOCS = '''
 Usage:
+    import hpscreg [--init]
     import hotstart [--init] <directory>
     import lims
     import batches <filename>
@@ -25,13 +24,14 @@ class Command(DocOptCommand):
 
     def handle_docopt(self, args):
 
-        if args.get('hotstart'):
-
+        if args.get('hpscreg'):
             if args.get('--init'):
-                logger.info('Initializing database')
-                for model in [Disease, Celltype, Celllineorgtype, Organization, Cellline, NonIntegratingVector]:
-                    model.objects.all().delete()
+                self.init()
+            importer.hpscreg.run()
 
+        if args.get('hotstart'):
+            if args.get('--init'):
+                self.init()
             importer.hotstart.run(args.get('<directory>'))
 
         if args.get('lims'):
@@ -43,3 +43,8 @@ class Command(DocOptCommand):
 
         if args.get('toelastic'):
             importer.toelastic.run()
+
+    def init(self):
+        logger.info('Initializing database')
+        for model in [Disease, Celltype, Celllineorgtype, Organization, Cellline, NonIntegratingVector]:
+            model.objects.all().delete()

@@ -61,7 +61,7 @@ mysql ebisc < schema.sql
 ## Exec dashboard
 
 - EBiSC Board Members (set user accounts)
-- Order first by most recent 
+- Order first by most recent
 - Print version Cell line data
 - Grouping of data (Dana)
 - Sales information (future goal - need to get QTY info from LIMS and sales data from ECACC)
@@ -100,7 +100,7 @@ mysql ebisc < schema.sql
     - Growth mode?
     - Culture medium (we have, but empty for now) / culture system
     - Available formats? (ECACC)
-- For sales link to ECACC? ... It would make more sense if users could "fill" their basket on IMS and then just complete the checkout on ECACC. 
+- For sales link to ECACC? ... It would make more sense if users could "fill" their basket on IMS and then just complete the checkout on ECACC.
 
 ## EBiSC Knowledge Community
 
@@ -108,7 +108,7 @@ mysql ebisc < schema.sql
 - List of diseases? (page 97) -> then you get a list of celllines for that disease?? (... page 99) - primerjave med cell lini
 - Assistance and support on differentiation, tests performed etc.?
 
-  Services: 
+  Services:
     - Protocols (support material): (uploaded by depositors, approved by execs?)
         - cell line derivation protocol
         - quality control
@@ -164,7 +164,7 @@ Grouping of cell line info (not to be done yet, wait for hESCreg??):
 
 - Do we need to develop cell line registration in the IMS? And as a consequence the depositor registration.
 - Are all hot start cell lines banked and available for purchase?
-- Which are the milestones for the executive dashboard that we will want to show as status on the dashboard? 
+- Which are the milestones for the executive dashboard that we will want to show as status on the dashboard?
     - is registered
     - MDA ?
     - pending/accepted/rejected for deposit,
@@ -190,7 +190,7 @@ Grouping of cell line info (not to be done yet, wait for hESCreg??):
     - registration / MDA
     - pending/accepted/rejected for deposit,
     - shipping instructions, labels, ... sent to depositor
-    - cell line received 
+    - cell line received
     - cell line banked and available in public catalogue
 
 - Cell line batch/Aliquot?? Are children of cell line, have their own biosamplesIDs and have different status then cell line.
@@ -232,7 +232,7 @@ Grouping of cell line info (not to be done yet, wait for hESCreg??):
 
 ## Sprints
 
-### August 
+### August
 
 
 1) As an IMS developer I want to start using hPSCreg API for importing depositor data into the IMS
@@ -257,7 +257,7 @@ Collect:
 Connect to LIMS API.
 Import sample batch data from EBI "LIMS" API.
 
-4) As an IMS developer I want to document how data updates are recorded in the IMS 
+4) As an IMS developer I want to document how data updates are recorded in the IMS
 
 Define how IMS is recording data updates, audit trail, level of granularity.
 
@@ -269,8 +269,8 @@ DOD: Document the reached decision and make the final document available on the 
 
 ### August/September
 
-I as an IMS developer need to track the number of vials at Core facility and IMBT in order to track stock levels. 
-The IMS needs to track this information.  Ian/maja    
+I as an IMS developer need to track the number of vials at Core facility and IMBT in order to track stock levels.
+The IMS needs to track this information.  Ian/maja
 
 ### September
 
@@ -294,7 +294,7 @@ WORK ON API !!! (all data, additional endpoints - donor, batch, transaction log)
 
 Complete single sign on between IMS and Hpscreg Steffi/Maja/Rok
 
-Allow users to assign embargos/hold untill publication dates for cellular data  Steffi/Maja 
+Allow users to assign embargos/hold untill publication dates for cellular data  Steffi/Maja
 In ECACC if there is no disease specified, it should display ‘Normal’ not ‘CONTROL’. Fix in IMS export. Maja
 IMS to take in LIMs culture conditions and export them to ECACC.    Maja
 
@@ -343,8 +343,3 @@ I as an EBiSC catalogue user want to know time to ship for an individual cell li
 - Culture protocols are being prepared as user manuals. They will be shared with users. Alex sets this as top protocols (cellluler phenotypes and differentation)
 
 - Intent to deposit
-
-
-
-
-
