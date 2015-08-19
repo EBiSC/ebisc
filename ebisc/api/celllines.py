@@ -78,7 +78,7 @@ class DiseaseResource(ModelResource):
 
 class DonorResource(ModelResource):
 
-    # - biosamplesid = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    # - biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
     # + gender = models.ForeignKey(Gender, verbose_name=_(u'Gender'), blank=True, null=True)
     # - countryoforigin = models.ForeignKey('Country', verbose_name=_(u'Country'), blank=True, null=True)
     # - primarydisease = models.ForeignKey('Disease', verbose_name=_(u'Disease'), blank=True, null=True)
@@ -91,7 +91,7 @@ class DonorResource(ModelResource):
     # - otherclinicalinformation = models.CharField(_(u'Other clinical information'), max_length=100, blank=True)
     # - phenotype = models.ForeignKey('Phenotype', verbose_name=_(u'Phenotype'), blank=True, null=True)
 
-    biosamples_id = fields.CharField('biosamplesid', null=True)
+    biosamples_id = fields.CharField('biosamples_id', null=True)
     gender = fields.CharField('gender', null=True)
 
     class Meta:
@@ -123,33 +123,33 @@ class OrganizationResource(ModelResource):
 
 class CelllineResource(ModelResource):
 
-    # - celllineaccepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
-    # + biosamplesid = models.CharField(_(u'Biosamples ID'), unique=True, max_length=12)
-    # + celllinename = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
+    # - accepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
+    # + biosamples_id = models.CharField(_(u'Biosamples ID'), unique=True, max_length=12)
+    # + name = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
     # - donor = models.ForeignKey('Donor', verbose_name=_(u'Donor'), blank=True, null=True)
     # - donor_age = models.ForeignKey(AgeRange, verbose_name=_(u'Age'), blank=True, null=True)
     # - generator = models.ForeignKey('Organization', verbose_name=_(u'Generator'), related_name='generator_of_cell_lines')
     # - owner = models.ForeignKey('Organization', verbose_name=_(u'Owner'), null=True, blank=True, related_name='owner_of_cell_lines')
-    # - celllineprimarydisease = models.ForeignKey('Disease', verbose_name=_(u'Disease'), blank=True, null=True)
-    # - celllinediseaseaddinfo = models.CharField(_(u'Cell line disease info'), max_length=100, null=True, blank=True)
-    # - celllinestatus = models.ForeignKey('Celllinestatus', verbose_name=_(u'Cell line status'), blank=True, null=True)
+    # - primary_disease = models.ForeignKey('Disease', verbose_name=_(u'Diagnosed disease'), blank=True, null=True)
+    # - primary_disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
+    # - status = models.ForeignKey('CelllineStatus', verbose_name=_(u'Cell line status'), blank=True, null=True)
     # + celllinecelltype = models.ForeignKey('Celltype', verbose_name=_(u'Cell type'), blank=True, null=True)
     # - celllinecollection = models.ForeignKey('Celllinecollection', verbose_name=_(u'Cell line collection'), blank=True, null=True)
     # - celllinetissuesource = models.ForeignKey('Tissuesource', verbose_name=_(u'Tissue source'), blank=True, null=True)
     # - celllinetissuetreatment = models.ForeignKey('Clinicaltreatmentb4donation', verbose_name=_(u'Clinical treatment B4 donation'), blank=True, null=True)
     # - celllinetissuedate = models.DateField(_(u'Cell line tissue date'), blank=True, null=True)
-    # + celllinenamesynonyms = models.CharField(_(u'Cell line name synonyms'), max_length=500, null=True, blank=True)
+    # + alternative_names = models.CharField(_(u'Cell line alternative names'), max_length=500, null=True, blank=True)
     # - depositorscelllineuri = models.CharField(_(u'Depositors cell line URI'), max_length=45, blank=True)
     # - celllinecomments = models.TextField(_(u'Cell line comments'), null=True, blank=True)
     # - celllineecaccurl = models.URLField(_(u'Cell line ECACC URL'), blank=True, null=True)
 
-    biosamples_id = fields.CharField('biosamplesid', unique=True)
+    biosamples_id = fields.CharField('biosamples_id', unique=True)
 
-    name = fields.CharField('celllinename', unique=True)
-    alternate_names = fields.CharField('celllinenamesynonyms')
+    name = fields.CharField('name', unique=True)
+    alternative_names = fields.CharField('alternative_names')
 
     cell_type = fields.CharField('celllinecelltype', null=True)
-    primary_disease = fields.ToOneField(DiseaseResource, 'celllineprimarydisease', null=True, full=True)
+    primary_disease = fields.ToOneField(DiseaseResource, 'primary_disease', null=True, full=True)
     culture_conditions = fields.ToOneField(CelllineCultureConditionsResource, 'celllinecultureconditions', full=True)
     cellline_karyotype = fields.ToOneField(CellLineKaryotypeResource, 'karyotype', null=True, full=True)
 
@@ -167,7 +167,7 @@ class CelllineResource(ModelResource):
         list_allowed_methods = ['get']
         detail_allowed_methods = ['get']
 
-        detail_uri_name = 'biosamplesid'
+        detail_uri_name = 'biosamples_id'
 
         authentication = ApiKeyAuthentication()
         authorization = ReadOnlyAuthorization()
@@ -180,7 +180,7 @@ class CelllineResource(ModelResource):
         raise Http404
 
     def dehydrate_alternate_names(self, bundle):
-        return value_list_of_string(bundle.obj.celllinenamesynonyms)
+        return value_list_of_string(bundle.obj.alternative_names)
 
     def dehydrate_reprogramming_method(self, bundle):
 

@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}Cell line {{ cellline.celllinename }}{% endblock %}
+{% block title %}Cell line {{ cellline.name }}{% endblock %}
 
 {% block article %}
 
-<h1>{{ cellline.celllinename }} <small>{{ cellline.biosamplesid }}</small></h1>
+<h1>{{ cellline.name }} <small>{{ cellline.biosamples_id }}</small></h1>
 
 <div class="status">
-    {% if cellline.celllineaccepted == 'accepted' or not perms.site.can_manage_executive_dashboard %}
+    {% if cellline.accepted == 'accepted' or not perms.site.can_manage_executive_dashboard %}
     Status:
     {% else %}
     Change status:
@@ -23,7 +23,7 @@
     {% if cellline.batches.all|length %}
     <ul class="accordion">
     {% for batch in cellline.batches.all %}
-    <li><a href="javascript:void(0)" class="js-accordion-trigger"><b>{{ batch.batch_id }}</b> - {{ batch.biosamplesid }} <small>({{ batch.aliquots.all.count }} vials)</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
+    <li><a href="javascript:void(0)" class="js-accordion-trigger"><b>{{ batch.batch_id }}</b> - {{ batch.biosamples_id }} <small>({{ batch.aliquots.all.count }} vials)</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
         <div class="content">
         {% if batch.passage_number %}
         <p>Passage number: {{ batch.passage_number }}<br/>
@@ -32,7 +32,7 @@
         <p><span class="comment">No data available.</span></p>
         {% endif %}
 
-        <div class="link-to-biosample-ids-file"><a href="{% url 'executive:batch_data' cellline.biosamplesid batch.biosamplesid %}"><i class="glyphicon glyphicon-download"></i>Download vial Biosample IDs file</a></div>
+        <div class="link-to-biosample-ids-file"><a href="{% url 'executive:batch_data' cellline.biosamples_id batch.biosamples_id %}"><i class="glyphicon glyphicon-download"></i>Download vial Biosample IDs file</a></div>
         </div>
     </li>
     {% endfor%}

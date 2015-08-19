@@ -69,20 +69,20 @@ def run():
             reprogramming_method = [None, None, None, None, None]
 
         writer.writerow(flatten((
-            cl.biosamplesid,
+            cl.biosamples_id,
 
-            cl.celllinename,
-            cl.celllinenamesynonyms,
+            cl.name,
+            cl.alternative_names,
 
             cl.generator.organizationname.encode('utf8'),
 
-            cl.donor.biosamplesid,
+            cl.donor.biosamples_id,
             cl.donor.gender,
             cl.donor_age,
 
-            cl.celllineprimarydisease.icdcode if cl.celllineprimarydisease else '',
-            cl.celllineprimarydisease.disease if cl.celllineprimarydisease else 'CONTROL',
-            cl.celllineprimarydisease.synonyms if cl.celllineprimarydisease else '',
+            cl.primary_disease.icdcode if cl.primary_disease else '',
+            cl.primary_disease.disease if cl.primary_disease else 'CONTROL',
+            cl.primary_disease.synonyms if cl.primary_disease else '',
 
             cl.celllinecelltype,
             cl.karyotype if hasattr(cl, 'karyotype') and cl.karyotype else '',

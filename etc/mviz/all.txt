@@ -31,7 +31,7 @@ CellLinePublication
 Celllinesnp
 Celllinesnpdetails
 Celllinesnprslinks
-Celllinestatus
+CelllineStatus
 Celllinestrfingerprinting
 Celllinevalue
 Celltype

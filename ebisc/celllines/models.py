@@ -10,13 +10,13 @@ EXTENDED_BOOL_CHOICES = (
 )
 
 
-class Gender(models.Model):
+class AgeRange(models.Model):
 
-    name = models.CharField(_(u'Gender'), max_length=10, unique=True)
+    name = models.CharField(_(u'Age range'), max_length=10, unique=True)
 
     class Meta:
-        verbose_name = _(u'Gender')
-        verbose_name_plural = _(u'Genders')
+        verbose_name = _(u'Age range')
+        verbose_name_plural = _(u'Age ranges')
         ordering = ['name']
 
     def __unicode__(self):
@@ -37,13 +37,13 @@ class Country(models.Model):
         return self.name
 
 
-class AgeRange(models.Model):
+class Gender(models.Model):
 
-    name = models.CharField(_(u'Age range'), max_length=10, unique=True)
+    name = models.CharField(_(u'Gender'), max_length=10, unique=True)
 
     class Meta:
-        verbose_name = _(u'Age range')
-        verbose_name_plural = _(u'Age ranges')
+        verbose_name = _(u'Gender')
+        verbose_name_plural = _(u'Genders')
         ordering = ['name']
 
     def __unicode__(self):
@@ -91,19 +91,6 @@ class MoleculeReference(models.Model):
         return '%s %s in %s' % (self.molecule, self.catalog_id, self.catalog)
 
 
-class ApprovedUse(models.Model):
-
-    name = models.CharField(_(u'Approved use'), max_length=60, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Approved use')
-        verbose_name_plural = _(u'Approved uses')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return u'%s' % (self.name,)
-
-
 # -----------------------------------------------------------------------------
 # Cell line
 
@@ -115,13 +102,15 @@ class Cellline(models.Model):
         ('rejected', _(u'Rejected')),
     )
 
-    celllineaccepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
+    accepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
+    status = models.ForeignKey('CelllineStatus', verbose_name=_(u'Cell line status'), null=True, blank=True)
 
-    celllinename = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
+    name = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
+    alternative_names = models.CharField(_(u'Cell line alternative names'), max_length=500, null=True, blank=True)
 
-    biosamplesid = models.CharField(_(u'Biosamples ID'), unique=True, max_length=12)
-    hescregid = models.CharField(_(u'hESCreg ID'), unique=True, max_length=10, null=True, blank=True)
-    ecaccid = models.CharField(_(u'ECACC ID'), unique=True, max_length=10, null=True, blank=True)
+    biosamples_id = models.CharField(_(u'Biosamples ID'), unique=True, max_length=12)
+    hescreg_id = models.CharField(_(u'hESCreg ID'), unique=True, max_length=10, null=True, blank=True)
+    ecacc_id = models.CharField(_(u'ECACC ID'), unique=True, max_length=10, null=True, blank=True)
 
     donor = models.ForeignKey('Donor', verbose_name=_(u'Donor'), null=True, blank=True)
     donor_age = models.ForeignKey(AgeRange, verbose_name=_(u'Age'), null=True, blank=True)
@@ -130,15 +119,14 @@ class Cellline(models.Model):
     owner = models.ForeignKey('Organization', verbose_name=_(u'Owner'), null=True, blank=True, related_name='owner_of_cell_lines')
     derivation_country = models.ForeignKey('Country', verbose_name=_(u'Derivation country'), null=True, blank=True)
 
-    celllineprimarydisease = models.ForeignKey('Disease', verbose_name=_(u'Disease'), null=True, blank=True)
-    celllinediseaseaddinfo = models.CharField(_(u'Cell line disease info'), max_length=100, null=True, blank=True)
-    celllinestatus = models.ForeignKey('Celllinestatus', verbose_name=_(u'Cell line status'), null=True, blank=True)
-    celllinecelltype = models.ForeignKey('Celltype', verbose_name=_(u'Cell type'), null=True, blank=True)
+    primary_disease = models.ForeignKey('Disease', verbose_name=_(u'Diagnosed disease'), null=True, blank=True)
+    primary_disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
+
+    celllinecelltype = models.ForeignKey('CellType', verbose_name=_(u'Cell type'), null=True, blank=True)
     celllinecollection = models.ForeignKey('Celllinecollection', verbose_name=_(u'Cell line collection'), null=True, blank=True)
     celllinetissuesource = models.ForeignKey('Tissuesource', verbose_name=_(u'Tissue source'), null=True, blank=True)
     celllinetissuetreatment = models.ForeignKey('Clinicaltreatmentb4donation', verbose_name=_(u'Clinical treatment B4 donation'), null=True, blank=True)
     celllinetissuedate = models.DateField(_(u'Cell line tissue date'), null=True, blank=True)
-    celllinenamesynonyms = models.CharField(_(u'Cell line name synonyms'), max_length=500, null=True, blank=True)
     depositorscelllineuri = models.CharField(_(u'Depositors cell line URI'), max_length=45, blank=True)
 
     comments = models.TextField(_(u'Comments'), null=True, blank=True)
@@ -146,25 +134,25 @@ class Cellline(models.Model):
     class Meta:
         verbose_name = _(u'Cell line')
         verbose_name_plural = _(u'Cell lines')
-        ordering = ['biosamplesid']
+        ordering = ['biosamples_id']
 
     def __unicode__(self):
-        return u'%s' % (self.biosamplesid,)
+        return u'%s' % (self.biosamples_id,)
 
     @property
     def ecacc_url(self):
-        return 'https://www.phe-culturecollections.org.uk/products/celllines/generalcell/detail.jsp?refId=%s&collection=ecacc_gc' % self.ecaccid
+        return 'https://www.phe-culturecollections.org.uk/products/celllines/generalcell/detail.jsp?refId=%s&collection=ecacc_gc' % self.ecacc_id
 
     def to_elastic(self):
 
         return {
-            'biosamplesid': self.biosamplesid,
-            'celllinename': self.celllinename,
-            'celllineprimarydisease': self.celllineprimarydisease.disease if self.celllineprimarydisease else 'control',
-            'celllineprimarydisease_synonyms': [s.strip() for s in self.celllineprimarydisease.synonyms.split(',')] if self.celllineprimarydisease else None,
+            'biosamples_id': self.biosamples_id,
+            'name': self.name,
+            'primary_disease': self.primary_disease.disease if self.primary_disease else 'control',
+            'celllineprimarydisease_synonyms': [s.strip() for s in self.celllineprimarydisease.synonyms.split(',')] if self.primary_disease else None,
             'depositor': self.generator.organizationname,
             'celllinecelltype': self.celllinecelltype.celltype,
-            'celllinenamesynonyms': self.celllinenamesynonyms,
+            'alternative_names': self.alternative_names,
         }
 
 
@@ -174,7 +162,7 @@ class Cellline(models.Model):
 class CelllineBatch(models.Model):
 
     cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='batches')
-    biosamplesid = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
 
     batch_id = models.CharField(_(u'Batch ID'), max_length=12)
 
@@ -188,27 +176,27 @@ class CelllineBatch(models.Model):
     class Meta:
         verbose_name = _(u'Cell line batch')
         verbose_name_plural = _(u'Cell line batches')
-        ordering = ['biosamplesid']
+        ordering = ['biosamples_id']
         unique_together = (('cell_line', 'batch_id'))
 
     def __unicode__(self):
-        return u'%s' % (self.biosamplesid,)
+        return u'%s' % (self.biosamples_id,)
 
 
 class CelllineAliquot(models.Model):
 
     batch = models.ForeignKey('CelllineBatch', verbose_name=_(u'Cell line'), related_name='aliquots')
-    biosamplesid = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
 
     derived_from_aliqot = models.ForeignKey('self', verbose_name=_(u'Derived from aliquot'), null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line aliquot')
         verbose_name_plural = _(u'Cell line aliquotes')
-        ordering = ['biosamplesid']
+        ordering = ['biosamples_id']
 
     def __unicode__(self):
-        return u'%s' % (self.biosamplesid,)
+        return u'%s' % (self.biosamples_id,)
 
 
 # -----------------------------------------------------------------------------
@@ -683,16 +671,16 @@ class Celllinesnprslinks(models.Model):
         return u'%s' % (self.id,)
 
 
-class Celllinestatus(models.Model):
-    celllinestatus = models.CharField(_(u'Cell line status'), max_length=50, blank=True)
+class CelllineStatus(models.Model):
+    status = models.CharField(_(u'Cell line status'), max_length=50, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line status')
         verbose_name_plural = _(u'Cell line statuses')
-        ordering = ['celllinestatus']
+        ordering = ['status']
 
     def __unicode__(self):
-        return u'%s' % (self.celllinestatus,)
+        return u'%s' % (self.status,)
 
 
 class Celllinestrfingerprinting(models.Model):
@@ -849,7 +837,7 @@ class Documenttype(models.Model):
 
 class Donor(models.Model):
 
-    biosamplesid = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
     gender = models.ForeignKey(Gender, verbose_name=_(u'Gender'), null=True, blank=True)
 
     provider_donor_ids = ArrayField(models.CharField(max_length=20), verbose_name=_(u'Provider donor ids'), null=True)
@@ -868,10 +856,10 @@ class Donor(models.Model):
     class Meta:
         verbose_name = _(u'Donor')
         verbose_name_plural = _(u'Donors')
-        ordering = ['biosamplesid']
+        ordering = ['biosamples_id']
 
     def __unicode__(self):
-        return u'%s' % (self.biosamplesid,)
+        return u'%s' % (self.biosamples_id,)
 
 
 class Ebisckeyword(models.Model):

@@ -3,23 +3,23 @@ config = {
 
     fields: [
         {
-            name: 'biosamplesid'
+            name: 'biosamples_id'
             label: 'Biosamples ID'
         }
         {
-            name: 'celllinename'
+            name: 'name'
             label: 'Name'
         }
         {
-            name: 'celllinenamesynonyms'
-            label: 'Name synonyms'
+            name: 'alternative_names'
+            label: 'Alternative names'
         }
         {
             name: 'depositor'
             label: 'Depositor'
         }
         {
-            name: 'celllineprimarydisease'
+            name: 'primary_disease'
             label: 'Disease'
         }
         {
@@ -29,18 +29,18 @@ config = {
     ]
 
     query_fields: [
-        'biosamplesid.analyzed'
-        'celllinename.analyzed'
-        'celllinenamesynonyms.analyzed'
+        'biosamples_id.analyzed'
+        'name.analyzed'
+        'alternative_names.analyzed'
         'depositor.analyzed'
         'celllinecelltype.analyzed'
-        'celllineprimarydisease.analyzed'
+        'primary_disease.analyzed'
         'celllineprimarydisease_synonyms'
     ]
 
     facets: [
         {
-            name: 'celllineprimarydisease'
+            name: 'primary_disease'
             label: 'Disease'
             selectedTerms: {}
         }

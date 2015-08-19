@@ -35,12 +35,6 @@ class AgeRangeAdmin(admin.ModelAdmin):
 admin.site.register(AgeRange, AgeRangeAdmin)
 
 
-class ApprovedUseAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(ApprovedUse, ApprovedUseAdmin)
-
-
 # -----------------------------------------------------------------------------
 # CellLine
 
@@ -82,7 +76,7 @@ class CellLineNonIntegratingVectorInline(OneToOneStackedInline):
 
 class CelllineAdmin(admin.ModelAdmin):
 
-    list_display = ['biosamplesid', 'celllinename', 'celllinestatus', 'celllinenamesynonyms']
+    list_display = ['biosamples_id', 'name', 'status', 'alternative_names']
     inlines = (
         CellLineCharacterizationInline,
         CelllinechecklistInline,
@@ -95,7 +89,7 @@ class CelllineAdmin(admin.ModelAdmin):
         CellLineNonIntegratingVectorInline,
     )
 
-    list_filter = ('celllinestatus',)
+    list_filter = ('status',)
 
 admin.site.register(Cellline, CelllineAdmin)
 
@@ -109,10 +103,8 @@ class BatchAliquotInline(TabularInline):
 
 class CelllineBatchAdmin(admin.ModelAdmin):
 
-    list_display = ['biosamplesid', 'batch_id', 'cell_line']
+    list_display = ['biosamples_id', 'batch_id', 'cell_line']
     inlines = (BatchAliquotInline,)
-
-    # list_filter = ('celllinestatus',)
 
 admin.site.register(CelllineBatch, CelllineBatchAdmin)
 

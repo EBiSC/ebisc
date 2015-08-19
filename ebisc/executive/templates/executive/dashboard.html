@@ -26,10 +26,10 @@
 
     <tbody>
         {% for cellline in celllines %}
-        <tr class="accepted-{{ cellline.celllineaccepted }}">
-            <td><a href="{% url 'executive:cellline' cellline.biosamplesid %}">{{ cellline.biosamplesid }}</a></td>
-            <td>{{ cellline.celllinename }}</td>
-            <td>{{ cellline.celllineprimarydisease|default_if_none:"" }}</td>
+        <tr class="accepted-{{ cellline.accepted }}">
+            <td><a href="{% url 'executive:cellline' cellline.biosamples_id %}">{{ cellline.biosamples_id }}</a></td>
+            <td>{{ cellline.name }}</td>
+            <td>{{ cellline.primary_disease|default_if_none:"" }}</td>
             <td>{{ cellline.registration_name }}</td>
             <td>{{ cellline.generator.organizationname }}</td>
             <td class="number">{{ cellline.batches.count }}</td>

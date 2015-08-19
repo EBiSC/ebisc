@@ -17,5 +17,5 @@ def search(request):
 def cellline(request, biosamples_id):
 
     return render(request, 'search/cellline.html', {
-        'cellline': get_object_or_404(Cellline, biosamplesid=biosamples_id)
+        'cellline': get_object_or_404(Cellline, biosamples_id=biosamples_id)
     })

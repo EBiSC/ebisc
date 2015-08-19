@@ -345,6 +345,44 @@ I as an EBiSC catalogue user want to know time to ship for an individual cell li
 - Intent to deposit
 
 
+## Data model cleanup
+
+Cellline
+
+celllineaccepted
+accepted
+
+celllinename
+name
+
+celllinenamesynonyms
+alternative_names
+
+biosamplesid
+biosamples_id
+
+hescregid
+hescreg_id
+
+ecaccid
+ecacc_id
+
+celllineprimarydisease
+primary_disease
+
+celllinediseaseaddinfo
+primary_disease_stage
+
+celllinestatus
+status
 
 
+
+---------------------
+
+Celltype
+CellType
+
+Celllinestatus
+CelllineStatus
 

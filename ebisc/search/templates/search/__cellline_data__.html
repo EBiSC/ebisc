@@ -1,9 +1,9 @@
 <table class="data">
 
     <tr><th colspan="2" class="title"><h2>General Information</h2></th></tr>
-    <tr><td class="label">Biosamples ID:</td><td>{{ cellline.biosamplesid|default:"-" }}</td></tr>
-    <tr><td class="label">Cell line name:</td><td>{{ cellline.celllinename|default:"-" }}</td></tr>
-    <tr><td class="label">Cell line alternative names:</td><td>{{ cellline.celllinenamesynonyms|default:"-" }}</td></tr>
+    <tr><td class="label">Biosamples ID:</td><td>{{ cellline.biosamples_id|default:"-" }}</td></tr>
+    <tr><td class="label">Cell line name:</td><td>{{ cellline.name|default:"-" }}</td></tr>
+    <tr><td class="label">Cell line alternative names:</td><td>{{ cellline.alternative_names|default:"-" }}</td></tr>
 
     {% if cellline.publications.all|length %}
     <tr>
@@ -19,8 +19,8 @@
     {% endif %}
 
     <!-- <tr><td class="label">Mutant gene:</td><td>{{ cellline.celllinelab.mutagene|default:"-" }}</td></tr> -->
-    <!-- <tr><td class="label">Cell line disease info:</td><td>{{ cellline.celllinediseaseaddinfo|default:"-" }}</td></tr> -->
-    <!-- <tr><td class="label">Cell line status:</td><td>{{ cellline.celllinestatus|default:"-" }}</td></tr> -->
+    <!-- <tr><td class="label">Cell line disease status:</td><td>{{ cellline.primary_disease_stage|default:"-" }}</td></tr> -->
+    <!-- <tr><td class="label">Cell line status:</td><td>{{ cellline.status|default:"-" }}</td></tr> -->
     <!-- <tr><td class="label">Tissue source:</td><td>{{ cellline.celllinetissuesource|default:"-" }}</td></tr> -->
     <!-- <tr><td class="label">Cell line collection:</td><td>{{ cellline.celllinecollection|default:"-" }}</td></tr> -->
     <!-- <tr><td class="label">Clinical treatment before donation:</td><td>{{ cellline.celllinetissuetreatment|default:"-" }}</td></tr> -->
@@ -32,9 +32,9 @@
     <!-- <tr><td class="label">Cell line ECACC URL:</td><td>{{ cellline.celllineecaccurl|default:"-" }}</td></tr> -->
 
     <tr><th class="sub-title"><h3>Donor information</h3></th><th></th></tr>
-    <tr><td class="label">Biosamples ID:</td><td>{{ cellline.donor.biosamplesid|default:"-" }}</td></tr>
+    <tr><td class="label">Biosamples ID:</td><td>{{ cellline.donor.biosamples_id|default:"-" }}</td></tr>
     <tr><td class="label">Internal donor ID:</td><td>{{ cellline.donor.provider_donor_ids|default:"-"|join:", " }}</td></tr>
-    <tr><td class="label">Diagnosed disease:</td><td>{{ cellline.celllineprimarydisease|default:"-" }}</td></tr>
+    <tr><td class="label">Diagnosed disease:</td><td>{{ cellline.primary_disease|default:"-" }}</td></tr>
     <tr><td class="label">Gender:</td><td>{{ cellline.donor.gender|default:"-" }}</td></tr>
     <tr><td class="label">Age:</td><td>{{ cellline.donor_age|default:"-" }}</td></tr>
     <tr><td class="label">Country of origin:</td><td>{{ cellline.donor.countryoforigin.code|default:"-" }}</td></tr>
