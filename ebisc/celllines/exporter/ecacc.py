@@ -38,6 +38,7 @@ def run():
         'reprogramming_method_virus',
         'reprogramming_method_transposon',
         'reprogramming_method_excisable',
+        'reprogramming_method_absence_reprogramming_vectors',
 
         'culture_conditions_culture_medium',
         'culture_conditions_passage_method',
@@ -58,6 +59,7 @@ def run():
                 cl.integrating_vector.virus,
                 cl.integrating_vector.transposon,
                 cl.integrating_vector.excisable,
+                cl.integrating_vector.absence_reprogramming_vectors,
             ]
         elif hasattr(cl, 'non_integrating_vector'):
             reprogramming_method = [
@@ -74,26 +76,26 @@ def run():
             cl.name,
             cl.alternative_names,
 
-            cl.generator.organizationname.encode('utf8'),
+            cl.generator.name.encode('utf8'),
 
             cl.donor.biosamples_id,
             cl.donor.gender,
             cl.donor_age,
 
             cl.primary_disease.icdcode if cl.primary_disease else '',
-            cl.primary_disease.disease if cl.primary_disease else 'CONTROL',
+            cl.primary_disease.disease if cl.primary_disease else 'Normal',
             cl.primary_disease.synonyms if cl.primary_disease else '',
 
-            cl.celllinecelltype,
+            cl.celllinederivation.primary_cell_type.name,
             cl.karyotype if hasattr(cl, 'karyotype') and cl.karyotype else '',
 
             reprogramming_method,
 
             cl.celllinecultureconditions.culture_medium,
-            cl.celllinecultureconditions.passagemethod,
-            cl.celllinecultureconditions.surfacecoating,
-            cl.celllinecultureconditions.co2concentration,
-            cl.celllinecultureconditions.o2concentration,
+            cl.celllinecultureconditions.passage_method,
+            cl.celllinecultureconditions.surface_coating,
+            cl.celllinecultureconditions.co2_concentration,
+            cl.celllinecultureconditions.o2_concentration,
 
             cl.publications.all()[0].reference_url if cl.publications.all().count() else '',
             cl.publications.all()[0].reference_title.encode('utf8') if cl.publications.all().count() else '',

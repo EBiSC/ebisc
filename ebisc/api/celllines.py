@@ -7,7 +7,29 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, Celllinecultureconditions, CellLineKaryotype, Organization
+from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CelllineDerivation, CellLineKaryotype, Organization
+
+
+# -----------------------------------------------------------------------------
+# CelllineDerivation
+
+class CelllineDerivationResource(ModelResource):
+
+    # - primary_cell_type = models.ForeignKey('CellType', verbose_name=_(u'Primary cell type'), null=True, blank=True)
+    # - primary_cell_developmental_stage = models.ForeignKey('PrimaryCellDevelopmentalStage', verbose_name=_(u'Primary cell developmental stage'), null=True, blank=True)
+    # - tissue_procurement_location = models.ForeignKey('TissueLocation', verbose_name=_(u'Location of primary tissue procurement'), null=True, blank=True)
+    # - tissue_collection_date = models.DateField(_(u'Tissue collection date'), null=True, blank=True)
+    # - selection_criteria_for_clones = models.TextField(_(u'Selection criteria for clones'), null=True, blank=True)
+    # - xeno_free_conditions = models.NullBooleanField(_(u'Xeno free conditions'), default=None, null=True, blank=True)
+    # - derived_under_gmp = models.NullBooleanField(_(u'Derived under gmp'), default=None, null=True, blank=True)
+    # - available_as_clinical_grade = models.CharField(_(u'Available as clinical grade'), max_length=4, blank=True)
+
+    primary_cell_type_name = fields.CharField('primary_cell_type', null=True)
+
+    class Meta:
+        queryset = CelllineDerivation.objects.all()
+        include_resource_uri = False
+        fields = ('primary_cell_type_name',)
 
 
 # -----------------------------------------------------------------------------
@@ -16,24 +38,24 @@ from ..celllines.models import Donor, Disease, Cellline, Celllinecultureconditio
 class CelllineCultureConditionsResource(ModelResource):
 
     # + culture_medium = models.ForeignKey('CultureMedium', verbose_name=_(u'Culture medium'), blank=True, null=True)
-    # + surfacecoating = models.ForeignKey('SurfaceCoating', verbose_name=_(u'Surface coating'), null=True, blank=True)
-    # - feedercelltype = models.CharField(_(u'Feeder cell type'), max_length=45, null=True, blank=True)
-    # - feedercellid = models.CharField(_(u'Feeder cell id'), max_length=45, null=True, blank=True)
-    # + passagemethod = models.ForeignKey('PassageMethod', verbose_name=_(u'Passage method'), blank=True, null=True)
+    # + surface_coating = models.ForeignKey('SurfaceCoating', verbose_name=_(u'Surface coating'), null=True, blank=True)
+    # - feeder_cell_type = models.CharField(_(u'Feeder cell type'), max_length=45, null=True, blank=True)
+    # - feeder_cell_id = models.CharField(_(u'Feeder cell id'), max_length=45, null=True, blank=True)
+    # + passage_method = models.ForeignKey('PassageMethod', verbose_name=_(u'Passage method'), blank=True, null=True)
     # - enzymatically = models.ForeignKey('Enzymatically', verbose_name=_(u'Enzymatically'), blank=True, null=True)
-    # - enzymefree = models.ForeignKey('EnzymeFree', verbose_name=_(u'Enzyme free'), blank=True, null=True)
-    # + o2concentration = models.IntegerField(_(u'O2 concentration'), blank=True, null=True)
-    # + co2concentration = models.IntegerField(_(u'Co2 concentration'), blank=True, null=True)
+    # - enzyme_free = models.ForeignKey('EnzymeFree', verbose_name=_(u'Enzyme free'), blank=True, null=True)
+    # + o2_concentration = models.IntegerField(_(u'O2 concentration'), blank=True, null=True)
+    # + co2_concentration = models.IntegerField(_(u'Co2 concentration'), blank=True, null=True)
 
-    surface_coating = fields.CharField('surfacecoating', null=True)
+    surface_coating = fields.CharField('surface_coating', null=True)
     culture_medium = fields.CharField('culture_medium', null=True)
-    passage_method = fields.CharField('passagemethod', null=True)
+    passage_method = fields.CharField('passage_method', null=True)
 
-    o2_concentration = fields.IntegerField('o2concentration', null=True)
-    co2_concentration = fields.IntegerField('co2concentration', null=True)
+    o2_concentration = fields.IntegerField('o2_concentration', null=True)
+    co2_concentration = fields.IntegerField('co2_concentration', null=True)
 
     class Meta:
-        queryset = Celllinecultureconditions.objects.all()
+        queryset = CelllineCultureConditions.objects.all()
         include_resource_uri = False
         fields = ('o2_concentration', 'co2_concentration')
 
@@ -78,13 +100,9 @@ class DiseaseResource(ModelResource):
 
 class DonorResource(ModelResource):
 
-    # - biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    # + biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
     # + gender = models.ForeignKey(Gender, verbose_name=_(u'Gender'), blank=True, null=True)
-    # - countryoforigin = models.ForeignKey('Country', verbose_name=_(u'Country'), blank=True, null=True)
-    # - primarydisease = models.ForeignKey('Disease', verbose_name=_(u'Disease'), blank=True, null=True)
-    # - diseaseadditionalinfo = models.CharField(_(u'Disease additional info'), max_length=45, blank=True)
-    # - othercelllinefromdonor = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='celllines_othercelllinefromdonor', blank=True, null=True)
-    # - parentcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='celllines_parentcellline', blank=True, null=True)
+    # - country_of_origin = models.ForeignKey('Country', verbose_name=_(u'Country'), blank=True, null=True)
     # - providerdonorid = models.CharField(_(u'Provider donor id'), max_length=45, blank=True)
     # - cellabnormalkaryotype = models.CharField(_(u'Cell abnormal karyotype'), max_length=45, blank=True)
     # - donorabnormalkaryotype = models.CharField(_(u'Donor abnormal karyotype'), max_length=45, blank=True)
@@ -105,15 +123,15 @@ class DonorResource(ModelResource):
 
 class OrganizationResource(ModelResource):
 
-    # + organizationname = models.CharField(_(u'Organization name'), max_length=100, unique=True, null=True, blank=True)
-    # - organizationshortname = models.CharField(_(u'Organization short name'), unique=True, max_length=6, null=True, blank=True)
-    # - organizationcontact = models.ForeignKey('Contact', verbose_name=_(u'Contact'), blank=True, null=True)
-    # - organizationtype = models.ForeignKey('Orgtype', verbose_name=_(u'Orgtype'), blank=True, null=True)
+    # + name = models.CharField(_(u'Organization name'), max_length=100, unique=True, null=True, blank=True)
+    # - short_name = models.CharField(_(u'Organization short name'), unique=True, max_length=6, null=True, blank=True)
+    # - contact = models.ForeignKey('Contact', verbose_name=_(u'Contact'), blank=True, null=True)
+    # - type = models.ForeignKey('OrgType', verbose_name=_(u'Orgtype'), blank=True, null=True)
 
-    name = fields.CharField('organizationname', null=True)
+    name = fields.CharField('name', null=True)
 
     class Meta:
-        queryset = Donor.objects.all()
+        queryset = Organization.objects.all()
         include_resource_uri = False
         fields = ('name',)
 
@@ -133,14 +151,7 @@ class CelllineResource(ModelResource):
     # - primary_disease = models.ForeignKey('Disease', verbose_name=_(u'Diagnosed disease'), blank=True, null=True)
     # - primary_disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
     # - status = models.ForeignKey('CelllineStatus', verbose_name=_(u'Cell line status'), blank=True, null=True)
-    # + celllinecelltype = models.ForeignKey('Celltype', verbose_name=_(u'Cell type'), blank=True, null=True)
-    # - celllinecollection = models.ForeignKey('Celllinecollection', verbose_name=_(u'Cell line collection'), blank=True, null=True)
-    # - celllinetissuesource = models.ForeignKey('Tissuesource', verbose_name=_(u'Tissue source'), blank=True, null=True)
-    # - celllinetissuetreatment = models.ForeignKey('Clinicaltreatmentb4donation', verbose_name=_(u'Clinical treatment B4 donation'), blank=True, null=True)
-    # - celllinetissuedate = models.DateField(_(u'Cell line tissue date'), blank=True, null=True)
     # + alternative_names = models.CharField(_(u'Cell line alternative names'), max_length=500, null=True, blank=True)
-    # - depositorscelllineuri = models.CharField(_(u'Depositors cell line URI'), max_length=45, blank=True)
-    # - celllinecomments = models.TextField(_(u'Cell line comments'), null=True, blank=True)
     # - celllineecaccurl = models.URLField(_(u'Cell line ECACC URL'), blank=True, null=True)
 
     biosamples_id = fields.CharField('biosamples_id', unique=True)
@@ -148,8 +159,8 @@ class CelllineResource(ModelResource):
     name = fields.CharField('name', unique=True)
     alternative_names = fields.CharField('alternative_names')
 
-    cell_type = fields.CharField('celllinecelltype', null=True)
     primary_disease = fields.ToOneField(DiseaseResource, 'primary_disease', null=True, full=True)
+    primary_cell_type = fields.ToOneField(CelllineDerivationResource, 'primary_cell_type_name', full=True)
     culture_conditions = fields.ToOneField(CelllineCultureConditionsResource, 'celllinecultureconditions', full=True)
     cellline_karyotype = fields.ToOneField(CellLineKaryotypeResource, 'karyotype', null=True, full=True)
 
@@ -201,6 +212,7 @@ class CelllineResource(ModelResource):
                 res['data'] = {
                     'vector': bundle.obj.integrating_vector.vector,
                     'excisable': bundle.obj.integrating_vector.excisable,
+                    'absence_reprogramming_vectors': bundle.obj.integrating_vector.absence_reprogramming_vectors,
                 }
                 if bundle.obj.integrating_vector.virus:
                     res['data']['virus'] = bundle.obj.integrating_vector.virus

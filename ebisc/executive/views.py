@@ -23,7 +23,7 @@ def dashboard(request):
         ('cellLineName', 'Cell line Name', 'name'),
         ('disease', 'Disease', 'primary_disease'),
         ('registrationDate', 'Date of Registration', None),
-        ('depositor', 'Depositor', 'generator__organizationname'),
+        ('depositor', 'Depositor', 'generator__name'),
         ('batches', 'Batches', None),
         ('quantity', 'QTY', None),
         ('sold', 'Sold', None),

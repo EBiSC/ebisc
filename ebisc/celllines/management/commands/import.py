@@ -29,7 +29,7 @@ class Command(DocOptCommand):
 
             if args.get('--init'):
                 logger.info('Initializing database')
-                for model in [Disease, Celltype, Celllineorgtype, Organization, Cellline, NonIntegratingVector]:
+                for model in [Disease, CellType, CelllineOrgType, Organization, Cellline, NonIntegratingVector]:
                     model.objects.all().delete()
 
             importer.hotstart.run(args.get('<directory>'))

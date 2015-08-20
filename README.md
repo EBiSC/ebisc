@@ -347,7 +347,7 @@ I as an EBiSC catalogue user want to know time to ship for an individual cell li
 
 ## Data model cleanup
 
-Cellline
+### Cellline
 
 celllineaccepted
 accepted
@@ -372,9 +372,231 @@ primary_disease
 
 celllinediseaseaddinfo
 primary_disease_stage
+- need to add primary_disease_phenotypes
 
 celllinestatus
 status
+
+celllinecelltype
+- removed, using Derivation -> primary cell type
+
+celllinecollection
+- removed for now. collections were meant to be used for common MDAs and AUAs - will implement in september
+
+celllinetissuesource
+- moved to Derivation: tissue_procurement_location
+
+celllinetissuedate
+- moved to Derivation: tissue_collection_date
+
+celllinetissuetreatment
+- removed. will be probably added later if donor medical/clinical info becomes available
+
+depositorscelllineuri
+- removed
+
+comments
+- removed
+
+### Donor
+
+countryoforigin
+country_of_origin
+
+primarydisease
+diseaseadditionalinfo
+- removed (goes to cell line)
+othercelllinefromdonor
+parentcellline
+cellabnormalkaryotype
+donorabnormalkaryotype
+otherclinicalinformation
+- removed (hSECreg does not collect this anymore)
+
+<!--     primarydisease = models.ForeignKey('Disease', verbose_name=_(u'Disease'), null=True, blank=True)
+    diseaseadditionalinfo = models.CharField(_(u'Disease additional info'), max_length=45, blank=True)
+    othercelllinefromdonor = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='celllines_othercelllinefromdonor', null=True, blank=True)
+    parentcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='celllines_parentcellline', null=True, blank=True)
+    cellabnormalkaryotype = models.CharField(_(u'Cell abnormal karyotype'), max_length=45, blank=True)
+    donorabnormalkaryotype = models.CharField(_(u'Donor abnormal karyotype'), max_length=45, blank=True)
+    otherclinicalinformation = models.CharField(_(u'Other clinical information'), max_length=100, blank=True)
+ -->
+
+### Cellline Culture Conditions
+
+surfacecoating
+surface_coating
+
+feedercelltype
+feeder_cell_type
+
+feedercellid
+feeder_cell_id
+
+passagemethod
+passage_method
+
+### Batch Culture Conditions
+
+passagemethod
+passage_method
+
+enzymefree
+enzyme_free
+
+o2concentration
+o2_concentration
+
+co2concentration
+co2_concentration
+
+other_culture_environment
+- added
+
+passage_number_banked
+- added
+
+number_of_vials_banked
+- added
+
+Add this when completed
+
+Passage history (back to reprogramming)
+Culture History (methods used) 
+
+### Cellline Derivation
+
+primarycelltypename
+primarycelltypecellfinderid
+- moved to foreignkey CellType (id still needs to be done). This will be done with ontologies in some future ...
+- need to fix importer to import this correctly (via parse_cell_type)!!!!
+
+primarycelldevelopmentalstage
+primary_cell_developmental_stage
+
+reprogramming_passage_number
+passage_number_reprogrammed
+- added
+
+selectioncriteriaforclones
+selection_criteria_for_clones
+
+xenofreeconditions
+xeno_free_conditions
+
+derivedundergmp
+derived_under_gmp
+
+vectorfreereprogramfactor
+vector_free_reprogramming_factor
+
+referenceid
+reference_id
+
+### Cellline Organization
+
+orgcellline
+cell_line
+
+celllineorgtype
+cell_line_org_type
+
+orgstatus
+- removed
+    <!-- orgstatus = models.IntegerField(_(u'Organization status'), null=True, blank=True) -->
+
+orgregistrationdate
+- removed
+    <!-- orgregistrationdate = models.DateField(null=True, blank=True) -->
+
+
+organizationname
+name
+
+organizationshortname
+short_name
+
+organizationcontact
+contact
+
+organizationtype
+org_type
+
+celllineorgtype
+cell_line_org_type
+
+orgtype
+org_type
+
+contacttype
+contact_type
+
+statecounty
+state_county
+
+buildingnumber
+building_number
+
+suiteoraptordept
+suite_or_apt_or_dept
+
+officephonecountrycode
+office_phone_country_code
+
+officephone
+office_phone
+
+faxcountrycode
+fax_country_code
+
+mobilecountrycode
+mobile_country_code
+
+mobilephone
+mobile_phone
+
+emailaddress
+email_address
+
+personlastname
+last_name
+
+personfirstname
+first_name
+
+personcontact
+contact
+
+### Document
+
+cellline
+cell_line
+
+documenttype
+document_type
+
+documentdepositor
+depositor
+
+accesslevel
+access_level
+
+### Cell line value
+
+valuecellline
+cell_line
+
+potentialuse
+potential_use
+
+valuetosociety
+value_to_society
+
+valuetoresearch
+value_to_research
+
+othervalue
+other_value
 
 
 
@@ -386,3 +608,200 @@ CellType
 Celllinestatus
 CelllineStatus
 
+Celllinecollection
+- removed for now. collections were meant to be used for common MDAs and AUAs - will implement in september (maybe differently)
+
+<!-- class Celllinecollection(models.Model):
+    celllinecollectiontotal = models.IntegerField(_(u'Cell line collection total'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line collection')
+        verbose_name_plural = _(u'Cell line collections')
+        ordering = ['id']
+
+    def __unicode__(self):
+        return u'%s' % (self.celllinecollectiontotal,)
+ -->
+
+Tissuesource
+TissueLocation
+
+Clinicaltreatmentb4donation
+- removed, will be probably added later if donor medical/clinical info becomes available
+
+Celllinecomments
+- removed
+
+CellLineCharacterization
+CelllineCharacterization
+
+Celllinechecklist
+- removed
+
+<!-- class Celllinechecklist(models.Model):
+    checklistcellline = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
+    morphologicalassessment = models.BooleanField(_(u'Morphological assessment'), default=False)
+    facs = models.BooleanField(_(u'FACS'), default=False)
+    ihc = models.BooleanField(_(u'IHC'), default=False)
+    pcrforreprofactorremoval = models.BooleanField(_(u'PCR for reprofactor removal'), default=False)
+    pcrforpluripotency = models.BooleanField(_(u'PCR for pluripotency'), default=False)
+    teratoma = models.BooleanField(_(u'Teratoma'), default=False)
+    invitrodifferentiation = models.BooleanField(_(u'Invitro differentiation'), default=False)
+    karyotype = models.BooleanField(_(u'Karyo type'), default=False)
+    cnvanalysis = models.BooleanField(_(u'CNV analysis'), default=False)
+    dnamethylation = models.BooleanField(_(u'DNA methylation'), default=False)
+    microbiologyinclmycoplasma = models.BooleanField(_(u'Micro biology inclmycoplasma'), default=False)
+    dnagenotyping = models.BooleanField(_(u'DNA genotyping'), default=False)
+    hlatyping = models.BooleanField(_(u'HLA typing'), default=False)
+    virustesting = models.BooleanField(_(u'Virus testing'), default=False)
+    postthawviability = models.BooleanField(_(u'Post thawviability'), default=False)
+    checklistcomments = models.TextField('Checklist comments', null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line checklist')
+        verbose_name_plural = _(u'Cell line checklists')
+        ordering = ['checklistcellline']
+
+    def __unicode__(self):
+        return u'%s' % (self.checklistcellline,)
+ -->
+
+
+Celllinecultureconditions
+CelllineCultureConditions
+
+CellLineCultureMediumSupplement
+CelllineCultureMediumSupplement
+
+Celllinederivation
+CelllineDerivation
+
+CellLineNonIntegratingVector
+CelllineNonIntegratingVector
+
+CellLineIntegratingVector
+CelllineIntegratingVector
+
+Vectorfreereprogramfactor
+VectorFreeReprogrammingFactor
+
+CellLineVectorFreeReprogrammingFactors
+CelllineVectorFreeReprogrammingFactors
+
+Celllinelab
+- removed
+
+<!-- class Celllinelab(models.Model):
+    labcellline = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), null=True, blank=True)
+    cryodate = models.DateField(null=True, blank=True)
+    expansioninprogress = models.IntegerField(_(u'Expansion in progress'), null=True, blank=True)
+    funder = models.CharField(_(u'Funder'), max_length=45, blank=True)
+    mutagene = models.CharField(_(u'Mutagene'), max_length=100, blank=True)
+    clonenumber = models.IntegerField(_(u'Clone number'), null=True, blank=True)
+    passagenumber = models.CharField(_(u'Passage number'), max_length=5, blank=True)
+    culturesystem = models.ForeignKey('Culturesystem', verbose_name=_(u'Culture system'), null=True, blank=True)
+    culturesystemcomment = models.CharField(_(u'Culture system comment'), max_length=45, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line lab')
+        verbose_name_plural = _(u'Cell line labs')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+ -->
+
+Culturesystem
+- removed
+
+<!-- class Culturesystem(models.Model):
+    culturesystem = models.CharField(_(u'Culture system'), max_length=45, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Culture system')
+        verbose_name_plural = _(u'Culture systems')
+        ordering = ['culturesystem']
+
+    def __unicode__(self):
+        return u'%s' % (self.culturesystem,)
+ -->
+
+
+
+CellLineLegal
+CelllineEthics
+
+Celllineorganization
+CelllineOrganization
+
+Celllineorgtype
+CelllineOrgType
+
+Orgtype
+OrgType
+
+Contacttype
+ContactType
+
+Phonecountrycode
+PhoneCountryCode
+
+Documenttype
+DocumentType
+
+
+Publisher
+- removed
+
+<!-- class Publisher(models.Model):
+    publisher = models.CharField(_(u'Publisher'), max_length=45, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Publisher')
+        verbose_name_plural = _(u'Publishers')
+        ordering = ['publisher']
+
+    def __unicode__(self):
+        return u'%s' % (self.publisher,)
+
+ -->
+
+ Celllinevalue
+ CelllineValue
+
+
+EBiSC Keyword and Keyword
+- removed
+
+<!-- class Ebisckeyword(models.Model):
+
+    cellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
+    document = models.ForeignKey('Document', verbose_name=_(u'Document'), null=True, blank=True)
+    ebisckeyword = models.ForeignKey('Keyword', verbose_name=_(u'Keyword'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Ebisc keyword')
+        verbose_name_plural = _(u'Ebisc keywords')
+        ordering = ['cellline', 'document', 'ebisckeyword']
+
+    def __unicode__(self):
+        return u'%s - %s - %s' % (self.cellline, self.document, self.ebisckeyword)
+
+
+class Keyword(models.Model):
+
+    keyword = models.CharField(_(u'Keyword'), max_length=45, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Keyword')
+        verbose_name_plural = _(u'Keywords')
+        ordering = ['keyword']
+
+    def __unicode__(self):
+        return u'%s' % (self.keyword,)
+
+
+
+ -->

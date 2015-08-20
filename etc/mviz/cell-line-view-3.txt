@@ -1,9 +1,9 @@
 Cellline
-Vectorfreereprogramfactor
+VectorFreeReprogrammingFactor
 NonIntegratingVector
 IntegratingVector
 Virus
 Transposon
-CellLineNonIntegratingVector
-CellLineIntegratingVector
-CellLineVectorfreereprogramfactors
+CelllineNonIntegratingVector
+CelllineIntegratingVector
+CelllineVectorFreeReprogrammingFactors

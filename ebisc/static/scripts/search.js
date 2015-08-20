@@ -579,18 +579,18 @@ config = {
       name: 'primary_disease',
       label: 'Disease'
     }, {
-      name: 'celllinecelltype',
-      label: 'Cell type'
+      name: 'primary_cell_type',
+      label: 'Primary cell type'
     }
   ],
-  query_fields: ['biosamples_id.analyzed', 'name.analyzed', 'alternative_names.analyzed', 'depositor.analyzed', 'celllinecelltype.analyzed', 'primary_disease.analyzed', 'celllineprimarydisease_synonyms'],
+  query_fields: ['biosamples_id.analyzed', 'name.analyzed', 'alternative_names.analyzed', 'depositor.analyzed', 'primary_cell_type.analyzed', 'primary_disease.analyzed', 'primary_disease_synonyms'],
   facets: [
     {
       name: 'primary_disease',
       label: 'Disease',
       selectedTerms: {}
     }, {
-      name: 'celllinecelltype',
+      name: 'primary_cell_type',
       label: 'Cell type',
       selectedTerms: {}
     }, {

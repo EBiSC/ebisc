@@ -23,8 +23,8 @@ config = {
             label: 'Disease'
         }
         {
-            name: 'celllinecelltype'
-            label: 'Cell type'
+            name: 'primary_cell_type'
+            label: 'Primary cell type'
         }
     ]
 
@@ -33,9 +33,9 @@ config = {
         'name.analyzed'
         'alternative_names.analyzed'
         'depositor.analyzed'
-        'celllinecelltype.analyzed'
+        'primary_cell_type.analyzed'
         'primary_disease.analyzed'
-        'celllineprimarydisease_synonyms'
+        'primary_disease_synonyms'
     ]
 
     facets: [
@@ -45,8 +45,8 @@ config = {
             selectedTerms: {}
         }
         {
-            name: 'celllinecelltype'
-            label: 'Cell type'
+            name: 'primary_cell_type'
+            label: 'Primary cell type'
             selectedTerms: {}
         }
         {
