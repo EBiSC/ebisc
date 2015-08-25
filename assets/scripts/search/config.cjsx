@@ -3,50 +3,50 @@ config = {
 
     fields: [
         {
-            name: 'biosamplesid'
+            name: 'biosamples_id'
             label: 'Biosamples ID'
         }
         {
-            name: 'celllinename'
+            name: 'name'
             label: 'Name'
         }
         {
-            name: 'celllinenamesynonyms'
-            label: 'Name synonyms'
+            name: 'alternative_names'
+            label: 'Alternative names'
         }
         {
             name: 'depositor'
             label: 'Depositor'
         }
         {
-            name: 'celllineprimarydisease'
+            name: 'primary_disease'
             label: 'Disease'
         }
         {
-            name: 'celllinecelltype'
-            label: 'Cell type'
+            name: 'primary_cell_type'
+            label: 'Primary cell type'
         }
     ]
 
     query_fields: [
-        'biosamplesid.analyzed'
-        'celllinename.analyzed'
-        'celllinenamesynonyms.analyzed'
+        'biosamples_id.analyzed'
+        'name.analyzed'
+        'alternative_names.analyzed'
         'depositor.analyzed'
-        'celllinecelltype.analyzed'
-        'celllineprimarydisease.analyzed'
-        'celllineprimarydisease_synonyms'
+        'primary_cell_type.analyzed'
+        'primary_disease.analyzed'
+        'primary_disease_synonyms'
     ]
 
     facets: [
         {
-            name: 'celllineprimarydisease'
+            name: 'primary_disease'
             label: 'Disease'
             selectedTerms: {}
         }
         {
-            name: 'celllinecelltype'
-            label: 'Cell type'
+            name: 'primary_cell_type'
+            label: 'Primary cell type'
             selectedTerms: {}
         }
         {

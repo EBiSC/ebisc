@@ -35,67 +35,51 @@ class AgeRangeAdmin(admin.ModelAdmin):
 admin.site.register(AgeRange, AgeRangeAdmin)
 
 
-class ApprovedUseAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(ApprovedUse, ApprovedUseAdmin)
-
-
 # -----------------------------------------------------------------------------
 # CellLine
 
-class CellLineCharacterizationInline(OneToOneStackedInline):
-    model = CellLineCharacterization
+class CelllineCharacterizationInline(OneToOneStackedInline):
+    model = CelllineCharacterization
 
 
-class CelllinechecklistInline(OneToOneStackedInline):
-    model = Celllinechecklist
+class CelllineCultureConditionsInline(OneToOneStackedInline):
+    model = CelllineCultureConditions
 
 
-class CelllinecultureconditionsInline(OneToOneStackedInline):
-    model = Celllinecultureconditions
+class CelllineDerivationInline(OneToOneStackedInline):
+    model = CelllineDerivation
 
 
-class CelllinederivationInline(OneToOneStackedInline):
-    model = Celllinederivation
+class CelllineEthicsInline(OneToOneStackedInline):
+    model = CelllineEthics
 
 
-class CelllinelabInline(OneToOneStackedInline):
-    model = Celllinelab
+class CelllineValueInline(OneToOneStackedInline):
+    model = CelllineValue
 
 
-class CellLineLegalInline(OneToOneStackedInline):
-    model = CellLineLegal
+class CelllineIntegratingVectorInline(OneToOneStackedInline):
+    model = CelllineIntegratingVector
 
 
-class CelllinevalueInline(OneToOneStackedInline):
-    model = Celllinevalue
-
-
-class CellLineIntegratingVectorInline(OneToOneStackedInline):
-    model = CellLineIntegratingVector
-
-
-class CellLineNonIntegratingVectorInline(OneToOneStackedInline):
-    model = CellLineNonIntegratingVector
+class CelllineNonIntegratingVectorInline(OneToOneStackedInline):
+    model = CelllineNonIntegratingVector
 
 
 class CelllineAdmin(admin.ModelAdmin):
 
-    list_display = ['biosamplesid', 'celllinename', 'celllinestatus', 'celllinenamesynonyms']
+    list_display = ['biosamples_id', 'name', 'status', 'alternative_names']
     inlines = (
-        CellLineCharacterizationInline,
-        CelllinechecklistInline,
-        CelllinecultureconditionsInline,
-        CelllinederivationInline,
-        CelllinelabInline,
-        CellLineLegalInline,
-        CelllinevalueInline,
-        CellLineIntegratingVectorInline,
-        CellLineNonIntegratingVectorInline,
+        CelllineCharacterizationInline,
+        CelllineCultureConditionsInline,
+        CelllineDerivationInline,
+        CelllineEthicsInline,
+        CelllineValueInline,
+        CelllineIntegratingVectorInline,
+        CelllineNonIntegratingVectorInline,
     )
 
-    list_filter = ('celllinestatus',)
+    list_filter = ('status',)
 
 admin.site.register(Cellline, CelllineAdmin)
 
@@ -109,10 +93,8 @@ class BatchAliquotInline(TabularInline):
 
 class CelllineBatchAdmin(admin.ModelAdmin):
 
-    list_display = ['biosamplesid', 'batch_id', 'cell_line']
+    list_display = ['biosamples_id', 'batch_id', 'cell_line']
     inlines = (BatchAliquotInline,)
-
-    # list_filter = ('celllinestatus',)
 
 admin.site.register(CelllineBatch, CelllineBatchAdmin)
 

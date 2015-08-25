@@ -46,5 +46,5 @@ class Command(DocOptCommand):
 
     def init(self):
         logger.info('Initializing database')
-        for model in [Disease, Celltype, Celllineorgtype, Organization, Cellline, NonIntegratingVector]:
+        for model in [Disease, CellType, CelllineOrgType, Organization, Cellline, NonIntegratingVector]:
             model.objects.all().delete()

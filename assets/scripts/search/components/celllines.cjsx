@@ -17,7 +17,7 @@ Celllines = React.createClass
         buildCell = (name, row) ->
             value = row._source[name]
 
-            if name == 'biosamplesid'
+            if name == 'biosamples_id'
                 <a href="./#{value}/">{value}</a>           
             else
                 value

@@ -12,7 +12,7 @@ logger = logging.getLogger('management.commands')
 import pdb
 
 '''
-HotsStart JSON data importer.
+hPSCreg JSON data API importer.
 '''
 
 

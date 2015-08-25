@@ -1,9 +1,9 @@
 <table class="data">
 
     <tr><th colspan="2" class="title"><h2>General Information</h2></th></tr>
-    <tr><td class="label">Biosamples ID:</td><td>{{ cellline.biosamplesid|default:"-" }}</td></tr>
-    <tr><td class="label">Cell line name:</td><td>{{ cellline.celllinename|default:"-" }}</td></tr>
-    <tr><td class="label">Cell line alternative names:</td><td>{{ cellline.celllinenamesynonyms|default:"-" }}</td></tr>
+    <tr><td class="label">Biosamples ID:</td><td>{{ cellline.biosamples_id|default:"-" }}</td></tr>
+    <tr><td class="label">Cell line name:</td><td>{{ cellline.name|default:"-" }}</td></tr>
+    <tr><td class="label">Cell line alternative names:</td><td>{{ cellline.alternative_names|default:"-" }}</td></tr>
 
     {% if cellline.publications.all|length %}
     <tr>
@@ -18,37 +18,33 @@
     </tr>
     {% endif %}
 
-    <!-- <tr><td class="label">Mutant gene:</td><td>{{ cellline.celllinelab.mutagene|default:"-" }}</td></tr> -->
-    <!-- <tr><td class="label">Cell line disease info:</td><td>{{ cellline.celllinediseaseaddinfo|default:"-" }}</td></tr> -->
-    <!-- <tr><td class="label">Cell line status:</td><td>{{ cellline.celllinestatus|default:"-" }}</td></tr> -->
-    <!-- <tr><td class="label">Tissue source:</td><td>{{ cellline.celllinetissuesource|default:"-" }}</td></tr> -->
-    <!-- <tr><td class="label">Cell line collection:</td><td>{{ cellline.celllinecollection|default:"-" }}</td></tr> -->
-    <!-- <tr><td class="label">Clinical treatment before donation:</td><td>{{ cellline.celllinetissuetreatment|default:"-" }}</td></tr> -->
-    <!-- <tr><td class="label">Cell line tissue date:</td><td>{{ cellline.celllinetissuedate|default:"-" }}</td></tr> -->
+    <!-- <tr><td class="label">Cell line disease status:</td><td>{{ cellline.primary_disease_stage|default:"-" }}</td></tr> -->
+    <!-- <tr><td class="label">Cell line status:</td><td>{{ cellline.status|default:"-" }}</td></tr> -->
 
-    <!-- <tr><td class="label">Cell line comments:</td><td>{{ cellline.celllinecomments|default:"-" }}</td></tr> -->
     <!-- <tr><td class="label">Cell line update:</td><td>{{ cellline.celllineupdate|default:"-" }}</td></tr> -->
     <!-- <tr><td class="label">Last update type:</td><td>{{ cellline.celllineupdatetype|default:"-" }}</td></tr> -->
     <!-- <tr><td class="label">Cell line ECACC URL:</td><td>{{ cellline.celllineecaccurl|default:"-" }}</td></tr> -->
 
     <tr><th class="sub-title"><h3>Donor information</h3></th><th></th></tr>
-    <tr><td class="label">Biosamples ID:</td><td>{{ cellline.donor.biosamplesid|default:"-" }}</td></tr>
+    <tr><td class="label">Biosamples ID:</td><td>{{ cellline.donor.biosamples_id|default:"-" }}</td></tr>
     <tr><td class="label">Internal donor ID:</td><td>{{ cellline.donor.provider_donor_ids|default:"-"|join:", " }}</td></tr>
-    <tr><td class="label">Diagnosed disease:</td><td>{{ cellline.celllineprimarydisease|default:"-" }}</td></tr>
+    <tr><td class="label">Diagnosed disease:</td><td>{{ cellline.primary_disease|default:"-" }}</td></tr>
     <tr><td class="label">Gender:</td><td>{{ cellline.donor.gender|default:"-" }}</td></tr>
     <tr><td class="label">Age:</td><td>{{ cellline.donor_age|default:"-" }}</td></tr>
-    <tr><td class="label">Country of origin:</td><td>{{ cellline.donor.countryoforigin.code|default:"-" }}</td></tr>
+    <tr><td class="label">Country of origin:</td><td>{{ cellline.donor.country_of_origin.code|default:"-" }}</td></tr>
 
     <tr><th class="sub-title"><h3>Depositor</h3></th><th></th></tr>
 
-    <tr><td class="label">Depositor:</td><td>{{ cellline.generator.organizationname|default:"-" }}</td></tr>
-    <!-- <tr><td class="label">Depositors cell line URI:</td><td>{{ cellline.depositorscelllineuri|default:"-" }}</td></tr> -->
+    <tr><td class="label">Depositor:</td><td>{{ cellline.generator.name|default:"-" }}</td></tr>
     <!-- <tr><td class="label">Cell line user account:</td><td>{{ cellline.celllineupdatedby|default:"-" }}</td></tr> -->
 
     <tr><th colspan="2" class="title"><h2>Derivation</h2></th></tr>
 
-    <tr><td class="label">Primary cell type:</td><td>{{ cellline.celllinederivation.primarycelltypename|default:"-" }}</td></tr>
-    <tr><td class="label">Primary cell developmental stage:</td><td>{{ cellline.celllinederivation.primarycelldevelopmentalstage|default:"-" }}</td></tr>
+    <tr><td class="label">Primary cell type:</td><td>{{ cellline.celllinederivation.primary_cell_type.name|default:"-" }}</td></tr>
+    <tr><td class="label">Primary cell developmental stage:</td><td>{{ cellline.celllinederivation.primary_cell_developmental_stage|default:"-" }}</td></tr>
+
+    <!-- <tr><td class="label">Tissue source:</td><td>{{ cellline.celllinederivation.tissue_procurement_location.tissue_location|default:"-" }}</td></tr> -->
+    <!-- <tr><td class="label">Cell line tissue date:</td><td>{{ cellline.celllinederivation.tissue_collection_date|default:"-" }}</td></tr> -->
 
     <tr><th class="sub-title"><h3>Reprogramming method</h3></th><th></th></tr>
 
@@ -72,6 +68,7 @@
         {% endif %}
 
         {% if cellline.integrating_vector.excisable %}<tr><td class="label">Is the used vector excisable?:</td><td>{{ cellline.integrating_vector.excisable|yesno:"yes,no" }}</td></tr>{% endif %}
+        {% if cellline.integrating_vector.absence_reprogramming_vectors %}<tr><td class="label">Absence of reprogramming vector(s):</td><td>{{ cellline.integrating_vector.absence_reprogramming_vectors|yesno:"yes,no" }}</td></tr>{% endif %}
     {% endif %}
 
     {% if cellline.non_integrating_vector %}
@@ -95,33 +92,34 @@
 
     <tr><th class="sub-title"><h3>Derivation</h3></th><th></th></tr>
 
-    <tr><td class="label">Selection criteria for clones:</td><td>{{ cellline.celllinederivation.selectioncriteriaforclones|default:"-" }}</td></tr>
-    <tr><td class="label">Xeno free conditions:</td><td>{{ cellline.celllinederivation.xenofreeconditions|yesno:"yes,no"|default:"-" }}</td></tr>
-    <tr><td class="label">Derived under gmp:</td><td>{{ cellline.celllinederivation.derivedundergmp|yesno:"yes,no"|default:"-" }}</td></tr>
+    <tr><td class="label">Selection criteria for clones:</td><td>{{ cellline.celllinederivation.selection_criteria_for_clones|default:"-" }}</td></tr>
+    <tr><td class="label">Xeno free conditions:</td><td>{{ cellline.celllinederivation.xeno_free_conditions|yesno:"yes,no"|default:"-" }}</td></tr>
+    <tr><td class="label">Derived under gmp:</td><td>{{ cellline.celllinederivation.derived_under_gmp|yesno:"yes,no"|default:"-" }}</td></tr>
+    <tr><td class="label">Available as clinical grade:</td><td>{{ cellline.celllinederivation.available_as_clinical_grade|yesno:"yes,no"|default:"-" }}</td></tr>
 
     <tr><th colspan="2" class="title"><h2>Culture Conditions</h2></th></tr>
 
-    {% if cellline.celllinecultureconditions.surfacecoating %}
-    <tr><td class="label">Surface coating:</td><td>{{ cellline.celllinecultureconditions.surfacecoating|default:"-" }}</td></tr>
+    {% if cellline.celllinecultureconditions.surface_coating %}
+    <tr><td class="label">Surface coating:</td><td>{{ cellline.celllinecultureconditions.surface_coating|default:"-" }}</td></tr>
     {% endif %}
-    {% if cellline.celllinecultureconditions.feedercelltype %}
-    <tr><td class="label">Feeder cell type:</td><td>{{ cellline.celllinecultureconditions.feedercelltype|default:"-" }}</td></tr>
+    {% if cellline.celllinecultureconditions.feeder_cell_type %}
+    <tr><td class="label">Feeder cell type:</td><td>{{ cellline.celllinecultureconditions.feeder_cell_type|default:"-" }}</td></tr>
     {% endif %}
-    <!-- <tr><td class="label">Feeder cell ID:</td><td>{{ cellline.celllinecultureconditions.feedercellid|default:"-" }}</td></tr> -->
-    {% if cellline.celllinecultureconditions.passagemethod %}
-    <tr><td class="label">Passage method:</td><td>{{ cellline.celllinecultureconditions.passagemethod|default:"-" }}</td></tr>
+    <!-- <tr><td class="label">Feeder cell ID:</td><td>{{ cellline.celllinecultureconditions.feeder_cell_id|default:"-" }}</td></tr> -->
+    {% if cellline.celllinecultureconditions.passage_method %}
+    <tr><td class="label">Passage method:</td><td>{{ cellline.celllinecultureconditions.passage_method|default:"-" }}</td></tr>
     {% endif %}
     {% if cellline.celllinecultureconditions.enzymatically %}
     <tr><td class="label">Enzymatically:</td><td>{{ cellline.celllinecultureconditions.enzymatically|default:"-" }}</td></tr>
     {% endif %}
-    {% if cellline.celllinecultureconditions.enzymefree %}
-    <tr><td class="label">Enzyme free:</td><td>{{ cellline.celllinecultureconditions.enzymefree|default:"-" }}</td></tr>
+    {% if cellline.celllinecultureconditions.enzyme_free %}
+    <tr><td class="label">Enzyme free:</td><td>{{ cellline.celllinecultureconditions.enzyme_free|default:"-" }}</td></tr>
     {% endif %}
-    {% if cellline.celllinecultureconditions.o2concentration %}
-    <tr><td class="label">O<sub>2</sub> concentration:</td><td>{{ cellline.celllinecultureconditions.o2concentration }}%</td></tr>
+    {% if cellline.celllinecultureconditions.o2_concentration %}
+    <tr><td class="label">O<sub>2</sub> concentration:</td><td>{{ cellline.celllinecultureconditions.o2_concentration }}%</td></tr>
     {% endif %}
-    {% if cellline.celllinecultureconditions.co2concentration %}
-    <tr><td class="label">CO<sub>2</sub> concentration:</td><td>{{ cellline.celllinecultureconditions.co2concentration }}%</td></tr>
+    {% if cellline.celllinecultureconditions.co2_concentration %}
+    <tr><td class="label">CO<sub>2</sub> concentration:</td><td>{{ cellline.celllinecultureconditions.co2_concentration }}%</td></tr>
     {% endif %}
 
     {% if cellline.celllinecultureconditions.culture_medium %}
@@ -214,35 +212,35 @@
 
     <tr><th class="sub-title"><h3>Informed Consent</h3></th><th></th></tr>
 
-    <tr><td class="label">Donor consent was obtained:</td><td>{{ cellline.celllinelegal.donor_consent|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Donor consent was obtained:</td><td>{{ cellline.celllineethics.donor_consent|yesno:"yes,no,-" }}</td></tr>
 
-    <tr><td class="label">No pressure was put on the donor:</td><td>{{ cellline.celllinelegal.no_pressure_statement|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">No financial inducement was offered:</td><td>{{ cellline.celllinelegal.no_inducement_statement|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">No pressure was put on the donor:</td><td>{{ cellline.celllineethics.no_pressure_statement|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">No financial inducement was offered:</td><td>{{ cellline.celllineethics.no_inducement_statement|yesno:"yes,no,-" }}</td></tr>
 
     <tr>
         <td class="label">Depositor holds a copy of the donor consent:</td>
-        <td>{{ cellline.celllinelegal.donor_consent_form|yesno:"yes,no,-" }}
-        {% if cellline.celllinelegal.donor_consent_form_url %}
+        <td>{{ cellline.celllineethics.donor_consent_form|yesno:"yes,no,-" }}
+        {% if cellline.celllineethics.donor_consent_form_url %}
             <i>file</i>
         {% endif %}
         </td>
     </tr>
 
-    {% if not cellline.celllinelegal.donor_consent_form %}
-        <tr><td class="label">Depositor knows location of consent form:</td><td>{{ cellline.celllinelegal.known_location_of_consent_form|yesno:"yes,no,-" }}</td></tr>
-        <tr><td class="label">Depositor can obtain a copy of consent form:</td><td>{{ cellline.celllinelegal.copy_of_consent_form_obtainable|yesno:"yes,no,-" }}</td></tr>
-        <tr><td class="label">Depositor can arrange to obtain a new form of consent from the donor:</td><td>{{ cellline.celllinelegal.obtain_new_consent_form|yesno:"yes,no,-" }}</td></tr>
-        <tr><td class="label">Donor has agreed to be re-contacted for re-consenting:</td><td>{{ cellline.celllinelegal.donor_recontact_agreement|yesno:"yes,no,-" }}</td></tr>
-        {% if cellline.celllinelegal.donor_recontact_agreement %}
-            <tr><td class="label">Consent anticipates that the donor will be notified of research results:</td><td>{{ cellline.celllinelegal.consent_anticipates_donor_notification_research_results|yesno:"yes,no,-" }}</td></tr>
-            <tr><td class="label">Donor expects to be notified if significant health implications are discovered:</td><td>{{ cellline.celllinelegal.donor_expects_notification_health_implications|yesno:"yes,no,-" }}</td></tr>
+    {% if not cellline.celllineethics.donor_consent_form %}
+        <tr><td class="label">Depositor knows location of consent form:</td><td>{{ cellline.celllineethics.known_location_of_consent_form|yesno:"yes,no,-" }}</td></tr>
+        <tr><td class="label">Depositor can obtain a copy of consent form:</td><td>{{ cellline.celllineethics.copy_of_consent_form_obtainable|yesno:"yes,no,-" }}</td></tr>
+        <tr><td class="label">Depositor can arrange to obtain a new form of consent from the donor:</td><td>{{ cellline.celllineethics.obtain_new_consent_form|yesno:"yes,no,-" }}</td></tr>
+        <tr><td class="label">Donor has agreed to be re-contacted for re-consenting:</td><td>{{ cellline.celllineethics.donor_recontact_agreement|yesno:"yes,no,-" }}</td></tr>
+        {% if cellline.celllineethics.donor_recontact_agreement %}
+            <tr><td class="label">Consent anticipates that the donor will be notified of research results:</td><td>{{ cellline.celllineethics.consent_anticipates_donor_notification_research_results|yesno:"yes,no,-" }}</td></tr>
+            <tr><td class="label">Donor expects to be notified if significant health implications are discovered:</td><td>{{ cellline.celllineethics.donor_expects_notification_health_implications|yesno:"yes,no,-" }}</td></tr>
         {% endif %}
     {% endif %}
 
     <tr>
         <td class="label">Depositor can provide a copy of consent information provided to donor (in English):</td>
-        <td>{{ cellline.celllinelegal.copy_of_donor_consent_information_english_obtainable|yesno:"yes,no,-" }}
-        {% if cellline.celllinelegal.copy_of_donor_consent_information_english_url %}
+        <td>{{ cellline.celllineethics.copy_of_donor_consent_information_english_obtainable|yesno:"yes,no,-" }}
+        {% if cellline.celllineethics.copy_of_donor_consent_information_english_url %}
             <i>file</i>
         {% endif %}
         </td>
@@ -250,8 +248,8 @@
     
     <tr>
         <td class="label">Depositor can provide a copy of consent form (in English):</td>
-        <td>{{ cellline.celllinelegal.copy_of_donor_consent_form_english_obtainable|yesno:"yes,no,-" }}
-        {% if cellline.celllinelegal.copy_of_donor_consent_form_english_url %}
+        <td>{{ cellline.celllineethics.copy_of_donor_consent_form_english_obtainable|yesno:"yes,no,-" }}
+        {% if cellline.celllineethics.copy_of_donor_consent_form_english_url %}
             <i>file</i>
         {% endif %}
         </td>
@@ -259,128 +257,128 @@
 
     <tr><th class="sub-title"><h3>Consent Permissions and Restrictions</h3></th><th></th></tr>
 
-    <tr><td class="label">Consent expressly permits derivation of iPS cells:</td><td>{{ cellline.celllinelegal.consent_permits_ips_derivation|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Consent expressly permits derivation of iPS cells:</td><td>{{ cellline.celllineethics.consent_permits_ips_derivation|yesno:"yes,no,-" }}</td></tr>
 
-    <tr><td class="label">Consent pertains to one specific research project:</td><td>{{ cellline.celllinelegal.consent_pertains_specific_research_project|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Consent pertains to one specific research project:</td><td>{{ cellline.celllineethics.consent_pertains_specific_research_project|yesno:"yes,no,-" }}</td></tr>
 
-    <tr><td class="label">Consent permits unforeseen future research:</td><td>{{ cellline.celllinelegal.consent_permits_future_research|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Consent permits unforeseen future research:</td><td>{{ cellline.celllineethics.consent_permits_future_research|yesno:"yes,no,-" }}</td></tr>
 
-    <tr><td class="label">Future research is permitted only in some areas or types of research:</td><td>{{ cellline.celllinelegal.future_research_permitted_specified_areas|yesno:"yes,no,-" }}
-    {% if cellline.celllinelegal.future_research_permitted_areas %}
-     - {{ cellline.celllinelegal.future_research_permitted_areas }}
+    <tr><td class="label">Future research is permitted only in some areas or types of research:</td><td>{{ cellline.celllineethics.future_research_permitted_specified_areas|yesno:"yes,no,-" }}
+    {% if cellline.celllineethics.future_research_permitted_areas %}
+     - {{ cellline.celllineethics.future_research_permitted_areas }}
     {% endif %}
     </td>
     </tr>
 
-    <tr><td class="label">Consent permits uses for clinical treatment or human applications:</td><td>{{ cellline.celllinelegal.consent_permits_clinical_treatment|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Consent permits uses for clinical treatment or human applications:</td><td>{{ cellline.celllineethics.consent_permits_clinical_treatment|yesno:"yes,no,-" }}</td></tr>
 
-    <tr><td class="label">Formal permission from the owner for distribution:</td><td>{{ cellline.celllinelegal.formal_permission_for_distribution|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Formal permission from the owner for distribution:</td><td>{{ cellline.celllineethics.formal_permission_for_distribution|yesno:"yes,no,-" }}</td></tr>
 
     <tr>
         <td class="label">Consent permits research by:</td> 
         <td>
-            Academic institution: {{ cellline.celllinelegal.consent_permits_research_by_academic_institution|yesno:"yes,no,-" }}<br/>
-            Public organization: {{ cellline.celllinelegal.consent_permits_research_by_org|yesno:"yes,no,-" }}<br/>
-            Non-profit company: {{ cellline.celllinelegal.consent_permits_research_by_non_profit_company|yesno:"yes,no,-" }}<br/>
-            For-profit company: {{ cellline.celllinelegal.consent_permits_research_by_for_profit_company|yesno:"yes,no,-" }}
+            Academic institution: {{ cellline.celllineethics.consent_permits_research_by_academic_institution|yesno:"yes,no,-" }}<br/>
+            Public organization: {{ cellline.celllineethics.consent_permits_research_by_org|yesno:"yes,no,-" }}<br/>
+            Non-profit company: {{ cellline.celllineethics.consent_permits_research_by_non_profit_company|yesno:"yes,no,-" }}<br/>
+            For-profit company: {{ cellline.celllineethics.consent_permits_research_by_for_profit_company|yesno:"yes,no,-" }}
         </td>
     </tr>
 
     <tr>
         <td class="label">Consent permits development of commercial products:</td>
-        <td>{{ cellline.celllinelegal.consent_permits_development_of_commercial_products|yesno:"yes,no,-" }}
-        {% if cellline.celllinelegal.consent_permits_development_of_commercial_products == False %}
-            <br/>Consent expressly prevents commercial development: {{ cellline.celllinelegal.consent_expressly_prevents_commercial_development|yesno:"yes,no,-" }}
-            <br/>Consent expressly prevents financial gain: {{ cellline.celllinelegal.consent_expressly_prevents_financial_gain|yesno:"yes,no,-" }}
+        <td>{{ cellline.celllineethics.consent_permits_development_of_commercial_products|yesno:"yes,no,-" }}
+        {% if cellline.celllineethics.consent_permits_development_of_commercial_products == False %}
+            <br/>Consent expressly prevents commercial development: {{ cellline.celllineethics.consent_expressly_prevents_commercial_development|yesno:"yes,no,-" }}
+            <br/>Consent expressly prevents financial gain: {{ cellline.celllineethics.consent_expressly_prevents_financial_gain|yesno:"yes,no,-" }}
         {% endif %}
         </td>
     </tr>
 
     <tr>
         <td class="label">Further constraints on use of donated material or derived cells:</td>
-        <td>{{ cellline.celllinelegal.further_constraints_on_use|yesno:"yes,no,-" }}
-        {% if cellline.celllinelegal.further_constraints_on_use %}
-        <br/>{{ cellline.celllinelegal.further_constraints_on_use_desc }}
+        <td>{{ cellline.celllineethics.further_constraints_on_use|yesno:"yes,no,-" }}
+        {% if cellline.celllineethics.further_constraints_on_use %}
+        <br/>{{ cellline.celllineethics.further_constraints_on_use_desc }}
         {% endif %}
         </td>
     </tr>
 
     <tr><th class="sub-title"><h3>Storage of and Access to Material</h3></th><th></th></tr>
 
-    <tr><td class="label">Consent expressly permits indefinite storage of donated material and derived cells:</td><td>{{ cellline.celllinelegal.consent_expressly_permits_indefinite_storage|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Does consent prevent donated material and derived cells from being made available to research anywhere in the world?</td><td>{{ cellline.celllinelegal.consent_prevents_availiability_to_worldwide_research|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Consent expressly permits indefinite storage of donated material and derived cells:</td><td>{{ cellline.celllineethics.consent_expressly_permits_indefinite_storage|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Does consent prevent donated material and derived cells from being made available to research anywhere in the world?</td><td>{{ cellline.celllineethics.consent_prevents_availiability_to_worldwide_research|yesno:"yes,no,-" }}</td></tr>
 
     <tr><th class="sub-title"><h3>Genetic and microbiological testing</h3></th><th></th></tr>
 
-    <tr><td class="label">Consent permits testing for genetic characteristics:</td><td>{{ cellline.celllinelegal.consent_permits_genetic_testing|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Consent permits testing for microbiological agents and pathogens:</td><td>{{ cellline.celllinelegal.consent_permits_testing_microbiological_agents_pathogens|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Donation and derived information may influence personal future treatment:</td><td>{{ cellline.celllinelegal.derived_information_influence_personal_future_treatment|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Consent permits testing for genetic characteristics:</td><td>{{ cellline.celllineethics.consent_permits_genetic_testing|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Consent permits testing for microbiological agents and pathogens:</td><td>{{ cellline.celllineethics.consent_permits_testing_microbiological_agents_pathogens|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Donation and derived information may influence personal future treatment:</td><td>{{ cellline.celllineethics.derived_information_influence_personal_future_treatment|yesno:"yes,no,-" }}</td></tr>
 
     <tr><th class="sub-title"><h3>Data handling</h3></th><th></th></tr>
 
 
-    <tr><td class="label">Donor informed about data protection:</td><td>{{ cellline.celllinelegal.donor_data_protection_informed|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Donated material is coded or pseudonymised:</td><td>{{ cellline.celllinelegal.donated_material_code|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Donated material has been rendered unidentifiable (anonymised):</td><td>{{ cellline.celllinelegal.donated_material_rendered_unidentifiable|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Is there genetic information associated with the cell line:</td><td>{{ cellline.celllinelegal.genetic_information_exists|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Donor informed about data protection:</td><td>{{ cellline.celllineethics.donor_data_protection_informed|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Donated material is coded or pseudonymised:</td><td>{{ cellline.celllineethics.donated_material_code|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Donated material has been rendered unidentifiable (anonymised):</td><td>{{ cellline.celllineethics.donated_material_rendered_unidentifiable|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Is there genetic information associated with the cell line:</td><td>{{ cellline.celllineethics.genetic_information_exists|yesno:"yes,no,-" }}</td></tr>
 
-    {% if cellline.celllinelegal.genetic_information_exists %}
+    {% if cellline.celllineethics.genetic_information_exists %}
 
-    <tr><td class="label">Access policy for genetic information derived from the cell line:</td><td>{{ cellline.celllinelegal.genetic_information_access_policy|default:"-" }}</td></tr>
+    <tr><td class="label">Access policy for genetic information derived from the cell line:</td><td>{{ cellline.celllineethics.genetic_information_access_policy|default:"-" }}</td></tr>
     {% endif %}
 
-    <tr><td class="label">Genetic information associated with the cell line is available:</td><td>{{ cellline.celllinelegal.genetic_information_available|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Genetic information associated with the cell line is available:</td><td>{{ cellline.celllineethics.genetic_information_available|yesno:"yes,no,-" }}</td></tr>
 
     <tr><th class="sub-title"><h3>Medical Records</h3></th><th></th></tr>
 
-    <tr><td class="label">Consent permits access to medical records:</td><td>{{ cellline.celllinelegal.consent_permits_access_medical_records|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Consent permits access to other clinical sources:</td><td>{{ cellline.celllinelegal.consent_permits_access_other_clinical_source|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Access to ongoing medical records has been consented:</td><td>{{ cellline.celllinelegal.medical_records_access_consented|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Organisation (contact) holding medical records:</td><td>{{ cellline.celllinelegal.medical_records_access_consented_organisation_name|default:"-" }}</td></tr>
+    <tr><td class="label">Consent permits access to medical records:</td><td>{{ cellline.celllineethics.consent_permits_access_medical_records|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Consent permits access to other clinical sources:</td><td>{{ cellline.celllineethics.consent_permits_access_other_clinical_source|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Access to ongoing medical records has been consented:</td><td>{{ cellline.celllineethics.medical_records_access_consented|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Organisation (contact) holding medical records:</td><td>{{ cellline.celllineethics.medical_records_access_consented_organisation_name|default:"-" }}</td></tr>
 
 
     <tr><th class="sub-title"><h3>Withdrawal</h3></th><th></th></tr>
 
-    <tr><td class="label">Consent permits the donor, upon withdrawal of consent, to stop the use of derived material:</td><td>{{ cellline.celllinelegal.consent_permits_stop_of_derived_material_use|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Consent permits the donor, upon withdrawal of consent, to stop delivery or use of information and data about donor:</td><td>{{ cellline.celllinelegal.consent_permits_stop_of_delivery_of_information_and_data|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Consent permits the donor, upon withdrawal of consent, to stop the use of derived material:</td><td>{{ cellline.celllineethics.consent_permits_stop_of_derived_material_use|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Consent permits the donor, upon withdrawal of consent, to stop delivery or use of information and data about donor:</td><td>{{ cellline.celllineethics.consent_permits_stop_of_delivery_of_information_and_data|yesno:"yes,no,-" }}</td></tr>
 
     <tr><th class="sub-title"><h3>Ethics Review Panel Details</h3></th><th></th></tr>
 
-    <tr><td class="label">Institutional review board/competent authority approval:</td><td>{{ cellline.celllinelegal.authority_approval|yesno:"yes,no,-" }}</td></tr>
-    {% if cellline.celllinelegal.authority_approval %}
-    <tr><td class="label">Name of accrediting authority involved:</td><td>{{ cellline.celllinelegal.approval_authority_name|default:"-" }}</td></tr>
-    <tr><td class="label">Approval number:</td><td>{{ cellline.celllinelegal.approval_number|default:"-" }}</td></tr>
+    <tr><td class="label">Institutional review board/competent authority approval:</td><td>{{ cellline.celllineethics.authority_approval|yesno:"yes,no,-" }}</td></tr>
+    {% if cellline.celllineethics.authority_approval %}
+    <tr><td class="label">Name of accrediting authority involved:</td><td>{{ cellline.celllineethics.approval_authority_name|default:"-" }}</td></tr>
+    <tr><td class="label">Approval number:</td><td>{{ cellline.celllineethics.approval_number|default:"-" }}</td></tr>
     {% endif%}
 
-    <tr><td class="label">Ethics review panel provided a favourable opinion in relation of the form of consent:</td><td>{{ cellline.celllinelegal.ethics_review_panel_opinion_relation_consent_form|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Ethics review panel provided a favourable opinion in relation to the project:</td><td>{{ cellline.celllinelegal.ethics_review_panel_opinion_project_proposed_use|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Ethics review panel provided a favourable opinion in relation of the form of consent:</td><td>{{ cellline.celllineethics.ethics_review_panel_opinion_relation_consent_form|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">Ethics review panel provided a favourable opinion in relation to the project:</td><td>{{ cellline.celllineethics.ethics_review_panel_opinion_project_proposed_use|yesno:"yes,no,-" }}</td></tr>
 
     <tr><th class="sub-title"><h3>Constraints to Line Usage</h3></th><th></th></tr>
 
-    <tr><td class="label">Supplier of any recombined DNA vectors or commercial kits used:</td><td>{{ cellline.celllinelegal.recombined_dna_vectors_supplier|default:"-" }}</td></tr>
+    <tr><td class="label">Supplier of any recombined DNA vectors or commercial kits used:</td><td>{{ cellline.celllineethics.recombined_dna_vectors_supplier|default:"-" }}</td></tr>
     <tr>
         <td class="label">Any use or distribution constraints for this supplier:</td>
-        <td>{{ cellline.celllinelegal.use_or_distribution_constraints|yesno:"yes,no,-" }}
-        {% if cellline.celllinelegal.use_or_distribution_constraints and cellline.celllinelegal.use_or_distribution_constraints_desc %}
-             - {{ cellline.celllinelegal.use_or_distribution_constraints_desc }}
+        <td>{{ cellline.celllineethics.use_or_distribution_constraints|yesno:"yes,no,-" }}
+        {% if cellline.celllineethics.use_or_distribution_constraints and cellline.celllineethics.use_or_distribution_constraints_desc %}
+             - {{ cellline.celllineethics.use_or_distribution_constraints_desc }}
         {% endif%}
         </td>
     </tr>
     
     <tr>
         <td class="label">Depositor third party obligations in regard to the use of the cell line:</td>
-        <td>{{ cellline.celllinelegal.third_party_obligations|yesno:"yes,no,-" }}
-        {% if cellline.celllinelegal.third_party_obligations and cellline.celllinelegal.third_party_obligations_desc %}
-         - {{ cellline.celllinelegal.third_party_obligations_desc }}
+        <td>{{ cellline.celllineethics.third_party_obligations|yesno:"yes,no,-" }}
+        {% if cellline.celllineethics.third_party_obligations and cellline.celllineethics.third_party_obligations_desc %}
+         - {{ cellline.celllineethics.third_party_obligations_desc }}
         {% endif %}
         </td>
     </tr>
 
-<!--     <tr><td class="label">:</td><td>{{ cellline.celllinelegal.|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">:</td><td>{{ cellline.celllinelegal.|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">:</td><td>{{ cellline.celllinelegal.|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">:</td><td>{{ cellline.celllinelegal.|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">:</td><td>{{ cellline.celllinelegal.|yesno:"yes,no,-" }}</td></tr>
+<!--     <tr><td class="label">:</td><td>{{ cellline.celllineethics.|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">:</td><td>{{ cellline.celllineethics.|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">:</td><td>{{ cellline.celllineethics.|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">:</td><td>{{ cellline.celllineethics.|yesno:"yes,no,-" }}</td></tr>
+    <tr><td class="label">:</td><td>{{ cellline.celllineethics.|yesno:"yes,no,-" }}</td></tr>
  -->
 
 <!-- 

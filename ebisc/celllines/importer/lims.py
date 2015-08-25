@@ -30,7 +30,7 @@ def run():
             continue
 
         try:
-            batch = CelllineBatch.objects.get(biosamplesid=lims_batch_data.biosamples_batch_id)
+            batch = CelllineBatch.objects.get(biosamples_id=lims_batch_data.biosamples_batch_id)
 
             # Update data
             batch.batch_id = lims_batch_data.batch_id
