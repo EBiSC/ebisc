@@ -62,14 +62,13 @@ def import_cellline(source):
     logger.info('Importing cell line %s' % valuef('name'))
 
     cell_line = Cellline(
-        biosamplesid=valuef('biosamples_id'),
-        hescregid=valuef('id'),
-        celllinename=valuef('name'),
-        celllineprimarydisease=parse_disease(source),
-        celllinecelltype=parse_cell_type(source),
-        celllinenamesynonyms=', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else '',
+        biosamples_id=valuef('biosamples_id'),
+        hescreg_id=valuef('id'),
+        name=valuef('name'),
+        primary_disease=parse_disease(source),
+        alternative_names=', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else '',
         donor=parse_donor(source),
-        # donor_age=valuef('donor_age', 'age_range'),
+        donor_age=valuef('donor_age', 'age_range'),
     )
 
     # Organizations
@@ -94,10 +93,10 @@ def import_cellline(source):
 
     for organization, organization_role in organizations:
 
-        cell_line_organization, created = Celllineorganization.objects.get_or_create(
-            orgcellline=cell_line,
+        cell_line_organization, created = CelllineOrganization.objects.get_or_create(
+            cell_line=cell_line,
             organization=organization,
-            celllineorgtype=organization_role,
+            cell_line_org_type=organization_role,
         )
         if created:
             logger.info('Added organization %s as %s' % (organization, organization_role))
@@ -112,7 +111,7 @@ def import_cellline(source):
 
     parse_legal(source, cell_line)
     parse_derivation(source, cell_line)
-    parse_culture_condions(source, cell_line)
+    parse_culture_conditions(source, cell_line)
     parse_karyotyping(source, cell_line)
     parse_publications(source, cell_line)
     parse_characterization(source, cell_line)
@@ -248,8 +247,8 @@ def parse_cell_type(valuef, source):
     if value is None:
         return
 
-    cell_type, created = Celltype.objects.get_or_create(
-        celltype=value,
+    cell_type, created = CellType.objects.get_or_create(
+        name=value,
     )
 
     if created:
@@ -264,7 +263,7 @@ def parse_organization(valuef, source):
     # Organization
 
     organization, created = Organization.objects.get_or_create(
-        organizationname=valuef('name')
+        name=valuef('name')
     )
     if created:
         logger.info('Found new organization: %s' % organization)
@@ -273,7 +272,7 @@ def parse_organization(valuef, source):
 
         return (organization, 'generator')
 
-    elif valuef('role') == 'Generator':
+    elif valuef('role') == 'Owner':
 
         return (organization, 'owner')
 
@@ -281,8 +280,8 @@ def parse_organization(valuef, source):
 
         # Other organization roles
 
-        organization_role, created = Celllineorgtype.objects.get_or_create(
-            celllineorgtype=valuef('role')
+        organization_role, created = CelllineOrgType.objects.get_or_create(
+            cell_line_org_type=valuef('role')
         )
         if created:
             logger.info('Found new organization type: %s' % organization_role)
@@ -298,7 +297,7 @@ def parse_donor(valuef, source):
     gender = valuef('gender_primary_cell', 'gender')
 
     try:
-        donor = Donor.objects.get(biosamplesid=valuef('biosamples_donor_id'))
+        donor = Donor.objects.get(biosamples_id=valuef('biosamples_donor_id'))
 
         if donor.gender != gender:
             logger.warn('Changing donor gender from %s to %s' % (donor.gender, gender))
@@ -306,7 +305,7 @@ def parse_donor(valuef, source):
 
     except Donor.DoesNotExist:
         donor = Donor(
-            biosamplesid=valuef('biosamples_donor_id'),
+            biosamples_id=valuef('biosamples_donor_id'),
             provider_donor_ids=valuef('internal_donor_id'),
             gender=gender,
         )
@@ -323,7 +322,7 @@ def parse_donor(valuef, source):
 @inject_valuef
 def parse_legal(valuef, source, cell_line):
 
-    cell_line_legal = CellLineLegal(
+    cell_line_ethics = CelllineEthics(
         cell_line=cell_line,
         donor_consent=valuef('hips_consent_obtained_from_donor_of_tissue_flag', 'nullbool'),
         no_pressure_statement=valuef('hips_no_pressure_stat_flag', 'nullbool'),
@@ -390,9 +389,9 @@ def parse_legal(valuef, source, cell_line):
         third_party_obligations_desc=valuef('hips_third_party_obligations'),
     )
 
-    logger.info('Added cell line legal: %s' % cell_line_legal)
+    logger.info('Added cell line ethics: %s' % cell_line_ethics)
 
-    cell_line_legal.save()
+    cell_line_ethics.save()
 
 
 @inject_valuef
@@ -411,12 +410,13 @@ def parse_integrating_vector(valuef, source, cell_line):
     if created:
         logger.info('Added integrating vector: %s' % vector)
 
-    cell_line_vector = CellLineIntegratingVector(
+    cell_line_vector = CelllineIntegratingVector(
         cell_line=cell_line,
         vector=vector,
         virus=term_list_value_of_json(source, 'integrating_vector_virus_type', Virus),
         transposon=term_list_value_of_json(source, 'integrating_vector_transposon_type', Transposon),
         excisable=valuef('excisable_vector_flag', 'bool'),
+        absence_reprogramming_vectors=valuef('reprogramming_vectors_absence_flag', 'bool'),
     )
 
     cell_line_vector.save()
@@ -500,7 +500,7 @@ def parse_non_integrating_vector(valuef, source, cell_line):
     if created:
         logger.info('Added non-integrating vector: %s' % vector)
 
-    cell_line_vector = CellLineNonIntegratingVector(
+    cell_line_vector = CelllineNonIntegratingVector(
         cell_line=cell_line,
         vector=vector,
     )
@@ -517,13 +517,15 @@ def parse_non_integrating_vector(valuef, source, cell_line):
 @inject_valuef
 def parse_derivation(valuef, source, cell_line):
 
-    cell_line_derivation = Celllinederivation(
+    cell_line_derivation = CelllineDerivation(
         cell_line=cell_line,
-        primarycelldevelopmentalstage=term_list_value_of_json(source, 'dev_stage_primary_cell', PrimaryCellDevelopmentalStage),
-        primarycelltypename=valuef('primary_celltype_ont_name'),
-        selectioncriteriaforclones=valuef('selection_of_clones'),
-        xenofreeconditions=valuef('derivation_xeno_graft_free_flag', 'bool'),
-        derivedundergmp=valuef('derivation_gmp_ips_flag', 'bool'),
+        primary_cell_type=parse_cell_type(source),
+        primary_cell_developmental_stage=term_list_value_of_json(source, 'dev_stage_primary_cell', PrimaryCellDevelopmentalStage),
+        reprogramming_passage_number=valuef('passage_number_reprogrammed'),
+        selection_criteria_for_clones=valuef('selection_of_clones'),
+        xeno_free_conditions=valuef('derivation_xeno_graft_free_flag', 'bool'),
+        derived_under_gmp=valuef('derivation_gmp_ips_flag', 'bool'),
+        available_as_clinical_grade=valuef('available_clinical_grade_ips_flag', 'bool'),
     )
 
     try:
@@ -536,22 +538,22 @@ def parse_derivation(valuef, source, cell_line):
 
 
 @inject_valuef
-def parse_culture_condions(valuef, source, cell_line):
+def parse_culture_conditions(valuef, source, cell_line):
 
-    cell_line_culture_conditions = Celllinecultureconditions(
+    cell_line_culture_conditions = CelllineCultureConditions(
         cell_line=cell_line,
 
-        surfacecoating=term_list_value_of_json(source, 'surface_coating', SurfaceCoating),
+        surface_coating=term_list_value_of_json(source, 'surface_coating', SurfaceCoating),
 
-        feedercellid=valuef('feeder_cells_ont_id'),
-        feedercelltype=valuef('feeder_cells_name'),
+        feeder_cell_id=valuef('feeder_cells_ont_id'),
+        feeder_cell_type=valuef('feeder_cells_name'),
 
-        passagemethod=term_list_value_of_json(source, 'passage_method', PassageMethod),
+        passage_method=term_list_value_of_json(source, 'passage_method', PassageMethod),
         enzymatically=term_list_value_of_json(source, 'passage_method_enzymatically', Enzymatically),
-        enzymefree=term_list_value_of_json(source, 'passage_method_enzyme_free', EnzymeFree),
+        enzyme_free=term_list_value_of_json(source, 'passage_method_enzyme_free', EnzymeFree),
 
-        o2concentration=valuef('o2_concentration', 'int'),
-        co2concentration=valuef('co2_concentration', 'int'),
+        o2_concentration=valuef('o2_concentration', 'int'),
+        co2_concentration=valuef('co2_concentration', 'int'),
     )
 
     cell_line_culture_conditions.save()
@@ -566,7 +568,7 @@ def parse_culture_condions(valuef, source, cell_line):
         else:
             for supplement in supplements:
                 (supplement, amount, unit) = supplement.split('###')
-                CellLineCultureMediumSupplement(
+                CelllineCultureMediumSupplement(
                     cell_line_culture_conditions=cell_line_culture_conditions,
                     supplement=supplement,
                     amount=amount,
@@ -618,11 +620,11 @@ def parse_publications(valuef, source, cell_line):
 
     if valuef('registration_reference_publication_pubmed_id', 'int'):
         # PubMed
-        CellLinePublication(
+        CelllinePublication(
             cell_line=cell_line,
             reference_type='pubmed',
             reference_id=valuef('registration_reference_publication_pubmed_id', 'int'),
-            reference_url=CellLinePublication.pubmed_url_from_id(valuef('registration_reference_publication_pubmed_id', 'int')),
+            reference_url=CelllinePublication.pubmed_url_from_id(valuef('registration_reference_publication_pubmed_id', 'int')),
             reference_title=valuef('registration_reference'),
         ).save()
 
@@ -638,7 +640,7 @@ def parse_characterization(valuef, source, cell_line):
     screening_mycoplasma = valuef('virology_screening_mycoplasma_result')
 
     if len([x for x in (certificate_of_analysis_passage_number, screening_hiv1, screening_hiv2, screening_hepatitis_b, screening_hepatitis_c, screening_mycoplasma) if x is not None]):
-        CellLineCharacterization(
+        CelllineCharacterization(
             cell_line=cell_line,
             certificate_of_analysis_passage_number=certificate_of_analysis_passage_number,
             screening_hiv1=screening_hiv1,

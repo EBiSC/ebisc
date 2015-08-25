@@ -591,7 +591,7 @@ config = {
       selectedTerms: {}
     }, {
       name: 'primary_cell_type',
-      label: 'Cell type',
+      label: 'Primary cell type',
       selectedTerms: {}
     }, {
       name: 'depositor',
@@ -960,7 +960,7 @@ var Baobab = require('./src/baobab.js'),
 
 // Non-writable version
 Object.defineProperty(Baobab, 'version', {
-  value: '0.4.3'
+  value: '0.4.4'
 });
 
 // Exposing helpers
@@ -2277,6 +2277,9 @@ Baobab.prototype.commit = function(referenceRecord) {
 };
 
 Baobab.prototype.select = function(path) {
+  if (!path)
+    throw Error('Baobab.select: invalid path.');
+
   if (arguments.length > 1)
     path = helpers.arrayOf(arguments);
 
@@ -2320,7 +2323,7 @@ Baobab.prototype.select = function(path) {
 };
 
 Baobab.prototype.root = function() {
-  return this.select();
+  return this.select([]);
 };
 
 Baobab.prototype.reference = function(path) {
@@ -2980,7 +2983,7 @@ Cursor.prototype.release = function() {
   // Dereferencing
   delete this.tree;
   delete this.path;
-  delete this.solvePath;
+  delete this.solvedPath;
 
   // Killing emitter
   this.kill();
@@ -3003,6 +3006,7 @@ type.Cursor = function (value) {
 module.exports = Cursor;
 
 },{"./combination.js":17,"./helpers.js":19,"./mixins.js":21,"./type.js":22,"emmett":14}],19:[function(require,module,exports){
+(function (global){
 /**
  * Baobab Helpers
  * ===============
@@ -3046,7 +3050,7 @@ function clone(deep, item) {
   if (!item ||
       typeof item !== 'object' ||
       item instanceof Error ||
-      item instanceof ArrayBuffer)
+      ('ArrayBuffer' in global && item instanceof ArrayBuffer))
     return item;
 
   // Array
@@ -3262,6 +3266,7 @@ module.exports = {
   solvePath: solvePath
 };
 
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./type.js":22}],20:[function(require,module,exports){
 /**
  * Baobab Merge
@@ -3818,6 +3823,12 @@ function update(target, spec, opts) {
 module.exports = update;
 
 },{"./helpers.js":19,"./type.js":22}],24:[function(require,module,exports){
+/*!
+  Copyright (c) 2015 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+
 function classNames() {
 	var classes = '';
 	var arg;
@@ -3844,9 +3855,16 @@ function classNames() {
 	return classes.substr(1);
 }
 
-// safely export classNames in case the script is included directly on a page
+// safely export classNames for node / browserify
 if (typeof module !== 'undefined' && module.exports) {
 	module.exports = classNames;
+}
+
+// safely export classNames for RequireJS
+if (typeof define !== 'undefined' && define.amd) {
+	define('classnames', [], function() {
+		return classNames;
+	});
 }
 
 },{}],25:[function(require,module,exports){

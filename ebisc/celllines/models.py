@@ -33,7 +33,7 @@ class CellType(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.name,)
+        return self.name
 
 
 class Country(models.Model):
@@ -192,9 +192,9 @@ class Cellline(models.Model):
             'biosamples_id': self.biosamples_id,
             'name': self.name,
             'primary_disease': self.primary_disease.disease if self.primary_disease else 'normal',
-            'primary_disease_synonyms': [s.strip() for s in self.primary_disease.synonyms.split(',')] if self.primary_disease else None,
+            'primary_disease_synonyms': [s.strip() for s in self.primary_disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.synonyms else None,
             'depositor': self.generator.name,
-            'primary_cell_type': self.celllinederivation.primary_cell_type.name,
+            'primary_cell_type': self.derivation.primary_cell_type.name if self.derivation.primary_cell_type else None,
             'alternative_names': self.alternative_names,
         }
 
@@ -476,7 +476,7 @@ class CelllineCultureMediumSupplement(models.Model):
 
 class CelllineDerivation(models.Model):
 
-    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), null=True, blank=True)
+    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='derivation')
 
     primary_cell_type = models.ForeignKey('CellType', verbose_name=_(u'Primary cell type'), null=True, blank=True)
     primary_cell_developmental_stage = models.ForeignKey('PrimaryCellDevelopmentalStage', verbose_name=_(u'Primary cell developmental stage'), null=True, blank=True)
