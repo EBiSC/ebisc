@@ -25,7 +25,7 @@ class AgeRange(models.Model):
 
 class CellType(models.Model):
 
-    name = models.CharField(_(u'Cell type'), max_length=100, blank=True)
+    name = models.CharField(_(u'Cell type'), max_length=100, unique=True)
 
     class Meta:
         verbose_name = _(u'Cell type')
@@ -119,7 +119,7 @@ class Virus(models.Model):
 
 class Transposon(models.Model):
 
-    name = models.CharField(_(u'Transposon'), max_length=100, blank=True)
+    name = models.CharField(_(u'Transposon'), max_length=100, unique=True)
 
     class Meta:
         verbose_name = _(u'Transposon')
@@ -132,7 +132,7 @@ class Transposon(models.Model):
 
 class Unit(models.Model):
 
-    name = models.CharField(_(u'Units'), max_length=20)
+    name = models.CharField(_(u'Units'), max_length=20, unique=True)
 
     class Meta:
         verbose_name = _(u'Units')
@@ -201,7 +201,7 @@ class Cellline(models.Model):
 
 class CelllineStatus(models.Model):
 
-    status = models.CharField(_(u'Cell line status'), max_length=50, blank=True)
+    status = models.CharField(_(u'Cell line status'), max_length=50, unique=True)
 
     class Meta:
         verbose_name = _(u'Cell line status')
@@ -209,7 +209,7 @@ class CelllineStatus(models.Model):
         ordering = ['status']
 
     def __unicode__(self):
-        return u'%s' % (self.status,)
+        return self.status
 
 
 # -----------------------------------------------------------------------------
@@ -279,7 +279,7 @@ class Donor(models.Model):
 
 class Phenotype(models.Model):
 
-    phenotype = models.CharField(_(u'Phenotype'), max_length=45, blank=True)
+    phenotype = models.CharField(_(u'Phenotype'), max_length=45, unique=True)
 
     class Meta:
         verbose_name = _(u'Phenotype')
@@ -287,7 +287,7 @@ class Phenotype(models.Model):
         ordering = ['phenotype']
 
     def __unicode__(self):
-        return u'%s' % (self.phenotype,)
+        return self.phenotype
 
 
 # -----------------------------------------------------------------------------
@@ -514,7 +514,7 @@ class PrimaryCellDevelopmentalStage(models.Model):
 
 class TissueLocation(models.Model):
 
-    tissue_location = models.CharField(_(u'Tissue location'), max_length=45, blank=True)
+    tissue_location = models.CharField(_(u'Tissue location'), max_length=45, unique=True)
 
     class Meta:
         verbose_name = _(u'Tissue location')
