@@ -260,6 +260,7 @@ Import sample batch data from EBI "LIMS" API.
 4) As an IMS developer I want to document how data updates are recorded in the IMS 
 
 Define how IMS is recording data updates, audit trail, level of granularity.
+The IMS needs to define its update schedule and the granularity at which updates are recorded and what the audit trail is for updates
 
 5) As an IMS developer I want define sync dates for data exchange between different WP7 components
 
@@ -304,6 +305,12 @@ IMS needs to assemble AUA (MTA) from standard EBiSC template and user specified 
 - Availability (ETA … in 5 months). ECACC needs to pull even if not shipped to them. (flag?) – linked to cell line because some may not even have first batches made.
 
 
+Feature #1430: Defining requirements for reporting stock info back to IMS
+    As an ECACC IT manager I would like to know from the EBISC team what stock information IMS would like back from us. The technical restriction is - we cant have any inbound call to our Oracle database (aka FARM)
+    Possible solution 
+    Can IMS provide us with a host FTPS server login credentials, we can then write the file there from Oracle. Preferable format for the file can be XML, txt (pipe separated) or csv
+
+
 ### September, October
 
 IMS needs to pull donor / line updates from hPSCReg?
@@ -313,10 +320,16 @@ IMS needs to pull donor / line updates from hPSCReg?
 
 As the IMS I need to track the latest image thumbnail with "some" meta data for morphology
 
+Make the first implementation for ECACC catalog number assignment
 
 ### November
 
 For automation of (i) IMS - HpscReg exchange process and (ii) LIMS - IMS BioSample batch IDs exchange define synch dates. (Define synch dates for non linear data flow processes within IMS/WP7 data flow)
+
+User Stories #1469: As an EBiSC Developer I need a plan on how to pull updates from the hPSCreg API
+    - Overtime, cell lines which are part of EBiSC may see updates to their information registered in hPSCreg.
+    - DC need to plan how they will monitor for updates and update the IMS to reflect the changes.
+    - This will be done when the requirements analysis is done, a written plan is in place and the tickets representing the implementation place are in redmine.
 
 
 ### December
@@ -331,6 +344,11 @@ I as an EBiSC catalogue user want to know time to ship for an individual cell li
 
 ### Not assigned dates
 
+- As a EBiSC developer I need to plan how to alllow cell line depositors to specify state hold dates on data release
+    Many archives/databases including hPSCreg allow users to specify hold dates for data release.
+    We need to figure out where it is appropriate in the EBiSC system for hold dates to be specified and how to ensure the difference services know about them and respect them
+    This will be done when we have plan for allowing hold data specification which has been approved on a Tuesday WP7 call.
+
 - Import ECACC data from ftp
 
 - Cell lines related to this line (isogenic,... same donor line ... connect these)
@@ -343,6 +361,9 @@ I as an EBiSC catalogue user want to know time to ship for an individual cell li
 - Culture protocols are being prepared as user manuals. They will be shared with users. Alex sets this as top protocols (cellluler phenotypes and differentation)
 
 - Intent to deposit
+
+
+
 
 
 ## Data model cleanup

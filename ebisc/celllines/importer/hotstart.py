@@ -76,7 +76,7 @@ def run(basedir):
 
             parse_ethics(source, cell_line)
             parse_derivation(source, cell_line)
-            parse_culture_condions(source, cell_line)
+            parse_culture_conditions(source, cell_line)
             parse_karyotyping(source, cell_line)
             parse_publications(source, cell_line)
             parse_characterization(source, cell_line)
@@ -229,7 +229,7 @@ def parse_organization(valuef, source):
 
         return (organization, 'generator')
 
-    elif valuef('role') == 'Generator':
+    elif valuef('role') == 'Owner':
 
         return (organization, 'owner')
 
@@ -252,6 +252,8 @@ def parse_organization(valuef, source):
 def parse_donor(valuef, source):
 
     gender = valuef('gender_primary_cell', 'gender')
+
+    print valuef('internal_donor_id')
 
     try:
         donor = Donor.objects.get(biosamples_id=valuef('biosamples_donor_id'))
@@ -470,9 +472,11 @@ def parse_non_integrating_vector(valuef, source, cell_line):
 @inject_valuef
 def parse_derivation(valuef, source, cell_line):
 
+    primary_cell_type = parse_cell_type(source)
+
     cell_line_derivation = CelllineDerivation(
         cell_line=cell_line,
-        primary_cell_type=valuef('primary_celltype_name'),
+        primary_cell_type=primary_cell_type,
         primary_cell_developmental_stage=term_list_value_of_json(source, 'dev_stage_primary_cell', PrimaryCellDevelopmentalStage),
         reprogramming_passage_number=valuef('passage_number_reprogrammed'),
         selection_criteria_for_clones=valuef('selection_of_clones'),
@@ -487,7 +491,7 @@ def parse_derivation(valuef, source, cell_line):
 
 
 @inject_valuef
-def parse_culture_condions(valuef, source, cell_line):
+def parse_culture_conditions(valuef, source, cell_line):
 
     cell_line_culture_conditions = CelllineCultureConditions(
         cell_line=cell_line,
