@@ -24,12 +24,12 @@ class CelllineDerivationResource(ModelResource):
     # - derived_under_gmp = models.NullBooleanField(_(u'Derived under gmp'), default=None, null=True, blank=True)
     # - available_as_clinical_grade = models.CharField(_(u'Available as clinical grade'), max_length=4, blank=True)
 
-    primary_cell_type_name = fields.CharField('primary_cell_type', null=True)
+    name = fields.CharField('primary_cell_type', null=True)
 
     class Meta:
         queryset = CelllineDerivation.objects.all()
         include_resource_uri = False
-        fields = ('primary_cell_type_name',)
+        fields = ('primary_cell_type',)
 
 
 # -----------------------------------------------------------------------------
@@ -160,12 +160,12 @@ class CelllineResource(ModelResource):
     alternative_names = fields.CharField('alternative_names')
 
     primary_disease = fields.ToOneField(DiseaseResource, 'primary_disease', null=True, full=True)
-    primary_cell_type = fields.ToOneField(CelllineDerivationResource, 'primary_cell_type_name', full=True)
+    primary_cell_type = fields.ToOneField(CelllineDerivationResource, 'derivation', null=True, full=True)
     culture_conditions = fields.ToOneField(CelllineCultureConditionsResource, 'celllinecultureconditions', full=True)
     cellline_karyotype = fields.ToOneField(CellLineKaryotypeResource, 'karyotype', null=True, full=True)
 
     donor_age = fields.CharField('donor_age', null=True)
-    donor = fields.ToOneField(DonorResource, 'donor', full=True)
+    donor = fields.ToOneField(DonorResource, 'donor', null=True, full=True)
 
     depositor = fields.ToOneField(OrganizationResource, 'generator', null=True, full=True)
 
