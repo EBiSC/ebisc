@@ -5,6 +5,7 @@
     <tr><td class="label">Cell line alternative names:</td><td>{{ cellline.alternative_names|default:"-" }}</td></tr>
     <tr><td class="label">Biosamples ID:</td><td>{{ cellline.biosamples_id|default:"-" }}</td></tr>
     <tr><td class="label">ECACC catalogue no.:</td><td>{{ cellline.ecacc_id|default:"-" }}</td></tr>
+    <tr><td class="label">Derivation country:</td><td>{{ cellline.derivation_country|default:"-" }}</td></tr>
 
     {% if cellline.publications.all|length %}
     <tr>
@@ -32,7 +33,8 @@
     <tr><td class="label">Diagnosed disease:</td><td>{{ cellline.primary_disease|default:"-" }}</td></tr>
     <tr><td class="label">Gender:</td><td>{{ cellline.donor.gender|default:"-" }}</td></tr>
     <tr><td class="label">Age:</td><td>{{ cellline.donor_age|default:"-" }}</td></tr>
-    <tr><td class="label">Country of origin:</td><td>{{ cellline.donor.country_of_origin.code|default:"-" }}</td></tr>
+    <tr><td class="label">Country of origin:</td><td>{{ cellline.donor.country_of_origin|default:"-" }}</td></tr>
+    <tr><td class="label">Ethnicity:</td><td>{{ cellline.donor.ethnicity|default:"-" }}</td></tr>
 
     <tr><th class="sub-title"><h3>Depositor</h3></th><th></th></tr>
 

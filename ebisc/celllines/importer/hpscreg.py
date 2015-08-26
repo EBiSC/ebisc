@@ -69,6 +69,7 @@ def import_cellline(source):
         alternative_names=', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else '',
         donor=parse_donor(source),
         donor_age=valuef('donor_age', 'age_range'),
+        derivation_country=term_list_value_of_json(source, 'derivation_country', Country),
     )
 
     # Organizations
@@ -311,10 +312,11 @@ def parse_donor(valuef, source):
     except Donor.DoesNotExist:
         donor = Donor(
             biosamples_id=valuef('biosamples_donor_id'),
-            provider_donor_ids=valuef('internal_donor_id'),
+            provider_donor_ids=valuef('internal_donor_ids'),
             gender=gender,
+            country_of_origin=term_list_value_of_json(source, 'donor_country_origin', Country),
+            ethnicity=valuef('ethnicity'),
         )
-
     try:
         donor.save()
     except IntegrityError, e:
