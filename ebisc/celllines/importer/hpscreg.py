@@ -178,7 +178,12 @@ def value_of_json(source, field, cast=None):
         return None
 
     else:
-        return source.get(field, None)
+        value = source.get(field, None)
+
+        if isinstance(value, str) or isinstance(value, unicode):
+            return value.strip()
+        else:
+            return value
 
 
 def term_list_value_of_json(source, source_field, model, model_field='name'):
