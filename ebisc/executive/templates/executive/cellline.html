@@ -25,9 +25,8 @@
     {% for batch in cellline.batches.all %}
     <li><a href="javascript:void(0)" class="js-accordion-trigger"><b>{{ batch.batch_id }}</b> - {{ batch.biosamples_id }} <small>({{ batch.aliquots.all.count }} vials)</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
         <div class="content">
-        {% if batch.passage_number %}
-        <p>Passage number: {{ batch.passage_number }}<br/>
-        Cells per vial: {{ batch.cells_per_vial }}<br/>
+        {% if batch.biosamples_id %}
+        <p>ECACC catalogue number: {{ cellline.ecacc_id }}</p>
         {% else %}
         <p><span class="comment">No data available.</span></p>
         {% endif %}

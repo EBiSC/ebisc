@@ -1,9 +1,10 @@
 <table class="data">
 
     <tr><th colspan="2" class="title"><h2>General Information</h2></th></tr>
-    <tr><td class="label">Biosamples ID:</td><td>{{ cellline.biosamples_id|default:"-" }}</td></tr>
     <tr><td class="label">Cell line name:</td><td>{{ cellline.name|default:"-" }}</td></tr>
     <tr><td class="label">Cell line alternative names:</td><td>{{ cellline.alternative_names|default:"-" }}</td></tr>
+    <tr><td class="label">Biosamples ID:</td><td>{{ cellline.biosamples_id|default:"-" }}</td></tr>
+    <tr><td class="label">ECACC catalogue no.:</td><td>{{ cellline.ecacc_id|default:"-" }}</td></tr>
 
     {% if cellline.publications.all|length %}
     <tr>

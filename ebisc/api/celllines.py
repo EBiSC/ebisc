@@ -155,6 +155,7 @@ class CelllineResource(ModelResource):
     # - celllineecaccurl = models.URLField(_(u'Cell line ECACC URL'), blank=True, null=True)
 
     biosamples_id = fields.CharField('biosamples_id', unique=True)
+    ecacc_cat_no = fields.CharField('ecacc_id', unique=True, null=True)
 
     name = fields.CharField('name', unique=True)
     alternative_names = fields.CharField('alternative_names')
