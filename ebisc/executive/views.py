@@ -13,7 +13,7 @@ from ebisc.site.views import render
 from ebisc.celllines.models import Cellline, CelllineBatch
 
 
-@permission_required('auth.can_view_executive_dashboard', raise_exception=True)
+@permission_required('auth.can_view_executive_dashboard')
 def dashboard(request):
 
     '''Display a list of all cell lines. Provide paging and sorting.'''
@@ -73,7 +73,7 @@ def dashboard(request):
     })
 
 
-@permission_required('auth.can_view_executive_dashboard', raise_exception=True)
+@permission_required('auth.can_view_executive_dashboard')
 def cellline(request, biosamples_id):
 
     '''Display complete information for the selected cell line.'''
@@ -83,7 +83,7 @@ def cellline(request, biosamples_id):
     })
 
 
-@permission_required('auth.can_view_executive_dashboard', raise_exception=True)
+@permission_required('auth.can_view_executive_dashboard')
 def batch_data(request, biosamples_id, batch_biosample_id):
 
     '''Return batch data as CSV file.'''
@@ -103,7 +103,7 @@ def batch_data(request, biosamples_id, batch_biosample_id):
     return response
 
 
-@permission_required('auth.can_manage_executive_dashboard', raise_exception=True)
+@permission_required('auth.can_manage_executive_dashboard')
 @require_POST
 def accept(request, biosamples_id):
 
