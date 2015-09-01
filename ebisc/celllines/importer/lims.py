@@ -6,7 +6,7 @@ logger = logging.getLogger('management.commands')
 
 from django.conf import settings
 
-from ebisc.celllines.models import CelllineBatch
+from ebisc.celllines.models import Cellline, CelllineBatch
 
 
 '''
@@ -30,15 +30,15 @@ def run():
             continue
 
         try:
-            batch = CelllineBatch.objects.get(biosamplesid=lims_batch_data.biosamples_batch_id)
+            batch = CelllineBatch.objects.get(biosamples_id=lims_batch_data.biosamples_batch_id)
 
-            # Update data
             batch.batch_id = lims_batch_data.batch_id
-            batch.passage_number = lims_batch_data.passage_number
-            batch.cells_per_vial = lims_batch_data.cells_per_vial
-
-            # Save
+            # batch.passage_number = lims_batch_data.passage_number
+            # batch.cells_per_vial = lims_batch_data.cells_per_vial
             batch.save()
+
+            batch.cell_line.ecacc_id = lims_batch_data.ecacc_cat_no
+            batch.cell_line.save()
 
         except CelllineBatch.DoesNotExist:
             logger.warn('Unknown batch with biosamples ID = {}'.format(lims_batch_data.biosamples_batch_id))

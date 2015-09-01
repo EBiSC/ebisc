@@ -1,5 +1,5 @@
 Cellline
-Celllinederivation
-Celllinecultureconditions
-CellLineKaryotype
-CellLineCharacterization
+CelllineDerivation
+CelllineCultureConditions
+CelllineKaryotype
+CelllineCharacterization

@@ -1,89 +1,124 @@
-import os
 import re
-import json
 import functools
-
-import logging
-logger = logging.getLogger('management.commands')
+import requests
 
 from ebisc.celllines.models import *
 
+from django.conf import settings
+from django.db import IntegrityError
+
+import logging
+logger = logging.getLogger('management.commands')
+import pdb
 
 '''
-HotsStart JSON data importer.
+hPSCreg JSON data API importer.
 '''
 
 
 # -----------------------------------------------------------------------------
 #  Run
 
-def run(basedir):
+def run():
 
-    for f in os.listdir(basedir):
+    cellline_ids = request_get(settings.HPSCREG['list_url'])
 
-        logger.info('Importing %s' % f)
+    if cellline_ids is None:
+        return
 
-        with open(os.path.join(basedir, f), 'r') as fi:
+    for cellline_id in cellline_ids:
+        logger.info('Fetching data for cell line %s' % cellline_id)
+        json = request_get(settings.HPSCREG['cellline_url'] + cellline_id)
 
-            source = json.load(fi)
-            valuef = functools.partial(value_of_json, source)
+        if json is None:
+            continue
+        elif type(json) is unicode:
+            logger.warn('Invalid cellline data: %s' % json)
+        else:
+            import_cellline(json)
 
-            logger.info('Importing cell line %s' % valuef('name'))
 
-            cell_line = Cellline(
-                biosamples_id=valuef('biosamples_id'),
-                hescreg_id=valuef('id'),
-                name=valuef('name'),
-                primary_disease=parse_disease(source),
-                alternative_names=', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else '',
-                donor=parse_donor(source),
-                donor_age=valuef('donor_age', 'age_range'),
-            )
+# -----------------------------------------------------------------------------
+# Make an API request and return JSON
 
-            # Organizations
+def request_get(url):
 
-            organizations = []
+    r = requests.get(url, auth=(settings.HPSCREG['username'], settings.HPSCREG['password']))
 
-            for org in valuef('providers'):
-                organization, role = parse_organization(org)
+    if r.status_code != requests.codes.ok:
+        logger.error('Can\' connect to the hPSGreg API (%s): %s' % (url, r.status_code))
+        return None
+    else:
+        return r.json()
 
-                if role == 'generator':
-                    cell_line.generator = organization
-                elif role == 'owner':
-                    cell_line.owner = organization
-                else:
-                    organizations.append((organization, role))
 
-            cell_line.save()
+# -----------------------------------------------------------------------------
+# Import cell line
 
-            for organization, organization_role in organizations:
+def import_cellline(source):
 
-                cell_line_organization, created = CelllineOrganization.objects.get_or_create(
-                    cell_line=cell_line,
-                    organization=organization,
-                    cell_line_org_type=organization_role,
-                )
-                if created:
-                    logger.info('Added organization %s as %s' % (organization, organization_role))
+    valuef = functools.partial(value_of_json, source)
 
-            # Vector
+    logger.info('Importing cell line %s' % valuef('name'))
 
-            if valuef('vector_type') == 'integrating':
-                parse_integrating_vector(source, cell_line)
+    cell_line = Cellline(
+        biosamples_id=valuef('biosamples_id'),
+        hescreg_id=valuef('id'),
+        name=valuef('name'),
+        primary_disease=parse_disease(source),
+        alternative_names=', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else '',
+        donor=parse_donor(source),
+        donor_age=valuef('donor_age', 'age_range'),
+        derivation_country=term_list_value_of_json(source, 'derivation_country', Country),
+    )
 
-            if valuef('vector_type') == 'non_integrating':
-                parse_non_integrating_vector(source, cell_line)
+    # Organizations
 
-            parse_ethics(source, cell_line)
-            parse_derivation(source, cell_line)
-            parse_culture_conditions(source, cell_line)
-            parse_karyotyping(source, cell_line)
-            parse_publications(source, cell_line)
-            parse_characterization(source, cell_line)
-            parse_characterization_markers(source, cell_line)
+    organizations = []
 
-            # Final save
-            cell_line.save()
+    for org in valuef('providers'):
+        organization, role = parse_organization(org)
+
+        if role == 'generator':
+            cell_line.generator = organization
+        elif role == 'owner':
+            cell_line.owner = organization
+        else:
+            organizations.append((organization, role))
+
+    try:
+        cell_line.save()
+    except IntegrityError, e:
+        logger.warn(format_integrity_error(e))
+        return None
+
+    for organization, organization_role in organizations:
+
+        cell_line_organization, created = CelllineOrganization.objects.get_or_create(
+            cell_line=cell_line,
+            organization=organization,
+            cell_line_org_type=organization_role,
+        )
+        if created:
+            logger.info('Added organization %s as %s' % (organization, organization_role))
+
+    # Vector
+
+    if valuef('vector_type') == 'integrating':
+        parse_integrating_vector(source, cell_line)
+
+    if valuef('vector_type') == 'non_integrating':
+        parse_non_integrating_vector(source, cell_line)
+
+    parse_legal(source, cell_line)
+    parse_derivation(source, cell_line)
+    parse_culture_conditions(source, cell_line)
+    parse_karyotyping(source, cell_line)
+    parse_publications(source, cell_line)
+    parse_characterization(source, cell_line)
+    parse_characterization_markers(source, cell_line)
+
+    cell_line.save()
 
 
 # -----------------------------------------------------------------------------
@@ -144,7 +179,12 @@ def value_of_json(source, field, cast=None):
         return None
 
     else:
-        return source.get(field, None)
+        value = source.get(field, None)
+
+        if isinstance(value, str) or isinstance(value, unicode):
+            return value.strip()
+        else:
+            return value
 
 
 def term_list_value_of_json(source, source_field, model, model_field='name'):
@@ -184,19 +224,23 @@ def parse_disease(valuef, source):
     if not valuef('disease_flag', 'bool'):
         disease = None
     else:
-        disease, created = Disease.objects.get_or_create(
-            icdcode=valuef('disease_doid'),
-            disease=valuef('disease_doid_name'),
-        )
+        try:
+            disease, created = Disease.objects.get_or_create(
+                icdcode=valuef('disease_doid'),
+                disease=valuef('disease_doid_name'),
+            )
+        except IntegrityError, e:
+            logger.warn(format_integrity_error(e))
+            return None
 
         if created:
             logger.info('Found new disease: %s' % disease)
 
-        synonyms = ', '.join([s.split('EXACT')[0].strip() for s in valuef('disease_doid_synonyms').split(',')])
-
-        if synonyms != '':
-            disease.synonyms = synonyms
-            disease.save()
+        if valuef('disease_doid_synonyms') is not None:
+            synonyms = ', '.join([s.split('EXACT')[0].strip() for s in valuef('disease_doid_synonyms').split(',')])
+            if synonyms != '':
+                disease.synonyms = synonyms
+                disease.save()
 
     return disease
 
@@ -204,8 +248,13 @@ def parse_disease(valuef, source):
 @inject_valuef
 def parse_cell_type(valuef, source):
 
+    value = valuef('primary_celltype_name')
+
+    if value is None:
+        return
+
     cell_type, created = CellType.objects.get_or_create(
-        name=valuef('primary_celltype_name'),
+        name=value,
     )
 
     if created:
@@ -253,8 +302,6 @@ def parse_donor(valuef, source):
 
     gender = valuef('gender_primary_cell', 'gender')
 
-    print valuef('internal_donor_id')
-
     try:
         donor = Donor.objects.get(biosamples_id=valuef('biosamples_donor_id'))
 
@@ -265,17 +312,22 @@ def parse_donor(valuef, source):
     except Donor.DoesNotExist:
         donor = Donor(
             biosamples_id=valuef('biosamples_donor_id'),
-            provider_donor_ids=valuef('internal_donor_id'),
+            provider_donor_ids=valuef('internal_donor_ids'),
             gender=gender,
+            country_of_origin=term_list_value_of_json(source, 'donor_country_origin', Country),
+            ethnicity=valuef('ethnicity'),
         )
-
-    donor.save()
+    try:
+        donor.save()
+    except IntegrityError, e:
+        logger.warn(format_integrity_error(e))
+        return None
 
     return donor
 
 
 @inject_valuef
-def parse_ethics(valuef, source, cell_line):
+def parse_legal(valuef, source, cell_line):
 
     cell_line_ethics = CelllineEthics(
         cell_line=cell_line,
@@ -472,11 +524,9 @@ def parse_non_integrating_vector(valuef, source, cell_line):
 @inject_valuef
 def parse_derivation(valuef, source, cell_line):
 
-    primary_cell_type = parse_cell_type(source)
-
     cell_line_derivation = CelllineDerivation(
         cell_line=cell_line,
-        primary_cell_type=primary_cell_type,
+        primary_cell_type=parse_cell_type(source),
         primary_cell_developmental_stage=term_list_value_of_json(source, 'dev_stage_primary_cell', PrimaryCellDevelopmentalStage),
         reprogramming_passage_number=valuef('passage_number_reprogrammed'),
         selection_criteria_for_clones=valuef('selection_of_clones'),
@@ -485,9 +535,13 @@ def parse_derivation(valuef, source, cell_line):
         available_as_clinical_grade=valuef('available_clinical_grade_ips_flag', 'bool'),
     )
 
-    logger.info('Added cell line derivation: %s' % cell_line_derivation)
+    try:
+        cell_line_derivation.save()
+    except IntegrityError, e:
+        logger.warn(format_integrity_error(e))
+        return None
 
-    cell_line_derivation.save()
+    logger.info('Added cell line derivation: %s' % cell_line_derivation)
 
 
 @inject_valuef
@@ -693,5 +747,12 @@ def parse_characterization_markers(valuef, source, cell_line):
             aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_rna_sequencing_marker'))
         elif valuef('undiff_exprof_proteomics_marker'):
             aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_proteomics_marker'))
+
+
+# -----------------------------------------------------------------------------
+# Format integrity error
+
+def format_integrity_error(e):
+    return re.split(r'\n', e.message)[0]
 
 # -----------------------------------------------------------------------------

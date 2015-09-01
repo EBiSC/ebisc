@@ -19,15 +19,15 @@ def dashboard(request):
     '''Display a list of all cell lines. Provide paging and sorting.'''
 
     COLUMNS = [
-        ('biosamplesID', 'Biosamples ID', 'biosamplesid'),
-        ('cellLineName', 'Cell line Name', 'celllinename'),
-        ('disease', 'Disease', 'celllineprimarydisease'),
+        ('biosamplesID', 'Biosamples ID', 'biosamples_id'),
+        ('cellLineName', 'Cell line Name', 'name'),
+        ('disease', 'Disease', 'primary_disease'),
         ('registrationDate', 'Date of Registration', None),
-        ('depositor', 'Depositor', 'generator__organizationname'),
+        ('depositor', 'Depositor', 'generator__name'),
         ('batches', 'Batches', None),
         ('quantity', 'QTY', None),
         ('sold', 'Sold', None),
-        ('accepted', 'Accepted', 'celllineaccepted'),
+        ('accepted', 'Accepted', 'accepted'),
     ]
 
     SORT_COLUMNS = dict([(x[0], x[2]) for x in COLUMNS])
@@ -79,7 +79,7 @@ def cellline(request, biosamples_id):
     '''Display complete information for the selected cell line.'''
 
     return render(request, 'executive/cellline.html', {
-        'cellline': get_object_or_404(Cellline, biosamplesid=biosamples_id)
+        'cellline': get_object_or_404(Cellline, biosamples_id=biosamples_id)
     })
 
 
@@ -88,17 +88,17 @@ def batch_data(request, biosamples_id, batch_biosample_id):
 
     '''Return batch data as CSV file.'''
 
-    batch = get_object_or_404(CelllineBatch, biosamplesid=batch_biosample_id, cell_line__biosamplesid=biosamples_id)
+    batch = get_object_or_404(CelllineBatch, biosamples_id=batch_biosample_id, cell_line__biosamples_id=biosamples_id)
 
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="{}_{}.csv"'.format(batch.cell_line.celllinename, batch.batch_id)
+    response['Content-Disposition'] = 'attachment; filename="{}_{}.csv"'.format(batch.cell_line.name, batch.batch_id)
 
     writer = csv.writer(response)
 
     writer.writerow(['Cell line Biosample ID', 'Cell line name', 'Batch Biosample ID', 'Batch ID', 'Vial Biosample ID'])
 
     for aliquot in batch.aliquots.all():
-        writer.writerow([batch.cell_line.biosamplesid, batch.cell_line.celllinename, batch.biosamplesid, batch.batch_id, aliquot.biosamplesid])
+        writer.writerow([batch.cell_line.biosamples_id, batch.cell_line.name, batch.biosamples_id, batch.batch_id, aliquot.biosamples_id])
 
     return response
 
@@ -113,19 +113,19 @@ def accept(request, biosamples_id):
         Rejected -> Accepted
     '''
 
-    cellline = get_object_or_404(Cellline, biosamplesid=biosamples_id)
+    cellline = get_object_or_404(Cellline, biosamples_id=biosamples_id)
 
     action = request.POST.get('action', None)
     redirect_to = redirect(request.POST.get('next', None) and request.POST.get('next') or 'executive:dashboard')
 
-    if action == 'pendng' and cellline.celllineaccepted == 'pending':
+    if action == 'pendng' and cellline.accepted == 'pending':
         pass
     elif action == 'accepted':
-        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.biosamplesid, cellline.celllineaccepted, action))
-        cellline.celllineaccepted = 'accepted'
-    elif action == 'rejected' and cellline.celllineaccepted == 'pending':
-        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.biosamplesid, cellline.celllineaccepted, action))
-        cellline.celllineaccepted = 'rejected'
+        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.biosamples_id, cellline.accepted, action))
+        cellline.accepted = 'accepted'
+    elif action == 'rejected' and cellline.accepted == 'pending':
+        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.biosamples_id, cellline.accepted, action))
+        cellline.accepted = 'rejected'
     else:
         return redirect_to
 

@@ -1,0 +1,2 @@
+INFO       Initializing database
+NameError: global name 'Celltype' is not defined
