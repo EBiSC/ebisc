@@ -29,10 +29,10 @@
         </div>
         <div class="user-account">
             {% if user.is_authenticated %}
-            {{ user.get_short_name }} | <a href="{% url 'logout' %}">Log out</a>
+            {% if user.get_short_name %}{{ user.get_short_name }}{% else %}{{ user.username }}{% endif %} | <a href="{% url 'logout' %}">Log out</a>
             {% else %}
             <a href="{% url 'login' %}">Log in</a>
-            {% endif %}            
+            {% endif %}
         </div>
     </header>
 
@@ -61,7 +61,7 @@
             </div>
         </div>
         <div class="copy">
-            &copy; EBiSC European Bank for induced pluripotent Stem Cells    
+            &copy; EBiSC European Bank for induced pluripotent Stem Cells
         </div>
     </footer>
 
