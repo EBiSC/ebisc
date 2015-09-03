@@ -41,6 +41,9 @@
     {% if cellline.donor.ethnicity %}
     <tr><td class="label">Ethnicity:</td><td>{{ cellline.donor.ethnicity|default:"-" }}</td></tr>
     {% endif %}
+    {% if cellline.donor.karyotype %}
+    <tr><td class="label">Donor karyotype:</td><td>{{ cellline.donor.karyotype|default:"-" }}</td></tr>
+    {% endif %}
 
     <tr><th class="sub-title"><h3>Depositor</h3></th><th></th></tr>
 

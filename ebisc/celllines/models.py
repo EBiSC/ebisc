@@ -268,6 +268,8 @@ class Donor(models.Model):
     ethnicity = models.CharField(_(u'Ethnicity'), max_length=100, null=True, blank=True)
     phenotypes = ArrayField(models.CharField(max_length=100), verbose_name=_(u'Phenotypes'), null=True)
 
+    karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
+
     class Meta:
         verbose_name = _(u'Donor')
         verbose_name_plural = _(u'Donors')

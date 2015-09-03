@@ -319,6 +319,7 @@ def parse_donor(valuef, source):
             country_of_origin=term_list_value_of_json(source, 'donor_country_origin', Country),
             ethnicity=valuef('ethnicity'),
             phenotypes=valuef('donor_phenotypes'),
+            karyotype=valuef('donor_karyotype'),
         )
 
     try:

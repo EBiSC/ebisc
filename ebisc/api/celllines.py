@@ -108,6 +108,7 @@ class DonorResource(ModelResource):
     # - donorabnormalkaryotype = models.CharField(_(u'Donor abnormal karyotype'), max_length=45, blank=True)
     # - otherclinicalinformation = models.CharField(_(u'Other clinical information'), max_length=100, blank=True)
     # - phenotypes = ArrayField(models.CharField(max_length=100), verbose_name=_(u'Phenotypes'), null=True)
+    # - karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
 
     biosamples_id = fields.CharField('biosamples_id', null=True)
     gender = fields.CharField('gender', null=True)
