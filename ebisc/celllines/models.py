@@ -174,6 +174,10 @@ class Cellline(models.Model):
     primary_disease = models.ForeignKey('Disease', verbose_name=_(u'Diagnosed disease'), null=True, blank=True)
     primary_disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
     disease_associated_phenotypes = ArrayField(models.CharField(max_length=500), verbose_name=_(u'Disease associated phenotypes'), null=True)
+    affected_status = models.CharField(_(u'Affected status'), max_length=12, null=True, blank=True)
+    family_history = models.CharField(_(u'Family history'), max_length=500, null=True, blank=True)
+    medical_history = models.CharField(_(u'Medical history'), max_length=500, null=True, blank=True)
+    clinical_information = models.CharField(_(u'Clinical information'), max_length=500, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line')

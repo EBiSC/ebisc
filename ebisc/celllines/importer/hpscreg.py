@@ -65,14 +65,19 @@ def import_cellline(source):
         biosamples_id=valuef('biosamples_id'),
         hescreg_id=valuef('id'),
         name=valuef('name'),
+        alternative_names=', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else '',
         primary_disease=parse_disease(source),
         primary_disease_stage=valuef('disease_stage'),
         disease_associated_phenotypes=valuef('disease_associated_phenotypes'),
-        alternative_names=', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else '',
+        affected_status=valuef('disease_affected_flag'),
+        family_history=valuef('family_history'),
+        medical_history=valuef('medical_history'),
+        clinical_information=valuef('clinical_information'),
         donor=parse_donor(source),
         donor_age=valuef('donor_age', 'age_range'),
         derivation_country=term_list_value_of_json(source, 'derivation_country', Country),
     )
+
 
     # Organizations
 
