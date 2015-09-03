@@ -300,7 +300,9 @@ def parse_organization(valuef, source):
 @inject_valuef
 def parse_donor(valuef, source):
 
-    gender = valuef('gender_primary_cell', 'gender')
+    # gender = valuef('gender_primary_cell', 'gender')
+
+    gender = term_list_value_of_json(source, 'gender_primary_cell', Gender)
 
     try:
         donor = Donor.objects.get(biosamples_id=valuef('biosamples_donor_id'))
@@ -316,7 +318,9 @@ def parse_donor(valuef, source):
             gender=gender,
             country_of_origin=term_list_value_of_json(source, 'donor_country_origin', Country),
             ethnicity=valuef('ethnicity'),
+            phenotypes=valuef('donor_phenotypes'),
         )
+
     try:
         donor.save()
     except IntegrityError, e:

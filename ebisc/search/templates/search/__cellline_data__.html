@@ -23,9 +23,12 @@
     <tr><th class="sub-title"><h3>Donor information</h3></th><th></th></tr>
     <tr><td class="label">Biosamples ID:</td><td>{{ cellline.donor.biosamples_id|default:"-" }}</td></tr>
     {% if cellline.donor.provider_donor_ids %}
-    <tr><td class="label">Internal donor ID:</td><td>{{ cellline.donor.provider_donor_ids|default:"-"|join:", " }}</td></tr>
+    <tr><td class="label">Internal donor ID:</td><td>{{ cellline.donor.provider_donor_ids|join:", " }}</td></tr>
     {% endif %}
     <tr><td class="label">Diagnosed disease:</td><td>{{ cellline.primary_disease|default:"-" }}</td></tr>
+    {% if cellline.donor.phenotypes %}
+    <tr><td class="label">Phenotypes:</td><td>{{ cellline.donor.phenotypes|default:"-"|join:", " }}</td></tr>
+    {% endif %}
     {% if cellline.donor.gender %}
     <tr><td class="label">Gender:</td><td>{{ cellline.donor.gender|default:"-" }}</td></tr>
     {% endif %}

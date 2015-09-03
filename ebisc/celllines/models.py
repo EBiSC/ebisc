@@ -266,7 +266,7 @@ class Donor(models.Model):
     provider_donor_ids = ArrayField(models.CharField(max_length=20), verbose_name=_(u'Provider donor ids'), null=True)
     country_of_origin = models.ForeignKey('Country', verbose_name=_(u'Country of origin'), null=True, blank=True)
     ethnicity = models.CharField(_(u'Ethnicity'), max_length=100, null=True, blank=True)
-    phenotype = models.ForeignKey('Phenotype', verbose_name=_(u'Phenotype'), null=True, blank=True)
+    phenotypes = ArrayField(models.CharField(max_length=100), verbose_name=_(u'Phenotypes'), null=True)
 
     class Meta:
         verbose_name = _(u'Donor')
@@ -275,19 +275,6 @@ class Donor(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.biosamples_id,)
-
-
-class Phenotype(models.Model):
-
-    phenotype = models.CharField(_(u'Phenotype'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Phenotype')
-        verbose_name_plural = _(u'Phenotypes')
-        ordering = ['phenotype']
-
-    def __unicode__(self):
-        return self.phenotype
 
 
 # -----------------------------------------------------------------------------
