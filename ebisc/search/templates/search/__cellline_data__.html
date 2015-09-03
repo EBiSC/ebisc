@@ -20,14 +20,19 @@
     </tr>
     {% endif %}
 
+    <tr><th class="sub-title"><h3>Disease information</h3></th><th></th></tr>
+    <tr><td class="label">Diagnosed disease:</td><td>{{ cellline.primary_disease|default:"-" }}</td></tr>
+    {% if cellline.primary_disease_stage %}
+    <tr><td class="label">Disease stage:</td><td>{{ cellline.primary_disease_stage }}</td></tr>
+    {% endif %}
+    {% if cellline.disease_associated_phenotypes %}
+    <tr><td class="label">Disease associated phenotypes:</td><td>{{ cellline.disease_associated_phenotypes|join:", " }}</td></tr>
+    {% endif %}
+
     <tr><th class="sub-title"><h3>Donor information</h3></th><th></th></tr>
     <tr><td class="label">Biosamples ID:</td><td>{{ cellline.donor.biosamples_id|default:"-" }}</td></tr>
     {% if cellline.donor.provider_donor_ids %}
     <tr><td class="label">Internal donor ID:</td><td>{{ cellline.donor.provider_donor_ids|join:", " }}</td></tr>
-    {% endif %}
-    <tr><td class="label">Diagnosed disease:</td><td>{{ cellline.primary_disease|default:"-" }}</td></tr>
-    {% if cellline.donor.phenotypes %}
-    <tr><td class="label">Phenotypes:</td><td>{{ cellline.donor.phenotypes|default:"-"|join:", " }}</td></tr>
     {% endif %}
     {% if cellline.donor.gender %}
     <tr><td class="label">Gender:</td><td>{{ cellline.donor.gender|default:"-" }}</td></tr>
@@ -40,6 +45,9 @@
     {% endif %}
     {% if cellline.donor.ethnicity %}
     <tr><td class="label">Ethnicity:</td><td>{{ cellline.donor.ethnicity|default:"-" }}</td></tr>
+    {% endif %}
+    {% if cellline.donor.phenotypes %}
+    <tr><td class="label">Donor phenotypes:</td><td>{{ cellline.donor.phenotypes|default:"-"|join:", " }}</td></tr>
     {% endif %}
     {% if cellline.donor.karyotype %}
     <tr><td class="label">Donor karyotype:</td><td>{{ cellline.donor.karyotype|default:"-" }}</td></tr>

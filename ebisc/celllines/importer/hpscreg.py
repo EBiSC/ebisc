@@ -66,6 +66,8 @@ def import_cellline(source):
         hescreg_id=valuef('id'),
         name=valuef('name'),
         primary_disease=parse_disease(source),
+        primary_disease_stage=valuef('disease_stage'),
+        disease_associated_phenotypes=valuef('disease_associated_phenotypes'),
         alternative_names=', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else '',
         donor=parse_donor(source),
         donor_age=valuef('donor_age', 'age_range'),
