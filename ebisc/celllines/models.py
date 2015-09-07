@@ -227,9 +227,6 @@ class CelllineBatch(models.Model):
 
     batch_id = models.CharField(_(u'Batch ID'), max_length=12)
 
-    passage_number = models.IntegerField(_(u'Passage number'), null=True, blank=True)
-    cells_per_vial = models.CharField(_(u'Cells per vial'), max_length=50, null=True, blank=True)
-
     vials_at_roslin = models.IntegerField(_(u'Vials at Central facility'), null=True, blank=True)
     vials_shipped_to_ecacc = models.IntegerField(_(u'Vials shipped to ECACC'), null=True, blank=True)
     vials_shipped_to_fraunhoffer = models.IntegerField(_(u'Vials shipped to Fraunhoffer'), null=True, blank=True)

@@ -33,8 +33,6 @@ def run():
             batch = CelllineBatch.objects.get(biosamples_id=lims_batch_data.biosamples_batch_id)
 
             batch.batch_id = lims_batch_data.batch_id
-            # batch.passage_number = lims_batch_data.passage_number
-            # batch.cells_per_vial = lims_batch_data.cells_per_vial
             batch.save()
 
             batch.cell_line.ecacc_id = lims_batch_data.ecacc_cat_no
