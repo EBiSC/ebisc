@@ -40,6 +40,19 @@ def deploy(option=None):
 
 
 # -----------------------------------------------------------------------------
+# Import data
+
+@task
+def update():
+
+    with virtualenv():
+        run('./manage.py import hpscreg --init')
+        run('./manage.py import batches var/batches.csv')
+        run('./manage.py import lims')
+        run('./manage.py toelastic')
+
+
+# -----------------------------------------------------------------------------
 # Sync
 
 @task
