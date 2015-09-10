@@ -1,7 +1,14 @@
+import os
+import uuid
+import datetime
+
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.contrib.postgres.fields import ArrayField
 
+
+# -----------------------------------------------------------------------------
+# Utilities
 
 EXTENDED_BOOL_CHOICES = (
     ('yes', 'Yes'),
@@ -9,6 +16,14 @@ EXTENDED_BOOL_CHOICES = (
     ('unknown', 'Unknown'),
 )
 
+
+def upload_to(instance, filename):
+    date = datetime.date.today()
+    return os.path.join('celllines', '%d/%02d/%02d' % (date.year, date.month, date.day), str(uuid.uuid4()), filename)
+
+
+# -----------------------------------------------------------------------------
+# Indexes
 
 class AgeRange(models.Model):
 
@@ -230,6 +245,9 @@ class CelllineBatch(models.Model):
     vials_at_roslin = models.IntegerField(_(u'Vials at Central facility'), null=True, blank=True)
     vials_shipped_to_ecacc = models.IntegerField(_(u'Vials shipped to ECACC'), null=True, blank=True)
     vials_shipped_to_fraunhoffer = models.IntegerField(_(u'Vials shipped to Fraunhoffer'), null=True, blank=True)
+
+    certificate_of_analysis = models.FileField(_(u'Certificate of analysis'), upload_to=upload_to, null=True, blank=True)
+    certificate_of_analysis_md5 = models.CharField(_(u'Certificate of analysis md5'), max_length=100, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line batch')

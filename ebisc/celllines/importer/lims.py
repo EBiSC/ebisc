@@ -1,3 +1,5 @@
+import os
+import hashlib
 import requests
 from easydict import EasyDict as ToObject
 
@@ -5,8 +7,10 @@ import logging
 logger = logging.getLogger('management.commands')
 
 from django.conf import settings
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
 
-from ebisc.celllines.models import Cellline, CelllineBatch, BatchCultureConditions
+from ebisc.celllines.models import CelllineBatch, BatchCultureConditions
 
 
 '''
@@ -37,6 +41,15 @@ def run():
             batch.vials_shipped_to_fraunhoffer = value_of_int(lims_batch_data.vials_shipped_to_fraunhoffer)
             batch.save()
 
+            if 'certificate_of_analysis' in lims_batch_data:
+                batch.certificate_of_analysis_md5 = value_of_file(
+                    lims_batch_data.certificate_of_analysis.file,
+                    batch.certificate_of_analysis,
+                    source_md5=lims_batch_data.certificate_of_analysis.md5,
+                    current_md5=batch.certificate_of_analysis_md5,
+                )
+                batch.save()
+
             culture_conditions, created = BatchCultureConditions.objects.get_or_create(batch=batch)
             if created:
                 logger.info('Created new batch culture conditions')
@@ -64,9 +77,37 @@ def query(url):
 
 
 def value_of_int(value):
-    if value != '':
-        return value
-    else:
+
+    if value == '':
         return None
+
+    return value
+
+
+def value_of_file(value, file_field, source_md5=None, current_md5=None):
+
+    if value == '':
+        file_field.delete()
+        return None
+
+    if source_md5 is not None and current_md5 is not None and source_md5 == current_md5:
+        logger.info('Target file md5 is the same as existing file md5, skipping')
+        return current_md5
+
+    logger.info('Fetching data file from %s' % value)
+
+    response = requests.get(value, stream=True, auth=(settings.LIMS.get('username'), settings.LIMS.get('password')))
+
+    with NamedTemporaryFile(delete=True) as f:
+        for chunk in response.iter_content(10240):
+            f.write(chunk)
+
+        f.seek(0)
+        file_field.save(os.path.basename(value), File(f), save=False)
+
+        file_field.instance.save()
+
+        f.seek(0)
+        return hashlib.md5(f.read()).hexdigest()
 
 # -----------------------------------------------------------------------------

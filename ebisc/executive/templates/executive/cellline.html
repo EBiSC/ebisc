@@ -27,18 +27,21 @@
         <div class="content">
         {% if batch.batch_id and batch.batch_id != batch.biosamples_id %}
 
-            <p><b>Inventory</b><br/>
-            Vials at Roslin: {{ batch.vials_at_roslin }}<br/>
-            Vials shipped to ECACC: {{ batch.vials_shipped_to_ecacc }}<br/>
-            Vials shipped to Fraunhoffer: {{ batch.vials_shipped_to_fraunhoffer }}</p>
+            <h3>Inventory</h3>
+            <div>Vials at Roslin: {{ batch.vials_at_roslin }}</div>
+            <div>Vials shipped to ECACC: {{ batch.vials_shipped_to_ecacc }}</div>
+            <div>Vials shipped to Fraunhoffer: {{ batch.vials_shipped_to_fraunhoffer }}</div>
 
-            <p><b>Culture conditions</b><br/>
-            Medium: {{ batch.batchcultureconditions.culture_medium }}<br/>
-            Passage method: {{ batch.batchcultureconditions.passage_method }}<br/>
-            Matrix: {{ batch.batchcultureconditions.matrix }}<br/>
-            CO2 concentration: {{ batch.batchcultureconditions.co2_concentration }}<br/>
-            O2 concentration: {{ batch.batchcultureconditions.o2_concentration }}<br/>
-            Temperature: {{ batch.batchcultureconditions.temperature }}<br/>
+            <h3>Culture conditions</h3>
+            <div>Medium: {{ batch.batchcultureconditions.culture_medium }}</div>
+            <div>Passage method: {{ batch.batchcultureconditions.passage_method }}</div>
+            <div>Matrix: {{ batch.batchcultureconditions.matrix }}</div>
+            <div>CO2 concentration: {{ batch.batchcultureconditions.co2_concentration }}</div>
+            <div>O2 concentration: {{ batch.batchcultureconditions.o2_concentration }}</div>
+            <div>Temperature: {{ batch.batchcultureconditions.temperature }}</div>
+            {% if batch.certificate_of_analysis %}
+            <div>Certificate of analysis: <a href="{{ batch.certificate_of_analysis.url }}">download</a></div>
+            {% endif %}
 
         {% else %}
         <p><span class="comment">No data available.</span></p>
