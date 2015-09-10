@@ -23,10 +23,23 @@
     {% if cellline.batches.all|length %}
     <ul class="accordion">
     {% for batch in cellline.batches.all %}
-    <li><a href="javascript:void(0)" class="js-accordion-trigger"><b>{{ batch.batch_id }}</b> - {{ batch.biosamples_id }} <small>({{ batch.aliquots.all.count }} vials)</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
+    <li><a href="javascript:void(0)" class="js-accordion-trigger">{% if batch.batch_id == batch.biosamples_id %}{% else %}<b>{{ batch.batch_id }}</b> - {% endif %}{{ batch.biosamples_id }} <small>({{ batch.aliquots.all.count }} vials)</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
         <div class="content">
-        {% if batch.biosamples_id %}
-        <p>ECACC catalogue number: {{ cellline.ecacc_id }}</p>
+        {% if batch.batch_id and batch.batch_id != batch.biosamples_id %}
+
+            <p><b>Inventory</b><br/>
+            Vials at Roslin: {{ batch.vials_at_roslin }}<br/>
+            Vials shipped to ECACC: {{ batch.vials_shipped_to_ecacc }}<br/>
+            Vials shipped to Fraunhoffer: {{ batch.vials_shipped_to_fraunhoffer }}</p>
+
+            <p><b>Culture conditions</b><br/>
+            Medium: {{ batch.batchcultureconditions.culture_medium }}<br/>
+            Passage method: {{ batch.batchcultureconditions.passage_method }}<br/>
+            Matrix: {{ batch.batchcultureconditions.matrix }}<br/>
+            CO2 concentration: {{ batch.batchcultureconditions.co2_concentration }}<br/>
+            O2 concentration: {{ batch.batchcultureconditions.o2_concentration }}<br/>
+            Temperature: {{ batch.batchcultureconditions.temperature }}<br/>
+
         {% else %}
         <p><span class="comment">No data available.</span></p>
         {% endif %}
