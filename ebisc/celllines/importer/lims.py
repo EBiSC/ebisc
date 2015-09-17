@@ -10,7 +10,7 @@ from django.conf import settings
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 
-from ebisc.celllines.models import CelllineBatch, BatchCultureConditions
+from ebisc.celllines.models import CelllineBatch, BatchCultureConditions, CelllineBatchImages
 
 
 '''
@@ -50,6 +50,37 @@ def run():
                 )
                 batch.save()
 
+            old_images = set([img.image_md5 for img in batch.images.all()])
+            if 'images' in lims_batch_data:
+                new_images = set([img.md5 for img in lims_batch_data.images])
+            else:
+                new_images = set()
+
+            # Delete old images that are not in new images
+
+            for img_md5 in old_images - new_images:
+                CelllineBatchImages(batch=batch, image_md5=img_md5).delete()
+
+            # Add new images
+
+            if len(new_images - old_images) > 0:
+                for image in lims_batch_data.images:
+                    if image.md5 in (new_images - old_images):
+                        batch_image = CelllineBatchImages(
+                            batch=batch,
+                            magnification=image.magnification,
+                            time_point=image.timepoint,
+                        )
+                        batch_image.save()
+
+                        batch_image.image_md5 = value_of_file(
+                            image.file,
+                            batch_image.image_file,
+                            source_md5=image.md5,
+                            current_md5=batch_image.image_md5,
+                        )
+                        batch_image.save()
+
             culture_conditions, created = BatchCultureConditions.objects.get_or_create(batch=batch)
             if created:
                 logger.info('Created new batch culture conditions')
@@ -85,6 +116,8 @@ def value_of_int(value):
 
 
 def value_of_file(value, file_field, source_md5=None, current_md5=None):
+
+    # Save file and return its md5
 
     if value == '':
         file_field.delete()

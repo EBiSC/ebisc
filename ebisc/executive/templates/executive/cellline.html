@@ -39,9 +39,22 @@
             <div>CO2 concentration: {{ batch.batchcultureconditions.co2_concentration }}</div>
             <div>O2 concentration: {{ batch.batchcultureconditions.o2_concentration }}</div>
             <div>Temperature: {{ batch.batchcultureconditions.temperature }}</div>
+
             {% if batch.certificate_of_analysis %}
-            <div>Certificate of analysis: <a href="{{ batch.certificate_of_analysis.url }}">download</a></div>
+            <h3>Certificate of Analysis</h3>
+            <div><a href="{{ batch.certificate_of_analysis.url }}">Certificate of analysis</a></div>
             {% endif %}
+
+            <h3>Images</h3>
+            {% for image in batch.images.all %}
+            <div class="image-with-caption">
+                <img src="{{ image.image_file.url }}">
+                <div class="caption">
+                    <div>Timepoint: {{ image.time_point }}</div>
+                    <div>Magnification: {{ image.magnification }}</div>
+                </div>
+            </div>
+            {% endfor %}
 
         {% else %}
         <p><span class="comment">No data available.</span></p>

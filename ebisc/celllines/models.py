@@ -259,6 +259,23 @@ class CelllineBatch(models.Model):
         return u'%s' % (self.biosamples_id,)
 
 
+class CelllineBatchImages(models.Model):
+
+    batch = models.ForeignKey('CelllineBatch', verbose_name=_(u'Cell line Batch images'), related_name='images')
+    image_file = models.FileField(_(u'Image file'), upload_to=upload_to)
+    image_md5 = models.CharField(_(u'Image file md5'), max_length=100)
+    magnification = models.CharField(_(u'Magnification'), max_length=10, null=True, blank=True)
+    time_point = models.CharField(_(u'Time point'), max_length=100, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line batch image')
+        verbose_name_plural = _(u'Cell line batch images')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
 class CelllineAliquot(models.Model):
 
     batch = models.ForeignKey('CelllineBatch', verbose_name=_(u'Cell line'), related_name='aliquots')
