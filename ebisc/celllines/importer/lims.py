@@ -33,12 +33,22 @@ def run():
             logger.warn('Missing biosamples ID ... skipping batch')
             continue
 
+        if 'ecacc_cat_no' not in lims_batch_data:
+            logger.warn('Missing ECACC catalogue number ... skipping batch')
+            continue
+
         try:
             batch = CelllineBatch.objects.get(biosamples_id=lims_batch_data.biosamples_batch_id)
             batch.batch_id = lims_batch_data.batch_id
-            batch.vials_at_roslin = value_of_int(lims_batch_data.vials_at_roslin)
-            batch.vials_shipped_to_ecacc = value_of_int(lims_batch_data.vials_shipped_to_ECACC)
-            batch.vials_shipped_to_fraunhoffer = value_of_int(lims_batch_data.vials_shipped_to_fraunhoffer)
+
+            if 'vials_at_roslin' in lims_batch_data:
+                batch.vials_at_roslin = value_of_int(lims_batch_data.vials_at_roslin)
+
+            if 'vials_shipped_to_ECACC' in lims_batch_data:
+                batch.vials_shipped_to_ecacc = value_of_int(lims_batch_data.vials_shipped_to_ECACC)
+
+            if 'vials_shipped_to_fraunhoffer' in lims_batch_data:
+                batch.vials_shipped_to_fraunhoffer = value_of_int(lims_batch_data.vials_shipped_to_fraunhoffer)
             batch.save()
 
             if 'certificate_of_analysis' in lims_batch_data:
@@ -85,13 +95,14 @@ def run():
             if created:
                 logger.info('Created new batch culture conditions')
 
-            culture_conditions.culture_medium = lims_batch_data.culture_conditions.medium
-            culture_conditions.matrix = lims_batch_data.culture_conditions.matrix
-            culture_conditions.passage_method = lims_batch_data.culture_conditions.passage_method
-            culture_conditions.o2_concentration = lims_batch_data.culture_conditions.O2_concentration
-            culture_conditions.co2_concentration = lims_batch_data.culture_conditions.CO2_concentration
-            culture_conditions.temperature = lims_batch_data.culture_conditions.temperature
-            culture_conditions.save()
+            if 'culture_conditions' in lims_batch_data:
+                culture_conditions.culture_medium = lims_batch_data.culture_conditions.medium
+                culture_conditions.matrix = lims_batch_data.culture_conditions.matrix
+                culture_conditions.passage_method = lims_batch_data.culture_conditions.passage_method
+                culture_conditions.o2_concentration = lims_batch_data.culture_conditions.O2_concentration
+                culture_conditions.co2_concentration = lims_batch_data.culture_conditions.CO2_concentration
+                culture_conditions.temperature = lims_batch_data.culture_conditions.temperature
+                culture_conditions.save()
 
             batch.cell_line.ecacc_id = lims_batch_data.ecacc_cat_no
             batch.cell_line.save()
