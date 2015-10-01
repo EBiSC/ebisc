@@ -31,7 +31,6 @@ Additional fields and endpoints may be created for future exchanges.
 3. List of all batches in the IMS: `https://ebisc.douglasconnect.com/api/v0/batches`
 4. Individual batch records that can be accessed via their BioSamples ID: `https://ebisc.douglasconnect.com/api/v0/batches/{BIOSAMPLES_ID}`
 
-
 ### Sample cell line JSON record structure
 
     {
