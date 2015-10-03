@@ -231,6 +231,7 @@ class CelllineResource(ModelResource):
     # - generator = models.ForeignKey('Organization', verbose_name=_(u'Generator'), related_name='generator_of_cell_lines')
     # - owner = models.ForeignKey('Organization', verbose_name=_(u'Owner'), null=True, blank=True, related_name='owner_of_cell_lines')
     # - primary_disease = models.ForeignKey('Disease', verbose_name=_(u'Diagnosed disease'), blank=True, null=True)
+    # - primary_disease_diagnosis = models.CharField(_(u'Disease diagnosis'), max_length=12, null=True, blank=True)
     # - primary_disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
     # - status = models.ForeignKey('CelllineStatus', verbose_name=_(u'Cell line status'), blank=True, null=True)
     # + alternative_names = models.CharField(_(u'Cell line alternative names'), max_length=500, null=True, blank=True)
@@ -242,6 +243,7 @@ class CelllineResource(ModelResource):
     name = fields.CharField('name', unique=True)
     alternative_names = fields.CharField('alternative_names', null=True)
 
+    primary_disease_diagnosed = fields.CharField('primary_disease_diagnosis')
     primary_disease = fields.ToOneField(DiseaseResource, 'primary_disease', null=True, full=True)
     primary_cell_type = fields.ToOneField(CelllineDerivationResource, 'derivation', null=True, full=True)
     # culture_conditions = fields.ToOneField(CelllineCultureConditionsResource, 'celllinecultureconditions', full=True)

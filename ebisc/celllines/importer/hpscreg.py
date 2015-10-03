@@ -66,6 +66,7 @@ def import_cellline(source):
         hescreg_id=valuef('id'),
         name=valuef('name'),
         alternative_names=', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else '',
+        primary_disease_diagnosis=valuef('disease_flag'),
         primary_disease=parse_disease(source),
         primary_disease_stage=valuef('disease_stage'),
         disease_associated_phenotypes=valuef('disease_associated_phenotypes'),
@@ -228,7 +229,7 @@ def inject_valuef(func):
 @inject_valuef
 def parse_disease(valuef, source):
 
-    if not valuef('disease_flag', 'bool'):
+    if valuef('disease_flag') == 0:
         disease = None
     else:
         try:

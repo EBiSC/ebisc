@@ -21,7 +21,14 @@
     {% endif %}
 
     <tr><th class="sub-title"><h3>Disease information</h3></th><th></th></tr>
+    {% if cellline.primary_disease_diagnosis == '1' %}
     <tr><td class="label">Diagnosed disease:</td><td>{{ cellline.primary_disease|default:"-" }}</td></tr>
+    {% elif cellline.primary_disease_diagnosis == 'carrier' %}
+    <tr><td class="label">Diagnosed disease:</td><td>{{ cellline.primary_disease|default:"-" }}</td></tr>
+    <tr><td class="label">Carrier:</td><td>Yes</td></tr>
+    {% else %}
+    <tr><td class="label">Diagnosed disease:</td><td>No</td></tr>
+    {% endif %}
     {% if cellline.primary_disease_stage %}
     <tr><td class="label">Disease stage:</td><td>{{ cellline.primary_disease_stage }}</td></tr>
     {% endif %}

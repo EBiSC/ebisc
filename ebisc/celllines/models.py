@@ -209,10 +209,17 @@ class Cellline(models.Model):
 
     def to_elastic(self):
 
+        if self.primary_disease and self.primary_disease_diagnosis != '0':
+            disease = self.primary_disease.disease
+        elif self.primary_disease_diagnosis == '0':
+            disease = 'normal'
+        else:
+            disease = None
+
         return {
             'biosamples_id': self.biosamples_id,
             'name': self.name,
-            'primary_disease': self.primary_disease.disease if self.primary_disease else 'normal',
+            'primary_disease': disease,
             'primary_disease_synonyms': [s.strip() for s in self.primary_disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.synonyms else None,
             'depositor': self.generator.name,
             'primary_cell_type': self.derivation.primary_cell_type.name if self.derivation.primary_cell_type else None,
