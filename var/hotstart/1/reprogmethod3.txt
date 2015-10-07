@@ -1,3 +1,0 @@
-IDREPROGMETHOD3,REPROGMETHOD3
-5,Integrating and excisable
-6,Inducible repro factors

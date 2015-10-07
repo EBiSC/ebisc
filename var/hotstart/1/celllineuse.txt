@@ -1,7 +1,0 @@
-IDCELLLINEUSE,CELLLINEUSE,CELLLINEUSE2
-1,Yes - Academic and Commercial use,Research and commercial use
-2,Yes - Academic use (commercial use possible later),Research use only (possibility to re-consent)
-3,Yes - Academic use (commercial use not possible),Research use only (NO possibility to re-consent)
-4,Soon - Academic Pending Initial Publication,Research only - embargoed until DC publication
-5,No - Other impediments to the line's use,Not available for use by third parties
-6,Other Status (see comments),

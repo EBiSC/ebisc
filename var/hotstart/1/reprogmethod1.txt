@@ -1,3 +1,0 @@
-IDREPROGMETHOD1,REPROGMETHOD1
-1,Integrating
-2,Non-integrating
