@@ -47,7 +47,6 @@ Organization
 OrgType
 PassageMethod
 Person
-Phenotype
 PhoneCountryCode
 Postcode
 PrimaryCellDevelopmentalStage

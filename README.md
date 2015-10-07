@@ -25,30 +25,6 @@ mysql ebisc < schema.sql
 ./manage.py inspectdb --database source > ebisc/celllines/models-inspectd.py
 
 
-## Questions
-
-- Schema migration: how it is done?
-    - Freeze feb 20
-    - 4 changes since then
-- HotStart data: is it aligned with the model?
-    - It is incomplete
-    - Has referential problems
-    - cellinelab & cellinechecklist added
-    - Report: where?
-    - ECACC -> FTP, CSV
-- Are there any 'unique together' constraints?
-- Do we validate URLs -> fields containing url to URLField?
-- Do we convert max_length=1000 fields to variable length char field TextField?
-
-- A lot of fields are optional - this does not look right!
-
-- Why is ForeignKey + Unique=True used instead of embedded fields?
-
-
-## TODO
-
-- [ ] Convert ForeignKey + Unique=True to OneToOne field or use embed (see questions)
-
 ## Search
 
 - Dump ORM data to ElasticSearch
@@ -60,10 +36,10 @@ mysql ebisc < schema.sql
 
 ## Exec dashboard
 
+- Data display: depositor data, batch QC data, document management
 - EBiSC Board Members (set user accounts)
 - Order first by most recent
 - Print version Cell line data
-- Grouping of data (Dana)
 - Sales information (future goal - need to get QTY info from LIMS and sales data from ECACC)
 - Option: Should there be a way for EBM to add notes to the Cell Line regarding Accept/Reject?
 - Filters:
@@ -105,7 +81,7 @@ mysql ebisc < schema.sql
 ## EBiSC Knowledge Community
 
 - User is customer
-- List of diseases? (page 97) -> then you get a list of celllines for that disease?? (... page 99) - primerjave med cell lini
+- List of diseases? (page 97) -> then you get a list of celllines for that disease?? (... page 99) - cell line comparisons
 - Assistance and support on differentiation, tests performed etc.?
 
   Services:
@@ -128,14 +104,6 @@ mysql ebisc < schema.sql
 
 - Could project members have the same passwords?
 
-## Data model
-
-Add? (hESCreg has this, if we want it, we have to ask for it, they will put it in the API):
-    - Family history
-    - Patient history
-    - amino acid / or DNA level change (requirement by Alex, the data is captured by hESCreg)
-    - anything else ...
-
 ## Feedback ideas, suggestions, ...
 
 - "Coord Blood (CD133+ cells)" should be "Cord Blood (CD133+ cells)"
@@ -156,14 +124,8 @@ Add? (hESCreg has this, if we want it, we have to ask for it, they will put it i
 - some character handling errors? unicode long-dashes? "HUB-SMN02-1" vs "HUB?SMN04-2"
 - UKKi0011-A should be UKKi011-A i.e. always 3 digits not always 2 zeros?
 
-Grouping of cell line info (not to be done yet, wait for hESCreg??):
-    - Just to follow up the ‘mutagene’ point. As Laura says it is currently under a heading of ‘Labs’. I’m not sure where those headings are coming from, but at least for the mutagene field that does not seem to be correct. For now I would move it up to the ‘General Information’ section. (Also ‘reprogramming method 1-3’ should surely go under ‘Derivation’). And ‘Funder’ would seem to be more at home with the ‘Depositor’ section.
-
-
 ## Questions Barry/Dana
 
-- Do we need to develop cell line registration in the IMS? And as a consequence the depositor registration.
-- Are all hot start cell lines banked and available for purchase?
 - Which are the milestones for the executive dashboard that we will want to show as status on the dashboard?
     - is registered
     - MDA ?
@@ -180,7 +142,6 @@ Grouping of cell line info (not to be done yet, wait for hESCreg??):
     - ECACC has CoA / data
     - IBMT mirror bank has cells
 
-
     - QC
     - passed QC, can be banked
     - LIMS data sent to depositor
@@ -193,26 +154,6 @@ Grouping of cell line info (not to be done yet, wait for hESCreg??):
     - cell line received
     - cell line banked and available in public catalogue
 
-- Cell line batch/Aliquot?? Are children of cell line, have their own biosamplesIDs and have different status then cell line.
-
-## LIMS fields
-
-- Clone ID
-
-- Tests are batch specific
-
-- QC is batch specific, and this doesn’t need to be shown in IMS, LIMS generates the cert. of analysis
-- QC tests and results for IMS, Cert. of analysis for ECACC (goes to IMS but then should be passed on to ECACC)
-
-- Determine image storage needs and data model (currently images stored as a document) - type (format), annotation of image and/or region of interest etc
-
-- Protocols (available in SOP format)? Kevin said would provide human readable format - there is a video for ToxBank protocol management
-
-- Passage Number (measured from Reprogramming)
-
-## Biosamples IDs
-
-- IMS needs to get them for batches and vials (once LIMS has done the work)
 
 ## hESCreg fields
 
@@ -232,95 +173,54 @@ Grouping of cell line info (not to be done yet, wait for hESCreg??):
 
 ## Sprints
 
-### August
+### Users
 
+Cell line depositor -- is someone who is coming to the service to provide EBiSC with iPSCs. 
+Catalogue user -- is someone coming to the EBiSC website to search for cell lines ultimately with the intention to buy them 
+ECACC user -- someone who is interacting with ECACC rather than EBiSC directly
+Core facility user -- representing people like Rachel from Roslin cells who need to interact with the IMS
+WP7 member -- representing Helen/Andreas/Alex and other stake holders within the work package 
+Board member -- representing Aidan/Tim and would be used if we need to meet EBiSC business needs such as reporting
 
-1) As an IMS developer I want to start using hPSCreg API for importing depositor data into the IMS
+### October
 
-Update the importer to include all data exported from hPSCreg (except Characterization section).
+As a WP7 member I want to view data stored in the IMS
 
-Query hPSCreg API for data import.
+- Set up production server
+- Display all data in the IMS on the EBISC portal
+- Change log for production server
 
-2) As an IMS developer I want to document authority for each field in the IMS
-
-Collect:
-    - info on who holds authority for each field in the IMS
-    - json names used in data exchange
-    - ...
-
-3) Set up production server
-
-------------------------------
-
-3) As an IMS developer I want to query pseudo LIMS API and begin importing data from the Central facility (interim solution)
-
-Connect to LIMS API.
-Import sample batch data from EBI "LIMS" API.
-
-4) As an IMS developer I want to document how data updates are recorded in the IMS
-
-Define how IMS is recording data updates, audit trail, level of granularity.
-The IMS needs to define its update schedule and the granularity at which updates are recorded and what the audit trail is for updates
-
-5) As an IMS developer I want define sync dates for data exchange between different WP7 components
-
-Coordinate discussion with members of the dev team to define sync dates for automated data flows between all EBiSC components: hESCreg, IMS, ECACC, LIMS/RC and BioSamples.
-
-DOD: Document the reached decision and make the final document available on the ARTTIC website.
-
-### August/September
-
-I as an IMS developer need to track the number of vials at Core facility and IMBT in order to track stock levels.
-The IMS needs to track this information.  Ian/maja
-
-### September
-
-1) As an IMS developer I want to display and export batch data
-
-Display batch data on EBiSC cell line catalogue.
-Display batch data on EBiSC executive dashboard.
-Export batch data in IMS API.
+1) As an IMS user I want IMS to reflect hPSCreg updates within 24 hours - Done when IMS is pulling hPSCreg data automatically every 24 hours.
 
 2) Ontologies
 
-?
-
 3) Querying for batch and vial Biosample IDs
 
-4) Change log for production server
+- In ECACC if there is no disease specified, it should display ‘Normal’ not ‘CONTROL’. Fix in IMS export. Maja
 
-September
-
-WORK ON API !!! (all data, additional endpoints - donor, batch, transaction log)
-
-Complete single sign on between IMS and Hpscreg Steffi/Maja/Rok
-
-Allow users to assign embargos/hold untill publication dates for cellular data  Steffi/Maja
-In ECACC if there is no disease specified, it should display ‘Normal’ not ‘CONTROL’. Fix in IMS export. Maja
-IMS to take in LIMs culture conditions and export them to ECACC.    Maja
-
-IMS needs to assemble AUA (MTA) from standard EBiSC template and user specified restrictions in order to provide to ECACC as single per line PDF. ??? (Kevin: not to done automatically)
-- AUA (MTA) – get manually input into IMS by someone within EBiSC . EBiSC exec will add 3rd party restrictions to AUA template and upload it to IMS. IMS will send AUA via API to ECACC.
-
-- Availability (ETA … in 5 months). ECACC needs to pull even if not shipped to them. (flag?) – linked to cell line because some may not even have first batches made.
-
-
-Feature #1430: Defining requirements for reporting stock info back to IMS
-    As an ECACC IT manager I would like to know from the EBISC team what stock information IMS would like back from us. The technical restriction is - we cant have any inbound call to our Oracle database (aka FARM)
-    Possible solution
-    Can IMS provide us with a host FTPS server login credentials, we can then write the file there from Oracle. Preferable format for the file can be XML, txt (pipe separated) or csv
-
-
-### September, October
-
-IMS needs to pull donor / line updates from hPSCReg?
 
 
 ### October/November
 
+As an IMS developer I want to document how data updates are recorded in the IMS
+    Define how IMS is recording data updates, audit trail, level of granularity.
+    The IMS needs to define its update schedule and the granularity at which updates are recorded and what the audit trail is for updates
+
+As an IMS developer I want define sync dates for data exchange between different WP7 components
+    Coordinate discussion with members of the dev team to define sync dates for automated data flows between all EBiSC components: hESCreg, IMS, ECACC, LIMS/RC and BioSamples.
+    DOD: Document the reached decision and make the final document available on the ARTTIC website.
+
+Get stock and sales info from ECACC (via EBI ftp)
+
+Complete single sign on between IMS and Hpscreg Steffi/Maja/Rok
+
 As the IMS I need to track the latest image thumbnail with "some" meta data for morphology
 
 Make the first implementation for ECACC catalog number assignment
+
+Allow users to assign embargos/hold untill publication dates for cellular data  Steffi/Maja
+
+Availability (ETA … in 5 months). ECACC needs to pull even if not shipped to them. (flag?) – linked to cell line because some may not even have first batches made.
 
 ### November
 
@@ -354,6 +254,10 @@ I as an EBiSC catalogue user want to know time to ship for an individual cell li
 - Cell lines related to this line (isogenic,... same donor line ... connect these)
 - Gene edited lines (also use disease phenotype even if it has been edited so that the cell line has no more phenotype) Maybe an icon for gene edited lines.
 
+- As a EBiSC customer I want to see documents about receipt of cell lines
+    There will be a set of documents applicable to all cell lines. The documents will describe what to do when the customer receives a cell line, e.g. how to culture them.
+    Done when IMS can display these documents to customers.
+
 - "These tests have been performed on all our cell lines" - this should be part of every cell line (same for all).
 - INFO on the website: our cell lines go through these protocols, QC.
 
@@ -363,460 +267,3 @@ I as an EBiSC catalogue user want to know time to ship for an individual cell li
 - Intent to deposit
 
 
-## Data model cleanup
-
-### Cellline
-
-celllineaccepted
-accepted
-
-celllinename
-name
-
-celllinenamesynonyms
-alternative_names
-
-biosamplesid
-biosamples_id
-
-hescregid
-hescreg_id
-
-ecaccid
-ecacc_id
-
-celllineprimarydisease
-primary_disease
-
-celllinediseaseaddinfo
-primary_disease_stage
-- need to add primary_disease_phenotypes
-
-celllinestatus
-status
-
-celllinecelltype
-- removed, using Derivation -> primary cell type
-
-celllinecollection
-- removed for now. collections were meant to be used for common MDAs and AUAs - will implement in september
-
-celllinetissuesource
-- moved to Derivation: tissue_procurement_location
-
-celllinetissuedate
-- moved to Derivation: tissue_collection_date
-
-celllinetissuetreatment
-- removed. will be probably added later if donor medical/clinical info becomes available
-
-depositorscelllineuri
-- removed
-
-comments
-- removed
-
-### Donor
-
-countryoforigin
-country_of_origin
-
-primarydisease
-diseaseadditionalinfo
-- removed (goes to cell line)
-othercelllinefromdonor
-parentcellline
-cellabnormalkaryotype
-donorabnormalkaryotype
-otherclinicalinformation
-- removed (hSECreg does not collect this anymore)
-
-<!--     primarydisease = models.ForeignKey('Disease', verbose_name=_(u'Disease'), null=True, blank=True)
-    diseaseadditionalinfo = models.CharField(_(u'Disease additional info'), max_length=45, blank=True)
-    othercelllinefromdonor = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='celllines_othercelllinefromdonor', null=True, blank=True)
-    parentcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='celllines_parentcellline', null=True, blank=True)
-    cellabnormalkaryotype = models.CharField(_(u'Cell abnormal karyotype'), max_length=45, blank=True)
-    donorabnormalkaryotype = models.CharField(_(u'Donor abnormal karyotype'), max_length=45, blank=True)
-    otherclinicalinformation = models.CharField(_(u'Other clinical information'), max_length=100, blank=True)
- -->
-
-### Cellline Culture Conditions
-
-surfacecoating
-surface_coating
-
-feedercelltype
-feeder_cell_type
-
-feedercellid
-feeder_cell_id
-
-passagemethod
-passage_method
-
-### Batch Culture Conditions
-
-passagemethod
-passage_method
-
-enzymefree
-enzyme_free
-
-o2concentration
-o2_concentration
-
-co2concentration
-co2_concentration
-
-other_culture_environment
-- added
-
-passage_number_banked
-- added
-
-number_of_vials_banked
-- added
-
-Add this when completed
-
-Passage history (back to reprogramming)
-Culture History (methods used)
-
-### Cellline Derivation
-
-primarycelltypename
-primarycelltypecellfinderid
-- moved to foreignkey CellType (id still needs to be done). This will be done with ontologies in some future ...
-- need to fix importer to import this correctly (via parse_cell_type)!!!!
-
-primarycelldevelopmentalstage
-primary_cell_developmental_stage
-
-reprogramming_passage_number
-passage_number_reprogrammed
-- added
-
-selectioncriteriaforclones
-selection_criteria_for_clones
-
-xenofreeconditions
-xeno_free_conditions
-
-derivedundergmp
-derived_under_gmp
-
-vectorfreereprogramfactor
-vector_free_reprogramming_factor
-
-referenceid
-reference_id
-
-### Cellline Organization
-
-orgcellline
-cell_line
-
-celllineorgtype
-cell_line_org_type
-
-orgstatus
-- removed
-    <!-- orgstatus = models.IntegerField(_(u'Organization status'), null=True, blank=True) -->
-
-orgregistrationdate
-- removed
-    <!-- orgregistrationdate = models.DateField(null=True, blank=True) -->
-
-
-organizationname
-name
-
-organizationshortname
-short_name
-
-organizationcontact
-contact
-
-organizationtype
-org_type
-
-celllineorgtype
-cell_line_org_type
-
-orgtype
-org_type
-
-contacttype
-contact_type
-
-statecounty
-state_county
-
-buildingnumber
-building_number
-
-suiteoraptordept
-suite_or_apt_or_dept
-
-officephonecountrycode
-office_phone_country_code
-
-officephone
-office_phone
-
-faxcountrycode
-fax_country_code
-
-mobilecountrycode
-mobile_country_code
-
-mobilephone
-mobile_phone
-
-emailaddress
-email_address
-
-personlastname
-last_name
-
-personfirstname
-first_name
-
-personcontact
-contact
-
-### Document
-
-cellline
-cell_line
-
-documenttype
-document_type
-
-documentdepositor
-depositor
-
-accesslevel
-access_level
-
-### Cell line value
-
-valuecellline
-cell_line
-
-potentialuse
-potential_use
-
-valuetosociety
-value_to_society
-
-valuetoresearch
-value_to_research
-
-othervalue
-other_value
-
-
-
----------------------
-
-Celltype
-CellType
-
-Celllinestatus
-CelllineStatus
-
-Celllinecollection
-- removed for now. collections were meant to be used for common MDAs and AUAs - will implement in september (maybe differently)
-
-<!-- class Celllinecollection(models.Model):
-    celllinecollectiontotal = models.IntegerField(_(u'Cell line collection total'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line collection')
-        verbose_name_plural = _(u'Cell line collections')
-        ordering = ['id']
-
-    def __unicode__(self):
-        return u'%s' % (self.celllinecollectiontotal,)
- -->
-
-Tissuesource
-TissueLocation
-
-Clinicaltreatmentb4donation
-- removed, will be probably added later if donor medical/clinical info becomes available
-
-Celllinecomments
-- removed
-
-CellLineCharacterization
-CelllineCharacterization
-
-Celllinechecklist
-- removed
-
-<!-- class Celllinechecklist(models.Model):
-    checklistcellline = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
-    morphologicalassessment = models.BooleanField(_(u'Morphological assessment'), default=False)
-    facs = models.BooleanField(_(u'FACS'), default=False)
-    ihc = models.BooleanField(_(u'IHC'), default=False)
-    pcrforreprofactorremoval = models.BooleanField(_(u'PCR for reprofactor removal'), default=False)
-    pcrforpluripotency = models.BooleanField(_(u'PCR for pluripotency'), default=False)
-    teratoma = models.BooleanField(_(u'Teratoma'), default=False)
-    invitrodifferentiation = models.BooleanField(_(u'Invitro differentiation'), default=False)
-    karyotype = models.BooleanField(_(u'Karyo type'), default=False)
-    cnvanalysis = models.BooleanField(_(u'CNV analysis'), default=False)
-    dnamethylation = models.BooleanField(_(u'DNA methylation'), default=False)
-    microbiologyinclmycoplasma = models.BooleanField(_(u'Micro biology inclmycoplasma'), default=False)
-    dnagenotyping = models.BooleanField(_(u'DNA genotyping'), default=False)
-    hlatyping = models.BooleanField(_(u'HLA typing'), default=False)
-    virustesting = models.BooleanField(_(u'Virus testing'), default=False)
-    postthawviability = models.BooleanField(_(u'Post thawviability'), default=False)
-    checklistcomments = models.TextField('Checklist comments', null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line checklist')
-        verbose_name_plural = _(u'Cell line checklists')
-        ordering = ['checklistcellline']
-
-    def __unicode__(self):
-        return u'%s' % (self.checklistcellline,)
- -->
-
-
-Celllinecultureconditions
-CelllineCultureConditions
-
-CellLineCultureMediumSupplement
-CelllineCultureMediumSupplement
-
-Celllinederivation
-CelllineDerivation
-
-CellLineNonIntegratingVector
-CelllineNonIntegratingVector
-
-CellLineIntegratingVector
-CelllineIntegratingVector
-
-Vectorfreereprogramfactor
-VectorFreeReprogrammingFactor
-
-CellLineVectorFreeReprogrammingFactors
-CelllineVectorFreeReprogrammingFactors
-
-Celllinelab
-- removed
-
-<!-- class Celllinelab(models.Model):
-    labcellline = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), null=True, blank=True)
-    cryodate = models.DateField(null=True, blank=True)
-    expansioninprogress = models.IntegerField(_(u'Expansion in progress'), null=True, blank=True)
-    funder = models.CharField(_(u'Funder'), max_length=45, blank=True)
-    mutagene = models.CharField(_(u'Mutagene'), max_length=100, blank=True)
-    clonenumber = models.IntegerField(_(u'Clone number'), null=True, blank=True)
-    passagenumber = models.CharField(_(u'Passage number'), max_length=5, blank=True)
-    culturesystem = models.ForeignKey('Culturesystem', verbose_name=_(u'Culture system'), null=True, blank=True)
-    culturesystemcomment = models.CharField(_(u'Culture system comment'), max_length=45, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line lab')
-        verbose_name_plural = _(u'Cell line labs')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
- -->
-
-Culturesystem
-- removed
-
-<!-- class Culturesystem(models.Model):
-    culturesystem = models.CharField(_(u'Culture system'), max_length=45, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Culture system')
-        verbose_name_plural = _(u'Culture systems')
-        ordering = ['culturesystem']
-
-    def __unicode__(self):
-        return u'%s' % (self.culturesystem,)
- -->
-
-
-
-CellLineLegal
-CelllineEthics
-
-Celllineorganization
-CelllineOrganization
-
-Celllineorgtype
-CelllineOrgType
-
-Orgtype
-OrgType
-
-Contacttype
-ContactType
-
-Phonecountrycode
-PhoneCountryCode
-
-Documenttype
-DocumentType
-
-
-Publisher
-- removed
-
-<!-- class Publisher(models.Model):
-    publisher = models.CharField(_(u'Publisher'), max_length=45, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Publisher')
-        verbose_name_plural = _(u'Publishers')
-        ordering = ['publisher']
-
-    def __unicode__(self):
-        return u'%s' % (self.publisher,)
-
- -->
-
- Celllinevalue
- CelllineValue
-
-
-EBiSC Keyword and Keyword
-- removed
-
-<!-- class Ebisckeyword(models.Model):
-
-    cellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    document = models.ForeignKey('Document', verbose_name=_(u'Document'), null=True, blank=True)
-    ebisckeyword = models.ForeignKey('Keyword', verbose_name=_(u'Keyword'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Ebisc keyword')
-        verbose_name_plural = _(u'Ebisc keywords')
-        ordering = ['cellline', 'document', 'ebisckeyword']
-
-    def __unicode__(self):
-        return u'%s - %s - %s' % (self.cellline, self.document, self.ebisckeyword)
-
-
-class Keyword(models.Model):
-
-    keyword = models.CharField(_(u'Keyword'), max_length=45, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Keyword')
-        verbose_name_plural = _(u'Keywords')
-        ordering = ['keyword']
-
-    def __unicode__(self):
-        return u'%s' % (self.keyword,)
- -->

@@ -1,3 +1,5 @@
+import os
+import hashlib
 import requests
 from easydict import EasyDict as ToObject
 
@@ -5,8 +7,10 @@ import logging
 logger = logging.getLogger('management.commands')
 
 from django.conf import settings
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
 
-from ebisc.celllines.models import Cellline, CelllineBatch
+from ebisc.celllines.models import CelllineBatch, BatchCultureConditions, CelllineBatchImages
 
 
 '''
@@ -29,13 +33,76 @@ def run():
             logger.warn('Missing biosamples ID ... skipping batch')
             continue
 
+        if 'ecacc_cat_no' not in lims_batch_data:
+            logger.warn('Missing ECACC catalogue number ... skipping batch')
+            continue
+
         try:
             batch = CelllineBatch.objects.get(biosamples_id=lims_batch_data.biosamples_batch_id)
-
             batch.batch_id = lims_batch_data.batch_id
-            # batch.passage_number = lims_batch_data.passage_number
-            # batch.cells_per_vial = lims_batch_data.cells_per_vial
+
+            if 'vials_at_roslin' in lims_batch_data:
+                batch.vials_at_roslin = value_of_int(lims_batch_data.vials_at_roslin)
+
+            if 'vials_shipped_to_ECACC' in lims_batch_data:
+                batch.vials_shipped_to_ecacc = value_of_int(lims_batch_data.vials_shipped_to_ECACC)
+
+            if 'vials_shipped_to_fraunhoffer' in lims_batch_data:
+                batch.vials_shipped_to_fraunhoffer = value_of_int(lims_batch_data.vials_shipped_to_fraunhoffer)
             batch.save()
+
+            if 'certificate_of_analysis' in lims_batch_data:
+                batch.certificate_of_analysis_md5 = value_of_file(
+                    lims_batch_data.certificate_of_analysis.file,
+                    batch.certificate_of_analysis,
+                    source_md5=lims_batch_data.certificate_of_analysis.md5,
+                    current_md5=batch.certificate_of_analysis_md5,
+                )
+                batch.save()
+
+            old_images = set([img.image_md5 for img in batch.images.all()])
+            if 'images' in lims_batch_data:
+                new_images = set([img.md5 for img in lims_batch_data.images])
+            else:
+                new_images = set()
+
+            # Delete old images that are not in new images
+
+            for img_md5 in old_images - new_images:
+                CelllineBatchImages(batch=batch, image_md5=img_md5).delete()
+
+            # Add new images
+
+            if len(new_images - old_images) > 0:
+                for image in lims_batch_data.images:
+                    if image.md5 in (new_images - old_images):
+                        batch_image = CelllineBatchImages(
+                            batch=batch,
+                            magnification=image.magnification,
+                            time_point=image.timepoint,
+                        )
+                        batch_image.save()
+
+                        batch_image.image_md5 = value_of_file(
+                            image.file,
+                            batch_image.image_file,
+                            source_md5=image.md5,
+                            current_md5=batch_image.image_md5,
+                        )
+                        batch_image.save()
+
+            culture_conditions, created = BatchCultureConditions.objects.get_or_create(batch=batch)
+            if created:
+                logger.info('Created new batch culture conditions')
+
+            if 'culture_conditions' in lims_batch_data:
+                culture_conditions.culture_medium = lims_batch_data.culture_conditions.medium
+                culture_conditions.matrix = lims_batch_data.culture_conditions.matrix
+                culture_conditions.passage_method = lims_batch_data.culture_conditions.passage_method
+                culture_conditions.o2_concentration = lims_batch_data.culture_conditions.O2_concentration
+                culture_conditions.co2_concentration = lims_batch_data.culture_conditions.CO2_concentration
+                culture_conditions.temperature = lims_batch_data.culture_conditions.temperature
+                culture_conditions.save()
 
             batch.cell_line.ecacc_id = lims_batch_data.ecacc_cat_no
             batch.cell_line.save()
@@ -49,5 +116,42 @@ def run():
 
 def query(url):
     return ToObject(requests.get(url, auth=(settings.LIMS.get('username'), settings.LIMS.get('password'))).json()).data
+
+
+def value_of_int(value):
+
+    if value == '':
+        return None
+
+    return value
+
+
+def value_of_file(value, file_field, source_md5=None, current_md5=None):
+
+    # Save file and return its md5
+
+    if value == '':
+        file_field.delete()
+        return None
+
+    if source_md5 is not None and current_md5 is not None and source_md5 == current_md5:
+        logger.info('Target file md5 is the same as existing file md5, skipping')
+        return current_md5
+
+    logger.info('Fetching data file from %s' % value)
+
+    response = requests.get(value, stream=True, auth=(settings.LIMS.get('username'), settings.LIMS.get('password')))
+
+    with NamedTemporaryFile(delete=True) as f:
+        for chunk in response.iter_content(10240):
+            f.write(chunk)
+
+        f.seek(0)
+        file_field.save(os.path.basename(value), File(f), save=False)
+
+        file_field.instance.save()
+
+        f.seek(0)
+        return hashlib.md5(f.read()).hexdigest()
 
 # -----------------------------------------------------------------------------

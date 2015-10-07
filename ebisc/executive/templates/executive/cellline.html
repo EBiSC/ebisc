@@ -23,10 +23,39 @@
     {% if cellline.batches.all|length %}
     <ul class="accordion">
     {% for batch in cellline.batches.all %}
-    <li><a href="javascript:void(0)" class="js-accordion-trigger"><b>{{ batch.batch_id }}</b> - {{ batch.biosamples_id }} <small>({{ batch.aliquots.all.count }} vials)</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
+    <li><a href="javascript:void(0)" class="js-accordion-trigger">{% if batch.batch_id == batch.biosamples_id %}{% else %}<b>{{ batch.batch_id }}</b> - {% endif %}{{ batch.biosamples_id }} <small>({{ batch.aliquots.all.count }} vials)</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
         <div class="content">
-        {% if batch.biosamples_id %}
-        <p>ECACC catalogue number: {{ cellline.ecacc_id }}</p>
+        {% if batch.batch_id and batch.batch_id != batch.biosamples_id %}
+
+            <h3>Inventory</h3>
+            <div>Vials at Roslin: {{ batch.vials_at_roslin }}</div>
+            <div>Vials shipped to ECACC: {{ batch.vials_shipped_to_ecacc }}</div>
+            <div>Vials shipped to Fraunhoffer: {{ batch.vials_shipped_to_fraunhoffer }}</div>
+
+            <h3>Culture conditions</h3>
+            <div>Medium: {{ batch.batchcultureconditions.culture_medium }}</div>
+            <div>Passage method: {{ batch.batchcultureconditions.passage_method }}</div>
+            <div>Matrix: {{ batch.batchcultureconditions.matrix }}</div>
+            <div>CO2 concentration: {{ batch.batchcultureconditions.co2_concentration }}</div>
+            <div>O2 concentration: {{ batch.batchcultureconditions.o2_concentration }}</div>
+            <div>Temperature: {{ batch.batchcultureconditions.temperature }}</div>
+
+            {% if batch.certificate_of_analysis %}
+            <h3>Certificate of Analysis</h3>
+            <div><a href="{{ batch.certificate_of_analysis.url }}">Certificate of analysis</a></div>
+            {% endif %}
+
+            <h3>Images</h3>
+            {% for image in batch.images.all %}
+            <div class="image-with-caption">
+                <img src="{{ image.image_file.url }}">
+                <div class="caption">
+                    <div>Timepoint: {{ image.time_point }}</div>
+                    <div>Magnification: {{ image.magnification }}</div>
+                </div>
+            </div>
+            {% endfor %}
+
         {% else %}
         <p><span class="comment">No data available.</span></p>
         {% endif %}

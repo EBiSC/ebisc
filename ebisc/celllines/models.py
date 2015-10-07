@@ -1,7 +1,14 @@
+import os
+import uuid
+import datetime
+
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.contrib.postgres.fields import ArrayField
 
+
+# -----------------------------------------------------------------------------
+# Utilities
 
 EXTENDED_BOOL_CHOICES = (
     ('yes', 'Yes'),
@@ -9,6 +16,14 @@ EXTENDED_BOOL_CHOICES = (
     ('unknown', 'Unknown'),
 )
 
+
+def upload_to(instance, filename):
+    date = datetime.date.today()
+    return os.path.join('celllines', '%d/%02d/%02d' % (date.year, date.month, date.day), str(uuid.uuid4()), filename)
+
+
+# -----------------------------------------------------------------------------
+# Indexes
 
 class AgeRange(models.Model):
 
@@ -172,7 +187,13 @@ class Cellline(models.Model):
     derivation_country = models.ForeignKey('Country', verbose_name=_(u'Derivation country'), null=True, blank=True)
 
     primary_disease = models.ForeignKey('Disease', verbose_name=_(u'Diagnosed disease'), null=True, blank=True)
+    primary_disease_diagnosis = models.CharField(_(u'Disease diagnosis'), max_length=12, null=True, blank=True)
     primary_disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
+    disease_associated_phenotypes = ArrayField(models.CharField(max_length=500), verbose_name=_(u'Disease associated phenotypes'), null=True)
+    affected_status = models.CharField(_(u'Affected status'), max_length=12, null=True, blank=True)
+    family_history = models.CharField(_(u'Family history'), max_length=500, null=True, blank=True)
+    medical_history = models.CharField(_(u'Medical history'), max_length=500, null=True, blank=True)
+    clinical_information = models.CharField(_(u'Clinical information'), max_length=500, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line')
@@ -188,10 +209,17 @@ class Cellline(models.Model):
 
     def to_elastic(self):
 
+        if self.primary_disease and self.primary_disease_diagnosis != '0':
+            disease = self.primary_disease.disease
+        elif self.primary_disease_diagnosis == '0':
+            disease = 'normal'
+        else:
+            disease = None
+
         return {
             'biosamples_id': self.biosamples_id,
             'name': self.name,
-            'primary_disease': self.primary_disease.disease if self.primary_disease else 'normal',
+            'primary_disease': disease,
             'primary_disease_synonyms': [s.strip() for s in self.primary_disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.synonyms else None,
             'depositor': self.generator.name,
             'primary_cell_type': self.derivation.primary_cell_type.name if self.derivation.primary_cell_type else None,
@@ -222,12 +250,12 @@ class CelllineBatch(models.Model):
 
     batch_id = models.CharField(_(u'Batch ID'), max_length=12)
 
-    passage_number = models.IntegerField(_(u'Passage number'), null=True, blank=True)
-    cells_per_vial = models.CharField(_(u'Cells per vial'), max_length=50, null=True, blank=True)
-
     vials_at_roslin = models.IntegerField(_(u'Vials at Central facility'), null=True, blank=True)
     vials_shipped_to_ecacc = models.IntegerField(_(u'Vials shipped to ECACC'), null=True, blank=True)
     vials_shipped_to_fraunhoffer = models.IntegerField(_(u'Vials shipped to Fraunhoffer'), null=True, blank=True)
+
+    certificate_of_analysis = models.FileField(_(u'Certificate of analysis'), upload_to=upload_to, null=True, blank=True)
+    certificate_of_analysis_md5 = models.CharField(_(u'Certificate of analysis md5'), max_length=100, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line batch')
@@ -237,6 +265,23 @@ class CelllineBatch(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.biosamples_id,)
+
+
+class CelllineBatchImages(models.Model):
+
+    batch = models.ForeignKey('CelllineBatch', verbose_name=_(u'Cell line Batch images'), related_name='images')
+    image_file = models.FileField(_(u'Image file'), upload_to=upload_to)
+    image_md5 = models.CharField(_(u'Image file md5'), max_length=100)
+    magnification = models.CharField(_(u'Magnification'), max_length=10, null=True, blank=True)
+    time_point = models.CharField(_(u'Time point'), max_length=100, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line batch image')
+        verbose_name_plural = _(u'Cell line batch images')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
 
 
 class CelllineAliquot(models.Model):
@@ -266,7 +311,9 @@ class Donor(models.Model):
     provider_donor_ids = ArrayField(models.CharField(max_length=20), verbose_name=_(u'Provider donor ids'), null=True)
     country_of_origin = models.ForeignKey('Country', verbose_name=_(u'Country of origin'), null=True, blank=True)
     ethnicity = models.CharField(_(u'Ethnicity'), max_length=100, null=True, blank=True)
-    phenotype = models.ForeignKey('Phenotype', verbose_name=_(u'Phenotype'), null=True, blank=True)
+    phenotypes = ArrayField(models.CharField(max_length=100), verbose_name=_(u'Phenotypes'), null=True)
+
+    karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Donor')
@@ -275,19 +322,6 @@ class Donor(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.biosamples_id,)
-
-
-class Phenotype(models.Model):
-
-    phenotype = models.CharField(_(u'Phenotype'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Phenotype')
-        verbose_name_plural = _(u'Phenotypes')
-        ordering = ['phenotype']
-
-    def __unicode__(self):
-        return self.phenotype
 
 
 # -----------------------------------------------------------------------------
@@ -343,9 +377,12 @@ class BatchCultureConditions(models.Model):
 
     batch = models.OneToOneField(CelllineBatch, verbose_name=_(u'Batch'))
 
-    culture_medium = models.ForeignKey('CultureMedium', verbose_name=_(u'Culture medium'), null=True, blank=True)
-    surface_coating = models.ForeignKey('SurfaceCoating', verbose_name=_(u'Matrix'), null=True, blank=True)
+    culture_medium = models.CharField(_(u'Medium'), max_length=100, null=True, blank=True)
     passage_method = models.CharField(_(u'Passage method'), max_length=100, null=True, blank=True)
+    matrix = models.CharField(_(u'Matrix'), max_length=100, null=True, blank=True)
+    o2_concentration = models.CharField(_(u'O2 Concentration'), max_length=12, null=True, blank=True)
+    co2_concentration = models.CharField(_(u'CO2 Concentration'), max_length=12, null=True, blank=True)
+    temperature = models.CharField(_(u'Temperature'), max_length=12, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Batch culture conditions')

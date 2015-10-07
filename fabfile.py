@@ -34,10 +34,22 @@ def deploy(option=None):
 
     with virtualenv():
         run('git pull origin')
-        run('bower install --production')
-        run('pip install -r requirements.txt')
+        run('pip install -r requirements.txt --upgrade')
         run('./manage.py collectstatic --noinput')
         run('touch etc/conf/*.ini')
+
+
+# -----------------------------------------------------------------------------
+# Import data
+
+@task
+def update():
+
+    with virtualenv():
+        run('./manage.py import hpscreg --init')
+        run('./manage.py import batches var/batches.csv')
+        run('./manage.py import lims')
+        run('./manage.py toelastic')
 
 
 # -----------------------------------------------------------------------------

@@ -65,12 +65,20 @@ def import_cellline(source):
         biosamples_id=valuef('biosamples_id'),
         hescreg_id=valuef('id'),
         name=valuef('name'),
-        primary_disease=parse_disease(source),
         alternative_names=', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else '',
+        primary_disease_diagnosis=valuef('disease_flag'),
+        primary_disease=parse_disease(source),
+        primary_disease_stage=valuef('disease_stage'),
+        disease_associated_phenotypes=valuef('disease_associated_phenotypes'),
+        affected_status=valuef('disease_affected_flag'),
+        family_history=valuef('family_history'),
+        medical_history=valuef('medical_history'),
+        clinical_information=valuef('clinical_information'),
         donor=parse_donor(source),
         donor_age=valuef('donor_age', 'age_range'),
         derivation_country=term_list_value_of_json(source, 'derivation_country', Country),
     )
+
 
     # Organizations
 
@@ -221,7 +229,7 @@ def inject_valuef(func):
 @inject_valuef
 def parse_disease(valuef, source):
 
-    if not valuef('disease_flag', 'bool'):
+    if valuef('disease_flag') == 0:
         disease = None
     else:
         try:
@@ -300,7 +308,9 @@ def parse_organization(valuef, source):
 @inject_valuef
 def parse_donor(valuef, source):
 
-    gender = valuef('gender_primary_cell', 'gender')
+    # gender = valuef('gender_primary_cell', 'gender')
+
+    gender = term_list_value_of_json(source, 'gender_primary_cell', Gender)
 
     try:
         donor = Donor.objects.get(biosamples_id=valuef('biosamples_donor_id'))
@@ -316,7 +326,10 @@ def parse_donor(valuef, source):
             gender=gender,
             country_of_origin=term_list_value_of_json(source, 'donor_country_origin', Country),
             ethnicity=valuef('ethnicity'),
+            phenotypes=valuef('donor_phenotypes'),
+            karyotype=valuef('donor_karyotype'),
         )
+
     try:
         donor.save()
     except IntegrityError, e:
