@@ -1,6 +1,7 @@
 import os
 import uuid
 import datetime
+from dirtyfields import DirtyFieldsMixin
 
 from django.db import models
 from django.utils.translation import ugettext as _
@@ -161,7 +162,7 @@ class Unit(models.Model):
 # -----------------------------------------------------------------------------
 # Cell line
 
-class Cellline(models.Model):
+class Cellline(DirtyFieldsMixin, models.Model):
 
     ACCEPTED_CHOICES = (
         ('pending', _(u'Pending')),
@@ -783,7 +784,7 @@ class UndifferentiatedMorphologyMarkerExpressionProfileMolecule(MarkerMoleculeBa
 # -----------------------------------------------------------------------------
 # Cell line Ethics
 
-class CelllineEthics(models.Model):
+class CelllineEthics(DirtyFieldsMixin, models.Model):
 
     ACCESS_POLICY_CHOICES = (
         ('open_access', 'Open access'),
