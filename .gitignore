@@ -5,6 +5,7 @@
 /node_modules/
 /assets/components/
 
+/var/media/
 /var/static/
 /var/virtualenv/
 /var/mviz/
