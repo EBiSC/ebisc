@@ -8,9 +8,10 @@ admin.site.site_header = _(u'EBiSC Administration')
 admin.site.site_title = _(u'EBiSC Administration')
 admin.site.index_title = ''
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
+
     # Admin
-    url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/', include(admin.site.urls)),
 
     # Auth
