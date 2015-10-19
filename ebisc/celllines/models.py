@@ -1103,6 +1103,90 @@ class CelllineValue(models.Model):
 # -----------------------------------------------------------------------------
 # TODO Genotyping
 
+# Disease associated genotype
+
+class CelllineGenotypingSNP(models.Model):
+
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='snps')
+
+    gene_name = models.CharField(_(u'SNP gene name'), max_length=45, null=True, blank=True)
+    chromosomal_position = models.CharField(_(u'SNP choromosomal position'), max_length=45, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line snp')
+        verbose_name_plural = _(u'Cell line snps')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class CelllineGenotypingRsNumber(models.Model):
+
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='rs_number')
+
+    rs_number = models.CharField(_(u'rs Number'), max_length=12, null=True, blank=True)
+    link = models.URLField(u'Link', null=True, blank=True)
+    allele_carried = models.CharField(_(u'Allele carried through'), max_length=12, null=True, blank=True)
+    cell_line_form = models.CharField(_(u'Is the cell line homozygote or heterozygot for this variant'), max_length=12, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line rs number')
+        verbose_name_plural = _(u'Cell line rs numbers')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class CelllineGenotypingVariant(models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genotyping_variant')
+
+    assembly = models.CharField(_(u'Assembly'), max_length=45, null=True, blank=True)
+    chormosome = models.CharField(_(u'Chormosome'), max_length=45, null=True, blank=True)
+    coordinate = models.CharField(_(u'Coordinate'), max_length=45, null=True, blank=True)
+    reference_allele = models.CharField(_(u'Reference allele'), max_length=45, null=True, blank=True)
+    alternative_allele = models.CharField(_(u'Alternative allele'), max_length=45, null=True, blank=True)
+    protein_sequence_variants = models.CharField(_(u'Protein sequence variants'), max_length=100, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line genotyping variant')
+        verbose_name_plural = _(u'Cell line genotyping variants')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+# class Celllinesnpdetails(models.Model):
+#
+#     celllinesnp = models.ForeignKey('Celllinesnp', verbose_name=_(u'Cell line snp'), null=True, blank=True)
+#     celllinesnpgene = models.CharField(_(u'Cell line snp gene'), max_length=45, blank=True)
+#     celllinesnpchromosomalposition = models.CharField(_(u'Cell line snp chromosomal position'), max_length=45, blank=True)
+#
+#     class Meta:
+#         verbose_name = _(u'Cell line snp details')
+#         verbose_name_plural = _(u'Cell line snp details')
+#         ordering = []
+#
+#     def __unicode__(self):
+#         return u'%s' % (self.id,)
+
+
+# class Celllinesnprslinks(models.Model):
+#
+#     celllinesnp = models.ForeignKey('Celllinesnp', verbose_name=_(u'Cel lline snp'), null=True, blank=True)
+#     rsnumber = models.CharField(_(u'Rs number'), max_length=45, blank=True)
+#     rslink = models.CharField(_(u'Rs link'), max_length=100, blank=True)
+#
+#     class Meta:
+#         verbose_name = _(u'Cell line snp Rs links')
+#         verbose_name_plural = _(u'Cell line snp Rs links')
+#         ordering = []
+#
+#     def __unicode__(self):
+#         return u'%s' % (self.id,)
+#
 
 class Celllinegenemutations(models.Model):
 
@@ -1195,48 +1279,6 @@ class CellLineKaryotype(models.Model):
         return unicode(self.karyotype)
 
 
-class Celllinesnp(models.Model):
-
-    snpcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    weblink = models.CharField(_(u'Weblink'), max_length=45, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line snp')
-        verbose_name_plural = _(u'Cell line snps')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class Celllinesnpdetails(models.Model):
-
-    celllinesnp = models.ForeignKey('Celllinesnp', verbose_name=_(u'Cell line snp'), null=True, blank=True)
-    celllinesnpgene = models.CharField(_(u'Cell line snp gene'), max_length=45, blank=True)
-    celllinesnpchromosomalposition = models.CharField(_(u'Cell line snp chromosomal position'), max_length=45, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line snp details')
-        verbose_name_plural = _(u'Cell line snp details')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class Celllinesnprslinks(models.Model):
-
-    celllinesnp = models.ForeignKey('Celllinesnp', verbose_name=_(u'Cel lline snp'), null=True, blank=True)
-    rsnumber = models.CharField(_(u'Rs number'), max_length=45, blank=True)
-    rslink = models.CharField(_(u'Rs link'), max_length=100, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line snp Rs links')
-        verbose_name_plural = _(u'Cell line snp Rs links')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
 
 
 class Celllinestrfingerprinting(models.Model):

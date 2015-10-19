@@ -15,9 +15,9 @@ CelllineEthics
 CelllineOrganization
 CelllineOrgType
 CelllinePublication
-Celllinesnp
-Celllinesnpdetails
-Celllinesnprslinks
+CelllineGenotypingSNP
+CelllineGenotypingRsNumber
+CelllineGenotypingVariant
 CelllineStatus
 Celllinestrfingerprinting
 CelllineValue

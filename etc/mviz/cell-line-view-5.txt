@@ -5,9 +5,9 @@ Celllinegenomeseq
 Celllinegenotypingother
 Celllinehlatyping
 CellLineKaryotype
-Celllinesnp
-Celllinesnpdetails
-Celllinesnprslinks
+CelllineGenotypingSNP
+CelllineGenotypingRsNumber
+CelllineGenotypingVariant
 Celllinestrfingerprinting
 Hla
 KaryotypeMethod

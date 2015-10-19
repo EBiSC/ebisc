@@ -51,6 +51,7 @@ from ebisc.celllines.models import  \
     CelllineOrgType,  \
     CelllinePublication,  \
     CellLineKaryotype,  \
+    CelllineGenotypingSNP, \
     KaryotypeMethod
 
 
