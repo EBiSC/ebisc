@@ -51,7 +51,9 @@ from ebisc.celllines.models import  \
     CelllineOrgType,  \
     CelllinePublication,  \
     CellLineKaryotype,  \
+    CelllineDiseaseGenotype, \
     CelllineGenotypingSNP, \
+    CelllineGenotypingRsNumber,\
     KaryotypeMethod
 
 
@@ -553,6 +555,43 @@ def parse_karyotyping(valuef, source, cell_line):
         cell_line_karyotype.save()
 
         logger.info('Added cell line karyotype: %s' % cell_line_karyotype)
+
+
+@inject_valuef
+def parse_genotyping_variants(valuef, source, cell_line):
+
+    def parse_snps(cell_line, snps):
+
+        if snps is None:
+            return
+
+        else:
+            for snp in snps:
+                (gene_name, chromosomal_position) = snp.split('###')
+                CelllineGenotypingSNP(
+                    cell_line=cell_line,
+                    gene_name=gene_name,
+                    chromosomal_position=chromosomal_position,
+                ).save()
+
+    def parse_rs_numbers(cell_line, rs_numbers):
+
+        if rs_numbers is None:
+            return
+
+        else:
+            for rs_number in rs_numbers:
+                (rs_number, link) = rs_number.split('###')
+                CelllineGenotypingRsNumber(
+                    cell_line=cell_line,
+                    rs_number=rs_number,
+                    link=link,
+                ).save()
+
+    if valuef('carries_disease_phenotype_associated_variants_flag', 'bool'):
+
+        parse_snps(cell_line, valuef('snp_list'))
+        parse_rs_numbers(cell_line, valuef('rs_number_list'))
 
 
 @inject_valuef

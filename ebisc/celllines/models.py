@@ -1105,9 +1105,32 @@ class CelllineValue(models.Model):
 
 # Disease associated genotype
 
+class CelllineDiseaseGenotype(models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genotyping_variant')
+
+    allele_carried = models.CharField(_(u'Allele carried through'), max_length=12, null=True, blank=True)
+    cell_line_form = models.CharField(_(u'Is the cell line homozygote or heterozygot for this variant'), max_length=12, null=True, blank=True)
+
+    assembly = models.CharField(_(u'Assembly'), max_length=45, null=True, blank=True)
+    chormosome = models.CharField(_(u'Chormosome'), max_length=45, null=True, blank=True)
+    coordinate = models.CharField(_(u'Coordinate'), max_length=45, null=True, blank=True)
+    reference_allele = models.CharField(_(u'Reference allele'), max_length=45, null=True, blank=True)
+    alternative_allele = models.CharField(_(u'Alternative allele'), max_length=45, null=True, blank=True)
+    protein_sequence_variants = models.CharField(_(u'Protein sequence variants'), max_length=100, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line disease associated genotype')
+        verbose_name_plural = _(u'Cell line disease associated genotypes')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
 class CelllineGenotypingSNP(models.Model):
 
-    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='snps')
+    disease_genotype = models.ForeignKey('CelllineDiseaseGenotype', verbose_name=_(u'Cell line'), related_name='snps', null=True, blank=True)
 
     gene_name = models.CharField(_(u'SNP gene name'), max_length=45, null=True, blank=True)
     chromosomal_position = models.CharField(_(u'SNP choromosomal position'), max_length=45, null=True, blank=True)
@@ -1123,36 +1146,14 @@ class CelllineGenotypingSNP(models.Model):
 
 class CelllineGenotypingRsNumber(models.Model):
 
-    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='rs_number')
+    disease_genotype = models.ForeignKey('CelllineDiseaseGenotype', verbose_name=_(u'Cell line'), related_name='rs_number', null=True, blank=True)
 
     rs_number = models.CharField(_(u'rs Number'), max_length=12, null=True, blank=True)
     link = models.URLField(u'Link', null=True, blank=True)
-    allele_carried = models.CharField(_(u'Allele carried through'), max_length=12, null=True, blank=True)
-    cell_line_form = models.CharField(_(u'Is the cell line homozygote or heterozygot for this variant'), max_length=12, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line rs number')
         verbose_name_plural = _(u'Cell line rs numbers')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class CelllineGenotypingVariant(models.Model):
-
-    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genotyping_variant')
-
-    assembly = models.CharField(_(u'Assembly'), max_length=45, null=True, blank=True)
-    chormosome = models.CharField(_(u'Chormosome'), max_length=45, null=True, blank=True)
-    coordinate = models.CharField(_(u'Coordinate'), max_length=45, null=True, blank=True)
-    reference_allele = models.CharField(_(u'Reference allele'), max_length=45, null=True, blank=True)
-    alternative_allele = models.CharField(_(u'Alternative allele'), max_length=45, null=True, blank=True)
-    protein_sequence_variants = models.CharField(_(u'Protein sequence variants'), max_length=100, null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line genotyping variant')
-        verbose_name_plural = _(u'Cell line genotyping variants')
         ordering = []
 
     def __unicode__(self):

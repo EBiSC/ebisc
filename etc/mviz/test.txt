@@ -17,7 +17,7 @@ CelllineOrgType
 CelllinePublication
 CelllineGenotypingSNP
 CelllineGenotypingRsNumber
-CelllineGenotypingVariant
+CelllineDiseaseGenotype
 CelllineStatus
 Celllinestrfingerprinting
 CelllineValue

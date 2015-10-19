@@ -7,7 +7,7 @@ Celllinehlatyping
 CellLineKaryotype
 CelllineGenotypingSNP
 CelllineGenotypingRsNumber
-CelllineGenotypingVariant
+CelllineDiseaseGenotype
 Celllinestrfingerprinting
 Hla
 KaryotypeMethod
