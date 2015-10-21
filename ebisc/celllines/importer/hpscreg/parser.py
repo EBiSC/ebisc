@@ -558,40 +558,67 @@ def parse_karyotyping(valuef, source, cell_line):
 
 
 @inject_valuef
-def parse_genotyping_variants(valuef, source, cell_line):
+def parse_disease_associated_genotype(valuef, source, cell_line):
 
-    def parse_snps(cell_line, snps):
+    if valuef('carries_disease_phenotype_associated_variants_flag', 'bool') and valuef('variant_of_interest_flag', 'bool'):
 
-        if snps is None:
-            return
+        cell_line_disease_genotype, created = CelllineDiseaseGenotype.objects.get_or_create(cell_line=cell_line)
 
-        else:
-            for snp in snps:
-                (gene_name, chromosomal_position) = snp.split('###')
-                CelllineGenotypingSNP(
-                    cell_line=cell_line,
-                    gene_name=gene_name,
-                    chromosomal_position=chromosomal_position,
-                ).save()
+        cell_line_disease_genotype = CelllineDiseaseGenotype(
+            cell_line=cell_line,
 
-    def parse_rs_numbers(cell_line, rs_numbers):
+            allele_carried=valuef('rs_allele_carried'),
+            cell_line_form=valuef('rs_cell_line_variant_homozygote_heterozygote'),
 
-        if rs_numbers is None:
-            return
+            chormosome=valuef('variant_details_chromosome'),
+            coordinate=valuef('variant_details_coordinate'),
+            reference_allele=valuef('variant_details_ref_allele'),
+            alternative_allele=valuef('variant_details_alt_allele'),
+            protein_sequence_variants=valuef('description_sequence_changes'),
+        )
 
-        else:
-            for rs_number in rs_numbers:
-                (rs_number, link) = rs_number.split('###')
-                CelllineGenotypingRsNumber(
-                    cell_line=cell_line,
-                    rs_number=rs_number,
-                    link=link,
-                ).save()
+        if valuef('variant_details_assembly'):
+            cell_line_disease_genotype.assembly = valuef('variant_details_assembly')
+        elif valuef('variant_details_assembly_other'):
+            cell_line_disease_genotype.assembly = valuef('variant_details_assembly_other')
 
-    if valuef('carries_disease_phenotype_associated_variants_flag', 'bool'):
+        cell_line_disease_genotype.save()
 
-        parse_snps(cell_line, valuef('snp_list'))
-        parse_rs_numbers(cell_line, valuef('rs_number_list'))
+        def parse_snps(cell_line_disease_genotype, snps):
+
+            if snps is None:
+                return
+
+            else:
+                for snp in snps:
+                    (gene_name, chromosomal_position) = snp.split('###')
+                    CelllineGenotypingSNP(
+                        disease_genotype=cell_line_disease_genotype,
+                        gene_name=gene_name,
+                        chromosomal_position=chromosomal_position,
+                    ).save()
+
+        def parse_rs_numbers(cell_line_disease_genotype, rs_numbers):
+
+            if rs_numbers is None:
+                return
+
+            else:
+                for rs_number in rs_numbers:
+                    (rs_number, link) = rs_number.split('###')
+                    CelllineGenotypingRsNumber(
+                        disease_genotype=cell_line_disease_genotype,
+                        rs_number=rs_number,
+                        link=link,
+                    ).save()
+
+        parse_snps(cell_line_disease_genotype, valuef('snp_list'))
+        parse_rs_numbers(cell_line_disease_genotype, valuef('rs_number_list'))
+
+        # Final save
+
+        cell_line_disease_genotype.save()
+        logger.info('Added cell line disease associated genotype: %s' % cell_line_disease_genotype)
 
 
 @inject_valuef
