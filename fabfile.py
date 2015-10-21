@@ -9,11 +9,15 @@ SLUG = 'ebisc'
 STORAGE = 'var/media/'
 DESTDIR = '/home/www/projects/%s/' % SLUG
 
-env.hosts = ['www@ebisc-stage.douglasconnect.com']
 env.port = 65022
 env.forward_agent = True
 env.shell = '/bin/sh -c'
 env.activate = '. %s/var/virtualenv/bin/activate' % DESTDIR
+
+env.roledefs = {
+    'staging': ['www@ebisc-stage.douglasconnect.com'],
+    'production': ['www@ebisc-prod.douglasconnect.com'],
+}
 
 
 # -----------------------------------------------------------------------------
