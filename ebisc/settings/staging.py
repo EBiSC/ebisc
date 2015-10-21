@@ -19,6 +19,6 @@ DATABASES = {
 }
 
 ELASTIC_INDEX = 'ebisc'
-ELASTIC_HOSTS = [{'host': 'elastic', 'port': 9200}]
+ELASTIC_HOSTS = [{'host': 'localhost', 'port': 9200}]
 
 # -----------------------------------------------------------------------------

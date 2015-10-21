@@ -49,7 +49,7 @@ def update():
         run('./manage.py import hpscreg --init')
         run('./manage.py import batches var/batches.csv')
         run('./manage.py import lims')
-        run('./manage.py toelastic')
+        run('./manage.py import toelastic')
 
 
 # -----------------------------------------------------------------------------
