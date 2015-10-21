@@ -53,7 +53,8 @@ from ebisc.celllines.models import  \
     CellLineKaryotype,  \
     CelllineDiseaseGenotype, \
     CelllineGenotypingSNP, \
-    CelllineGenotypingRsNumber,\
+    CelllineGenotypingRsNumber, \
+    CelllineHlaTyping, \
     KaryotypeMethod
 
 
@@ -555,6 +556,84 @@ def parse_karyotyping(valuef, source, cell_line):
         cell_line_karyotype.save()
 
         logger.info('Added cell line karyotype: %s' % cell_line_karyotype)
+
+
+@inject_valuef
+def parse_hla_typing(valuef, source, cell_line):
+
+    if valuef('hla_flag', 'bool'):
+
+        if valuef('hla_i_a_all1') or valuef('hla_i_a_all2'):
+            CelllineHlaTyping(
+                cell_line=cell_line,
+                hla_class='I',
+                hla='A',
+                hla_allele_1=valuef('hla_i_a_all1'),
+                hla_allele_2=valuef('hla_i_a_all2'),
+            ).save
+
+        if valuef('hla_i_b_all1') or valuef('hla_i_b_all2'):
+            CelllineHlaTyping(
+                cell_line=cell_line,
+                hla_class='I',
+                hla='B',
+                hla_allele_1=valuef('hla_i_b_all1'),
+                hla_allele_2=valuef('hla_i_b_all2'),
+            ).save
+
+        if valuef('hla_i_c_all1') or valuef('hla_i_c_all2'):
+            CelllineHlaTyping(
+                cell_line=cell_line,
+                hla_class='I',
+                hla='C',
+                hla_allele_1=valuef('hla_i_c_all1'),
+                hla_allele_2=valuef('hla_i_c_all2'),
+            ).save
+
+        if valuef('hla_ii_dp_all1') or valuef('hla_ii_dp_all2'):
+            CelllineHlaTyping(
+                cell_line=cell_line,
+                hla_class='II',
+                hla='DP',
+                hla_allele_1=valuef('hla_ii_dp_all1'),
+                hla_allele_2=valuef('hla_ii_dp_all2'),
+            ).save
+
+        if valuef('hla_ii_dm_all1') or valuef('hla_ii_dm_all2'):
+            CelllineHlaTyping(
+                cell_line=cell_line,
+                hla_class='II',
+                hla='DM',
+                hla_allele_1=valuef('hla_ii_dm_all1'),
+                hla_allele_2=valuef('hla_ii_dm_all2'),
+            ).save
+
+        if valuef('hla_ii_doa_all1') or valuef('hla_ii_doa_all2'):
+            CelllineHlaTyping(
+                cell_line=cell_line,
+                hla_class='II',
+                hla='DOA',
+                hla_allele_1=valuef('hla_ii_doa_all1'),
+                hla_allele_2=valuef('hla_ii_doa_all2'),
+            ).save
+
+        if valuef('hla_ii_dq_all1') or valuef('hla_ii_dq_all2'):
+            CelllineHlaTyping(
+                cell_line=cell_line,
+                hla_class='II',
+                hla='DQ',
+                hla_allele_1=valuef('hla_ii_dq_all1'),
+                hla_allele_2=valuef('hla_ii_dq_all2'),
+            ).save
+
+        if valuef('hla_ii_dr_all1') or valuef('hla_ii_dr_all2'):
+            CelllineHlaTyping(
+                cell_line=cell_line,
+                hla_class='II',
+                hla='DR',
+                hla_allele_1=valuef('hla_ii_dr_all1'),
+                hla_allele_2=valuef('hla_ii_dr_all2'),
+            ).save
 
 
 @inject_valuef

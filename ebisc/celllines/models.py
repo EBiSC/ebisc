@@ -1103,8 +1103,86 @@ class CelllineValue(models.Model):
 # -----------------------------------------------------------------------------
 # Genotyping
 
-# Disease associated genotype
+# Karyotyping
+class CellLineKaryotype(models.Model):
 
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='karyotype')
+
+    karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
+    karyotype_method = models.ForeignKey('KaryotypeMethod', verbose_name=_(u'Karyotype method'), null=True, blank=True)
+
+    passage_number = models.CharField(_(u'Passage number'), max_length=10, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line karyotype')
+        verbose_name_plural = _(u'Cell line karyotypes')
+        ordering = []
+
+    def __unicode__(self):
+        return unicode(self.karyotype)
+
+
+class KaryotypeMethod(models.Model):
+
+    name = models.CharField(_(u'Karyotype method'), max_length=45, unique=True)
+
+    class Meta:
+        verbose_name = _(u'Karyotype method')
+        verbose_name_plural = _(u'Karyotype methods')
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+
+# Genome-Wide Assays
+class CelllineHlaTyping(models.Model):
+
+    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name="hla_typing")
+    hla_class = models.CharField(_(u'HLA class'), max_length=10, null=True, blank=True)
+    hla = models.CharField(_(u'HLA'), max_length=10, null=True, blank=True)
+    hla_allele_1 = models.CharField(_(u'Cell line HLA allele 1'), max_length=45, null=True, blank=True)
+    hla_allele_2 = models.CharField(_(u'Cell line HLA allele 2'), max_length=45, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line HLA typing')
+        verbose_name_plural = _(u'Cell line HLA typing')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class Celllinestrfingerprinting(models.Model):
+
+    strfpcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
+    locus = models.ForeignKey('Strfplocus', verbose_name=_(u'STR fplocus'), null=True, blank=True)
+    allele1 = models.CharField(_(u'All ele1'), max_length=45, blank=True)
+    allele2 = models.CharField(_(u'All ele2'), max_length=45, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line STR finger printing')
+        verbose_name_plural = _(u'Cell line STR finger printings')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class Strfplocus(models.Model):
+
+    strfplocus = models.CharField(_(u'STR FP locus'), max_length=45, blank=True)
+
+    class Meta:
+        verbose_name = _(u'STR FP locus')
+        verbose_name_plural = _(u'STR FP loci')
+        ordering = ['strfplocus']
+
+    def __unicode__(self):
+        return u'%s' % (self.strfplocus,)
+
+
+# Disease associated genotype
 class CelllineDiseaseGenotype(models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genotyping_variant')
@@ -1273,98 +1351,6 @@ class Celllinegenotypingother(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.id,)
-
-
-class Celllinehlatyping(models.Model):
-
-    hlatypingcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    celllinehlaclass = models.IntegerField(_(u'Cell line hla class'), null=True, blank=True)
-    celllinehla = models.ForeignKey('Hla', verbose_name=_(u'Hla'), null=True, blank=True)
-    celllinehlaallele1 = models.CharField(_(u'Cell line hla all ele1'), max_length=45, blank=True)
-    celllinehlaallele2 = models.CharField(_(u'Cell line hla all ele2'), max_length=45, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line hla typing')
-        verbose_name_plural = _(u'Cell line hla typing')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class CellLineKaryotype(models.Model):
-
-    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='karyotype')
-
-    karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
-    karyotype_method = models.ForeignKey('KaryotypeMethod', verbose_name=_(u'Karyotype method'), null=True, blank=True)
-
-    passage_number = models.CharField(_(u'Passage number'), max_length=10, null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line karyotype')
-        verbose_name_plural = _(u'Cell line karyotypes')
-        ordering = []
-
-    def __unicode__(self):
-        return unicode(self.karyotype)
-
-
-
-
-class Celllinestrfingerprinting(models.Model):
-
-    strfpcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    locus = models.ForeignKey('Strfplocus', verbose_name=_(u'STR fplocus'), null=True, blank=True)
-    allele1 = models.CharField(_(u'All ele1'), max_length=45, blank=True)
-    allele2 = models.CharField(_(u'All ele2'), max_length=45, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line STR finger printing')
-        verbose_name_plural = _(u'Cell line STR finger printings')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class Hla(models.Model):
-
-    hla = models.CharField(_(u'HLA'), max_length=45, blank=True)
-
-    class Meta:
-        verbose_name = _(u'HLA')
-        verbose_name_plural = _(u'HLAs')
-        ordering = ['hla']
-
-    def __unicode__(self):
-        return u'%s' % (self.hla,)
-
-
-class KaryotypeMethod(models.Model):
-
-    name = models.CharField(_(u'Karyotype method'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Karyotype method')
-        verbose_name_plural = _(u'Karyotype methods')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class Strfplocus(models.Model):
-
-    strfplocus = models.CharField(_(u'STR FP locus'), max_length=45, blank=True)
-
-    class Meta:
-        verbose_name = _(u'STR FP locus')
-        verbose_name_plural = _(u'STR FP loci')
-        ordering = ['strfplocus']
-
-    def __unicode__(self):
-        return u'%s' % (self.strfplocus,)
 
 
 # -----------------------------------------------------------------------------
