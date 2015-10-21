@@ -112,10 +112,10 @@ def import_cellline(source):
 
     # Vector
 
-    if valuef('vector_type') == 'integrating':
+    if valuef('vector_type') == 'Integrating':
         parse_integrating_vector(source, cell_line)
 
-    if valuef('vector_type') == 'non_integrating':
+    if valuef('vector_type') == 'Non-integrating':
         parse_non_integrating_vector(source, cell_line)
 
     parse_legal(source, cell_line)

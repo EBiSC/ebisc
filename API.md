@@ -24,7 +24,7 @@ Cell line records currently hold data required for two data exchanges:
 
 Additional fields and endpoints may be created for future exchanges.
 
-### Endpoints 
+### Endpoints
 
 1. List of all cell lines in the IMS: `https://ebisc.douglasconnect.com/api/v0/cell-lines`
 2. Individual cell line records that can be accessed via their BioSamples ID: `https://ebisc.douglasconnect.com/api/v0/cell-lines/{BIOSAMPLES_ID}`
@@ -113,6 +113,7 @@ Additional fields and endpoints may be created for future exchanges.
                 "spinocerebellar ataxia type 3"
             ]
         },
+        "primary_disease_diagnosed": "1",
         "reprogramming_method": {
             "data": {
                 "absence_reprogramming_vectors": false,
@@ -125,6 +126,15 @@ Additional fields and endpoints may be created for future exchanges.
         "resource_uri": "/api/v0/cell-lines/SAMEA2590882"
     }
 
+#### Primary disease
+
+Primary disease data is provided in two fields:
+* `primary_disease_diagnosed` can have values `0`, `1` or `carrier`. If the value is `0`, there is no disease diagnosed and this disease status should be displayed as `Normal`. If the value is `1` or `carrier` the disease has been diagnosed or the donor is a carrier. In these two cases information about the disease is provided in the field `primary_disease`.
+* `primary_disease` fields hold information about the diagnosed disease.
+
+Note: Some fields in `primary_disease` will change with the implementation of ontologies.
+
+#### Reprogramming method
 
 The reprogramming method has a different structure depending on the `type`. Possible types are:
 
@@ -140,7 +150,7 @@ The reprogramming method has a different structure depending on the `type`. Poss
             "excisable": true,
             "transposon": "sleeping_beauty",
             "vector": "transposon"
-        } 
+        }
 
 * for `integrating vector` and `virus`:
 
@@ -207,5 +217,3 @@ The reprogramming method has a different structure depending on the `type`. Poss
         "vials_shipped_to_ecacc": 19,
         "vials_shipped_to_fraunhoffer": 5
     }
-
-
