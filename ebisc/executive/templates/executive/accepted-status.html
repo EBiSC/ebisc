@@ -1,0 +1,43 @@
+{% load i18n %}
+
+<div class="accepted-status">
+
+    {% if perms.site.can_manage_executive_dashboard %}
+
+        <form class="accepted" method="post" action="{% url 'executive:accept' cellline.biosamples_id %}">
+            {% csrf_token %}
+
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <input type="hidden" name="name" value="{{ cellline.name }}">
+            <input type="hidden" name="status" value="{{ cellline.accepted }}">
+
+            {% if cellline.accepted == 'accepted' %}
+            <span class="status-label accepted">{{ cellline.get_accepted_display }}</span>
+            {% elif cellline.accepted == 'rejected' %}
+            <select name="action" class="rejected">
+                <option value="rejected">{% trans 'Rejected' %}</option>
+                <option value="accepted">{% trans 'Accepted' %}</option>
+            </select>
+            {% elif cellline.accepted == 'pending' %}
+            <select name="action" class="pending">
+                {% for choice in cellline.ACCEPTED_CHOICES %}
+                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
+            {% endif %}
+        </form>
+
+    {% else %}
+
+        {% if cellline.accepted == 'accepted' %}
+        <span class="status-label accepted">{{ cellline.get_accepted_display }}</span>
+        {% elif cellline.accepted == 'rejected' %}
+        <span class="status-label rejected">Rejected</span>
+        {% elif cellline.accepted == 'pending' %}
+        <span class="status-label pending">Pending</span>
+        {% endif %}
+
+
+    {% endif %}
+
+</div>

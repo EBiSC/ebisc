@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+
+{% block title %}Executive Dashboard{% endblock %}
+
+{% block article %}
+
+<h1>Executive dashboard <small>Hot Start data</h1>
+
+<table class="listing">
+
+    <thead>
+        <tr>
+            {% for column in columns %}
+            <th{% if sort_column == column.0 %} class="order-by {{ sort_order }}"{% endif %}>
+                {% if column.2 %}
+                <a class="sort" href="?sc={{ column.0 }}{% if sort_column == column.0 %}{% if sort_order == 'asc' %}&so=desc{% endif %}{% endif %}">{{ column.1 }}</a>
+                {% else %}
+                {{ column.1 }}
+                {% endif %}
+            </th>
+            {% endfor %}
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for cellline in celllines %}
+        <tr class="accepted-{{ cellline.accepted }}">
+            <td><a href="{% url 'executive:cellline' cellline.biosamples_id %}">{{ cellline.biosamples_id }}</a></td>
+            <td>{{ cellline.name }}</td>
+            <td>{{ cellline.primary_disease|default_if_none:"" }}</td>
+            <td>{{ cellline.registration_name }}</td>
+            <td>{{ cellline.generator.name }}</td>
+            <td class="number">{{ cellline.batches.count }}</td>
+            <td class="number {{ cellline.quantity|default:'empty' }}">{{ cellline.quantity|default:'-' }}</td>
+            <td class="number {{ cellline.sold|default:'empty' }}">{{ cellline.sold|default:'-' }}</td>
+            <td class="accepted">{% include 'executive/accepted-status.html' %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+
+<div class="pagination">
+    Page: 
+    <ul>
+        <li>
+            <ul>
+                {% for p in celllines.paginator.page_range %}
+                <li><a class="{% if p == page %}active{% endif %}" href="?page={{ p }}{% if sort_column %}&sc={{ sort_column }}&so={{ sort_order }}{% endif %}">{{ p }}</a></li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+</div>
+
+{% endblock %}
+
+{% block extra-scripts %}
+{% if perms.site.can_manage_executive_dashboard %}
+{% include 'executive/accepted-script.html' %}
+{% endif %}
+{% endblock %}

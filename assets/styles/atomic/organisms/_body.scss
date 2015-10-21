@@ -1,0 +1,14 @@
+body {
+  background-color: #d6e6e9;
+  background-image: url('/static/images/background.jpg');
+  background-size: 100% auto;
+  padding: 10px;
+
+  @include font-feature-settings("kern", "liga", "pnum");
+  -webkit-font-smoothing: antialiased;
+  color: $base-font-color;
+  font-family: $base-font-family;
+  font-size: $base-font-size;
+  line-height: $base-line-height;
+}
+

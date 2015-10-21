@@ -1,0 +1,15 @@
+// Table headers
+
+%thead-listing {
+  thead {
+    th {    
+      @extend %th-listing;
+    }      
+  }
+}
+
+// Table bodies
+
+tbody {
+
+}

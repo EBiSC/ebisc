@@ -1,6 +1,10 @@
-Django==1.7
-django-appconf==0.6
-django-compressor==1.4
+Django>=1.8,<1.9
 psycopg2==2.5.4
-six==1.8.0
-wsgiref==0.1.2
+django-cleanup==0.3.0
+django-tastypie==0.12.2
+defusedxml==0.4.1
+elasticsearch==1.4.0
+django-extensions==1.5.5
+django-docopt-command==0.2.1
+requests==2.7.0
+easydict==1.6

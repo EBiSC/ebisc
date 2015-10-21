@@ -1,0 +1,55 @@
+table {
+  border-collapse: collapse;
+}
+
+// Listing table
+
+%table-listing {
+  width: 100%;
+  font-size: $font-size-small;
+
+  @extend %striped;
+  @extend %bordered;
+
+  @extend %thead-listing;
+
+  select {
+    display: inline-block;
+  }  
+}
+
+table.listing {
+  @extend %table-listing;
+}
+
+.load-more {
+  display: none;
+  text-align: center;
+  margin: 40px 0px;
+
+  button {
+    @extend %inverse-button;
+    margin: 0 auto;
+    width: span(3);
+
+    @include breakpoint(map-get($breakpoints, medium)) {
+      width: span(4);
+    }
+
+    @include breakpoint(map-get($breakpoints, small)) {
+      width: span(7);
+    }
+  }
+}
+
+// Table for displaying data
+
+table.data {
+  width: 100%;
+
+  td {
+    padding: 3px 10px 3px 0px;
+    vertical-align: top;
+  }
+}
+

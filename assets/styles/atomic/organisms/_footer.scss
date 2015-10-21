@@ -1,0 +1,58 @@
+footer {
+  margin-bottom: 20px;
+  font-size: $font-size-small;
+
+  hr {
+    border-bottom-color: darken($base-border-color, 20%);
+  }
+
+  .support {
+    @include organism();
+    @include clearfix;
+
+    padding-top: 20px;
+    padding-bottom: 20px;
+
+    .text {
+      @include span(8);
+      color: $dark-gray;
+
+      a {
+        color: darken($dark-gray, 20%);
+      }
+
+      @include breakpoint(map-get($breakpoints, large)) {
+        @include span(6);
+      }
+
+      @include breakpoint(map-get($breakpoints, small)) {
+        @include span(12);
+        text-align: center;
+      }
+    }
+
+    .links {
+      @include span(last 4);
+      text-align: right;
+      
+      ul {
+        @extend %inline-ul;
+      }
+
+      @include breakpoint(map-get($breakpoints, large)) {
+        @include span(last 6);
+        text-align: center;
+      }
+
+      @include breakpoint(map-get($breakpoints, small)) {
+        @include span(12);
+        margin-top: 30px;
+      }
+    }
+  }
+
+  .copy {
+    @include container();
+    padding: $container-padding;
+  }
+}

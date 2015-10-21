@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+{% load staticfiles %}
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>{% block full-title %}{% block title %}{% endblock %} | EBiSC{% endblock %}</title>
+    <meta name="viewport" content="initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/main.css' %}">
+</head>
+
+<body class="{% block body-class %}{% endblock%}">
+
+    <header>
+        <div class="logo">
+            <img src="{% static 'images/EBiSC-logo.png' %}" alt="EBiSC" width="131" height="80">
+        </div>
+        <div class="collapsible-menu">
+            <button id="main-navigation-menu-mobile-toggle" class="collapsible-menu-toggle" data-target="main-navigation-menu-items">MENU</button>
+            <nav role="navigation">
+                <ul id="main-navigation-menu-items" class="collapsible-menu-items">
+                    {% for item in menu %}
+                    <li class="{% if item.active %}active{% endif %}"><a href="{{ item.path }}">{{ item.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        </div>
+        <div class="user-account">
+            {% if user.is_authenticated %}
+            {% if user.get_short_name %}{{ user.get_short_name }}{% else %}{{ user.username }}{% endif %} | <a href="{% url 'logout' %}">Log out</a>
+            {% else %}
+            <a href="{% url 'login' %}">Log in</a>
+            {% endif %}
+        </div>
+    </header>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="message-{{ message.level_tag }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <article>{% block article %}{% endblock %}</article>
+
+    <footer>
+        <div class="support">
+            <hr>
+            <div class="text">
+                The EBiSC – European Bank for induced pluripotent Stem Cells project has received support from the Innovative Medicines Initiative Joint Undertaking under grant agreement n° 115582, resources of which are composed of financial contribution from the European Union’s Seventh Framework Programme (FP7/2007-2013) and EFPIA companies’ in kind contribution. <a href="http://www.imi.europa.eu/">www.imi.europa.eu</a>
+            </div>
+            <div class="links">
+                <ul>
+                    <li><a href="http://www.efpia.eu/"><img src="{% static 'images/logo-efpia.png' %}" width="144" height="60" alt="EFPIA - European Federation of Pharmaceutical Industries and Associations"></a></li>
+                    <li><a href="http://www.imi.europa.eu/"><img src="{% static 'images/logo-imi.png' %}" width="96" height="60" alt="IMI - Innovative Medicines Initiative"></a></li>
+                    <li><a href="http://europa.eu/"><img src="{% static 'images/logo-europe.png' %}" width="80" height="60" alt="EU"></a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copy">
+            &copy; EBiSC European Bank for induced pluripotent Stem Cells
+        </div>
+    </footer>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="{% static 'scripts/main.js' %}"></script>
+
+    {% block extra-scripts %}{% endblock %}
+</body>
+
+</html>

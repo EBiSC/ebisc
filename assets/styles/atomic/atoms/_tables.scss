@@ -1,0 +1,108 @@
+td.number {
+  text-align: right;
+}
+
+td.empty {
+  text-align: center;
+}
+
+td.accepted {
+  white-space: nowrap;
+}
+
+td.label {
+  // width: 1%;
+  width: 33%;
+  vertical-align: top;
+  // white-space: nowrap;
+  text-align: right;
+  color: $dark-gray;
+
+  @include breakpoint(map-get($breakpoints, small)) {
+    white-space: normal;
+  }
+}
+
+th.title {
+  padding-bottom: 20px;
+  text-align: left;
+
+  h2 {
+    margin-bottom: 0px;
+    margin-top: 0;
+    padding-bottom: 5px;
+    padding-top: 20px;
+    border-bottom: $base-border;
+  }
+}
+
+th.sub-title {
+  h3 {
+    margin: 1.7em 0 0.5em 0;
+    padding: 0 10px 0 0;
+    text-align: right;
+  }  
+}
+
+%th-listing {
+  background-color: darken($color-table-background, 40%);
+  color: white;
+  text-align: left;
+  cursor: pointer;
+
+  .sort {
+    color: white;
+    display: block;
+  }
+
+  &.order-by {
+    background-color: darken($color-table-background, 55%);
+
+    .sort {
+      position: relative;
+
+      &:after
+      {
+          position: absolute;
+          content: "▼";
+          font-family: sans-serif;
+          font-size: $font-size-small * 0.8;
+          top: 4px;
+          margin-left: 5px;
+      }
+    }
+
+    &.desc {
+      .sort {
+        &:after {
+          content: "▲";
+        }
+      }
+    }
+  }
+}
+
+%striped {
+  tr {
+    &:nth-child(even) {
+      background-color: $color-table-background;
+    }    
+
+    &:nth-child(odd) {
+      background-color: transparent;
+    }    
+
+    &:hover {
+      background-color: lighten($color-blue-dark, 65%);
+    }    
+  }
+}
+
+%bordered {
+  td, th {
+    border: solid 1px $base-border-color;
+    padding: 10px;
+    vertical-align: top;
+  }  
+}
+

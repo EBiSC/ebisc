@@ -1,0 +1,2 @@
+PHENOTYPE_ID,PHENOTYPE
+1,Phenotype Unknown

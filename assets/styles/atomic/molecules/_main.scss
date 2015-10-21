@@ -1,0 +1,195 @@
+// Menu
+
+.collapsible-menu {
+
+  button {
+    outline: none;
+  }
+
+  .collapsible-menu-toggle {
+    display: none;
+  }
+
+  @include breakpoint(map-get($breakpoints, small)) {
+    position: absolute;
+    right: 0px;
+    top: 50px;
+    width: 100%;
+    
+    .collapsible-menu-toggle {
+      display: block;
+      float: right;
+      margin-right: 20px;
+    }
+  }
+
+  .collapsible-menu-items {
+    li {
+      display: inline-block;
+      margin-right: 25px;
+      font-size: $base-font-size * 0.9;
+
+      &:last-child {
+        margin-right: 0px;
+      }
+
+      a {
+        color: $color-text;
+
+        &:hover {
+          color: $action-color;
+        }
+      }
+
+      &.active a {
+        color: $action-color;
+      }
+    }
+
+    @include breakpoint(map-get($breakpoints, small)) {
+      display: none;
+
+      margin-left: 0;
+      padding-left: 0;
+
+      background-color: rgba(255,255,255,0.9);
+      border-top: solid 1px $base-border-color;
+      border-bottom: solid 1px $base-border-color;
+      margin-top: 55px;
+      padding: 10px;
+      z-index: 100;
+      position: relative;
+
+      li {
+        display: block;
+        font-size: $font-size-large;
+        margin: 10px 0px 10px 0px;
+      }
+    }
+  }
+}
+
+// Cards
+
+
+.status {
+  @extend %card;
+}
+
+.batches {
+  @extend %card;
+  margin-top: 10px;
+
+  h2 {
+    margin-top: 0;
+  }
+
+  .request-bisample-ids {
+    margin: 1em 0 1.5em 0;
+  }
+
+  .accordion .content {
+    .link-to-biosample-ids-file {
+      display: inline-block;      
+      border-top: $base-border;
+      margin: 10px 0px;
+      padding-top: 15px;
+
+      .glyphicon {
+        float: none;
+        padding-right: 0.5em;
+        color: $action-color;
+      }
+    }
+  }
+}
+
+// Accepted status
+
+.accepted-status {
+  font-size: $font-size-small;
+  display: inline-block;
+
+  .status-label {
+    display: inline-block;
+    min-width: 88px;
+    padding: 2px 10px;
+  
+    &.accepted {
+      background-color: $color-green;
+    }
+
+    &.pending {
+      background-color: LightYellow;
+      border: $base-border;
+    }
+
+    &.rejected {
+      background-color: $color-red-light;
+      color: white;
+      font-weight: bold;
+    }
+  }
+
+  select {
+    font-size: $font-size-small;
+
+    &.pending {
+      background-color: white;
+      border: $base-border;
+    }
+
+    &.rejected {
+      background-color: white;
+      color: $color-red-light;
+      border: $base-border;
+    }
+  }
+}
+
+// Filters
+
+.filter-group {
+  $filter-width: 245px;
+
+  margin-top: 10px;
+
+  > .filter {
+    display: inline-block;
+    vertical-align: top;
+
+    > .dropdown {
+      display: inline-block;
+      width: $filter-width;
+      margin-right: 5px;
+
+      .dropdown-button {
+        min-width: $filter-width;
+      }
+
+      @include breakpoint(map-get($breakpoints, small)) {
+        display: block;
+      }
+    }
+
+    > .selected-terms {
+      width: $filter-width;
+      line-height: 1.5em;
+
+      @include transition-opacity(0.1s);
+
+      .term {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: $font-size-small * 1.1;
+        color: $dark-gray;
+
+        .remove {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+

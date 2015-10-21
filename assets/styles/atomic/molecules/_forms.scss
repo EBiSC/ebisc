@@ -1,0 +1,23 @@
+.search {
+  @include clearfix;
+  width: 100%;
+
+  input {
+    float: left;
+    margin: 0;
+  }
+
+  input[type="text"] {
+    max-width: 60%;
+    margin-right: 8px;
+  }
+}
+
+
+.login {
+  @extend %card;
+
+  label, button {
+    margin-top: 2em;
+  }
+}

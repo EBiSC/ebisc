@@ -1,0 +1,46 @@
+{
+    "cellline": {
+        "properties": {
+            "biosamples_id": {
+                "type": "string",
+                "index": "not_analyzed",
+                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+            },
+
+            "name": {
+                "type": "string",
+                "index": "not_analyzed",
+                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+            },
+
+            "depositor": {
+                "type": "string",
+                "index": "not_analyzed",
+                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+            },
+
+            "primary_disease": {
+                "type": "string",
+                "index": "not_analyzed",
+                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+            },
+
+            "primary_disease_synonyms": {
+                "type": "string",
+                "index": "analyzed"
+            },
+
+            "primary_cell_type": {
+                "type": "string",
+                "index": "not_analyzed",
+                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+            },
+
+            "alternative_names": {
+                "type": "string",
+                "index": "not_analyzed",
+                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+            }
+        }
+    }
+}

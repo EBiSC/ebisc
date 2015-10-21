@@ -1,0 +1,91 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $heading-font-family;
+  font-size: $base-font-size;
+  font-weight: normal;
+  line-height: $heading-line-height;
+  margin: 0 0 $small-spacing;
+
+  color: $color-red-dark;
+
+  small {
+    color: $dark-gray;
+    font-size: 60%;
+  }
+}
+
+h1 {
+  font-size: $base-font-size * 2.4;
+
+  @include breakpoint(map-get($breakpoints, small)) {
+    font-size: $base-font-size * 1.8;
+  }
+}
+
+h2 {
+  margin-top: 1.5em;
+  font-size: $base-font-size * 1.8;
+
+  @include breakpoint(map-get($breakpoints, small)) {
+    font-size: $base-font-size * 1.4;
+  }
+}
+
+h3 {
+  font-size: $base-font-size * 1.1;
+
+  @include breakpoint(map-get($breakpoints, small)) {
+    font-size: $base-font-size * 1;
+  }
+
+  margin: 1em 0 0.5em 0;
+}
+
+p {
+  margin: 0 0 $small-spacing;
+}
+
+a {
+  color: $action-color;
+  text-decoration: none;
+  transition: color 0.1s linear;
+
+  &:active,
+  &:focus,
+  &:hover {
+    color: darken($action-color, 15%);
+  }
+
+  &:active,
+  &:focus {
+    outline: none;
+  }
+}
+
+hr {
+  border-bottom: $base-border;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  margin: $base-spacing 0;
+}
+
+.lead {
+  font-size: $font-size-large * 1.2;
+  color: darken($color-text, 10%);
+  margin: 0 0 1.2em 0;
+
+  @include breakpoint(map-get($breakpoints, small)) {
+    font-size: $font-size-large;
+  }
+}
+
+.comment {
+  font-style: italic;
+  color: lighten($color-text, 30%);
+}
+

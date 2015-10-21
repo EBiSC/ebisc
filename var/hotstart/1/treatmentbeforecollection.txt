@@ -1,0 +1,2 @@
+TREATMENTBEFORECOLLECTION_ID,TREATMENTBEFORECOLLECTION
+1,Treatment before tissue collection unknown

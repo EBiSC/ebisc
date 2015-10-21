@@ -1,0 +1,77 @@
+.pagination {  
+
+  $base-border-color: $base-border-color;
+  $base-border-radius: $base-border-radius;
+  $base-accent-color: $action-color;
+  $base-link-color: $action-color;
+  $base-font-color: $base-font-color;
+
+  $padding: 0.4em;
+  
+  margin-top: 6 * $padding;
+
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    list-style: none;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  $pagination-border-color: $base-border-color;
+  $pagination-border: 1px solid $pagination-border-color;
+  $pagination-background: lighten($pagination-border-color, 10);
+  $pagination-hover-background: lighten($pagination-background, 5);
+  $pagination-selected-background: lighten($pagination-background, 5);
+  $pagination-color: $base-font-color;
+
+  ul {
+    display: inline;
+
+    li {
+      display: inline;
+    }
+
+    ul li {
+      display: none;
+      
+      &:nth-child(1),
+      &:nth-child(2),
+      &:nth-child(3) {
+        display: inline;
+      }
+
+      display: inline;
+    }
+
+    li a {
+      @include transition (all 0.2s ease-in-out);
+      background: $pagination-background;
+      border-radius: $base-border-radius;
+      border: $pagination-border;
+      color: $pagination-color;
+      outline: none;
+      padding: $padding 2.5 * $padding;
+
+      &:hover,
+      &:focus {
+        background: $pagination-hover-background;
+        color: $base-link-color;
+      }
+
+      &:active {
+        background: $pagination-background;
+      }
+
+      &.active {
+        color: $base-link-color;
+        background: $pagination-selected-background;
+      }
+    }
+  }
+}

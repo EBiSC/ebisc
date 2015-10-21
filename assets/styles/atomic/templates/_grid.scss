@@ -1,0 +1,17 @@
+body.template-grid {
+  article {
+    h1 {
+      @include container;
+    }
+
+    .grid-row {
+      @include container;
+    }
+
+    @for $i from 1 through 12 {
+      .grid-col-#{$i} { @include span($i); }
+      .grid-col-#{$i}:last-child { @include span($i last); }
+      .grid-offset-#{$i} { @include pre($i); }
+    }
+  }
+}

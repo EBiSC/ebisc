@@ -1,30 +1,30 @@
 """
-Django settings for ebisc project.
+Django settings for EBiSC project.
 
 For more information on this file, see
-https://docs.djangoproject.com/en/dev/topics/settings/
+https://docs.djangoproject.com/en/1.7/topics/settings/
 
 For the full list of settings and their values, see
-https://docs.djangoproject.com/en/dev/ref/settings/
+https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '@!7ju$b1*1c5!dihak)cw3ao1ema&2quw3s*9l#&8^v8ob%gw1'
 
+# -----------------------------------------------------------------------------
+# Admins & managers
+
+ADMINS = (
+    ('Joh Dokler', 'joh.dokler@gmail.com'),
+    ('Maja Brajnik', 'maja.brajnik@gmail.com'),
+)
+
+# -----------------------------------------------------------------------------
 # Application definition
 
 INSTALLED_APPS = (
-    # 'django_admin_bootstrapped.bootstrap3',
-    # 'django_admin_bootstrapped',
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -32,10 +32,14 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'compressor',
-
     'ebisc',
-    'ebisc.demo',
+    'ebisc.site',
+    'ebisc.celllines',
+    'ebisc.search',
+    'ebisc.executive',
+
+    'tastypie',
+    'django_cleanup',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -52,56 +56,93 @@ ROOT_URLCONF = 'ebisc.urls'
 
 WSGI_APPLICATION = 'ebisc.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/dev/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ebisc',
-    }
-}
-
+# -----------------------------------------------------------------------------
 # Internationalization
-# https://docs.djangoproject.com/en/dev/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'en'
 
 USE_I18N = True
-
 USE_L10N = True
 
+TIME_ZONE = 'Europe/Paris'
 USE_TZ = True
 
 # -----------------------------------------------------------------------------
-# Templating
-
-TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates/'),)
-
-# -----------------------------------------------------------------------------
-# Static files and media
+# Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, '../var/static/')
 
-STATICFILES_FINDERS = (
-    'compressor.finders.CompressorFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, '../var/media/')
+
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+
+# -----------------------------------------------------------------------------
+# Templating
+
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as DEFAULT_TEMPLATE_CONTEXT_PROCESSORS
+
+TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_TEMPLATE_CONTEXT_PROCESSORS + (
+    'django.core.context_processors.request',
 )
 
 # -----------------------------------------------------------------------------
-# Django static assets compressor
+# Authentication
 
-COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc {infile} {outfile}'),
-    ('text/coffeescript', 'coffee --compile --stdio'),
-)
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
 
-COMPRESS_CSS_FILTERS = (
-    'compressor.filters.cssmin.CSSMinFilter',
-)
+# -----------------------------------------------------------------------------
+# Tastypie
+
+TASTYPIE_DEFAULT_FORMATS = ['json']
+TASTYPIE_ALLOW_MISSING_SLASH = True
+API_LIMIT_PER_PAGE = 50
+
+# -----------------------------------------------------------------------------
+# Logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '%(levelname)-10s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'management.commands': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    }
+}
+
+# -----------------------------------------------------------------------------
+# hPSCreg
+
+HPSCREG = {
+    'list_url': 'http://hpscreg.eu/api/full_list',
+    'cellline_url': 'http://hpscreg.eu/api/export/',
+    'username': 'ebiscims',
+    'password': 'cWNJnc6p',
+}
+
+# -----------------------------------------------------------------------------
+# LIMS
+
+LIMS = {
+    'url': 'http://www.ebi.ac.uk/~ebiscdcc/api/batch.json',
+    'username': 'ebisc',
+    'password': 'ebisc321',
+}
 
 # -----------------------------------------------------------------------------

@@ -7,13 +7,17 @@ from fabric.contrib.project import rsync_project
 
 SLUG = 'ebisc'
 STORAGE = 'var/media/'
-DESTDIR = '/var/projects/%s' % SLUG
+DESTDIR = '/home/www/projects/%s/' % SLUG
 
-env.hosts = ['www@django.two.sevenpastnine.com']
 env.port = 65022
 env.forward_agent = True
 env.shell = '/bin/sh -c'
 env.activate = '. %s/var/virtualenv/bin/activate' % DESTDIR
+
+env.roledefs = {
+    'staging': ['www@ebisc-stage.douglasconnect.com'],
+    'production': ['www@ebisc-prod.douglasconnect.com'],
+}
 
 
 # -----------------------------------------------------------------------------
@@ -34,11 +38,22 @@ def deploy(option=None):
 
     with virtualenv():
         run('git pull origin')
-        # run('bower install')
-        run('pip install -r requirements.txt')
+        run('pip install -r requirements.txt --upgrade')
         run('./manage.py collectstatic --noinput')
-        run('./manage.py compress')
-        run('touch etc/staging.uwsgi.ini')
+        run('touch etc/conf/*.ini')
+
+
+# -----------------------------------------------------------------------------
+# Import data
+
+@task
+def update():
+
+    with virtualenv():
+        run('./manage.py import hpscreg --init')
+        run('./manage.py import batches var/batches.csv')
+        run('./manage.py import lims')
+        run('./manage.py import toelastic')
 
 
 # -----------------------------------------------------------------------------
@@ -62,7 +77,7 @@ def sync_media():
 def sync_db():
     fn = '%s-%s.sql.gz' % (SLUG, str(datetime.datetime.now()).replace(' ', '-'))
 
-    run('pg_dump -h db %s | bzip2 -c > %s' % (SLUG, fn))
+    run('pg_dump -h db %s | gzip -c > %s' % (SLUG, fn))
     get(fn, fn)
 
     with settings(warn_only=True):
@@ -71,8 +86,26 @@ def sync_db():
 
     run('rm %s' % fn)
 
-    local('bunzip2 -c %s | psql -f - %s' % (fn, SLUG))
+    local('gunzip -c %s | psql -f - %s' % (fn, SLUG))
     local('rm %s' % fn)
 
+
+# -----------------------------------------------------------------------------
+# Model visualizations
+
+@task
+def visualize_model(group, layout='dot'):
+
+    input_file = 'etc/mviz/%s.txt' % group
+
+    output_dir = 'var/mviz'
+    output_file = '%s/%s.png' % (output_dir, group)
+
+    header_bgcolor = '#1b85cfff'
+    body_bgcolor = '#efefef'
+
+    local('mkdir -p %s' % output_dir)
+    # local('./manage.py graph_models celllines --disable-fields --verbose-names --include-models=%s | sed s/BGCOLOR=\\"olivedrab4\\"/BGCOLOR=\\"%s\\"/g | sed s/BGCOLOR=\\"palegoldenrod\\"/BGCOLOR=\\"%s\\"/g | %s -Tpng -o %s' % (input_file, header_bgcolor, body_bgcolor, layout, output_file))
+    local('./manage.py graph_models celllines --verbose-names --include-models=%s | sed s/BGCOLOR=\\"olivedrab4\\"/BGCOLOR=\\"%s\\"/g | sed s/BGCOLOR=\\"palegoldenrod\\"/BGCOLOR=\\"%s\\"/g | %s -Tpng -o %s' % (input_file, header_bgcolor, body_bgcolor, layout, output_file))
 
 # -----------------------------------------------------------------------------

@@ -1,0 +1,29 @@
+[
+{
+  "fields": {
+    "user": 6,
+    "key": "c868b2ee-0df2-11e5-b332-0c4de9cf8041",
+    "created": "2015-06-08T15:26:43Z"
+  },
+  "model": "tastypie.apikey",
+  "pk": 2
+},
+{
+  "fields": {
+    "user": 7,
+    "key": "0da4cb72-0df3-11e5-a310-0c4de9cf8041",
+    "created": "2015-06-08T15:28:41Z"
+  },
+  "model": "tastypie.apikey",
+  "pk": 3
+},
+{
+  "fields": {
+    "user": 8,
+    "key": "2f572896-0df3-11e5-95fc-0c4de9cf8041",
+    "created": "2015-06-08T15:29:40Z"
+  },
+  "model": "tastypie.apikey",
+  "pk": 4
+}
+]

@@ -1,0 +1,6 @@
+@import '../../components/bourbon/app/assets/stylesheets/bourbon';
+
+// Reset box-sizing mixin to prevent warnings when used with susy
+@mixin box-sizing($box) {
+  box-sizing: $box;
+}

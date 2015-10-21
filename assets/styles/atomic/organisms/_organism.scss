@@ -1,0 +1,6 @@
+@mixin organism {
+  @include container;
+
+  background-color: $color-content-background;
+  padding: $container-padding;
+}

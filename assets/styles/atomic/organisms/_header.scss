@@ -1,0 +1,29 @@
+header {
+  @include organism;
+  position: relative;
+
+  .logo {
+    display: inline-block;
+  }
+
+  .collapsible-menu {
+    display: inline-block;
+    margin-left: 40px;
+
+    @include breakpoint(map-get($breakpoints, medium)) {
+      margin-left: 15px;
+    }
+
+    .collapsible-menu-items
+    {
+      li a
+      {
+      }
+    }
+  }
+
+  .user-account {
+    float: right;
+    font-size: $font-size-small;
+  }
+}
