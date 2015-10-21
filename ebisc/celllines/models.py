@@ -1101,7 +1101,7 @@ class CelllineValue(models.Model):
 
 
 # -----------------------------------------------------------------------------
-# TODO Genotyping
+# Genotyping
 
 # Disease associated genotype
 
@@ -1130,7 +1130,7 @@ class CelllineDiseaseGenotype(models.Model):
 
 class CelllineGenotypingSNP(models.Model):
 
-    disease_genotype = models.ForeignKey('CelllineDiseaseGenotype', verbose_name=_(u'Cell line'), related_name='snps', null=True, blank=True)
+    disease_genotype = models.ForeignKey('CelllineDiseaseGenotype', verbose_name=_(u'Cell line disease genotype'), related_name='snps', null=True, blank=True)
 
     gene_name = models.CharField(_(u'SNP gene name'), max_length=45, null=True, blank=True)
     chromosomal_position = models.CharField(_(u'SNP choromosomal position'), max_length=45, null=True, blank=True)
@@ -1146,7 +1146,7 @@ class CelllineGenotypingSNP(models.Model):
 
 class CelllineGenotypingRsNumber(models.Model):
 
-    disease_genotype = models.ForeignKey('CelllineDiseaseGenotype', verbose_name=_(u'Cell line'), related_name='rs_number', null=True, blank=True)
+    disease_genotype = models.ForeignKey('CelllineDiseaseGenotype', verbose_name=_(u'Cell line disease genotype'), related_name='rs_number', null=True, blank=True)
 
     rs_number = models.CharField(_(u'rs Number'), max_length=12, null=True, blank=True)
     link = models.URLField(u'Link', null=True, blank=True)
@@ -1159,35 +1159,65 @@ class CelllineGenotypingRsNumber(models.Model):
     def __unicode__(self):
         return u'%s' % (self.id,)
 
-# class Celllinesnpdetails(models.Model):
-#
-#     celllinesnp = models.ForeignKey('Celllinesnp', verbose_name=_(u'Cell line snp'), null=True, blank=True)
-#     celllinesnpgene = models.CharField(_(u'Cell line snp gene'), max_length=45, blank=True)
-#     celllinesnpchromosomalposition = models.CharField(_(u'Cell line snp chromosomal position'), max_length=45, blank=True)
-#
-#     class Meta:
-#         verbose_name = _(u'Cell line snp details')
-#         verbose_name_plural = _(u'Cell line snp details')
-#         ordering = []
-#
-#     def __unicode__(self):
-#         return u'%s' % (self.id,)
+
+# Donor genotyping
+class DonorGenotype(models.Model):
+
+    donor = models.OneToOneField('Donor', verbose_name=_(u'Donor'), related_name='donor_genotyping')
+
+    allele_carried = models.CharField(_(u'Allele carried through'), max_length=12, null=True, blank=True)
+    homozygous_heterozygous = models.CharField(_(u'Is the donor homozygous or heterozygous for this variant'), max_length=12, null=True, blank=True)
+
+    assembly = models.CharField(_(u'Assembly'), max_length=45, null=True, blank=True)
+    chormosome = models.CharField(_(u'Chormosome'), max_length=45, null=True, blank=True)
+    coordinate = models.CharField(_(u'Coordinate'), max_length=45, null=True, blank=True)
+    reference_allele = models.CharField(_(u'Reference allele'), max_length=45, null=True, blank=True)
+    alternative_allele = models.CharField(_(u'Alternative allele'), max_length=45, null=True, blank=True)
+    protein_sequence_variants = models.CharField(_(u'Protein sequence variants'), max_length=100, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Donor Genotyping')
+        verbose_name_plural = _(u'Donor Genotyping')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
 
 
-# class Celllinesnprslinks(models.Model):
-#
-#     celllinesnp = models.ForeignKey('Celllinesnp', verbose_name=_(u'Cel lline snp'), null=True, blank=True)
-#     rsnumber = models.CharField(_(u'Rs number'), max_length=45, blank=True)
-#     rslink = models.CharField(_(u'Rs link'), max_length=100, blank=True)
-#
-#     class Meta:
-#         verbose_name = _(u'Cell line snp Rs links')
-#         verbose_name_plural = _(u'Cell line snp Rs links')
-#         ordering = []
-#
-#     def __unicode__(self):
-#         return u'%s' % (self.id,)
-#
+class DonorGenotypingSNP(models.Model):
+
+    donor_genotype = models.ForeignKey('DonorGenotype', verbose_name=_(u'Donor Genotype'), related_name='donor_snps')
+
+    gene_name = models.CharField(_(u'SNP gene name'), max_length=45)
+    chromosomal_position = models.CharField(_(u'SNP choromosomal position'), max_length=45, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Donor snp')
+        verbose_name_plural = _(u'Donor snps')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class DonorGenotypingRsNumber(models.Model):
+
+    donor_genotype = models.ForeignKey('DonorGenotype', verbose_name=_(u'Donor Genotype'), related_name='donor_rs_number')
+
+    rs_number = models.CharField(_(u'rs Number'), max_length=12)
+    link = models.URLField(u'Link', null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Donor rs number')
+        verbose_name_plural = _(u'Donor rs numbers')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+# -----------------------------------------------------------------------------
+# Genotyping - todo
 
 class Celllinegenemutations(models.Model):
 
