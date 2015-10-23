@@ -19,6 +19,6 @@ CelllineGenotypingSNP
 CelllineGenotypingRsNumber
 CelllineDiseaseGenotype
 CelllineStatus
-Celllinestrfingerprinting
+CelllineStrFingerprinting
 CelllineValue
 CellType

@@ -88,7 +88,7 @@
     <tr><th class="sub-title"><h3>Reprogramming method</h3></th><th></th></tr>
 
     {% if cellline.integrating_vector %}
-        <tr><td class="label">Vector type:</td><td>integrating</td></tr>
+        <tr><td class="label">Vector type:</td><td>Integrating</td></tr>
         {% if cellline.integrating_vector.vector %}<tr><td class="label">Vector:</td><td>{{ cellline.integrating_vector.vector }}</td></tr>{% endif %}
         {% if cellline.integrating_vector.virus %}<tr><td class="label">Virus type:</td><td>{{ cellline.integrating_vector.virus }}</td></tr>{% endif %}
         {% if cellline.integrating_vector.transposon %}<tr><td class="label">Transposon:</td><td>{{ cellline.integrating_vector.transposon }}</td></tr>{% endif %}
@@ -111,7 +111,7 @@
     {% endif %}
 
     {% if cellline.non_integrating_vector %}
-        <tr><td class="label">Vector type:</td><td>non-integrating</td></tr>
+        <tr><td class="label">Vector type:</td><td>Non-integrating</td></tr>
         {% if cellline.non_integrating_vector %}<tr><td class="label">Vector:</td><td>{{ cellline.non_integrating_vector }}</td></tr>{% endif %}
 
         {% if cellline.non_integrating_vector.genes.all|length %}
@@ -216,7 +216,7 @@
                     <td>Mycoplasma:</td>
                     <td>{{ cellline.celllinecharacterization.get_screening_mycoplasma_display|default:"-" }}</td>
                 </tr>
-            </table>            
+            </table>
         </td>
     </tr>
 
@@ -236,14 +236,41 @@
     </tr>
     {% endif %}
  -->
-    {% if cellline.karyotype %}
+    {% if cellline.karyotype or cellline.str_fingerprinting.all|length %}
     <tr><th colspan="2" class="title"><h2>Genotyping</h2></th></tr>
+    {% endif %}
+
+    {% if cellline.karyotype %}
+    <tr><th class="sub-title"><h3>Karyotyping</h3></th><th></th></tr>
 
     {% if cellline.karyotype.passage_number %}
     <tr><td class="label">Passage number:</td><td>{{ cellline.karyotype.passage_number|default:"-" }}</td></tr>
     {% endif %}
     <tr><td class="label">Cell line karyotype:</td><td>{{ cellline.karyotype.karyotype|default:"-" }}</td></tr>
     <tr><td class="label">Karyotyping method:</td><td>{{ cellline.karyotype.karyotype_method|default:"-" }}</td></tr>
+    {% endif %}
+
+    {% if cellline.str_fingerprinting.all|length %}
+    <tr><th class="sub-title"><h3>Genome-Wide Assays</h3></th><th></th></tr>
+    <tr>
+        <td class="label">STR/Fingerprinting:</td>
+        <td>
+            <table>
+                <tr>
+                    <th>Locus</th>
+                    <th>Allele 1</th>
+                    <th>Allele 2</th>
+                </tr>
+                {% for locus in cellline.str_fingerprinting.all %}
+                <tr>
+                    <td>{{ locus.locus }}</td>
+                    <td class="center">{{ locus.allele1 }}</td>
+                    <td class="center">{{ locus.allele2 }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
     {% endif %}
 
 
@@ -284,7 +311,7 @@
         {% endif %}
         </td>
     </tr>
-    
+
     <tr>
         <td class="label">Depositor can provide a copy of consent form (in English):</td>
         <td>{{ cellline.celllineethics.copy_of_donor_consent_form_english_obtainable|yesno:"yes,no,-" }}
@@ -314,7 +341,7 @@
     <tr><td class="label">Formal permission from the owner for distribution:</td><td>{{ cellline.celllineethics.formal_permission_for_distribution|yesno:"yes,no,-" }}</td></tr>
 
     <tr>
-        <td class="label">Consent permits research by:</td> 
+        <td class="label">Consent permits research by:</td>
         <td>
             Academic institution: {{ cellline.celllineethics.consent_permits_research_by_academic_institution|yesno:"yes,no,-" }}<br/>
             Public organization: {{ cellline.celllineethics.consent_permits_research_by_org|yesno:"yes,no,-" }}<br/>
@@ -403,7 +430,7 @@
         {% endif%}
         </td>
     </tr>
-    
+
     <tr>
         <td class="label">Depositor third party obligations in regard to the use of the cell line:</td>
         <td>{{ cellline.celllineethics.third_party_obligations|yesno:"yes,no,-" }}
@@ -420,7 +447,7 @@
     <tr><td class="label">:</td><td>{{ cellline.celllineethics.|yesno:"yes,no,-" }}</td></tr>
  -->
 
-<!-- 
+<!--
 
 
  -->

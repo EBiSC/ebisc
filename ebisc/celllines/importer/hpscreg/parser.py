@@ -55,6 +55,7 @@ from ebisc.celllines.models import  \
     CelllineGenotypingSNP, \
     CelllineGenotypingRsNumber, \
     CelllineHlaTyping, \
+    CelllineStrFingerprinting, \
     KaryotypeMethod
 
 
@@ -634,6 +635,27 @@ def parse_hla_typing(valuef, source, cell_line):
                 hla_allele_1=valuef('hla_ii_dr_all1'),
                 hla_allele_2=valuef('hla_ii_dr_all2'),
             ).save
+
+
+@inject_valuef
+def parse_str_fingerprinting(valuef, source, cell_line):
+
+    if valuef('fingerprinting_flag', 'bool'):
+
+        if valuef('fingerprinting') is None:
+            return
+
+        else:
+            for locus in valuef('fingerprinting'):
+                (locus, allele1, allele2) = locus.split('###')
+                CelllineStrFingerprinting(
+                    cell_line=cell_line,
+                    locus=locus,
+                    allele1=allele1,
+                    allele2=allele2,
+                ).save()
+
+        logger.info('Added cell STR/Fingerprinting: %s' % CelllineStrFingerprinting)
 
 
 @inject_valuef

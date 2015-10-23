@@ -25,7 +25,7 @@ def run():
     if cellline_ids is None:
         return
 
-    # for cellline_id in [id for id in cellline_ids if id == 'ESi001-A']:
+    # for cellline_id in [id for id in cellline_ids if id == 'ESi008-A']:
     for cellline_id in [id for id in cellline_ids]:
         logger.info('Importing data for cell line %s' % cellline_id)
         json = request_get(settings.HPSCREG['cellline_url'] + cellline_id)
@@ -95,10 +95,10 @@ def import_cellline(source):
     #
     # # Vector
     #
-    # if valuef('vector_type') == 'integrating':
+    # if valuef('vector_type') == 'Integrating':
     #     parser.parse_integrating_vector(source, cell_line)
     #
-    # if valuef('vector_type') == 'non_integrating':
+    # if valuef('vector_type') == 'Non_integrating':
     #     parser.parse_non_integrating_vector(source, cell_line)
 
     dirty += [
@@ -112,6 +112,22 @@ def import_cellline(source):
         # parser.parse_disease_associated_genotype(source, cell_line)
         # parser.parse_hla_typing(source, cell_line)
     ]
+
+    if valuef('vector_type') == 'Integrating':
+        parser.parse_integrating_vector(source, cell_line)
+
+    if valuef('vector_type') == 'Non-integrating':
+        parser.parse_non_integrating_vector(source, cell_line)
+
+    parser.parse_derivation(source, cell_line)
+    parser.parse_culture_conditions(source, cell_line)
+    parser.parse_karyotyping(source, cell_line)
+    parser.parse_publications(source, cell_line)
+    parser.parse_characterization(source, cell_line)
+    parser.parse_characterization_markers(source, cell_line)
+    parser.parse_disease_associated_genotype(source, cell_line)
+    parser.parse_hla_typing(source, cell_line)
+    parser.parse_str_fingerprinting(source, cell_line)
 
     if True in dirty:
         if cell_line_created:

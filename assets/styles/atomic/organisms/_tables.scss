@@ -15,7 +15,7 @@ table {
 
   select {
     display: inline-block;
-  }  
+  }
 }
 
 table.listing {
@@ -50,6 +50,21 @@ table.data {
   td {
     padding: 3px 10px 3px 0px;
     vertical-align: top;
+
+    table {
+      th, td {
+        vertical-align: top;
+        text-align: left;
+        padding-right: 1em;
+
+        &.center {
+          text-align: center;
+        }
+
+        &.right {
+          text-align: right;
+        }
+      }
+    }
   }
 }
-
