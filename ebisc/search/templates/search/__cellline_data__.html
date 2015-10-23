@@ -236,7 +236,7 @@
     </tr>
     {% endif %}
  -->
-    {% if cellline.karyotype or cellline.str_fingerprinting.all|length %}
+    {% if cellline.karyotype or cellline.str_fingerprinting.all|length or cellline.genome_analysis %}
     <tr><th colspan="2" class="title"><h2>Genotyping</h2></th></tr>
     {% endif %}
 
@@ -250,8 +250,9 @@
     <tr><td class="label">Karyotyping method:</td><td>{{ cellline.karyotype.karyotype_method|default:"-" }}</td></tr>
     {% endif %}
 
-    {% if cellline.str_fingerprinting.all|length %}
+    {% if cellline.str_fingerprinting.all|length or cellline.genome_analysis %}
     <tr><th class="sub-title"><h3>Genome-Wide Assays</h3></th><th></th></tr>
+    {% if cellline.str_fingerprinting.all|length %}
     <tr>
         <td class="label">STR/Fingerprinting:</td>
         <td>
@@ -271,6 +272,16 @@
             </table>
         </td>
     </tr>
+    {% endif %}
+    {% if cellline.genome_analysis %}
+    <tr>
+        <td class="label">Genome-wide analysis:</td>
+        <td>
+            {% if cellline.genome_analysis.data %}{{ cellline.genome_analysis.data }}{% endif %}
+            {% if cellline.genome_analysis.data and cellline.genome_analysis.link %}<br/>{% endif %}
+            {% if cellline.genome_analysis.link %}<a href="{{ cellline.genome_analysis.link }}">{{ cellline.genome_analysis.link }}</a>{% endif %}</td>
+    </tr>
+    {% endif %}
     {% endif %}
 
 

@@ -16,7 +16,7 @@ CelllineCultureMediumSupplement
 CelllineDerivation
 Celllinegenemutations
 Celllinegeneticmod
-Celllinegenomeseq
+CelllineGenomeAnalysis
 Celllinegenotypingother
 Celllinehlatyping
 CellLineKaryotype

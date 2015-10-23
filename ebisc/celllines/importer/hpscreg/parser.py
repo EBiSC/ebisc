@@ -56,6 +56,7 @@ from ebisc.celllines.models import  \
     CelllineGenotypingRsNumber, \
     CelllineHlaTyping, \
     CelllineStrFingerprinting, \
+    CelllineGenomeAnalysis, \
     KaryotypeMethod
 
 
@@ -655,7 +656,31 @@ def parse_str_fingerprinting(valuef, source, cell_line):
                     allele2=allele2,
                 ).save()
 
-        logger.info('Added cell STR/Fingerprinting: %s' % CelllineStrFingerprinting)
+        logger.info('Added cell STR/Fingerprinting')
+
+
+@inject_valuef
+def parse_genome_analysis(valuef, source, cell_line):
+
+    if valuef('genome_wide_genotyping_flag', 'bool'):
+
+        data_type = None
+
+        if valuef('genome_wide_genotyping_ega'):
+            if valuef('genome_wide_genotyping_ega') == 'other':
+                data_type = valuef('genome_wide_genotyping_ega_other')
+            else:
+                data_type = valuef('genome_wide_genotyping_ega')
+
+        cell_line_genome_analysis = CelllineGenomeAnalysis(
+            cell_line=cell_line,
+            data=data_type,
+            link=valuef('genome_wide_genotyping_ega_url'),
+        )
+
+        cell_line_genome_analysis.save()
+
+        logger.info('Added cell line genome analysis')
 
 
 @inject_valuef

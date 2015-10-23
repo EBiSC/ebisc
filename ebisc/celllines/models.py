@@ -1169,6 +1169,21 @@ class CelllineStrFingerprinting(models.Model):
         return u'%s' % (self.id,)
 
 
+class CelllineGenomeAnalysis(models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genome_analysis')
+    data = models.CharField(_(u'Data'), max_length=100, null=True, blank=True)
+    link = models.URLField(u'Link', null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line genome analysis')
+        verbose_name_plural = _(u'Cell line genome analysis')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
 # Disease associated genotype
 class CelllineDiseaseGenotype(models.Model):
 
@@ -1306,20 +1321,6 @@ class Celllinegeneticmod(models.Model):
     class Meta:
         verbose_name = _(u'Cell line genetic mod')
         verbose_name_plural = _(u'Cell line genetic modes')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class Celllinegenomeseq(models.Model):
-
-    genomeseqcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    celllinegenomeseqlink = models.CharField(_(u'Cell line genome seq link'), max_length=45, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line genome seqence')
-        verbose_name_plural = _(u'Cell line genome seqences')
         ordering = []
 
     def __unicode__(self):
