@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CelllineDerivation, CellLineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions
+from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CelllineDerivation, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions
 
 
 # -----------------------------------------------------------------------------
@@ -61,9 +61,9 @@ class CelllineCultureConditionsResource(ModelResource):
 
 
 # -----------------------------------------------------------------------------
-# CellLineKaryotype
+# CelllineKaryotype
 
-class CellLineKaryotypeResource(ModelResource):
+class CelllineKaryotypeResource(ModelResource):
 
     # + karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
     # + karyotype_method = models.ForeignKey('KaryotypeMethod', verbose_name=_(u'Karyotype method'), null=True, blank=True)
@@ -72,7 +72,7 @@ class CellLineKaryotypeResource(ModelResource):
     # karyotype_method = fields.CharField('karyotype_method', null=True)
 
     class Meta:
-        queryset = CellLineKaryotype.objects.all()
+        queryset = CelllineKaryotype.objects.all()
         include_resource_uri = False
         fields = ('karyotype', 'passage_number')
 
@@ -247,7 +247,7 @@ class CelllineResource(ModelResource):
     primary_disease = fields.ToOneField(DiseaseResource, 'primary_disease', null=True, full=True)
     primary_cell_type = fields.ToOneField(CelllineDerivationResource, 'derivation', null=True, full=True)
     # culture_conditions = fields.ToOneField(CelllineCultureConditionsResource, 'celllinecultureconditions', full=True)
-    cellline_karyotype = fields.ToOneField(CellLineKaryotypeResource, 'karyotype', null=True, full=True)
+    cellline_karyotype = fields.ToOneField(CelllineKaryotypeResource, 'karyotype', null=True, full=True)
 
     donor_age = fields.CharField('donor_age', null=True)
     donor = fields.ToOneField(DonorResource, 'donor', null=True, full=True)

@@ -6,11 +6,11 @@ CultureMediumOther
 CelllineCultureMediumSupplement
 CelllineDerivation
 Celllinegenemutations
-Celllinegeneticmod
+CelllineGeneticModification
 CelllineGenomeAnalysis
 Celllinegenotypingother
 Celllinehlatyping
-CellLineKaryotype
+CelllineKaryotype
 CelllineEthics
 CelllineOrganization
 CelllineOrgType

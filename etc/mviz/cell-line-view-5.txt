@@ -1,10 +1,10 @@
 Cellline
 Celllinegenemutations
-Celllinegeneticmod
+CelllineGeneticModification
 CelllineGenomeAnalysis
 Celllinegenotypingother
 Celllinehlatyping
-CellLineKaryotype
+CelllineKaryotype
 CelllineGenotypingSNP
 CelllineGenotypingRsNumber
 CelllineDiseaseGenotype

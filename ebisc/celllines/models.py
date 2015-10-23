@@ -1104,12 +1104,12 @@ class CelllineValue(models.Model):
 # Genotyping
 
 # Karyotyping
-class CellLineKaryotype(models.Model):
+class CelllineKaryotype(models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='karyotype')
 
     karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
-    karyotype_method = models.ForeignKey('KaryotypeMethod', verbose_name=_(u'Karyotype method'), null=True, blank=True)
+    karyotype_method = models.CharField(_(u'Karyotype method'), max_length=100, null=True, blank=True)
 
     passage_number = models.CharField(_(u'Passage number'), max_length=10, null=True, blank=True)
 
@@ -1120,19 +1120,6 @@ class CellLineKaryotype(models.Model):
 
     def __unicode__(self):
         return unicode(self.karyotype)
-
-
-class KaryotypeMethod(models.Model):
-
-    name = models.CharField(_(u'Karyotype method'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Karyotype method')
-        verbose_name_plural = _(u'Karyotype methods')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
 
 
 # Genome-Wide Assays
@@ -1296,45 +1283,83 @@ class DonorGenotypingRsNumber(models.Model):
         return u'%s' % (self.id,)
 
 
-# -----------------------------------------------------------------------------
-# Genotyping - todo
+# Genetic modification
+class CelllineGeneticModification(models.Model):
 
-class Celllinegenemutations(models.Model):
-
-    genemutationscellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    weblink = models.CharField(_(u'Weblink'), max_length=100, blank=True)
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification')
+    protocol = models.FileField(_(u'Protocol'), upload_to=upload_to, null=True, blank=True)
 
     class Meta:
-        verbose_name = _(u'Cell line gene mutations')
-        verbose_name_plural = _(u'Cell line gene mutations')
+        verbose_name = _(u'Cell line genetic modification')
+        verbose_name_plural = _(u'Cell line genetic modifications')
         ordering = []
 
     def __unicode__(self):
         return u'%s' % (self.id,)
 
 
-class Celllinegeneticmod(models.Model):
+class GeneticModificationTransgeneExpression(models.Model):
 
-    geneticmodcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    celllinegeneticmod = models.CharField(_(u'Cell line genetic mod'), max_length=45, blank=True)
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_transgene_expression')
+    genes = models.ManyToManyField(Molecule, blank=True)
+    delivery_method = models.CharField(_(u'Delivery method'), max_length=45, null=True, blank=True)
+    virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
+    transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
 
     class Meta:
-        verbose_name = _(u'Cell line genetic mod')
-        verbose_name_plural = _(u'Cell line genetic modes')
+        verbose_name = _(u'Genetic modification - Transgene Expression')
+        verbose_name_plural = _(u'Genetic modifications - Transgene Expression')
         ordering = []
 
     def __unicode__(self):
         return u'%s' % (self.id,)
 
 
-class Celllinegenotypingother(models.Model):
+class GeneticModificationGeneKnockOut(models.Model):
 
-    genometypothercellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    celllinegenotypingother = models.TextField(_(u'Cell line geno typing other'), null=True, blank=True)
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_gene_knock_out')
+    target_genes = models.ManyToManyField(Molecule, blank=True)
+    delivery_method = models.CharField(_(u'Delivery method'), max_length=45, null=True, blank=True)
+    virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
+    transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
 
     class Meta:
-        verbose_name = _(u'Cell line genotyping other')
-        verbose_name_plural = _(u'Cell line genotyping others')
+        verbose_name = _(u'Genetic modification - Gene knock-out')
+        verbose_name_plural = _(u'Genetic modifications - Gene knock-out')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class GeneticModificationGeneKnockIn(models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_gene_knock_in')
+    target_genes = models.ManyToManyField(Molecule, blank=True, related_name='target_genes')
+    transgenes = models.ManyToManyField(Molecule, blank=True, related_name='transgenes')
+    delivery_method = models.CharField(_(u'Delivery method'), max_length=45, null=True, blank=True)
+    virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
+    transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Gene knock-in')
+        verbose_name_plural = _(u'Genetic modifications - Gene knock-in')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class GeneticModificationIsogenic(models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_isogenic')
+    target_locus = models.ManyToManyField(Molecule, blank=True)
+    change_type = models.CharField(_(u'Type of change'), max_length=45, null=True, blank=True)
+    modified_sequence = models.CharField(_(u'Modified sequence'), max_length=100, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Isogenic modification')
+        verbose_name_plural = _(u'Genetic modifications - Isogenic modification')
         ordering = []
 
     def __unicode__(self):

@@ -50,14 +50,18 @@ from ebisc.celllines.models import  \
     Organization,  \
     CelllineOrgType,  \
     CelllinePublication,  \
-    CellLineKaryotype,  \
+    CelllineKaryotype,  \
     CelllineDiseaseGenotype, \
     CelllineGenotypingSNP, \
     CelllineGenotypingRsNumber, \
     CelllineHlaTyping, \
     CelllineStrFingerprinting, \
     CelllineGenomeAnalysis, \
-    KaryotypeMethod
+    CelllineGeneticModification, \
+    GeneticModificationTransgeneExpression, \
+    GeneticModificationGeneKnockOut, \
+    GeneticModificationGeneKnockIn, \
+    GeneticModificationIsogenic
 
 
 # -----------------------------------------------------------------------------
@@ -548,16 +552,25 @@ def parse_karyotyping(valuef, source, cell_line):
 
     if valuef('karyotyping_flag', 'bool'):
 
-        cell_line_karyotype = CellLineKaryotype(
-            cell_line=cell_line,
-            karyotype=valuef('karyotyping_karyotype'),
-            karyotype_method=term_list_value_of_json(source, 'karyotyping_method', KaryotypeMethod),
-            passage_number=valuef('karyotyping_number_passages'),
-        )
+        if valuef('karyotyping_method') == 'other':
+            if valuef('karyotyping_method_other'):
+                karyotype_method = valuef('karyotyping_method_other')
+            else:
+                karyotype_method = u'Other'
+        else:
+            karyotype_method = valuef('karyotyping_method')
 
-        cell_line_karyotype.save()
+        if valuef('karyotyping_karyotype') or valuef('karyotyping_method') or valuef('karyotyping_number_passages'):
+            cell_line_karyotype = CelllineKaryotype(
+                cell_line=cell_line,
+                karyotype=valuef('karyotyping_karyotype'),
+                karyotype_method=karyotype_method,
+                passage_number=valuef('karyotyping_number_passages'),
+            )
 
-        logger.info('Added cell line karyotype: %s' % cell_line_karyotype)
+            cell_line_karyotype.save()
+
+            logger.info('Added cell line karyotype: %s' % cell_line_karyotype)
 
 
 @inject_valuef
@@ -668,19 +681,128 @@ def parse_genome_analysis(valuef, source, cell_line):
 
         if valuef('genome_wide_genotyping_ega'):
             if valuef('genome_wide_genotyping_ega') == 'other':
-                data_type = valuef('genome_wide_genotyping_ega_other')
+                if valuef('genome_wide_genotyping_ega_other') is not None:
+                    data_type = valuef('genome_wide_genotyping_ega_other')
+                else:
+                    data_type = u'Other'
             else:
                 data_type = valuef('genome_wide_genotyping_ega')
 
-        cell_line_genome_analysis = CelllineGenomeAnalysis(
-            cell_line=cell_line,
-            data=data_type,
-            link=valuef('genome_wide_genotyping_ega_url'),
-        )
+        if data_type or valuef('genome_wide_genotyping_ega_url'):
+            cell_line_genome_analysis = CelllineGenomeAnalysis(
+                cell_line=cell_line,
+                data=data_type,
+                link=valuef('genome_wide_genotyping_ega_url'),
+            )
 
-        cell_line_genome_analysis.save()
+            cell_line_genome_analysis.save()
 
-        logger.info('Added cell line genome analysis')
+            logger.info('Added cell line genome analysis')
+
+
+@inject_valuef
+def parse_genetic_modifications(valuef, source, cell_line):
+
+    if valuef('genetic_modification_flag', 'bool'):
+
+        def parse_delivery_method(source, source_field, source_field_other):
+
+            if source_field not in source and source_field_other not in source:
+                return None
+
+            delivery_method = None
+
+            if valuef(source_field) == 'other':
+                if valuef(source_field_other) is not None:
+                    delivery_method = valuef(source_field_other)
+                else:
+                    delivery_method = u'Other'
+            else:
+                delivery_method = valuef(source_field)
+
+            return delivery_method
+
+        for modification_type in valuef('genetic_modification_types'):
+            if modification_type == 'gen_mod_transgene_expression':
+
+                transgene_expression = GeneticModificationTransgeneExpression(
+                    cell_line=cell_line,
+                    delivery_method=parse_delivery_method(source, 'transgene_delivery_method', 'transgene_delivery_method_other'),
+                    virus=term_list_value_of_json(source, 'transgene_viral_method_spec', Virus),
+                    transposon=term_list_value_of_json(source, 'transgene_transposon_method_spec', Transposon),
+                )
+
+                transgene_expression.save()
+
+                for gene in [parse_molecule(g) for g in source.get('genetic_modification_transgene_expression_list', [])]:
+                    logger.info('Added gene: %s' % gene)
+                    transgene_expression.genes.add(gene)
+
+                transgene_expression.save()
+
+                logger.info('Added transgene modification: %s' % transgene_expression)
+
+            elif modification_type == 'gen_mod_gene_knock_out':
+
+                gene_knock_out = GeneticModificationGeneKnockOut(
+                    cell_line=cell_line,
+                    delivery_method=parse_delivery_method(source, 'knockout_delivery_method', 'knockout_delivery_method_other'),
+                    virus=term_list_value_of_json(source, 'knockout_viral_method_spec', Virus),
+                    transposon=term_list_value_of_json(source, 'knockout_transposon_method_spec', Transposon),
+                )
+
+                gene_knock_out.save()
+
+                for gene in [parse_molecule(g) for g in source.get('genetic_modification_knockout_list', [])]:
+                    logger.info('Added gene: %s' % gene)
+                    gene_knock_out.target_genes.add(gene)
+
+                gene_knock_out.save()
+
+                logger.info('Added gene knock-out modification: %s' % gene_knock_out)
+
+            elif modification_type == 'gen_mod_gene_knock_in':
+
+                gene_knock_in = GeneticModificationGeneKnockIn(
+                    cell_line=cell_line,
+                    delivery_method=parse_delivery_method(source, 'knockin_delivery_method', 'knockin_delivery_method_other'),
+                    virus=term_list_value_of_json(source, 'knockin_viral_method_spec', Virus),
+                    transposon=term_list_value_of_json(source, 'knockin_transposon_method_spec', Transposon),
+                )
+
+                gene_knock_in.save()
+
+                for gene in [parse_molecule(g) for g in source.get('genetic_modification_knockin_target_gene_list', [])]:
+                    logger.info('Added gene: %s' % gene)
+                    gene_knock_in.target_genes.add(gene)
+
+                gene_knock_in.save()
+
+                for gene in [parse_molecule(g) for g in source.get('genetic_modification_knockin_transgene_list', [])]:
+                    logger.info('Added gene: %s' % gene)
+                    gene_knock_in.transgenes.add(gene)
+
+                gene_knock_in.save()
+
+                logger.info('Added gene knock-in modification: %s' % gene_knock_in)
+
+            elif modification_type == 'gen_mod_isogenic_modification':
+
+                isogenic_modification = GeneticModificationIsogenic(
+                    cell_line=cell_line,
+                    change_type=valuef('genetic_modification_isogenic_modified_locus_change_type'),
+                    modified_sequence=valuef('genetic_modification_isogenic_modified_locus'),
+                )
+
+                isogenic_modification.save()
+
+                for gene in [parse_molecule(g) for g in source.get('genetic_modification_isogenic_target_locus_list', [])]:
+                    logger.info('Added gene: %s' % gene)
+                    isogenic_modification.target_locus.add(gene)
+
+                isogenic_modification.save()
+
+                logger.info('Added gene isogenic modification: %s' % isogenic_modification)
 
 
 @inject_valuef
