@@ -131,8 +131,8 @@ LOGGING = {
 HPSCREG = {
     'list_url': 'http://hpscreg.eu/api/full_list',
     'cellline_url': 'http://hpscreg.eu/api/export/',
-    'username': 'maja',
-    'password': 'jh5!ghwe',
+    'username': 'ebiscims',
+    'password': 'cWNJnc6p',
 }
 
 # -----------------------------------------------------------------------------
