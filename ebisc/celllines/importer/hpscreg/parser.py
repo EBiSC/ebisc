@@ -22,13 +22,7 @@ from ebisc.celllines.models import  \
     Donor,  \
     Disease,  \
     CelllineCultureConditions,  \
-    SurfaceCoating,  \
-    PassageMethod,  \
-    Enzymatically,  \
-    EnzymeFree,  \
-    CultureMedium,  \
     CultureMediumOther,  \
-    ProteinSource,  \
     CelllineCultureMediumSupplement,  \
     CelllineDerivation,  \
     PrimaryCellDevelopmentalStage,  \
@@ -489,62 +483,112 @@ def parse_derivation(valuef, source, cell_line):
 @inject_valuef
 def parse_culture_conditions(valuef, source, cell_line):
 
-    cell_line_culture_conditions = CelllineCultureConditions(
-        cell_line=cell_line,
+    cell_line_culture_conditions, cell_line_culture_conditions_created = CelllineCultureConditions.objects.get_or_create(cell_line=cell_line)
 
-        surface_coating=term_list_value_of_json(source, 'surface_coating', SurfaceCoating),
+    cell_line_culture_conditions.surface_coating = valuef('surface_coating')
+    cell_line_culture_conditions.feeder_cell_id = valuef('feeder_cells_ont_id')
+    cell_line_culture_conditions.feeder_cell_type = valuef('feeder_cells_name')
+    cell_line_culture_conditions.passage_method = valuef('passage_method')
+    cell_line_culture_conditions.enzymatically = valuef('passage_method_enzymatically')
+    cell_line_culture_conditions.enzyme_free = valuef('passage_method_enzyme_free')
+    cell_line_culture_conditions.o2_concentration = valuef('o2_concentration', 'int')
+    cell_line_culture_conditions.co2_concentration = valuef('co2_concentration', 'int')
+    cell_line_culture_conditions.passage_number_banked = valuef('passage_number_banked')
+    cell_line_culture_conditions.number_of_vials_banked = valuef('number_of_vials_banked')
 
-        feeder_cell_id=valuef('feeder_cells_ont_id'),
-        feeder_cell_type=valuef('feeder_cells_name'),
+    if not valuef('culture_conditions_medium_culture_medium') == 'other_medium':
+        cell_line_culture_conditions.culture_medium = valuef('culture_conditions_medium_culture_medium')
 
-        passage_method=term_list_value_of_json(source, 'passage_method', PassageMethod),
-        enzymatically=term_list_value_of_json(source, 'passage_method_enzymatically', Enzymatically),
-        enzyme_free=term_list_value_of_json(source, 'passage_method_enzyme_free', EnzymeFree),
-
-        o2_concentration=valuef('o2_concentration', 'int'),
-        co2_concentration=valuef('co2_concentration', 'int'),
-    )
-
-    cell_line_culture_conditions.save()
-
-    # Culture medium
+    dirty = [cell_line_culture_conditions.is_dirty(check_relationship=True)]
 
     def parse_supplements(cell_line_culture_conditions, supplements):
 
+        old_supplements = set([supplement.supplement for supplement in cell_line_culture_conditions.medium_supplements.all()])
+
+        dirty_supplements = []
+
         if supplements is None:
-            return
+
+            if not old_supplements:
+                return []
+
+            else:
+                for supplement_name in old_supplements:
+                    s = CelllineCultureMediumSupplement.objects.get(cell_line_culture_conditions=cell_line_culture_conditions, supplement=supplement_name)
+                    s.delete()
+                    dirty_supplements += [True]
 
         else:
+            new_supplements_list = []
+
             for supplement in supplements:
-                (supplement, amount, unit) = supplement.split('###')
-                CelllineCultureMediumSupplement(
-                    cell_line_culture_conditions=cell_line_culture_conditions,
-                    supplement=supplement,
-                    amount=amount,
-                    unit=term_list_value(unit, Unit),
-                ).save()
+                (supplement_name, amount, unit) = supplement.split('###')
+
+                new_supplements_list.append((supplement_name))
+
+            new_supplements = set(new_supplements_list)
+
+            # Delete old supplements that are not in new supplements
+            for supplement_name in (old_supplements - new_supplements):
+                s = CelllineCultureMediumSupplement.objects.get(cell_line_culture_conditions=cell_line_culture_conditions, supplement=supplement_name)
+                s.delete()
+                dirty_supplements += [True]
+
+            for supplement in supplements:
+                (supplement_name, amount, unit) = supplement.split('###')
+
+                # Add new supplements
+                if supplement_name in (new_supplements - old_supplements):
+                    CelllineCultureMediumSupplement(
+                        cell_line_culture_conditions=cell_line_culture_conditions,
+                        supplement=supplement_name,
+                        amount=amount,
+                        unit=term_list_value(unit, Unit),
+                    ).save()
+                    dirty_supplements += [True]
+
+                # Modify existing if data has changed
+                else:
+                    cell_line_culture_medium_supplement = CelllineCultureMediumSupplement.objects.get(cell_line_culture_conditions=cell_line_culture_conditions, supplement=supplement_name,)
+                    cell_line_culture_medium_supplement.amount = amount
+                    cell_line_culture_medium_supplement.unit = term_list_value(unit, Unit)
+
+                    if cell_line_culture_medium_supplement.is_dirty():
+                        cell_line_culture_medium_supplement.save()
+                        dirty_supplements += [True]
+
+            return dirty_supplements
 
     if not valuef('culture_conditions_medium_culture_medium') == 'other_medium':
-        cell_line_culture_conditions.culture_medium = term_list_value_of_json(source, 'culture_conditions_medium_culture_medium', CultureMedium)
 
         # Culture medium supplements
-        parse_supplements(cell_line_culture_conditions, valuef('culture_conditions_medium_culture_medium_supplements'))
+        dirty += parse_supplements(cell_line_culture_conditions, valuef('culture_conditions_medium_culture_medium_supplements'))
 
     else:
-        CultureMediumOther(
-            cell_line_culture_conditions=cell_line_culture_conditions,
-            base=valuef('culture_conditions_medium_culture_medium_other_base'),
-            protein_source=term_list_value_of_json(source, 'culture_conditions_medium_culture_medium_other_protein_source', ProteinSource),
-            serum_concentration=valuef('culture_conditions_medium_culture_medium_other_concentration', 'int'),
-        ).save()
+        cell_line_culture_medium_other, created = CultureMediumOther.objects.get_or_create(cell_line_culture_conditions=cell_line_culture_conditions)
+
+        cell_line_culture_medium_other.base = valuef('culture_conditions_medium_culture_medium_other_base')
+        cell_line_culture_medium_other.protein_source = valuef('culture_conditions_medium_culture_medium_other_protein_source')
+        cell_line_culture_medium_other.serum_concentration = valuef('culture_conditions_medium_culture_medium_other_concentration', 'int')
+
+        if created or cell_line_culture_medium_other.is_dirty():
+            cell_line_culture_medium_other.save()
+            dirty += [True]
 
         # Culture medium supplements
-        parse_supplements(cell_line_culture_conditions, valuef('culture_conditions_medium_culture_medium_other_supplements'))
+        dirty += parse_supplements(cell_line_culture_conditions, valuef('culture_conditions_medium_culture_medium_other_supplements'))
 
-    # Final save
+    if True in dirty:
+        if cell_line_culture_conditions_created:
+            logger.info('Added cell line culture conditions: %s' % cell_line_culture_conditions)
+        else:
+            logger.info('Updated cell line culture conditions: %s' % cell_line_culture_conditions)
 
-    cell_line_culture_conditions.save()
-    logger.info('Added cell line culture conditions: %s' % cell_line_culture_conditions)
+        cell_line_culture_conditions.save()
+
+        return True
+
+    return False
 
 
 @inject_valuef

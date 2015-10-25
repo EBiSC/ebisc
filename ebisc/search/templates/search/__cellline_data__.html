@@ -181,6 +181,20 @@
     </tr>
     {% endif %}
 
+    {% if cellline.celllinecultureconditions.passage_number_banked %}
+    <tr>
+        <td class="label">Passage Number banked (pre-EBiSC):</td>
+        <td>{{ cellline.celllinecultureconditions.passage_number_banked }}</td>
+    </tr>
+    {% endif %}
+
+    {% if cellline.celllinecultureconditions.number_of_vials_banked %}
+    <tr>
+        <td class="label">No. Vials banked (pre-EBiSC):</td>
+        <td>{{ cellline.celllinecultureconditions.number_of_vials_banked }}</td>
+    </tr>
+    {% endif %}
+
     <tr><th colspan="2" class="title"><h2>Characterization</h2></th></tr>
 
     {% if cellline.celllinecharacterization.certificate_of_analysis_passage_number %}

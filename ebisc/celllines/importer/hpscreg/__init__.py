@@ -25,7 +25,7 @@ def run():
     if cellline_ids is None:
         return
 
-    # for cellline_id in [id for id in cellline_ids if id == 'ESi005-A']:
+    # for cellline_id in [id for id in cellline_ids if id == 'UKBi003-A']:
     for cellline_id in [id for id in cellline_ids]:
         logger.info('Importing data for cell line %s' % cellline_id)
         json = request_get(settings.HPSCREG['cellline_url'] + cellline_id)
@@ -104,7 +104,7 @@ def import_cellline(source):
     dirty += [
         parser.parse_ethics(source, cell_line),
         # parser.parse_derivation(source, cell_line)
-        # parser.parse_culture_conditions(source, cell_line)
+        parser.parse_culture_conditions(source, cell_line)
         # parser.parse_karyotyping(source, cell_line)
         # parser.parse_publications(source, cell_line)
         # parser.parse_characterization(source, cell_line)
