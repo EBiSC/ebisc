@@ -346,7 +346,7 @@ class Disease(models.Model):
 # -----------------------------------------------------------------------------
 # Cell line and batch culture conditions
 
-class CelllineCultureConditions(models.Model):
+class CelllineCultureConditions(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
 
@@ -364,6 +364,8 @@ class CelllineCultureConditions(models.Model):
 
     passage_number_banked = models.CharField(_(u'Passage number banked (pre-EBiSC)'), max_length=10, null=True, blank=True)
     number_of_vials_banked = models.CharField(_(u'No. Vials banked (pre-EBiSC)'), max_length=10, null=True, blank=True)
+    passage_history = models.NullBooleanField(_(u'Passage history (back to reprogramming)'), default=None, null=True, blank=True)
+    culture_history = models.NullBooleanField(_(u'Culture history (methods used)'), default=None, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line culture conditions')
