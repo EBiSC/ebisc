@@ -401,7 +401,7 @@ class CultureMediumOther(DirtyFieldsMixin, models.Model):
     cell_line_culture_conditions = models.OneToOneField(CelllineCultureConditions, verbose_name=_(u'Cell line culture conditions'), related_name='culture_medium_other')
 
     base = models.CharField(_(u'Culture medium base'), max_length=45, blank=True)
-    protein_source = models.ForeignKey('ProteinSource', verbose_name=_(u'Protein source'), null=True, blank=True)
+    protein_source = models.CharField(_(u'Protein source'), max_length=45, null=True, blank=True)
     serum_concentration = models.IntegerField(_(u'Serum concentration'), null=True, blank=True)
 
     class Meta:
@@ -411,19 +411,6 @@ class CultureMediumOther(DirtyFieldsMixin, models.Model):
 
     def __unicode__(self):
         return u'%s / %s / %s' % (self.base, self.protein_source, self.serum_concentration)
-
-
-class ProteinSource(models.Model):
-
-    name = models.CharField(_(u'Protein source'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Protein source')
-        verbose_name_plural = _(u'Protein sources')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
 
 
 class CelllineCultureMediumSupplement(DirtyFieldsMixin, models.Model):
