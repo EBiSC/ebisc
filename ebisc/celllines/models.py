@@ -350,17 +350,17 @@ class CelllineCultureConditions(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
 
-    surface_coating = models.ForeignKey('SurfaceCoating', verbose_name=_(u'Surface coating'), null=True, blank=True)
+    surface_coating = models.CharField(_(u'Surface coating'), max_length=100, null=True, blank=True)
     feeder_cell_type = models.CharField(_(u'Feeder cell type'), max_length=45, null=True, blank=True)
     feeder_cell_id = models.CharField(_(u'Feeder cell id'), max_length=45, null=True, blank=True)
-    passage_method = models.ForeignKey('PassageMethod', verbose_name=_(u'Passage method'), null=True, blank=True)
-    enzymatically = models.ForeignKey('Enzymatically', verbose_name=_(u'Enzymatically'), null=True, blank=True)
-    enzyme_free = models.ForeignKey('EnzymeFree', verbose_name=_(u'Enzyme free'), null=True, blank=True)
+    passage_method = models.CharField(_(u'Passage method'), max_length=100, null=True, blank=True)
+    enzymatically = models.CharField(_(u'Enzymatically'), max_length=45, null=True, blank=True)
+    enzyme_free = models.CharField(_(u'Enzyme free'), max_length=45, null=True, blank=True)
     o2_concentration = models.IntegerField(_(u'O2 concentration'), null=True, blank=True)
     co2_concentration = models.IntegerField(_(u'Co2 concentration'), null=True, blank=True)
     other_culture_environment = models.CharField(_(u'Other culture environment'), max_length=100, null=True, blank=True)
 
-    culture_medium = models.ForeignKey('CultureMedium', verbose_name=_(u'Culture medium'), null=True, blank=True)
+    culture_medium = models.CharField(_(u'Culture medium'), max_length=45, null=True, blank=True)
 
     passage_number_banked = models.CharField(_(u'Passage number banked (pre-EBiSC)'), max_length=10, null=True, blank=True)
     number_of_vials_banked = models.CharField(_(u'No. Vials banked (pre-EBiSC)'), max_length=10, null=True, blank=True)
@@ -396,72 +396,7 @@ class BatchCultureConditions(models.Model):
         return u'%s' % (self.id,)
 
 
-class SurfaceCoating(models.Model):
-
-    name = models.CharField(_(u'Surface coating'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Surface coating')
-        verbose_name_plural = _(u'Surface coatings')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class PassageMethod(models.Model):
-
-    name = models.CharField(_(u'Passage method'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Passage method')
-        verbose_name_plural = _(u'Passage methods')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class Enzymatically(models.Model):
-
-    name = models.CharField(_(u'Enzymatically'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Enzymatically')
-        verbose_name_plural = _(u'Enzymatically')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class EnzymeFree(models.Model):
-
-    name = models.CharField(_(u'Enzyme free'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Enzyme free')
-        verbose_name_plural = _(u'Enzyme free')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class CultureMedium(models.Model):
-
-    name = models.CharField(_(u'Culture medium'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Culture medium')
-        verbose_name_plural = _(u'Culture mediums')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class CultureMediumOther(models.Model):
+class CultureMediumOther(DirtyFieldsMixin, models.Model):
 
     cell_line_culture_conditions = models.OneToOneField(CelllineCultureConditions, verbose_name=_(u'Cell line culture conditions'), related_name='culture_medium_other')
 
@@ -491,7 +426,7 @@ class ProteinSource(models.Model):
         return self.name
 
 
-class CelllineCultureMediumSupplement(models.Model):
+class CelllineCultureMediumSupplement(DirtyFieldsMixin, models.Model):
 
     cell_line_culture_conditions = models.ForeignKey(CelllineCultureConditions, verbose_name=_(u'Cell line culture conditions'), related_name='medium_supplements')
 
