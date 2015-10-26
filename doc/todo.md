@@ -1,5 +1,11 @@
 # TODO
 
+## hPSCreg importer
+
+- Characterization
+- Documents
+- Check for updates for genes in Reprogramming method
+
 ## Exec dashboard
 
 - Data display: depositor data, batch QC data, document management
