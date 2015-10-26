@@ -25,7 +25,6 @@ from ebisc.celllines.models import  \
     CultureMediumOther,  \
     CelllineCultureMediumSupplement,  \
     CelllineDerivation,  \
-    PrimaryCellDevelopmentalStage,  \
     NonIntegratingVector,  \
     IntegratingVector,  \
     CelllineNonIntegratingVector,  \
@@ -348,27 +347,35 @@ def parse_integrating_vector(valuef, source, cell_line):
     else:
         vector_name = valuef('integrating_vector')
 
-    vector, created = IntegratingVector.objects.get_or_create(name=vector_name)
+    vector, vector_created = IntegratingVector.objects.get_or_create(name=vector_name)
 
-    if created:
+    if vector_created:
         logger.info('Added integrating vector: %s' % vector)
 
-    cell_line_vector = CelllineIntegratingVector(
-        cell_line=cell_line,
-        vector=vector,
-        virus=term_list_value_of_json(source, 'integrating_vector_virus_type', Virus),
-        transposon=term_list_value_of_json(source, 'integrating_vector_transposon_type', Transposon),
-        excisable=valuef('excisable_vector_flag', 'bool'),
-        absence_reprogramming_vectors=valuef('reprogramming_vectors_absence_flag', 'bool'),
-    )
+    cell_line_integrating_vector, cell_line_integrating_vector_created = CelllineIntegratingVector.objects.get_or_create(cell_line=cell_line)
 
-    cell_line_vector.save()
+    cell_line_integrating_vector.vector = vector
+    cell_line_integrating_vector.virus = term_list_value_of_json(source, 'integrating_vector_virus_type', Virus)
+    cell_line_integrating_vector.transposon = term_list_value_of_json(source, 'integrating_vector_transposon_type', Transposon)
+    cell_line_integrating_vector.excisable = valuef('excisable_vector_flag', 'bool')
+    cell_line_integrating_vector.absence_reprogramming_vectors = valuef('reprogramming_vectors_absence_flag', 'bool')
+
+    dirty = [cell_line_integrating_vector.is_dirty(check_relationship=True)]
 
     for gene in [parse_molecule(g) for g in source.get('integrating_vector_gene_list', [])]:
-        logger.info('Added gene: %s' % gene)
-        cell_line_vector.genes.add(gene)
+        cell_line_integrating_vector.genes.add(gene)
 
-    logger.info('Added integrating vector: %s to cell line %s' % (vector, cell_line))
+    if True in dirty:
+        if cell_line_integrating_vector_created:
+            logger.info('Added integrating vector: %s to cell line %s' % (vector, cell_line))
+        else:
+            logger.info('Updated integrating vector: %s to cell line %s' % (vector, cell_line))
+
+        cell_line_integrating_vector.save()
+
+        return True
+
+    return False
 
 
 def parse_molecule(molecule_string):
@@ -438,46 +445,65 @@ def parse_non_integrating_vector(valuef, source, cell_line):
     else:
         vector_name = valuef('non_integrating_vector')
 
-    vector, created = NonIntegratingVector.objects.get_or_create(name=vector_name)
+    vector, vector_created = NonIntegratingVector.objects.get_or_create(name=vector_name)
 
-    if created:
+    if vector_created:
         logger.info('Added non-integrating vector: %s' % vector)
 
-    cell_line_vector = CelllineNonIntegratingVector(
-        cell_line=cell_line,
-        vector=vector,
-    )
+    cell_line_non_integrating_vector, cell_line_non_integrating_vector_created = CelllineNonIntegratingVector.objects.get_or_create(cell_line=cell_line)
 
-    cell_line_vector.save()
+    cell_line_non_integrating_vector.vector = vector
+
+    dirty = [cell_line_non_integrating_vector.is_dirty(check_relationship=True)]
 
     for gene in [parse_molecule(g) for g in source.get('non_integrating_vector_gene_list', [])]:
-        logger.info('Added gene: %s' % gene)
-        cell_line_vector.genes.add(gene)
+        cell_line_non_integrating_vector.genes.add(gene)
 
-    logger.info('Added non-integrationg vector %s to cell line %s' % (vector, cell_line))
+    if True in dirty:
+        if cell_line_non_integrating_vector_created:
+            logger.info('Added non-integrationg vector %s to cell line %s' % (vector, cell_line))
+        else:
+            logger.info('Updated non-integrationg vector %s to cell line %s' % (vector, cell_line))
+
+        cell_line_non_integrating_vector.save()
+
+        return True
+
+    return False
 
 
 @inject_valuef
 def parse_derivation(valuef, source, cell_line):
 
-    cell_line_derivation = CelllineDerivation(
-        cell_line=cell_line,
-        primary_cell_type=parse_cell_type(source),
-        primary_cell_developmental_stage=term_list_value_of_json(source, 'dev_stage_primary_cell', PrimaryCellDevelopmentalStage),
-        reprogramming_passage_number=valuef('passage_number_reprogrammed'),
-        selection_criteria_for_clones=valuef('selection_of_clones'),
-        xeno_free_conditions=valuef('derivation_xeno_graft_free_flag', 'bool'),
-        derived_under_gmp=valuef('derivation_gmp_ips_flag', 'bool'),
-        available_as_clinical_grade=valuef('available_clinical_grade_ips_flag', 'bool'),
-    )
+    cell_line_derivation, cell_line_derivation_created = CelllineDerivation.objects.get_or_create(cell_line=cell_line)
 
-    try:
-        cell_line_derivation.save()
-    except IntegrityError, e:
-        logger.warn(format_integrity_error(e))
-        return None
+    cell_line_derivation.primary_cell_type = parse_cell_type(source)
+    cell_line_derivation.primary_cell_developmental_stage = valuef('dev_stage_primary_cell') if valuef('dev_stage_primary_cell') and valuef('dev_stage_primary_cell') != '0' else ''
+    cell_line_derivation.tissue_procurement_location = valuef('location_primary_tissue_procurement')
+    cell_line_derivation.tissue_collection_date = valuef('collection_date')
+    cell_line_derivation.reprogramming_passage_number = valuef('passage_number_reprogrammed')
 
-    logger.info('Added cell line derivation: %s' % cell_line_derivation)
+    cell_line_derivation.selection_criteria_for_clones = valuef('selection_of_clones')
+    cell_line_derivation.xeno_free_conditions = valuef('derivation_xeno_graft_free_flag', 'bool')
+    cell_line_derivation.derived_under_gmp = valuef('derivation_gmp_ips_flag', 'bool')
+    cell_line_derivation.available_as_clinical_grade = valuef('available_clinical_grade_ips_flag', 'bool')
+
+    if cell_line_derivation_created or cell_line_derivation.is_dirty(check_relationship=True):
+        try:
+            cell_line_derivation.save()
+
+            if cell_line_derivation_created:
+                logger.info('Added cell line derivation: %s' % cell_line_derivation)
+            else:
+                logger.info('Updated cell line derivation: %s' % cell_line_derivation)
+
+            return True
+
+        except IntegrityError, e:
+            logger.warn(format_integrity_error(e))
+            return None
+
+    return False
 
 
 @inject_valuef

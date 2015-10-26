@@ -442,7 +442,6 @@ class CelllineDerivation(DirtyFieldsMixin, models.Model):
 
     primary_cell_type = models.ForeignKey('CellType', verbose_name=_(u'Primary cell type'), null=True, blank=True)
     primary_cell_developmental_stage = models.CharField(_(u'Primary cell developmental stage'), max_length=45, null=True, blank=True)
-
     tissue_procurement_location = models.CharField(_(u'Location of primary tissue procurement'), max_length=45, null=True, blank=True)
     tissue_collection_date = models.DateField(_(u'Tissue collection date'), null=True, blank=True)
     reprogramming_passage_number = models.CharField(_(u'Passage number reprogrammed'), max_length=10, null=True, blank=True)
@@ -489,7 +488,7 @@ class IntegratingVector(models.Model):
         return self.name
 
 
-class CelllineNonIntegratingVector(models.Model):
+class CelllineNonIntegratingVector(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='non_integrating_vector')
     vector = models.ForeignKey(NonIntegratingVector, verbose_name=_(u'Non-integrating vector'), null=True, blank=True)
@@ -504,7 +503,7 @@ class CelllineNonIntegratingVector(models.Model):
         return unicode(self.vector)
 
 
-class CelllineIntegratingVector(models.Model):
+class CelllineIntegratingVector(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='integrating_vector')
     vector = models.ForeignKey(IntegratingVector, verbose_name=_(u'Integrating vector'), null=True, blank=True)

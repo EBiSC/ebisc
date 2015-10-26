@@ -79,7 +79,19 @@
     <tr><th colspan="2" class="title"><h2>Derivation</h2></th></tr>
 
     <tr><td class="label">Primary cell type:</td><td>{{ cellline.derivation.primary_cell_type.name|default:"-" }}</td></tr>
-    <tr><td class="label">Primary cell developmental stage:</td><td>{{ cellline.celllinederivation.primary_cell_developmental_stage|default:"-" }}</td></tr>
+
+    {% if cellline.derivation.primary_cell_developmental_stage %}
+    <tr><td class="label">Primary cell developmental stage:</td><td>{{ cellline.derivation.primary_cell_developmental_stage }}</td></tr>
+    {% endif %}
+    {% if cellline.derivation.tissue_procurement_location %}
+    <tr><td class="label">Location of primary tissue procurement:</td><td>{{ cellline.derivation.tissue_procurement_location }}</td></tr>
+    {% endif %}
+    {% if cellline.derivation.tissue_collection_date %}
+    <tr><td class="label">Tissue collection date:</td><td>{{ cellline.derivation.tissue_collection_date }}</td></tr>
+    {% endif %}
+    {% if cellline.derivation.reprogramming_passage_number %}
+    <tr><td class="label">Passage number reprogrammed:</td><td>{{ cellline.derivation.reprogramming_passage_number }}</td></tr>
+    {% endif %}
 
     <tr><th class="sub-title"><h3>Reprogramming method</h3></th><th></th></tr>
 
@@ -127,7 +139,9 @@
 
     <tr><th class="sub-title"><h3>Derivation</h3></th><th></th></tr>
 
-    <tr><td class="label">Selection criteria for clones:</td><td>{{ cellline.celllinederivation.selection_criteria_for_clones|default:"-" }}</td></tr>
+    {% if cellline.celllinederivation.selection_criteria_for_clones %}
+    <tr><td class="label">Selection criteria for clones:</td><td>{{ cellline.celllinederivation.selection_criteria_for_clones }}</td></tr>
+    {% endif %}
     <tr><td class="label">Xeno free conditions:</td><td>{{ cellline.celllinederivation.xeno_free_conditions|yesno:"yes,no"|default:"-" }}</td></tr>
     <tr><td class="label">Derived under gmp:</td><td>{{ cellline.celllinederivation.derived_under_gmp|yesno:"yes,no"|default:"-" }}</td></tr>
     <tr><td class="label">Available as clinical grade:</td><td>{{ cellline.celllinederivation.available_as_clinical_grade|yesno:"yes,no"|default:"-" }}</td></tr>

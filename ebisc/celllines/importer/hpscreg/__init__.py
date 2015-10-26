@@ -25,7 +25,7 @@ def run():
     if cellline_ids is None:
         return
 
-    # for cellline_id in [id for id in cellline_ids if id == 'UKBi003-A']:
+    # for cellline_id in [id for id in cellline_ids if id == 'ESi008-A']:
     for cellline_id in [id for id in cellline_ids]:
         logger.info('Importing data for cell line %s' % cellline_id)
         json = request_get(settings.HPSCREG['cellline_url'] + cellline_id)
@@ -93,17 +93,18 @@ def import_cellline(source):
     #     if created:
     #         logger.info('Added organization %s as %s' % (organization, organization_role))
     #
-    # # Vector
-    #
-    # if valuef('vector_type') == 'Integrating':
-    #     parser.parse_integrating_vector(source, cell_line)
-    #
-    # if valuef('vector_type') == 'Non_integrating':
-    #     parser.parse_non_integrating_vector(source, cell_line)
+
+    # Vector
+
+    if valuef('vector_type') == 'Integrating':
+        dirty += [parser.parse_integrating_vector(source, cell_line)]
+
+    if valuef('vector_type') == 'Non-integrating':
+        dirty += [parser.parse_non_integrating_vector(source, cell_line)]
 
     dirty += [
         parser.parse_ethics(source, cell_line),
-        # parser.parse_derivation(source, cell_line)
+        parser.parse_derivation(source, cell_line),
         parser.parse_culture_conditions(source, cell_line)
         # parser.parse_karyotyping(source, cell_line)
         # parser.parse_publications(source, cell_line)
