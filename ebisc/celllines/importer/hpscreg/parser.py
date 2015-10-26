@@ -50,7 +50,6 @@ from ebisc.celllines.models import  \
     CelllineHlaTyping, \
     CelllineStrFingerprinting, \
     CelllineGenomeAnalysis, \
-    CelllineGeneticModification, \
     GeneticModificationTransgeneExpression, \
     GeneticModificationGeneKnockOut, \
     GeneticModificationGeneKnockIn, \
@@ -638,15 +637,15 @@ def parse_karyotyping(valuef, source, cell_line):
             cell_line_karyotype.karyotype_method = karyotype_method
             cell_line_karyotype.passage_number = valuef('karyotyping_number_passages')
 
-            if cell_line_karyotype_created or cell_line_karyotype.is_dirty(check_relationship=True):
+            if cell_line_karyotype_created or cell_line_karyotype.is_dirty():
                 if cell_line_karyotype_created:
                     logger.info('Added cell line karyotype: %s' % cell_line_karyotype)
                 else:
                     logger.info('Updated cell line karyotype: %s' % cell_line_karyotype)
 
-                    cell_line_karyotype.save()
+                cell_line_karyotype.save()
 
-                    return True
+                return True
 
             return False
 
