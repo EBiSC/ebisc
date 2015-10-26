@@ -49,10 +49,8 @@ PassageMethod
 Person
 PhoneCountryCode
 Postcode
-PrimaryCellDevelopmentalStage
 ProteinSource
 SurfaceCoating
-TissueLocation
 Unit
 VectorFreeReprogrammingFactor
 NonIntegratingVector

@@ -16,8 +16,8 @@ from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditio
 class CelllineDerivationResource(ModelResource):
 
     # - primary_cell_type = models.ForeignKey('CellType', verbose_name=_(u'Primary cell type'), null=True, blank=True)
-    # - primary_cell_developmental_stage = models.ForeignKey('PrimaryCellDevelopmentalStage', verbose_name=_(u'Primary cell developmental stage'), null=True, blank=True)
-    # - tissue_procurement_location = models.ForeignKey('TissueLocation', verbose_name=_(u'Location of primary tissue procurement'), null=True, blank=True)
+    # - primary_cell_developmental_stage = models.Charfield(_(u'Primary cell developmental stage'), max_length=45, null=True, blank=True)
+    # - tissue_procurement_location = models.Charfield(_(u'Location of primary tissue procurement'), max_length=45, null=True, blank=True)
     # - tissue_collection_date = models.DateField(_(u'Tissue collection date'), null=True, blank=True)
     # - selection_criteria_for_clones = models.TextField(_(u'Selection criteria for clones'), null=True, blank=True)
     # - xeno_free_conditions = models.NullBooleanField(_(u'Xeno free conditions'), default=None, null=True, blank=True)

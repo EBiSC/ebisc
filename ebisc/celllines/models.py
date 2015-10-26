@@ -436,14 +436,14 @@ class CelllineCultureMediumSupplement(DirtyFieldsMixin, models.Model):
 # -----------------------------------------------------------------------------
 # Cell line Derivation
 
-class CelllineDerivation(models.Model):
+class CelllineDerivation(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='derivation')
 
     primary_cell_type = models.ForeignKey('CellType', verbose_name=_(u'Primary cell type'), null=True, blank=True)
-    primary_cell_developmental_stage = models.ForeignKey('PrimaryCellDevelopmentalStage', verbose_name=_(u'Primary cell developmental stage'), null=True, blank=True)
+    primary_cell_developmental_stage = models.CharField(_(u'Primary cell developmental stage'), max_length=45, null=True, blank=True)
 
-    tissue_procurement_location = models.ForeignKey('TissueLocation', verbose_name=_(u'Location of primary tissue procurement'), null=True, blank=True)
+    tissue_procurement_location = models.CharField(_(u'Location of primary tissue procurement'), max_length=45, null=True, blank=True)
     tissue_collection_date = models.DateField(_(u'Tissue collection date'), null=True, blank=True)
     reprogramming_passage_number = models.CharField(_(u'Passage number reprogrammed'), max_length=10, null=True, blank=True)
 
@@ -459,32 +459,6 @@ class CelllineDerivation(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.id,)
-
-
-class PrimaryCellDevelopmentalStage(models.Model):
-
-    name = models.CharField(_(u'Primary cell developmental stage'), max_length=20, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Primary cell developmental stage')
-        verbose_name_plural = _(u'Primary cell developmental stages')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class TissueLocation(models.Model):
-
-    tissue_location = models.CharField(_(u'Tissue location'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Tissue location')
-        verbose_name_plural = _(u'Tissue locations')
-        ordering = ['tissue_location']
-
-    def __unicode__(self):
-        return u'%s' % (self.tissue_location,)
 
 
 # Reprogramming method
