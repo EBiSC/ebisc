@@ -338,7 +338,7 @@ def parse_ethics(valuef, source, cell_line):
 @inject_valuef
 def parse_integrating_vector(valuef, source, cell_line):
 
-    if valuef('integrating_vector') == 'other':
+    if valuef('integrating_vector') == 'Other':
         if valuef('integrating_vector_other') is not None:
             vector_name = valuef('integrating_vector_other')
         else:
@@ -436,7 +436,7 @@ def get_or_create_molecule(name, kind, catalog, catalog_id):
 @inject_valuef
 def parse_non_integrating_vector(valuef, source, cell_line):
 
-    if valuef('non_integrating_vector') == 'other':
+    if valuef('non_integrating_vector') == 'Other':
         if valuef('non_integrating_vector_other') is not None:
             vector_name = valuef('non_integrating_vector_other')
         else:
