@@ -1001,7 +1001,7 @@ class CelllineValue(models.Model):
 # Genotyping
 
 # Karyotyping
-class CelllineKaryotype(models.Model):
+class CelllineKaryotype(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='karyotype')
 
