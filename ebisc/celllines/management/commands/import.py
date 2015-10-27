@@ -9,6 +9,7 @@ logger = logging.getLogger('management.commands')
 
 DOCS = '''
 Usage:
+    import all
     import hpscreg [--init]
     import lims
     import batches <filename>
@@ -22,6 +23,13 @@ class Command(DocOptCommand):
     help = 'EBISC data importer'
 
     def handle_docopt(self, args):
+
+        if args.get('all'):
+            self.init()
+            importer.hpscreg.run()
+            importer.lims.run()
+            importer.batches.run('var/batches.csv')
+            importer.toelastic.run()
 
         if args.get('hpscreg'):
             if args.get('--init'):
