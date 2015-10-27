@@ -1,6 +1,7 @@
 import os
 import uuid
 import datetime
+from dirtyfields import DirtyFieldsMixin
 
 from django.db import models
 from django.utils.translation import ugettext as _
@@ -161,7 +162,7 @@ class Unit(models.Model):
 # -----------------------------------------------------------------------------
 # Cell line
 
-class Cellline(models.Model):
+class Cellline(DirtyFieldsMixin, models.Model):
 
     ACCEPTED_CHOICES = (
         ('pending', _(u'Pending')),
@@ -345,24 +346,26 @@ class Disease(models.Model):
 # -----------------------------------------------------------------------------
 # Cell line and batch culture conditions
 
-class CelllineCultureConditions(models.Model):
+class CelllineCultureConditions(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
 
-    surface_coating = models.ForeignKey('SurfaceCoating', verbose_name=_(u'Surface coating'), null=True, blank=True)
+    surface_coating = models.CharField(_(u'Surface coating'), max_length=100, null=True, blank=True)
     feeder_cell_type = models.CharField(_(u'Feeder cell type'), max_length=45, null=True, blank=True)
     feeder_cell_id = models.CharField(_(u'Feeder cell id'), max_length=45, null=True, blank=True)
-    passage_method = models.ForeignKey('PassageMethod', verbose_name=_(u'Passage method'), null=True, blank=True)
-    enzymatically = models.ForeignKey('Enzymatically', verbose_name=_(u'Enzymatically'), null=True, blank=True)
-    enzyme_free = models.ForeignKey('EnzymeFree', verbose_name=_(u'Enzyme free'), null=True, blank=True)
+    passage_method = models.CharField(_(u'Passage method'), max_length=100, null=True, blank=True)
+    enzymatically = models.CharField(_(u'Enzymatically'), max_length=45, null=True, blank=True)
+    enzyme_free = models.CharField(_(u'Enzyme free'), max_length=45, null=True, blank=True)
     o2_concentration = models.IntegerField(_(u'O2 concentration'), null=True, blank=True)
     co2_concentration = models.IntegerField(_(u'Co2 concentration'), null=True, blank=True)
     other_culture_environment = models.CharField(_(u'Other culture environment'), max_length=100, null=True, blank=True)
 
-    culture_medium = models.ForeignKey('CultureMedium', verbose_name=_(u'Culture medium'), null=True, blank=True)
+    culture_medium = models.CharField(_(u'Culture medium'), max_length=45, null=True, blank=True)
 
     passage_number_banked = models.CharField(_(u'Passage number banked (pre-EBiSC)'), max_length=10, null=True, blank=True)
     number_of_vials_banked = models.CharField(_(u'No. Vials banked (pre-EBiSC)'), max_length=10, null=True, blank=True)
+    passage_history = models.NullBooleanField(_(u'Passage history (back to reprogramming)'), default=None, null=True, blank=True)
+    culture_history = models.NullBooleanField(_(u'Culture history (methods used)'), default=None, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line culture conditions')
@@ -393,77 +396,12 @@ class BatchCultureConditions(models.Model):
         return u'%s' % (self.id,)
 
 
-class SurfaceCoating(models.Model):
-
-    name = models.CharField(_(u'Surface coating'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Surface coating')
-        verbose_name_plural = _(u'Surface coatings')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class PassageMethod(models.Model):
-
-    name = models.CharField(_(u'Passage method'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Passage method')
-        verbose_name_plural = _(u'Passage methods')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class Enzymatically(models.Model):
-
-    name = models.CharField(_(u'Enzymatically'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Enzymatically')
-        verbose_name_plural = _(u'Enzymatically')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class EnzymeFree(models.Model):
-
-    name = models.CharField(_(u'Enzyme free'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Enzyme free')
-        verbose_name_plural = _(u'Enzyme free')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class CultureMedium(models.Model):
-
-    name = models.CharField(_(u'Culture medium'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Culture medium')
-        verbose_name_plural = _(u'Culture mediums')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class CultureMediumOther(models.Model):
+class CultureMediumOther(DirtyFieldsMixin, models.Model):
 
     cell_line_culture_conditions = models.OneToOneField(CelllineCultureConditions, verbose_name=_(u'Cell line culture conditions'), related_name='culture_medium_other')
 
     base = models.CharField(_(u'Culture medium base'), max_length=45, blank=True)
-    protein_source = models.ForeignKey('ProteinSource', verbose_name=_(u'Protein source'), null=True, blank=True)
+    protein_source = models.CharField(_(u'Protein source'), max_length=45, null=True, blank=True)
     serum_concentration = models.IntegerField(_(u'Serum concentration'), null=True, blank=True)
 
     class Meta:
@@ -475,20 +413,7 @@ class CultureMediumOther(models.Model):
         return u'%s / %s / %s' % (self.base, self.protein_source, self.serum_concentration)
 
 
-class ProteinSource(models.Model):
-
-    name = models.CharField(_(u'Protein source'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Protein source')
-        verbose_name_plural = _(u'Protein sources')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class CelllineCultureMediumSupplement(models.Model):
+class CelllineCultureMediumSupplement(DirtyFieldsMixin, models.Model):
 
     cell_line_culture_conditions = models.ForeignKey(CelllineCultureConditions, verbose_name=_(u'Cell line culture conditions'), related_name='medium_supplements')
 
@@ -511,14 +436,13 @@ class CelllineCultureMediumSupplement(models.Model):
 # -----------------------------------------------------------------------------
 # Cell line Derivation
 
-class CelllineDerivation(models.Model):
+class CelllineDerivation(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='derivation')
 
     primary_cell_type = models.ForeignKey('CellType', verbose_name=_(u'Primary cell type'), null=True, blank=True)
-    primary_cell_developmental_stage = models.ForeignKey('PrimaryCellDevelopmentalStage', verbose_name=_(u'Primary cell developmental stage'), null=True, blank=True)
-
-    tissue_procurement_location = models.ForeignKey('TissueLocation', verbose_name=_(u'Location of primary tissue procurement'), null=True, blank=True)
+    primary_cell_developmental_stage = models.CharField(_(u'Primary cell developmental stage'), max_length=45, null=True, blank=True)
+    tissue_procurement_location = models.CharField(_(u'Location of primary tissue procurement'), max_length=45, null=True, blank=True)
     tissue_collection_date = models.DateField(_(u'Tissue collection date'), null=True, blank=True)
     reprogramming_passage_number = models.CharField(_(u'Passage number reprogrammed'), max_length=10, null=True, blank=True)
 
@@ -534,32 +458,6 @@ class CelllineDerivation(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.id,)
-
-
-class PrimaryCellDevelopmentalStage(models.Model):
-
-    name = models.CharField(_(u'Primary cell developmental stage'), max_length=20, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Primary cell developmental stage')
-        verbose_name_plural = _(u'Primary cell developmental stages')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class TissueLocation(models.Model):
-
-    tissue_location = models.CharField(_(u'Tissue location'), max_length=45, unique=True)
-
-    class Meta:
-        verbose_name = _(u'Tissue location')
-        verbose_name_plural = _(u'Tissue locations')
-        ordering = ['tissue_location']
-
-    def __unicode__(self):
-        return u'%s' % (self.tissue_location,)
 
 
 # Reprogramming method
@@ -590,7 +488,7 @@ class IntegratingVector(models.Model):
         return self.name
 
 
-class CelllineNonIntegratingVector(models.Model):
+class CelllineNonIntegratingVector(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='non_integrating_vector')
     vector = models.ForeignKey(NonIntegratingVector, verbose_name=_(u'Non-integrating vector'), null=True, blank=True)
@@ -605,7 +503,7 @@ class CelllineNonIntegratingVector(models.Model):
         return unicode(self.vector)
 
 
-class CelllineIntegratingVector(models.Model):
+class CelllineIntegratingVector(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='integrating_vector')
     vector = models.ForeignKey(IntegratingVector, verbose_name=_(u'Integrating vector'), null=True, blank=True)
@@ -783,7 +681,7 @@ class UndifferentiatedMorphologyMarkerExpressionProfileMolecule(MarkerMoleculeBa
 # -----------------------------------------------------------------------------
 # Cell line Ethics
 
-class CelllineEthics(models.Model):
+class CelllineEthics(DirtyFieldsMixin, models.Model):
 
     ACCESS_POLICY_CHOICES = (
         ('open_access', 'Open access'),
@@ -1100,88 +998,15 @@ class CelllineValue(models.Model):
 
 
 # -----------------------------------------------------------------------------
-# TODO Genotyping
+# Genotyping
 
-
-class Celllinegenemutations(models.Model):
-
-    genemutationscellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    weblink = models.CharField(_(u'Weblink'), max_length=100, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line gene mutations')
-        verbose_name_plural = _(u'Cell line gene mutations')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class Celllinegeneticmod(models.Model):
-
-    geneticmodcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    celllinegeneticmod = models.CharField(_(u'Cell line genetic mod'), max_length=45, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line genetic mod')
-        verbose_name_plural = _(u'Cell line genetic modes')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class Celllinegenomeseq(models.Model):
-
-    genomeseqcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    celllinegenomeseqlink = models.CharField(_(u'Cell line genome seq link'), max_length=45, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line genome seqence')
-        verbose_name_plural = _(u'Cell line genome seqences')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class Celllinegenotypingother(models.Model):
-
-    genometypothercellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    celllinegenotypingother = models.TextField(_(u'Cell line geno typing other'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line genotyping other')
-        verbose_name_plural = _(u'Cell line genotyping others')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class Celllinehlatyping(models.Model):
-
-    hlatypingcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    celllinehlaclass = models.IntegerField(_(u'Cell line hla class'), null=True, blank=True)
-    celllinehla = models.ForeignKey('Hla', verbose_name=_(u'Hla'), null=True, blank=True)
-    celllinehlaallele1 = models.CharField(_(u'Cell line hla all ele1'), max_length=45, blank=True)
-    celllinehlaallele2 = models.CharField(_(u'Cell line hla all ele2'), max_length=45, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line hla typing')
-        verbose_name_plural = _(u'Cell line hla typing')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class CellLineKaryotype(models.Model):
+# Karyotyping
+class CelllineKaryotype(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='karyotype')
 
     karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
-    karyotype_method = models.ForeignKey('KaryotypeMethod', verbose_name=_(u'Karyotype method'), null=True, blank=True)
+    karyotype_method = models.CharField(_(u'Karyotype method'), max_length=100, null=True, blank=True)
 
     passage_number = models.CharField(_(u'Passage number'), max_length=10, null=True, blank=True)
 
@@ -1194,10 +1019,85 @@ class CellLineKaryotype(models.Model):
         return unicode(self.karyotype)
 
 
-class Celllinesnp(models.Model):
+# Genome-Wide Assays
+class CelllineHlaTyping(models.Model):
 
-    snpcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    weblink = models.CharField(_(u'Weblink'), max_length=45, blank=True)
+    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name="hla_typing")
+    hla_class = models.CharField(_(u'HLA class'), max_length=10, null=True, blank=True)
+    hla = models.CharField(_(u'HLA'), max_length=10, null=True, blank=True)
+    hla_allele_1 = models.CharField(_(u'Cell line HLA allele 1'), max_length=45, null=True, blank=True)
+    hla_allele_2 = models.CharField(_(u'Cell line HLA allele 2'), max_length=45, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line HLA typing')
+        verbose_name_plural = _(u'Cell line HLA typing')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class CelllineStrFingerprinting(models.Model):
+
+    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name="str_fingerprinting")
+    locus = models.CharField(_(u'Locus'), max_length=45, null=True, blank=True)
+    allele1 = models.CharField(_(u'Allele 1'), max_length=45, null=True, blank=True)
+    allele2 = models.CharField(_(u'Allele 2'), max_length=45, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line STR finger printing')
+        verbose_name_plural = _(u'Cell line STR finger printing')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class CelllineGenomeAnalysis(models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genome_analysis')
+    data = models.CharField(_(u'Data'), max_length=100, null=True, blank=True)
+    link = models.URLField(u'Link', null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line genome analysis')
+        verbose_name_plural = _(u'Cell line genome analysis')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+# Disease associated genotype
+class CelllineDiseaseGenotype(models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genotyping_variant')
+
+    allele_carried = models.CharField(_(u'Allele carried through'), max_length=12, null=True, blank=True)
+    cell_line_form = models.CharField(_(u'Is the cell line homozygote or heterozygot for this variant'), max_length=12, null=True, blank=True)
+
+    assembly = models.CharField(_(u'Assembly'), max_length=45, null=True, blank=True)
+    chormosome = models.CharField(_(u'Chormosome'), max_length=45, null=True, blank=True)
+    coordinate = models.CharField(_(u'Coordinate'), max_length=45, null=True, blank=True)
+    reference_allele = models.CharField(_(u'Reference allele'), max_length=45, null=True, blank=True)
+    alternative_allele = models.CharField(_(u'Alternative allele'), max_length=45, null=True, blank=True)
+    protein_sequence_variants = models.CharField(_(u'Protein sequence variants'), max_length=100, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line disease associated genotype')
+        verbose_name_plural = _(u'Cell line disease associated genotypes')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class CelllineGenotypingSNP(models.Model):
+
+    disease_genotype = models.ForeignKey('CelllineDiseaseGenotype', verbose_name=_(u'Cell line disease genotype'), related_name='snps', null=True, blank=True)
+
+    gene_name = models.CharField(_(u'SNP gene name'), max_length=45, null=True, blank=True)
+    chromosomal_position = models.CharField(_(u'SNP choromosomal position'), max_length=45, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line snp')
@@ -1208,89 +1108,159 @@ class Celllinesnp(models.Model):
         return u'%s' % (self.id,)
 
 
-class Celllinesnpdetails(models.Model):
+class CelllineGenotypingRsNumber(models.Model):
 
-    celllinesnp = models.ForeignKey('Celllinesnp', verbose_name=_(u'Cell line snp'), null=True, blank=True)
-    celllinesnpgene = models.CharField(_(u'Cell line snp gene'), max_length=45, blank=True)
-    celllinesnpchromosomalposition = models.CharField(_(u'Cell line snp chromosomal position'), max_length=45, blank=True)
+    disease_genotype = models.ForeignKey('CelllineDiseaseGenotype', verbose_name=_(u'Cell line disease genotype'), related_name='rs_number', null=True, blank=True)
+
+    rs_number = models.CharField(_(u'rs Number'), max_length=12, null=True, blank=True)
+    link = models.URLField(u'Link', null=True, blank=True)
 
     class Meta:
-        verbose_name = _(u'Cell line snp details')
-        verbose_name_plural = _(u'Cell line snp details')
+        verbose_name = _(u'Cell line rs number')
+        verbose_name_plural = _(u'Cell line rs numbers')
         ordering = []
 
     def __unicode__(self):
         return u'%s' % (self.id,)
 
 
-class Celllinesnprslinks(models.Model):
+# Donor genotyping
+class DonorGenotype(models.Model):
 
-    celllinesnp = models.ForeignKey('Celllinesnp', verbose_name=_(u'Cel lline snp'), null=True, blank=True)
-    rsnumber = models.CharField(_(u'Rs number'), max_length=45, blank=True)
-    rslink = models.CharField(_(u'Rs link'), max_length=100, blank=True)
+    donor = models.OneToOneField('Donor', verbose_name=_(u'Donor'), related_name='donor_genotyping')
+
+    allele_carried = models.CharField(_(u'Allele carried through'), max_length=12, null=True, blank=True)
+    homozygous_heterozygous = models.CharField(_(u'Is the donor homozygous or heterozygous for this variant'), max_length=12, null=True, blank=True)
+
+    assembly = models.CharField(_(u'Assembly'), max_length=45, null=True, blank=True)
+    chormosome = models.CharField(_(u'Chormosome'), max_length=45, null=True, blank=True)
+    coordinate = models.CharField(_(u'Coordinate'), max_length=45, null=True, blank=True)
+    reference_allele = models.CharField(_(u'Reference allele'), max_length=45, null=True, blank=True)
+    alternative_allele = models.CharField(_(u'Alternative allele'), max_length=45, null=True, blank=True)
+    protein_sequence_variants = models.CharField(_(u'Protein sequence variants'), max_length=100, null=True, blank=True)
 
     class Meta:
-        verbose_name = _(u'Cell line snp Rs links')
-        verbose_name_plural = _(u'Cell line snp Rs links')
+        verbose_name = _(u'Donor Genotyping')
+        verbose_name_plural = _(u'Donor Genotyping')
         ordering = []
 
     def __unicode__(self):
         return u'%s' % (self.id,)
 
 
-class Celllinestrfingerprinting(models.Model):
+class DonorGenotypingSNP(models.Model):
 
-    strfpcellline = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-    locus = models.ForeignKey('Strfplocus', verbose_name=_(u'STR fplocus'), null=True, blank=True)
-    allele1 = models.CharField(_(u'All ele1'), max_length=45, blank=True)
-    allele2 = models.CharField(_(u'All ele2'), max_length=45, blank=True)
+    donor_genotype = models.ForeignKey('DonorGenotype', verbose_name=_(u'Donor Genotype'), related_name='donor_snps')
+
+    gene_name = models.CharField(_(u'SNP gene name'), max_length=45)
+    chromosomal_position = models.CharField(_(u'SNP choromosomal position'), max_length=45, null=True, blank=True)
 
     class Meta:
-        verbose_name = _(u'Cell line STR finger printing')
-        verbose_name_plural = _(u'Cell line STR finger printings')
+        verbose_name = _(u'Donor snp')
+        verbose_name_plural = _(u'Donor snps')
         ordering = []
 
     def __unicode__(self):
         return u'%s' % (self.id,)
 
 
-class Hla(models.Model):
+class DonorGenotypingRsNumber(models.Model):
 
-    hla = models.CharField(_(u'HLA'), max_length=45, blank=True)
+    donor_genotype = models.ForeignKey('DonorGenotype', verbose_name=_(u'Donor Genotype'), related_name='donor_rs_number')
 
-    class Meta:
-        verbose_name = _(u'HLA')
-        verbose_name_plural = _(u'HLAs')
-        ordering = ['hla']
-
-    def __unicode__(self):
-        return u'%s' % (self.hla,)
-
-
-class KaryotypeMethod(models.Model):
-
-    name = models.CharField(_(u'Karyotype method'), max_length=45, unique=True)
+    rs_number = models.CharField(_(u'rs Number'), max_length=12)
+    link = models.URLField(u'Link', null=True, blank=True)
 
     class Meta:
-        verbose_name = _(u'Karyotype method')
-        verbose_name_plural = _(u'Karyotype methods')
-        ordering = ['name']
+        verbose_name = _(u'Donor rs number')
+        verbose_name_plural = _(u'Donor rs numbers')
+        ordering = []
 
     def __unicode__(self):
-        return self.name
+        return u'%s' % (self.id,)
 
 
-class Strfplocus(models.Model):
+# Genetic modification
+class CelllineGeneticModification(models.Model):
 
-    strfplocus = models.CharField(_(u'STR FP locus'), max_length=45, blank=True)
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification')
+    protocol = models.FileField(_(u'Protocol'), upload_to=upload_to, null=True, blank=True)
 
     class Meta:
-        verbose_name = _(u'STR FP locus')
-        verbose_name_plural = _(u'STR FP loci')
-        ordering = ['strfplocus']
+        verbose_name = _(u'Cell line genetic modification')
+        verbose_name_plural = _(u'Cell line genetic modifications')
+        ordering = []
 
     def __unicode__(self):
-        return u'%s' % (self.strfplocus,)
+        return u'%s' % (self.id,)
+
+
+class GeneticModificationTransgeneExpression(models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_transgene_expression')
+    genes = models.ManyToManyField(Molecule, blank=True)
+    delivery_method = models.CharField(_(u'Delivery method'), max_length=45, null=True, blank=True)
+    virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
+    transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Transgene Expression')
+        verbose_name_plural = _(u'Genetic modifications - Transgene Expression')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class GeneticModificationGeneKnockOut(models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_gene_knock_out')
+    target_genes = models.ManyToManyField(Molecule, blank=True)
+    delivery_method = models.CharField(_(u'Delivery method'), max_length=45, null=True, blank=True)
+    virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
+    transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Gene knock-out')
+        verbose_name_plural = _(u'Genetic modifications - Gene knock-out')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class GeneticModificationGeneKnockIn(models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_gene_knock_in')
+    target_genes = models.ManyToManyField(Molecule, blank=True, related_name='target_genes')
+    transgenes = models.ManyToManyField(Molecule, blank=True, related_name='transgenes')
+    delivery_method = models.CharField(_(u'Delivery method'), max_length=45, null=True, blank=True)
+    virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
+    transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Gene knock-in')
+        verbose_name_plural = _(u'Genetic modifications - Gene knock-in')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class GeneticModificationIsogenic(models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_isogenic')
+    target_locus = models.ManyToManyField(Molecule, blank=True)
+    change_type = models.CharField(_(u'Type of change'), max_length=45, null=True, blank=True)
+    modified_sequence = models.CharField(_(u'Modified sequence'), max_length=100, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Isogenic modification')
+        verbose_name_plural = _(u'Genetic modifications - Isogenic modification')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
 
 
 # -----------------------------------------------------------------------------

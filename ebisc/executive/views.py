@@ -21,13 +21,13 @@ def dashboard(request):
     COLUMNS = [
         ('biosamplesID', 'Biosamples ID', 'biosamples_id'),
         ('cellLineName', 'Cell line Name', 'name'),
+        ('cellLineAlternativeNames', 'Alternative Names', 'alternative_names'),
         ('disease', 'Disease', 'primary_disease'),
-        ('registrationDate', 'Date of Registration', None),
         ('depositor', 'Depositor', 'generator__name'),
         ('batches', 'Batches', None),
         ('quantity', 'QTY', None),
         ('sold', 'Sold', None),
-        ('accepted', 'Accepted', 'accepted'),
+        # ('accepted', 'Accepted', 'accepted'),
     ]
 
     SORT_COLUMNS = dict([(x[0], x[2]) for x in COLUMNS])

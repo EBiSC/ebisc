@@ -1,3 +1,0 @@
-IDCELLLINESTATUS,CELLLINESTATUS
-1,Available
-2,Hot Start cell line (not available)

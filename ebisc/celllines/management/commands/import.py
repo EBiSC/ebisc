@@ -10,7 +10,6 @@ logger = logging.getLogger('management.commands')
 DOCS = '''
 Usage:
     import hpscreg [--init]
-    import hotstart [--init] <directory>
     import lims
     import batches <filename>
     import toelastic
@@ -28,11 +27,6 @@ class Command(DocOptCommand):
             if args.get('--init'):
                 self.init()
             importer.hpscreg.run()
-
-        if args.get('hotstart'):
-            if args.get('--init'):
-                self.init()
-            importer.hotstart.run(args.get('<directory>'))
 
         if args.get('lims'):
             logger.info('Synchronizing batch data with LIMS')
