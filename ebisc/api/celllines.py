@@ -284,7 +284,7 @@ class CelllineResource(ModelResource):
 
         if hasattr(bundle.obj, 'non_integrating_vector'):
 
-            res = {'type': 'non-integrating vector'}
+            res = {'type': 'Non-integrating vector'}
 
             if bundle.obj.non_integrating_vector.vector:
                 res['data'] = {'vector': bundle.obj.non_integrating_vector.vector}
@@ -293,7 +293,7 @@ class CelllineResource(ModelResource):
 
         elif hasattr(bundle.obj, 'integrating_vector'):
 
-            res = {'type': 'integrating vector'}
+            res = {'type': 'Integrating vector'}
 
             if bundle.obj.integrating_vector.vector:
                 res['data'] = {

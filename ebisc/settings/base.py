@@ -18,6 +18,7 @@ SECRET_KEY = '@!7ju$b1*1c5!dihak)cw3ao1ema&2quw3s*9l#&8^v8ob%gw1'
 
 ADMINS = (
     ('Joh Dokler', 'joh.dokler@gmail.com'),
+    ('Maja Brajnik', 'maja.brajnik@gmail.com'),
 )
 
 # -----------------------------------------------------------------------------
