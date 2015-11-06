@@ -583,8 +583,6 @@ class CelllineCharacterization(models.Model):
         return unicode(self.cell_line)
 
 
-# Undifferentiated cells
-
 class MarkerMoleculeBase(models.Model):
 
     RESULT_CHOICES = (
@@ -593,7 +591,8 @@ class MarkerMoleculeBase(models.Model):
         ('nd', 'n.d.'),
     )
 
-    molecule = models.ForeignKey(Molecule)
+    # molecule = models.ForeignKey(Molecule) TODO
+    molecule = models.CharField(u'Molecule', max_length=25)
     result = models.CharField(u'Result', max_length=5, choices=RESULT_CHOICES)
 
     class Meta:
@@ -602,6 +601,8 @@ class MarkerMoleculeBase(models.Model):
         verbose_name_plural = _(u'Marker molecules')
         ordering = ['molecule']
 
+
+# Undifferentiated cells
 
 class UndifferentiatedMorphologyMarkerImune(models.Model):
 
@@ -1262,7 +1263,7 @@ class GeneticModificationIsogenic(models.Model):
     def __unicode__(self):
         return u'%s' % (self.id,)
 
-
+# -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 # TODO Cell line differentation 2
 

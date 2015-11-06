@@ -1007,12 +1007,20 @@ def parse_characterization_markers(valuef, source, cell_line):
     def aux_molecule_result(marker, marker_molecule_model, string):
 
         if len(string.split('###')) == 2:
-            # TODO
-            pass
+            (molecule_name, result) = string.split('###')
+            try:
+                molecule = molecule_name
+                marker_molecule_model(
+                    marker=marker,
+                    molecule=molecule,
+                    result=result).save()
+            except InvalidMoleculeDataException:
+                pass
         else:
             (molecule_catalog_id, result, molecule_name, molecule_catalog, molecule_kind) = string.split('###')
             try:
-                molecule = get_or_create_molecule(molecule_name, molecule_kind, molecule_catalog, molecule_catalog_id)
+                # molecule = get_or_create_molecule(molecule_name, molecule_kind, molecule_catalog, molecule_catalog_id)
+                molecule = molecule_name
                 marker_molecule_model(
                     marker=marker,
                     molecule=molecule,
@@ -1071,5 +1079,6 @@ def parse_characterization_markers(valuef, source, cell_line):
             aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_rna_sequencing_marker'))
         elif valuef('undiff_exprof_proteomics_marker'):
             aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_proteomics_marker'))
+
 
 # -----------------------------------------------------------------------------
