@@ -27,8 +27,8 @@ class Command(DocOptCommand):
         if args.get('all'):
             self.init()
             importer.hpscreg.run()
-            importer.lims.run()
             importer.batches.run('var/batches.csv')
+            importer.lims.run()
             importer.toelastic.run()
 
         if args.get('hpscreg'):
