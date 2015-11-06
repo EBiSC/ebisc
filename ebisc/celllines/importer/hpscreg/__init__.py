@@ -25,7 +25,7 @@ def run():
     if cellline_ids is None:
         return
 
-    # for cellline_id in [id for id in cellline_ids if id == 'UKKi009-A']:
+    # for cellline_id in [id for id in cellline_ids if id == 'UKKi009-B']:
     for cellline_id in [id for id in cellline_ids]:
         logger.info('Importing data for cell line %s' % cellline_id)
         json = request_get(settings.HPSCREG['cellline_url'] + cellline_id)

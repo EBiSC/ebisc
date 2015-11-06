@@ -39,7 +39,7 @@ DocumentType
 Donor
 Enzymatically
 EnzymeFree
-Germlayer
+GermLayer
 Hla
 KaryotypeMethod
 Morphologymethod
@@ -73,8 +73,6 @@ SpontaneousDifferentiationPotency
 DirectedDifferentiationPotency
 EmbryoidBodyDifferentiationPotency
 TeratomaFormationPotency
-Marker
-Celllinediffpotency
-Celllinediffpotencymarker
-Celllinediffpotencymolecule
-Celllinemarker
+CelllineDifferentiationPotency
+CelllineDifferentiationPotencyMarker
+CelllineDifferentiationPotencyMolecule
