@@ -210,12 +210,10 @@ class CelllineBatchResource(ModelResource):
         if not bundle.obj.certificate_of_analysis:
             return None
         else:
-            res = {
-                'file': bundle.obj.certificate_of_analysis,
+            return {
+                'file': bundle.obj.certificate_of_analysis.url,
                 'md5': bundle.obj.certificate_of_analysis_md5,
             }
-
-            return res
 
 
 # -----------------------------------------------------------------------------
