@@ -7,7 +7,7 @@ from fabric.contrib.project import rsync_project
 
 SLUG = 'ebisc'
 STORAGE = 'var/media/'
-DESTDIR = '/var/projects/projects/%s/' % SLUG
+DESTDIR = '/var/projects/%s/' % SLUG
 
 env.port = 65022
 env.forward_agent = True
