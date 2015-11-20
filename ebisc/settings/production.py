@@ -3,9 +3,9 @@ from .base import *
 DEBUG = False
 TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = ['ebisc-prod.douglasconnect.com']
+ALLOWED_HOSTS = ['ebisc.douglasconnect.com']
 
-SERVER_EMAIL = 'EBiSC Production <joh@douglasconnect.com>'
+SERVER_EMAIL = 'EBiSC <www@douglasconnect.com>'
 
 # -----------------------------------------------------------------------------
 # Database

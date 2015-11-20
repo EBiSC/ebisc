@@ -7,7 +7,7 @@ from fabric.contrib.project import rsync_project
 
 SLUG = 'ebisc'
 STORAGE = 'var/media/'
-DESTDIR = '/home/www/projects/%s/' % SLUG
+DESTDIR = '/var/projects/projects/%s/' % SLUG
 
 env.port = 65022
 env.forward_agent = True
@@ -15,9 +15,8 @@ env.shell = '/bin/sh -c'
 env.activate = '. %s/var/virtualenv/bin/activate' % DESTDIR
 
 env.roledefs = {
-    'develop': ['www@uwsgi'],
+    'production': ['www@ebisc.douglasconnect.com'],
     'staging': ['www@ebisc-stage.douglasconnect.com'],
-    'production': ['www@ebisc-prod.douglasconnect.com'],
 }
 
 
