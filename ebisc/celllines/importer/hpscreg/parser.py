@@ -168,9 +168,11 @@ def parse_disease(valuef, source):
         try:
             disease, created = Disease.objects.update_or_create(
                 icdcode=valuef('disease_doid'),
-                purl=valuef('disease_purl'),
                 disease=valuef('disease_doid_name'),
-                defaults={'synonyms': synonyms}
+                defaults={
+                    'synonyms': synonyms,
+                    'purl': valuef('disease_purl'),
+                }
             )
         except IntegrityError, e:
             logger.warn(format_integrity_error(e))
