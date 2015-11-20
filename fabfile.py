@@ -15,6 +15,7 @@ env.shell = '/bin/sh -c'
 env.activate = '. %s/var/virtualenv/bin/activate' % DESTDIR
 
 env.roledefs = {
+    'develop': ['www@ebisc.douglasconnect.com'],
     'staging': ['www@ebisc-stage.douglasconnect.com'],
     'production': ['www@ebisc-prod.douglasconnect.com'],
 }

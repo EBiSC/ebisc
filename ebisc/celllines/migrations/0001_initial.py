@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations, models
+import dirtyfields.dirtyfields
 import django.contrib.postgres.fields
+import ebisc.celllines.models
 
 
 class Migration(migrations.Migration):
@@ -27,7 +29,12 @@ class Migration(migrations.Migration):
             name='BatchCultureConditions',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('culture_medium', models.CharField(max_length=100, null=True, verbose_name='Medium', blank=True)),
                 ('passage_method', models.CharField(max_length=100, null=True, verbose_name='Passage method', blank=True)),
+                ('matrix', models.CharField(max_length=100, null=True, verbose_name='Matrix', blank=True)),
+                ('o2_concentration', models.CharField(max_length=12, null=True, verbose_name='O2 Concentration', blank=True)),
+                ('co2_concentration', models.CharField(max_length=12, null=True, verbose_name='CO2 Concentration', blank=True)),
+                ('temperature', models.CharField(max_length=12, null=True, verbose_name='Temperature', blank=True)),
             ],
             options={
                 'ordering': [],
@@ -45,13 +52,20 @@ class Migration(migrations.Migration):
                 ('biosamples_id', models.CharField(unique=True, max_length=12, verbose_name='Biosamples ID')),
                 ('hescreg_id', models.CharField(max_length=10, unique=True, null=True, verbose_name='hESCreg ID', blank=True)),
                 ('ecacc_id', models.CharField(max_length=10, unique=True, null=True, verbose_name='ECACC ID', blank=True)),
+                ('primary_disease_diagnosis', models.CharField(max_length=12, null=True, verbose_name='Disease diagnosis', blank=True)),
                 ('primary_disease_stage', models.CharField(max_length=100, null=True, verbose_name='Disease stage', blank=True)),
+                ('disease_associated_phenotypes', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=500), null=True, verbose_name='Disease associated phenotypes', size=None)),
+                ('affected_status', models.CharField(max_length=12, null=True, verbose_name='Affected status', blank=True)),
+                ('family_history', models.CharField(max_length=500, null=True, verbose_name='Family history', blank=True)),
+                ('medical_history', models.CharField(max_length=500, null=True, verbose_name='Medical history', blank=True)),
+                ('clinical_information', models.CharField(max_length=500, null=True, verbose_name='Clinical information', blank=True)),
             ],
             options={
                 'ordering': ['biosamples_id'],
                 'verbose_name': 'Cell line',
                 'verbose_name_plural': 'Cell lines',
             },
+            bases=(dirtyfields.dirtyfields.DirtyFieldsMixin, models.Model),
         ),
         migrations.CreateModel(
             name='CelllineAliquot',
@@ -71,17 +85,33 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('biosamples_id', models.CharField(unique=True, max_length=12, verbose_name='Biosamples ID')),
                 ('batch_id', models.CharField(max_length=12, verbose_name='Batch ID')),
-                ('passage_number', models.IntegerField(null=True, verbose_name='Passage number', blank=True)),
-                ('cells_per_vial', models.CharField(max_length=50, null=True, verbose_name='Cells per vial', blank=True)),
                 ('vials_at_roslin', models.IntegerField(null=True, verbose_name='Vials at Central facility', blank=True)),
                 ('vials_shipped_to_ecacc', models.IntegerField(null=True, verbose_name='Vials shipped to ECACC', blank=True)),
                 ('vials_shipped_to_fraunhoffer', models.IntegerField(null=True, verbose_name='Vials shipped to Fraunhoffer', blank=True)),
+                ('certificate_of_analysis', models.FileField(upload_to=ebisc.celllines.models.upload_to, null=True, verbose_name='Certificate of analysis', blank=True)),
+                ('certificate_of_analysis_md5', models.CharField(max_length=100, null=True, verbose_name='Certificate of analysis md5', blank=True)),
                 ('cell_line', models.ForeignKey(related_name='batches', verbose_name='Cell line', to='celllines.Cellline')),
             ],
             options={
                 'ordering': ['biosamples_id'],
                 'verbose_name': 'Cell line batch',
                 'verbose_name_plural': 'Cell line batches',
+            },
+        ),
+        migrations.CreateModel(
+            name='CelllineBatchImages',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('image_file', models.FileField(upload_to=ebisc.celllines.models.upload_to, verbose_name='Image file')),
+                ('image_md5', models.CharField(max_length=100, verbose_name='Image file md5')),
+                ('magnification', models.CharField(max_length=10, null=True, verbose_name='Magnification', blank=True)),
+                ('time_point', models.CharField(max_length=100, null=True, verbose_name='Time point', blank=True)),
+                ('batch', models.ForeignKey(related_name='images', verbose_name='Cell line Batch images', to='celllines.CelllineBatch')),
+            ],
+            options={
+                'ordering': [],
+                'verbose_name': 'Cell line batch image',
+                'verbose_name_plural': 'Cell line batch images',
             },
         ),
         migrations.CreateModel(
@@ -106,13 +136,20 @@ class Migration(migrations.Migration):
             name='CelllineCultureConditions',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('surface_coating', models.CharField(max_length=100, null=True, verbose_name='Surface coating', blank=True)),
                 ('feeder_cell_type', models.CharField(max_length=45, null=True, verbose_name='Feeder cell type', blank=True)),
                 ('feeder_cell_id', models.CharField(max_length=45, null=True, verbose_name='Feeder cell id', blank=True)),
+                ('passage_method', models.CharField(max_length=100, null=True, verbose_name='Passage method', blank=True)),
+                ('enzymatically', models.CharField(max_length=45, null=True, verbose_name='Enzymatically', blank=True)),
+                ('enzyme_free', models.CharField(max_length=45, null=True, verbose_name='Enzyme free', blank=True)),
                 ('o2_concentration', models.IntegerField(null=True, verbose_name='O2 concentration', blank=True)),
                 ('co2_concentration', models.IntegerField(null=True, verbose_name='Co2 concentration', blank=True)),
                 ('other_culture_environment', models.CharField(max_length=100, null=True, verbose_name='Other culture environment', blank=True)),
+                ('culture_medium', models.CharField(max_length=45, null=True, verbose_name='Culture medium', blank=True)),
                 ('passage_number_banked', models.CharField(max_length=10, null=True, verbose_name='Passage number banked (pre-EBiSC)', blank=True)),
                 ('number_of_vials_banked', models.CharField(max_length=10, null=True, verbose_name='No. Vials banked (pre-EBiSC)', blank=True)),
+                ('passage_history', models.NullBooleanField(default=None, verbose_name='Passage history (back to reprogramming)')),
+                ('culture_history', models.NullBooleanField(default=None, verbose_name='Culture history (methods used)')),
                 ('cell_line', models.OneToOneField(verbose_name='Cell line', to='celllines.Cellline')),
             ],
             options={
@@ -120,6 +157,7 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Cell line culture conditions',
                 'verbose_name_plural': 'Cell line culture conditions',
             },
+            bases=(dirtyfields.dirtyfields.DirtyFieldsMixin, models.Model),
         ),
         migrations.CreateModel(
             name='CelllineCultureMediumSupplement',
@@ -134,24 +172,28 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Cell line culture supplements',
                 'verbose_name_plural': 'Cell line culture supplements',
             },
+            bases=(dirtyfields.dirtyfields.DirtyFieldsMixin, models.Model),
         ),
         migrations.CreateModel(
             name='CelllineDerivation',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('primary_cell_developmental_stage', models.CharField(max_length=45, null=True, verbose_name='Primary cell developmental stage', blank=True)),
+                ('tissue_procurement_location', models.CharField(max_length=45, null=True, verbose_name='Location of primary tissue procurement', blank=True)),
                 ('tissue_collection_date', models.DateField(null=True, verbose_name='Tissue collection date', blank=True)),
                 ('reprogramming_passage_number', models.CharField(max_length=10, null=True, verbose_name='Passage number reprogrammed', blank=True)),
                 ('selection_criteria_for_clones', models.TextField(null=True, verbose_name='Selection criteria for clones', blank=True)),
                 ('xeno_free_conditions', models.NullBooleanField(default=None, verbose_name='Xeno free conditions')),
                 ('derived_under_gmp', models.NullBooleanField(default=None, verbose_name='Derived under gmp')),
                 ('available_as_clinical_grade', models.NullBooleanField(default=None, verbose_name='Available as clinical grade')),
-                ('cell_line', models.OneToOneField(null=True, blank=True, to='celllines.Cellline', verbose_name='Cell line')),
+                ('cell_line', models.OneToOneField(related_name='derivation', verbose_name='Cell line', to='celllines.Cellline')),
             ],
             options={
                 'ordering': [],
                 'verbose_name': 'Cell line derivation',
                 'verbose_name_plural': 'Cell line derivations',
             },
+            bases=(dirtyfields.dirtyfields.DirtyFieldsMixin, models.Model),
         ),
         migrations.CreateModel(
             name='CellLineDifferentiationPotency',
@@ -188,6 +230,26 @@ class Migration(migrations.Migration):
                 'ordering': [],
                 'verbose_name': 'Cell line differentiation potency molecule',
                 'verbose_name_plural': 'Cell line differentiation potency molecules',
+            },
+        ),
+        migrations.CreateModel(
+            name='CelllineDiseaseGenotype',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('allele_carried', models.CharField(max_length=12, null=True, verbose_name='Allele carried through', blank=True)),
+                ('cell_line_form', models.CharField(max_length=12, null=True, verbose_name='Is the cell line homozygote or heterozygot for this variant', blank=True)),
+                ('assembly', models.CharField(max_length=45, null=True, verbose_name='Assembly', blank=True)),
+                ('chormosome', models.CharField(max_length=45, null=True, verbose_name='Chormosome', blank=True)),
+                ('coordinate', models.CharField(max_length=45, null=True, verbose_name='Coordinate', blank=True)),
+                ('reference_allele', models.CharField(max_length=45, null=True, verbose_name='Reference allele', blank=True)),
+                ('alternative_allele', models.CharField(max_length=45, null=True, verbose_name='Alternative allele', blank=True)),
+                ('protein_sequence_variants', models.CharField(max_length=100, null=True, verbose_name='Protein sequence variants', blank=True)),
+                ('cell_line', models.OneToOneField(related_name='genotyping_variant', verbose_name='Cell line', to='celllines.Cellline')),
+            ],
+            options={
+                'ordering': [],
+                'verbose_name': 'Cell line disease associated genotype',
+                'verbose_name_plural': 'Cell line disease associated genotypes',
             },
         ),
         migrations.CreateModel(
@@ -259,71 +321,77 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Cell line ethics',
                 'verbose_name_plural': 'Cell line ethics',
             },
+            bases=(dirtyfields.dirtyfields.DirtyFieldsMixin, models.Model),
         ),
         migrations.CreateModel(
-            name='Celllinegenemutations',
+            name='CelllineGeneticModification',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('weblink', models.CharField(max_length=100, verbose_name='Weblink', blank=True)),
-                ('genemutationscellline', models.ForeignKey(verbose_name='Cell line', blank=True, to='celllines.Cellline', null=True)),
+                ('protocol', models.FileField(upload_to=ebisc.celllines.models.upload_to, null=True, verbose_name='Protocol', blank=True)),
+                ('cell_line', models.OneToOneField(related_name='genetic_modification', verbose_name='Cell line', to='celllines.Cellline')),
             ],
             options={
                 'ordering': [],
-                'verbose_name': 'Cell line gene mutations',
-                'verbose_name_plural': 'Cell line gene mutations',
+                'verbose_name': 'Cell line genetic modification',
+                'verbose_name_plural': 'Cell line genetic modifications',
             },
         ),
         migrations.CreateModel(
-            name='Celllinegeneticmod',
+            name='CelllineGenomeAnalysis',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('celllinegeneticmod', models.CharField(max_length=45, verbose_name='Cell line genetic mod', blank=True)),
-                ('geneticmodcellline', models.ForeignKey(verbose_name='Cell line', blank=True, to='celllines.Cellline', null=True)),
+                ('data', models.CharField(max_length=100, null=True, verbose_name='Data', blank=True)),
+                ('link', models.URLField(null=True, verbose_name='Link', blank=True)),
+                ('cell_line', models.OneToOneField(related_name='genome_analysis', verbose_name='Cell line', to='celllines.Cellline')),
             ],
             options={
                 'ordering': [],
-                'verbose_name': 'Cell line genetic mod',
-                'verbose_name_plural': 'Cell line genetic modes',
+                'verbose_name': 'Cell line genome analysis',
+                'verbose_name_plural': 'Cell line genome analysis',
             },
         ),
         migrations.CreateModel(
-            name='Celllinegenomeseq',
+            name='CelllineGenotypingRsNumber',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('celllinegenomeseqlink', models.CharField(max_length=45, verbose_name='Cell line genome seq link', blank=True)),
-                ('genomeseqcellline', models.ForeignKey(verbose_name='Cell line', blank=True, to='celllines.Cellline', null=True)),
+                ('rs_number', models.CharField(max_length=12, null=True, verbose_name='rs Number', blank=True)),
+                ('link', models.URLField(null=True, verbose_name='Link', blank=True)),
+                ('disease_genotype', models.ForeignKey(related_name='rs_number', verbose_name='Cell line disease genotype', blank=True, to='celllines.CelllineDiseaseGenotype', null=True)),
             ],
             options={
                 'ordering': [],
-                'verbose_name': 'Cell line genome seqence',
-                'verbose_name_plural': 'Cell line genome seqences',
+                'verbose_name': 'Cell line rs number',
+                'verbose_name_plural': 'Cell line rs numbers',
             },
         ),
         migrations.CreateModel(
-            name='Celllinegenotypingother',
+            name='CelllineGenotypingSNP',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('celllinegenotypingother', models.TextField(null=True, verbose_name='Cell line geno typing other', blank=True)),
-                ('genometypothercellline', models.ForeignKey(verbose_name='Cell line', blank=True, to='celllines.Cellline', null=True)),
+                ('gene_name', models.CharField(max_length=45, null=True, verbose_name='SNP gene name', blank=True)),
+                ('chromosomal_position', models.CharField(max_length=45, null=True, verbose_name='SNP choromosomal position', blank=True)),
+                ('disease_genotype', models.ForeignKey(related_name='snps', verbose_name='Cell line disease genotype', blank=True, to='celllines.CelllineDiseaseGenotype', null=True)),
             ],
             options={
                 'ordering': [],
-                'verbose_name': 'Cell line genotyping other',
-                'verbose_name_plural': 'Cell line genotyping others',
+                'verbose_name': 'Cell line snp',
+                'verbose_name_plural': 'Cell line snps',
             },
         ),
         migrations.CreateModel(
-            name='Celllinehlatyping',
+            name='CelllineHlaTyping',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('celllinehlaclass', models.IntegerField(null=True, verbose_name='Cell line hla class', blank=True)),
-                ('celllinehlaallele1', models.CharField(max_length=45, verbose_name='Cell line hla all ele1', blank=True)),
-                ('celllinehlaallele2', models.CharField(max_length=45, verbose_name='Cell line hla all ele2', blank=True)),
+                ('hla_class', models.CharField(max_length=10, null=True, verbose_name='HLA class', blank=True)),
+                ('hla', models.CharField(max_length=10, null=True, verbose_name='HLA', blank=True)),
+                ('hla_allele_1', models.CharField(max_length=45, null=True, verbose_name='Cell line HLA allele 1', blank=True)),
+                ('hla_allele_2', models.CharField(max_length=45, null=True, verbose_name='Cell line HLA allele 2', blank=True)),
+                ('cell_line', models.ForeignKey(related_name='hla_typing', verbose_name='Cell line', to='celllines.Cellline')),
             ],
             options={
                 'ordering': [],
-                'verbose_name': 'Cell line hla typing',
-                'verbose_name_plural': 'Cell line hla typing',
+                'verbose_name': 'Cell line HLA typing',
+                'verbose_name_plural': 'Cell line HLA typing',
             },
         ),
         migrations.CreateModel(
@@ -338,12 +406,14 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Cell line integrating vector',
                 'verbose_name_plural': 'Cell line integrating vectors',
             },
+            bases=(dirtyfields.dirtyfields.DirtyFieldsMixin, models.Model),
         ),
         migrations.CreateModel(
-            name='CellLineKaryotype',
+            name='CelllineKaryotype',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('karyotype', models.CharField(max_length=500, null=True, verbose_name='Karyotype', blank=True)),
+                ('karyotype_method', models.CharField(max_length=100, null=True, verbose_name='Karyotype method', blank=True)),
                 ('passage_number', models.CharField(max_length=10, null=True, verbose_name='Passage number', blank=True)),
                 ('cell_line', models.OneToOneField(related_name='karyotype', verbose_name='Cell line', to='celllines.Cellline')),
             ],
@@ -352,6 +422,7 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Cell line karyotype',
                 'verbose_name_plural': 'Cell line karyotypes',
             },
+            bases=(dirtyfields.dirtyfields.DirtyFieldsMixin, models.Model),
         ),
         migrations.CreateModel(
             name='CellLineMarker',
@@ -375,6 +446,7 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Cell line non integrating vector',
                 'verbose_name_plural': 'Cell line non integrating vectors',
             },
+            bases=(dirtyfields.dirtyfields.DirtyFieldsMixin, models.Model),
         ),
         migrations.CreateModel(
             name='CelllineOrganization',
@@ -417,47 +489,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Celllinesnp',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('weblink', models.CharField(max_length=45, verbose_name='Weblink', blank=True)),
-                ('snpcellline', models.ForeignKey(verbose_name='Cell line', blank=True, to='celllines.Cellline', null=True)),
-            ],
-            options={
-                'ordering': [],
-                'verbose_name': 'Cell line snp',
-                'verbose_name_plural': 'Cell line snps',
-            },
-        ),
-        migrations.CreateModel(
-            name='Celllinesnpdetails',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('celllinesnpgene', models.CharField(max_length=45, verbose_name='Cell line snp gene', blank=True)),
-                ('celllinesnpchromosomalposition', models.CharField(max_length=45, verbose_name='Cell line snp chromosomal position', blank=True)),
-                ('celllinesnp', models.ForeignKey(verbose_name='Cell line snp', blank=True, to='celllines.Celllinesnp', null=True)),
-            ],
-            options={
-                'ordering': [],
-                'verbose_name': 'Cell line snp details',
-                'verbose_name_plural': 'Cell line snp details',
-            },
-        ),
-        migrations.CreateModel(
-            name='Celllinesnprslinks',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('rsnumber', models.CharField(max_length=45, verbose_name='Rs number', blank=True)),
-                ('rslink', models.CharField(max_length=100, verbose_name='Rs link', blank=True)),
-                ('celllinesnp', models.ForeignKey(verbose_name='Cel lline snp', blank=True, to='celllines.Celllinesnp', null=True)),
-            ],
-            options={
-                'ordering': [],
-                'verbose_name': 'Cell line snp Rs links',
-                'verbose_name_plural': 'Cell line snp Rs links',
-            },
-        ),
-        migrations.CreateModel(
             name='CelllineStatus',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -470,16 +501,18 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Celllinestrfingerprinting',
+            name='CelllineStrFingerprinting',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('allele1', models.CharField(max_length=45, verbose_name='All ele1', blank=True)),
-                ('allele2', models.CharField(max_length=45, verbose_name='All ele2', blank=True)),
+                ('locus', models.CharField(max_length=45, null=True, verbose_name='Locus', blank=True)),
+                ('allele1', models.CharField(max_length=45, null=True, verbose_name='Allele 1', blank=True)),
+                ('allele2', models.CharField(max_length=45, null=True, verbose_name='Allele 2', blank=True)),
+                ('cell_line', models.ForeignKey(related_name='str_fingerprinting', verbose_name='Cell line', to='celllines.Cellline')),
             ],
             options={
                 'ordering': [],
                 'verbose_name': 'Cell line STR finger printing',
-                'verbose_name_plural': 'Cell line STR finger printings',
+                'verbose_name_plural': 'Cell line STR finger printing',
             },
         ),
         migrations.CreateModel(
@@ -568,22 +601,11 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='CultureMedium',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=45, verbose_name='Culture medium')),
-            ],
-            options={
-                'ordering': ['name'],
-                'verbose_name': 'Culture medium',
-                'verbose_name_plural': 'Culture mediums',
-            },
-        ),
-        migrations.CreateModel(
             name='CultureMediumOther',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('base', models.CharField(max_length=45, verbose_name='Culture medium base', blank=True)),
+                ('protein_source', models.CharField(max_length=45, null=True, verbose_name='Protein source', blank=True)),
                 ('serum_concentration', models.IntegerField(null=True, verbose_name='Serum concentration', blank=True)),
                 ('cell_line_culture_conditions', models.OneToOneField(related_name='culture_medium_other', verbose_name='Cell line culture conditions', to='celllines.CelllineCultureConditions')),
             ],
@@ -592,12 +614,14 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Culture medium',
                 'verbose_name_plural': 'Culture mediums',
             },
+            bases=(dirtyfields.dirtyfields.DirtyFieldsMixin, models.Model),
         ),
         migrations.CreateModel(
             name='Disease',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('icdcode', models.CharField(max_length=30, unique=True, null=True, verbose_name='DOID', blank=True)),
+                ('purl', models.URLField(max_length=300, unique=True, null=True, verbose_name='Purl', blank=True)),
                 ('disease', models.CharField(max_length=45, verbose_name='Disease', blank=True)),
                 ('synonyms', models.CharField(max_length=500, null=True, verbose_name='Synonyms', blank=True)),
             ],
@@ -645,6 +669,8 @@ class Migration(migrations.Migration):
                 ('biosamples_id', models.CharField(unique=True, max_length=12, verbose_name='Biosamples ID')),
                 ('provider_donor_ids', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=20), null=True, verbose_name='Provider donor ids', size=None)),
                 ('ethnicity', models.CharField(max_length=100, null=True, verbose_name='Ethnicity', blank=True)),
+                ('phenotypes', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=100), null=True, verbose_name='Phenotypes', size=None)),
+                ('karyotype', models.CharField(max_length=500, null=True, verbose_name='Karyotype', blank=True)),
                 ('country_of_origin', models.ForeignKey(verbose_name='Country of origin', blank=True, to='celllines.Country', null=True)),
             ],
             options={
@@ -654,27 +680,51 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Enzymatically',
+            name='DonorGenotype',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=45, verbose_name='Enzymatically')),
+                ('allele_carried', models.CharField(max_length=12, null=True, verbose_name='Allele carried through', blank=True)),
+                ('homozygous_heterozygous', models.CharField(max_length=12, null=True, verbose_name='Is the donor homozygous or heterozygous for this variant', blank=True)),
+                ('assembly', models.CharField(max_length=45, null=True, verbose_name='Assembly', blank=True)),
+                ('chormosome', models.CharField(max_length=45, null=True, verbose_name='Chormosome', blank=True)),
+                ('coordinate', models.CharField(max_length=45, null=True, verbose_name='Coordinate', blank=True)),
+                ('reference_allele', models.CharField(max_length=45, null=True, verbose_name='Reference allele', blank=True)),
+                ('alternative_allele', models.CharField(max_length=45, null=True, verbose_name='Alternative allele', blank=True)),
+                ('protein_sequence_variants', models.CharField(max_length=100, null=True, verbose_name='Protein sequence variants', blank=True)),
+                ('donor', models.OneToOneField(related_name='donor_genotyping', verbose_name='Donor', to='celllines.Donor')),
             ],
             options={
-                'ordering': ['name'],
-                'verbose_name': 'Enzymatically',
-                'verbose_name_plural': 'Enzymatically',
+                'ordering': [],
+                'verbose_name': 'Donor Genotyping',
+                'verbose_name_plural': 'Donor Genotyping',
             },
         ),
         migrations.CreateModel(
-            name='EnzymeFree',
+            name='DonorGenotypingRsNumber',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=45, verbose_name='Enzyme free')),
+                ('rs_number', models.CharField(max_length=12, verbose_name='rs Number')),
+                ('link', models.URLField(null=True, verbose_name='Link', blank=True)),
+                ('donor_genotype', models.ForeignKey(related_name='donor_rs_number', verbose_name='Donor Genotype', to='celllines.DonorGenotype')),
             ],
             options={
-                'ordering': ['name'],
-                'verbose_name': 'Enzyme free',
-                'verbose_name_plural': 'Enzyme free',
+                'ordering': [],
+                'verbose_name': 'Donor rs number',
+                'verbose_name_plural': 'Donor rs numbers',
+            },
+        ),
+        migrations.CreateModel(
+            name='DonorGenotypingSNP',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('gene_name', models.CharField(max_length=45, verbose_name='SNP gene name')),
+                ('chromosomal_position', models.CharField(max_length=45, null=True, verbose_name='SNP choromosomal position', blank=True)),
+                ('donor_genotype', models.ForeignKey(related_name='donor_snps', verbose_name='Donor Genotype', to='celllines.DonorGenotype')),
+            ],
+            options={
+                'ordering': [],
+                'verbose_name': 'Donor snp',
+                'verbose_name_plural': 'Donor snps',
             },
         ),
         migrations.CreateModel(
@@ -690,6 +740,59 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='GeneticModificationGeneKnockIn',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('delivery_method', models.CharField(max_length=45, null=True, verbose_name='Delivery method', blank=True)),
+                ('cell_line', models.OneToOneField(related_name='genetic_modification_gene_knock_in', verbose_name='Cell line', to='celllines.Cellline')),
+            ],
+            options={
+                'ordering': [],
+                'verbose_name': 'Genetic modification - Gene knock-in',
+                'verbose_name_plural': 'Genetic modifications - Gene knock-in',
+            },
+        ),
+        migrations.CreateModel(
+            name='GeneticModificationGeneKnockOut',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('delivery_method', models.CharField(max_length=45, null=True, verbose_name='Delivery method', blank=True)),
+                ('cell_line', models.OneToOneField(related_name='genetic_modification_gene_knock_out', verbose_name='Cell line', to='celllines.Cellline')),
+            ],
+            options={
+                'ordering': [],
+                'verbose_name': 'Genetic modification - Gene knock-out',
+                'verbose_name_plural': 'Genetic modifications - Gene knock-out',
+            },
+        ),
+        migrations.CreateModel(
+            name='GeneticModificationIsogenic',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('change_type', models.CharField(max_length=45, null=True, verbose_name='Type of change', blank=True)),
+                ('modified_sequence', models.CharField(max_length=100, null=True, verbose_name='Modified sequence', blank=True)),
+                ('cell_line', models.OneToOneField(related_name='genetic_modification_isogenic', verbose_name='Cell line', to='celllines.Cellline')),
+            ],
+            options={
+                'ordering': [],
+                'verbose_name': 'Genetic modification - Isogenic modification',
+                'verbose_name_plural': 'Genetic modifications - Isogenic modification',
+            },
+        ),
+        migrations.CreateModel(
+            name='GeneticModificationTransgeneExpression',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('delivery_method', models.CharField(max_length=45, null=True, verbose_name='Delivery method', blank=True)),
+                ('cell_line', models.OneToOneField(related_name='genetic_modification_transgene_expression', verbose_name='Cell line', to='celllines.Cellline')),
+            ],
+            options={
+                'ordering': [],
+                'verbose_name': 'Genetic modification - Transgene Expression',
+                'verbose_name_plural': 'Genetic modifications - Transgene Expression',
+            },
+        ),
+        migrations.CreateModel(
             name='Germlayer',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -702,18 +805,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Hla',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('hla', models.CharField(max_length=45, verbose_name='HLA', blank=True)),
-            ],
-            options={
-                'ordering': ['hla'],
-                'verbose_name': 'HLA',
-                'verbose_name_plural': 'HLAs',
-            },
-        ),
-        migrations.CreateModel(
             name='IntegratingVector',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -723,18 +814,6 @@ class Migration(migrations.Migration):
                 'ordering': ['name'],
                 'verbose_name': 'Integrating vector',
                 'verbose_name_plural': 'Integrating vectors',
-            },
-        ),
-        migrations.CreateModel(
-            name='KaryotypeMethod',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=45, verbose_name='Karyotype method')),
-            ],
-            options={
-                'ordering': ['name'],
-                'verbose_name': 'Karyotype method',
-                'verbose_name_plural': 'Karyotype methods',
             },
         ),
         migrations.CreateModel(
@@ -827,18 +906,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='PassageMethod',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=45, verbose_name='Passage method')),
-            ],
-            options={
-                'ordering': ['name'],
-                'verbose_name': 'Passage method',
-                'verbose_name_plural': 'Passage methods',
-            },
-        ),
-        migrations.CreateModel(
             name='Person',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -851,18 +918,6 @@ class Migration(migrations.Migration):
                 'ordering': ['last_name', 'first_name'],
                 'verbose_name': 'Person',
                 'verbose_name_plural': 'Persons',
-            },
-        ),
-        migrations.CreateModel(
-            name='Phenotype',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('phenotype', models.CharField(unique=True, max_length=45, verbose_name='Phenotype')),
-            ],
-            options={
-                'ordering': ['phenotype'],
-                'verbose_name': 'Phenotype',
-                'verbose_name_plural': 'Phenotypes',
             },
         ),
         migrations.CreateModel(
@@ -888,66 +943,6 @@ class Migration(migrations.Migration):
                 'ordering': ['postcode', 'district'],
                 'verbose_name': 'Postcode',
                 'verbose_name_plural': 'Postcodes',
-            },
-        ),
-        migrations.CreateModel(
-            name='PrimaryCellDevelopmentalStage',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=20, verbose_name='Primary cell developmental stage')),
-            ],
-            options={
-                'ordering': ['name'],
-                'verbose_name': 'Primary cell developmental stage',
-                'verbose_name_plural': 'Primary cell developmental stages',
-            },
-        ),
-        migrations.CreateModel(
-            name='ProteinSource',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=45, verbose_name='Protein source')),
-            ],
-            options={
-                'ordering': ['name'],
-                'verbose_name': 'Protein source',
-                'verbose_name_plural': 'Protein sources',
-            },
-        ),
-        migrations.CreateModel(
-            name='Strfplocus',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('strfplocus', models.CharField(max_length=45, verbose_name='STR FP locus', blank=True)),
-            ],
-            options={
-                'ordering': ['strfplocus'],
-                'verbose_name': 'STR FP locus',
-                'verbose_name_plural': 'STR FP loci',
-            },
-        ),
-        migrations.CreateModel(
-            name='SurfaceCoating',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=45, verbose_name='Surface coating')),
-            ],
-            options={
-                'ordering': ['name'],
-                'verbose_name': 'Surface coating',
-                'verbose_name_plural': 'Surface coatings',
-            },
-        ),
-        migrations.CreateModel(
-            name='TissueLocation',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('tissue_location', models.CharField(unique=True, max_length=45, verbose_name='Tissue location')),
-            ],
-            options={
-                'ordering': ['tissue_location'],
-                'verbose_name': 'Tissue location',
-                'verbose_name_plural': 'Tissue locations',
             },
         ),
         migrations.CreateModel(
@@ -981,9 +976,9 @@ class Migration(migrations.Migration):
             name='UndifferentiatedMorphologyMarkerExpressionProfileMolecule',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('molecule', models.CharField(max_length=25, verbose_name='Molecule')),
                 ('result', models.CharField(max_length=5, verbose_name='Result', choices=[(b'+', b'+'), (b'-', b'-'), (b'nd', b'n.d.')])),
                 ('marker', models.ForeignKey(related_name='molecules', verbose_name='Marker', to='celllines.UndifferentiatedMorphologyMarkerExpressionProfile')),
-                ('molecule', models.ForeignKey(to='celllines.Molecule')),
             ],
             options={
                 'ordering': ['molecule'],
@@ -1008,9 +1003,9 @@ class Migration(migrations.Migration):
             name='UndifferentiatedMorphologyMarkerFacsMolecule',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('molecule', models.CharField(max_length=25, verbose_name='Molecule')),
                 ('result', models.CharField(max_length=5, verbose_name='Result', choices=[(b'+', b'+'), (b'-', b'-'), (b'nd', b'n.d.')])),
                 ('marker', models.ForeignKey(related_name='molecules', verbose_name='Marker', to='celllines.UndifferentiatedMorphologyMarkerFacs')),
-                ('molecule', models.ForeignKey(to='celllines.Molecule')),
             ],
             options={
                 'ordering': ['molecule'],
@@ -1035,9 +1030,9 @@ class Migration(migrations.Migration):
             name='UndifferentiatedMorphologyMarkerImuneMolecule',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('molecule', models.CharField(max_length=25, verbose_name='Molecule')),
                 ('result', models.CharField(max_length=5, verbose_name='Result', choices=[(b'+', b'+'), (b'-', b'-'), (b'nd', b'n.d.')])),
                 ('marker', models.ForeignKey(related_name='molecules', verbose_name='Marker', to='celllines.UndifferentiatedMorphologyMarkerImune')),
-                ('molecule', models.ForeignKey(to='celllines.Molecule')),
             ],
             options={
                 'ordering': ['molecule'],
@@ -1076,9 +1071,9 @@ class Migration(migrations.Migration):
             name='UndifferentiatedMorphologyMarkerRtPcrMolecule',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('molecule', models.CharField(max_length=25, verbose_name='Molecule')),
                 ('result', models.CharField(max_length=5, verbose_name='Result', choices=[(b'+', b'+'), (b'-', b'-'), (b'nd', b'n.d.')])),
                 ('marker', models.ForeignKey(related_name='molecules', verbose_name='Marker', to='celllines.UndifferentiatedMorphologyMarkerRtPcr')),
-                ('molecule', models.ForeignKey(to='celllines.Molecule')),
             ],
             options={
                 'ordering': ['molecule'],
@@ -1134,24 +1129,69 @@ class Migration(migrations.Migration):
             unique_together=set([('name', 'kind')]),
         ),
         migrations.AddField(
+            model_name='geneticmodificationtransgeneexpression',
+            name='genes',
+            field=models.ManyToManyField(to='celllines.Molecule', blank=True),
+        ),
+        migrations.AddField(
+            model_name='geneticmodificationtransgeneexpression',
+            name='transposon',
+            field=models.ForeignKey(verbose_name='Transposon', blank=True, to='celllines.Transposon', null=True),
+        ),
+        migrations.AddField(
+            model_name='geneticmodificationtransgeneexpression',
+            name='virus',
+            field=models.ForeignKey(verbose_name='Virus', blank=True, to='celllines.Virus', null=True),
+        ),
+        migrations.AddField(
+            model_name='geneticmodificationisogenic',
+            name='target_locus',
+            field=models.ManyToManyField(to='celllines.Molecule', blank=True),
+        ),
+        migrations.AddField(
+            model_name='geneticmodificationgeneknockout',
+            name='target_genes',
+            field=models.ManyToManyField(to='celllines.Molecule', blank=True),
+        ),
+        migrations.AddField(
+            model_name='geneticmodificationgeneknockout',
+            name='transposon',
+            field=models.ForeignKey(verbose_name='Transposon', blank=True, to='celllines.Transposon', null=True),
+        ),
+        migrations.AddField(
+            model_name='geneticmodificationgeneknockout',
+            name='virus',
+            field=models.ForeignKey(verbose_name='Virus', blank=True, to='celllines.Virus', null=True),
+        ),
+        migrations.AddField(
+            model_name='geneticmodificationgeneknockin',
+            name='target_genes',
+            field=models.ManyToManyField(related_name='target_genes', to='celllines.Molecule', blank=True),
+        ),
+        migrations.AddField(
+            model_name='geneticmodificationgeneknockin',
+            name='transgenes',
+            field=models.ManyToManyField(related_name='transgenes', to='celllines.Molecule', blank=True),
+        ),
+        migrations.AddField(
+            model_name='geneticmodificationgeneknockin',
+            name='transposon',
+            field=models.ForeignKey(verbose_name='Transposon', blank=True, to='celllines.Transposon', null=True),
+        ),
+        migrations.AddField(
+            model_name='geneticmodificationgeneknockin',
+            name='virus',
+            field=models.ForeignKey(verbose_name='Virus', blank=True, to='celllines.Virus', null=True),
+        ),
+        migrations.AddField(
             model_name='donor',
             name='gender',
             field=models.ForeignKey(verbose_name='Gender', blank=True, to='celllines.Gender', null=True),
         ),
         migrations.AddField(
-            model_name='donor',
-            name='phenotype',
-            field=models.ForeignKey(verbose_name='Phenotype', blank=True, to='celllines.Phenotype', null=True),
-        ),
-        migrations.AddField(
             model_name='document',
             name='document_type',
             field=models.ForeignKey(verbose_name='Document type', blank=True, to='celllines.DocumentType', null=True),
-        ),
-        migrations.AddField(
-            model_name='culturemediumother',
-            name='protein_source',
-            field=models.ForeignKey(verbose_name='Protein source', blank=True, to='celllines.ProteinSource', null=True),
         ),
         migrations.AddField(
             model_name='contact',
@@ -1189,16 +1229,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(verbose_name='Vector-free reprogramming factor', blank=True, to='celllines.VectorFreeReprogrammingFactor', null=True),
         ),
         migrations.AddField(
-            model_name='celllinestrfingerprinting',
-            name='locus',
-            field=models.ForeignKey(verbose_name='STR fplocus', blank=True, to='celllines.Strfplocus', null=True),
-        ),
-        migrations.AddField(
-            model_name='celllinestrfingerprinting',
-            name='strfpcellline',
-            field=models.ForeignKey(verbose_name='Cell line', blank=True, to='celllines.Cellline', null=True),
-        ),
-        migrations.AddField(
             model_name='celllineorganization',
             name='cell_line_org_type',
             field=models.ForeignKey(verbose_name='Cell line org type', to='celllines.CelllineOrgType'),
@@ -1229,11 +1259,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(verbose_name='Morphology method', blank=True, to='celllines.Morphologymethod', null=True),
         ),
         migrations.AddField(
-            model_name='celllinekaryotype',
-            name='karyotype_method',
-            field=models.ForeignKey(verbose_name='Karyotype method', blank=True, to='celllines.KaryotypeMethod', null=True),
-        ),
-        migrations.AddField(
             model_name='celllineintegratingvector',
             name='genes',
             field=models.ManyToManyField(to='celllines.Molecule', blank=True),
@@ -1254,16 +1279,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(verbose_name='Virus', blank=True, to='celllines.Virus', null=True),
         ),
         migrations.AddField(
-            model_name='celllinehlatyping',
-            name='celllinehla',
-            field=models.ForeignKey(verbose_name='Hla', blank=True, to='celllines.Hla', null=True),
-        ),
-        migrations.AddField(
-            model_name='celllinehlatyping',
-            name='hlatypingcellline',
-            field=models.ForeignKey(verbose_name='Cell line', blank=True, to='celllines.Cellline', null=True),
-        ),
-        migrations.AddField(
             model_name='celllinedifferentiationpotencymolecule',
             name='molecule',
             field=models.ForeignKey(verbose_name='Molecule', blank=True, to='celllines.Molecule', null=True),
@@ -1280,48 +1295,13 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='celllinederivation',
-            name='primary_cell_developmental_stage',
-            field=models.ForeignKey(verbose_name='Primary cell developmental stage', blank=True, to='celllines.PrimaryCellDevelopmentalStage', null=True),
-        ),
-        migrations.AddField(
-            model_name='celllinederivation',
             name='primary_cell_type',
             field=models.ForeignKey(verbose_name='Primary cell type', blank=True, to='celllines.CellType', null=True),
-        ),
-        migrations.AddField(
-            model_name='celllinederivation',
-            name='tissue_procurement_location',
-            field=models.ForeignKey(verbose_name='Location of primary tissue procurement', blank=True, to='celllines.TissueLocation', null=True),
         ),
         migrations.AddField(
             model_name='celllineculturemediumsupplement',
             name='unit',
             field=models.ForeignKey(verbose_name='Unit', blank=True, to='celllines.Unit', null=True),
-        ),
-        migrations.AddField(
-            model_name='celllinecultureconditions',
-            name='culture_medium',
-            field=models.ForeignKey(verbose_name='Culture medium', blank=True, to='celllines.CultureMedium', null=True),
-        ),
-        migrations.AddField(
-            model_name='celllinecultureconditions',
-            name='enzymatically',
-            field=models.ForeignKey(verbose_name='Enzymatically', blank=True, to='celllines.Enzymatically', null=True),
-        ),
-        migrations.AddField(
-            model_name='celllinecultureconditions',
-            name='enzyme_free',
-            field=models.ForeignKey(verbose_name='Enzyme free', blank=True, to='celllines.EnzymeFree', null=True),
-        ),
-        migrations.AddField(
-            model_name='celllinecultureconditions',
-            name='passage_method',
-            field=models.ForeignKey(verbose_name='Passage method', blank=True, to='celllines.PassageMethod', null=True),
-        ),
-        migrations.AddField(
-            model_name='celllinecultureconditions',
-            name='surface_coating',
-            field=models.ForeignKey(verbose_name='Surface coating', blank=True, to='celllines.SurfaceCoating', null=True),
         ),
         migrations.AddField(
             model_name='celllinealiquot',
@@ -1372,16 +1352,6 @@ class Migration(migrations.Migration):
             model_name='batchcultureconditions',
             name='batch',
             field=models.OneToOneField(verbose_name='Batch', to='celllines.CelllineBatch'),
-        ),
-        migrations.AddField(
-            model_name='batchcultureconditions',
-            name='culture_medium',
-            field=models.ForeignKey(verbose_name='Culture medium', blank=True, to='celllines.CultureMedium', null=True),
-        ),
-        migrations.AddField(
-            model_name='batchcultureconditions',
-            name='surface_coating',
-            field=models.ForeignKey(verbose_name='Matrix', blank=True, to='celllines.SurfaceCoating', null=True),
         ),
         migrations.AlterUniqueTogether(
             name='moleculereference',

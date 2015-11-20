@@ -6,7 +6,7 @@
 
 {% block article %}
 
-<h1>Executive dashboard <small>Hot Start data</h1>
+<h1>Executive dashboard</h1>
 
 <table class="listing">
 
@@ -28,14 +28,14 @@
         {% for cellline in celllines %}
         <tr class="accepted-{{ cellline.accepted }}">
             <td><a href="{% url 'executive:cellline' cellline.biosamples_id %}">{{ cellline.biosamples_id }}</a></td>
-            <td>{{ cellline.name }}</td>
+            <td class="name">{{ cellline.name }}</td>
+            <td>{{ cellline.alternative_names }}</td>
             <td>{{ cellline.primary_disease|default_if_none:"" }}</td>
-            <td>{{ cellline.registration_name }}</td>
             <td>{{ cellline.generator.name }}</td>
             <td class="number">{{ cellline.batches.count }}</td>
             <td class="number {{ cellline.quantity|default:'empty' }}">{{ cellline.quantity|default:'-' }}</td>
             <td class="number {{ cellline.sold|default:'empty' }}">{{ cellline.sold|default:'-' }}</td>
-            <td class="accepted">{% include 'executive/accepted-status.html' %}</td>
+            <!-- <td class="accepted">{% include 'executive/accepted-status.html' %}</td> -->
         </tr>
         {% endfor %}
     </tbody>
@@ -43,7 +43,7 @@
 </table>
 
 <div class="pagination">
-    Page: 
+    Page:
     <ul>
         <li>
             <ul>

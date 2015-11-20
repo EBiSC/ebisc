@@ -3,8 +3,8 @@
     <tr><th colspan="2" class="title"><h2>General Information</h2></th></tr>
     <tr><td class="label">Cell line name:</td><td>{{ cellline.name|default:"-" }}</td></tr>
     <tr><td class="label">Cell line alternative names:</td><td>{{ cellline.alternative_names|default:"-" }}</td></tr>
-    <tr><td class="label">Biosamples ID:</td><td>{{ cellline.biosamples_id|default:"-" }}</td></tr>
-    <!-- <tr><td class="label">ECACC catalogue no.:</td><td>{{ cellline.ecacc_id|default:"-" }}</td></tr> -->
+    <tr><td class="label">Biosamples ID:</td><td><a href="http://www.ebi.ac.uk/biosamples/sample/{{ cellline.biosamples_id }}" target="_blank"><i class="glyphicon glyphicon-link"></i> {{ cellline.biosamples_id }}</a></td></tr>
+
     <tr><td class="label">Derivation country:</td><td>{{ cellline.derivation_country|default:"-" }}</td></tr>
 
     {% if cellline.publications.all|length %}
@@ -75,15 +75,23 @@
     <tr><th class="sub-title"><h3>Depositor</h3></th><th></th></tr>
 
     <tr><td class="label">Depositor:</td><td>{{ cellline.generator.name|default:"-" }}</td></tr>
-    <!-- <tr><td class="label">Cell line user account:</td><td>{{ cellline.celllineupdatedby|default:"-" }}</td></tr> -->
 
     <tr><th colspan="2" class="title"><h2>Derivation</h2></th></tr>
 
     <tr><td class="label">Primary cell type:</td><td>{{ cellline.derivation.primary_cell_type.name|default:"-" }}</td></tr>
-    <tr><td class="label">Primary cell developmental stage:</td><td>{{ cellline.celllinederivation.primary_cell_developmental_stage|default:"-" }}</td></tr>
 
-    <!-- <tr><td class="label">Tissue source:</td><td>{{ cellline.celllinederivation.tissue_procurement_location.tissue_location|default:"-" }}</td></tr> -->
-    <!-- <tr><td class="label">Cell line tissue date:</td><td>{{ cellline.celllinederivation.tissue_collection_date|default:"-" }}</td></tr> -->
+    {% if cellline.derivation.primary_cell_developmental_stage %}
+    <tr><td class="label">Primary cell developmental stage:</td><td>{{ cellline.derivation.primary_cell_developmental_stage }}</td></tr>
+    {% endif %}
+    {% if cellline.derivation.tissue_procurement_location %}
+    <tr><td class="label">Location of primary tissue procurement:</td><td>{{ cellline.derivation.tissue_procurement_location }}</td></tr>
+    {% endif %}
+    {% if cellline.derivation.tissue_collection_date %}
+    <tr><td class="label">Tissue collection date:</td><td>{{ cellline.derivation.tissue_collection_date }}</td></tr>
+    {% endif %}
+    {% if cellline.derivation.reprogramming_passage_number %}
+    <tr><td class="label">Passage number reprogrammed:</td><td>{{ cellline.derivation.reprogramming_passage_number }}</td></tr>
+    {% endif %}
 
     <tr><th class="sub-title"><h3>Reprogramming method</h3></th><th></th></tr>
 
@@ -131,7 +139,9 @@
 
     <tr><th class="sub-title"><h3>Derivation</h3></th><th></th></tr>
 
-    <tr><td class="label">Selection criteria for clones:</td><td>{{ cellline.celllinederivation.selection_criteria_for_clones|default:"-" }}</td></tr>
+    {% if cellline.celllinederivation.selection_criteria_for_clones %}
+    <tr><td class="label">Selection criteria for clones:</td><td>{{ cellline.celllinederivation.selection_criteria_for_clones }}</td></tr>
+    {% endif %}
     <tr><td class="label">Xeno free conditions:</td><td>{{ cellline.celllinederivation.xeno_free_conditions|yesno:"yes,no"|default:"-" }}</td></tr>
     <tr><td class="label">Derived under gmp:</td><td>{{ cellline.celllinederivation.derived_under_gmp|yesno:"yes,no"|default:"-" }}</td></tr>
     <tr><td class="label">Available as clinical grade:</td><td>{{ cellline.celllinederivation.available_as_clinical_grade|yesno:"yes,no"|default:"-" }}</td></tr>
@@ -144,7 +154,6 @@
     {% if cellline.celllinecultureconditions.feeder_cell_type %}
     <tr><td class="label">Feeder cell type:</td><td>{{ cellline.celllinecultureconditions.feeder_cell_type|default:"-" }}</td></tr>
     {% endif %}
-    <!-- <tr><td class="label">Feeder cell ID:</td><td>{{ cellline.celllinecultureconditions.feeder_cell_id|default:"-" }}</td></tr> -->
     {% if cellline.celllinecultureconditions.passage_method %}
     <tr><td class="label">Passage method:</td><td>{{ cellline.celllinecultureconditions.passage_method|default:"-" }}</td></tr>
     {% endif %}
@@ -186,6 +195,20 @@
     </tr>
     {% endif %}
 
+    {% if cellline.celllinecultureconditions.passage_number_banked %}
+    <tr>
+        <td class="label">Passage Number banked (pre-EBiSC):</td>
+        <td>{{ cellline.celllinecultureconditions.passage_number_banked }}</td>
+    </tr>
+    {% endif %}
+
+    {% if cellline.celllinecultureconditions.number_of_vials_banked %}
+    <tr>
+        <td class="label">No. Vials banked (pre-EBiSC):</td>
+        <td>{{ cellline.celllinecultureconditions.number_of_vials_banked }}</td>
+    </tr>
+    {% endif %}
+
     <tr><th colspan="2" class="title"><h2>Characterization</h2></th></tr>
 
     {% if cellline.celllinecharacterization.certificate_of_analysis_passage_number %}
@@ -220,209 +243,269 @@
         </td>
     </tr>
 
-<!--     {% if cellline.undifferentiated_morphology_marker_imune %}
+    {% if cellline.undifferentiated_morphology_marker_imune %}
     <tr><th class="sub-title"><h3>Undifferentiated cells</h3></th></tr>
 
     <tr>
         <td class="label">Morphology and Marker expression:</td>
         <td>
-            Passage number: {{ cellline.undifferentiated_morphology_marker_imune.passage_number }}
-            <ul>
+            {% if cellline.undifferentiated_morphology_marker_imune %}
+            <p><b>Immune/Markerstaining</b><br/>
+            Passage number: {{ cellline.undifferentiated_morphology_marker_imune.passage_number }}</p>
+            <table>
             {% for molecule in cellline.undifferentiated_morphology_marker_imune.molecules.all %}
-            <li>{{ molecule.molecule.name }} {{ molecule.molecule.kind }}: {{ molecule.result }}</li>
+            <tr><td>{{ molecule.molecule }}:</td><td class="center">{{ molecule.result }}</td></tr>
             {% endfor %}
-            </ul>
+            </table>
+            {% endif %}
+
+            {% if cellline.undifferentiated_morphology_marker_facs %}
+            <p><br/><b>FACS</b><br/>
+            Passage number: {{ cellline.undifferentiated_morphology_marker_facs.passage_number }}</p>
+            <table>
+            {% for molecule in cellline.undifferentiated_morphology_marker_facs.molecules.all %}
+            <tr><td>{{ molecule.molecule }}:</td><td class="center">{{ molecule.result }}</td></tr>
+            {% endfor %}
+            </table>
+            {% endif %}
+
+            {% if cellline.undifferentiated_morphology_marker_rtpcr %}
+            <p><br/><b>RT-PCR</b><br/>
+            Passage number: {{ cellline.undifferentiated_morphology_marker_rtpcr.passage_number }}</p>
+            <table>
+            {% for molecule in cellline.undifferentiated_morphology_marker_rtpcr.molecules.all %}
+            <tr><td>{{ molecule.molecule }}:</td><td class="center">{{ molecule.result }}</td></tr>
+            {% endfor %}
+            </table>
+            {% endif %}
+
+            {% if cellline.undifferentiated_morphology_marker_morphology %}
+            <p><br/><b>Morphology</b><br/>
+            Passage number: {{ cellline.undifferentiated_morphology_marker_morphology.passage_number|default:'-' }}<br/>
+            Description: {{ cellline.undifferentiated_morphology_marker_morphology.description|default:'-' }}<br/>
+            {% if cellline.undifferentiated_morphology_marker_morphology.data_url %}
+            File: <a href="{{ cellline.undifferentiated_morphology_marker_morphology.data_url }}">Image</a>
+            {% endif %}
+            {% endif %}
+
+            {% if cellline.undifferentiated_morphology_marker_expression_profile %}
+            <p><br/><b>Expression profiles (Omics)</b><br/>
+            Passage number: {{ cellline.undifferentiated_morphology_marker_expression_profile.passage_number|default:'-' }}<br/>
+            Method: {{ cellline.undifferentiated_morphology_marker_expression_profile.method|default:'-' }}<br/>
+            <table>
+            {% for molecule in undifferentiated_morphology_marker_expression_profile.molecules.all %}
+            <tr><td>{{ molecule.molecule }}:</td><td class="center">{{ molecule.result }}</td></tr>
+            {% endfor %}
+            </table>
+            Data:
+            {% if undifferentiated_morphology_marker_expression_profile.uploaded_data_url %}
+                <a href="{{ cellline.undifferentiated_morphology_marker_expression_profile.uploaded_data_url }}">Data file</a>
+            {% endif %}
+            {% if undifferentiated_morphology_marker_expression_profile.uploaded_data_url and cellline.undifferentiated_morphology_marker_expression_profile.data_url %}, {% endif %}
+            {% if cellline.undifferentiated_morphology_marker_expression_profile.data_url %}
+                <a href="{{ cellline.undifferentiated_morphology_marker_expression_profile.data_url }}">Link</a>
+            {% endif %}
+            {% endif %}
+
         </td>
     </tr>
     {% endif %}
- -->
-    {% if cellline.karyotype %}
+
+
+    {% if cellline.karyotype or cellline.str_fingerprinting.all|length or cellline.genome_analysis or cellline.genetic_modification_transgene_expression or cellline.genetic_modification_gene_knock_out or cellline.genetic_modification_gene_knock_in or cellline.genetic_modification_isogenic %}
     <tr><th colspan="2" class="title"><h2>Genotyping</h2></th></tr>
 
-    {% if cellline.karyotype.passage_number %}
-    <tr><td class="label">Passage number:</td><td>{{ cellline.karyotype.passage_number|default:"-" }}</td></tr>
+        {% if cellline.karyotype %}
+        <tr><th class="sub-title"><h3>Karyotyping</h3></th><th></th></tr>
+
+        {% if cellline.karyotype.passage_number %}
+        <tr><td class="label">Passage number:</td><td>{{ cellline.karyotype.passage_number|default:"-" }}</td></tr>
+        {% endif %}
+        <tr><td class="label">Cell line karyotype:</td><td>{{ cellline.karyotype.karyotype|default:"-" }}</td></tr>
+        <tr><td class="label">Karyotyping method:</td><td>{{ cellline.karyotype.karyotype_method|default:"-" }}</td></tr>
+        {% endif %}
+
+        {% if cellline.str_fingerprinting.all|length or cellline.genome_analysis %}
+        <tr><th class="sub-title"><h3>Genome-Wide Assays</h3></th><th></th></tr>
+
+            {% if cellline.str_fingerprinting.all|length %}
+            <tr>
+                <td class="label">STR/Fingerprinting:</td>
+                <td>
+                    <table>
+                        <tr>
+                            <th>Locus</th>
+                            <th>Allele 1</th>
+                            <th>Allele 2</th>
+                        </tr>
+                        {% for locus in cellline.str_fingerprinting.all %}
+                        <tr>
+                            <td>{{ locus.locus }}</td>
+                            <td class="center">{{ locus.allele1 }}</td>
+                            <td class="center">{{ locus.allele2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </td>
+            </tr>
+            {% endif %}
+
+            {% if cellline.genome_analysis %}
+            <tr>
+                <td class="label">Genome-wide analysis:</td>
+                <td>
+                    {% if cellline.genome_analysis.data %}{{ cellline.genome_analysis.data }}{% endif %}
+                    {% if cellline.genome_analysis.data and cellline.genome_analysis.link %}<br/>{% endif %}
+                    {% if cellline.genome_analysis.link %}<a href="{{ cellline.genome_analysis.link }}">{{ cellline.genome_analysis.link }}</a>{% endif %}</td>
+            </tr>
+            {% endif %}
+
+        {% endif %}
+
+        {% if cellline.genetic_modification_transgene_expression or cellline.genetic_modification_gene_knock_out or cellline.genetic_modification_gene_knock_in or cellline.genetic_modification_isogenic %}
+        <tr><th class="sub-title"><h3>Genetic modification</h3></th><th></th></tr>
+            {% if cellline.genetic_modification_transgene_expression %}
+                <tr>
+                    <td class="label">Type of modification:</td>
+                    <td><b>Transgene expression</b></td>
+                </tr>
+
+                {% if cellline.genetic_modification_transgene_expression.genes.all|length %}
+                <tr>
+                    <td class="label">Genes:</td>
+                    <td>
+                        <ul>
+                            {% for gene in cellline.genetic_modification_transgene_expression.genes.all %}
+                            <li>{{ gene.name }}</li>
+                            {% endfor%}
+                        </ul>
+                    </td>
+                </tr>
+                {% endif %}
+
+                {% if cellline.genetic_modification_transgene_expression.delivery_method %}
+                <tr>
+                    <td class="label">Delivery method:</td>
+                    <td>
+                        {{ cellline.genetic_modification_transgene_expression.delivery_method }}
+                        {% if cellline.genetic_modification_transgene_expression.virus %} - {{ cellline.genetic_modification_transgene_expression.virus }}{% endif %}
+                        {% if cellline.genetic_modification_transgene_expression.transposon %} - {{ cellline.genetic_modification_transgene_expression.transposon }}{% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+            {% endif %}
+
+            {% if cellline.genetic_modification_gene_knock_out %}
+                <tr>
+                    <td class="label">Type of modification:</td>
+                    <td><b>Gene knock-out</b></td>
+                </tr>
+
+                {% if cellline.genetic_modification_gene_knock_out.target_genes.all|length %}
+                <tr>
+                    <td class="label">Target genes:</td>
+                    <td>
+                        <ul>
+                            {% for gene in cellline.genetic_modification_gene_knock_out.target_genes.all %}
+                            <li>{{ gene.name }}</li>
+                            {% endfor%}
+                        </ul>
+                    </td>
+                </tr>
+                {% endif %}
+
+                {% if cellline.genetic_modification_gene_knock_out.delivery_method %}
+                <tr>
+                    <td class="label">Delivery method:</td>
+                    <td>
+                        {{ cellline.genetic_modification_gene_knock_out.delivery_method }}
+                        {% if cellline.genetic_modification_gene_knock_out.virus %} - {{ cellline.genetic_modification_gene_knock_out.virus }}{% endif %}
+                        {% if cellline.genetic_modification_gene_knock_out.transposon %} - {{ cellline.genetic_modification_gene_knock_out.transposon }}{% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+            {% endif %}
+
+            {% if cellline.genetic_modification_gene_knock_in %}
+                <tr>
+                    <td class="label">Type of modification:</td>
+                    <td><b>Gene knock-in</b></td>
+                </tr>
+
+                {% if cellline.genetic_modification_gene_knock_in.target_genes.all|length %}
+                <tr>
+                    <td class="label">Target genes:</td>
+                    <td>
+                        <ul>
+                            {% for gene in cellline.genetic_modification_gene_knock_in.target_genes.all %}
+                            <li>{{ gene.name }}</li>
+                            {% endfor%}
+                        </ul>
+                    </td>
+                </tr>
+                {% endif %}
+
+                {% if cellline.genetic_modification_gene_knock_in.transgenes.all|length %}
+                <tr>
+                    <td class="label">Transgenes:</td>
+                    <td>
+                        <ul>
+                            {% for gene in cellline.genetic_modification_gene_knock_in.transgenes.all %}
+                            <li>{{ gene.name }}</li>
+                            {% endfor%}
+                        </ul>
+                    </td>
+                </tr>
+                {% endif %}
+
+                {% if cellline.genetic_modification_gene_knock_in.delivery_method %}
+                <tr>
+                    <td class="label">Delivery method:</td>
+                    <td>
+                        {{ cellline.genetic_modification_gene_knock_in.delivery_method }}
+                        {% if cellline.genetic_modification_gene_knock_in.virus %} - {{ cellline.genetic_modification_gene_knock_in.virus }}{% endif %}
+                        {% if cellline.genetic_modification_gene_knock_in.transposon %} - {{ cellline.genetic_modification_gene_knock_in.transposon }}{% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+            {% endif %}
+
+            {% if cellline.genetic_modification_isogenic %}
+                <tr>
+                    <td class="label">Type of modification:</td>
+                    <td><b>Isogenic modification</b></td>
+                </tr>
+
+                {% if cellline.genetic_modification_isogenic.target_locus.all|length %}
+                <tr>
+                    <td class="label">Target loci:</td>
+                    <td>
+                        <ul>
+                            {% for gene in cellline.genetic_modification_isogenic.target_locus.all %}
+                            <li>{{ gene.name }}</li>
+                            {% endfor%}
+                        </ul>
+                    </td>
+                </tr>
+                {% endif %}
+
+                {% if cellline.genetic_modification_isogenic.change_type %}
+                <tr>
+                    <td class="label">Type of change:</td>
+                    <td>{{ cellline.genetic_modification_isogenic.change_type }}</td>
+                </tr>
+                {% endif %}
+
+                {% if cellline.genetic_modification_isogenic.modified_sequence %}
+                <tr>
+                    <td class="label">Modified sequence:</td>
+                    <td>{{ cellline.genetic_modification_isogenic.modified_sequence }}</td>
+                </tr>
+                {% endif %}
+            {% endif %}
+
+        {% endif %}
+
     {% endif %}
-    <tr><td class="label">Cell line karyotype:</td><td>{{ cellline.karyotype.karyotype|default:"-" }}</td></tr>
-    <tr><td class="label">Karyotyping method:</td><td>{{ cellline.karyotype.karyotype_method|default:"-" }}</td></tr>
-    {% endif %}
-
-
-    <tr><th colspan="2" class="title"><h2>Ethics</h2></th></tr>
-
-    <tr><th class="sub-title"><h3>Informed Consent</h3></th><th></th></tr>
-
-    <tr><td class="label">Donor consent was obtained:</td><td>{{ cellline.celllineethics.donor_consent|yesno:"yes,no,-" }}</td></tr>
-
-    <tr><td class="label">No pressure was put on the donor:</td><td>{{ cellline.celllineethics.no_pressure_statement|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">No financial inducement was offered:</td><td>{{ cellline.celllineethics.no_inducement_statement|yesno:"yes,no,-" }}</td></tr>
-
-    <tr>
-        <td class="label">Depositor holds a copy of the donor consent:</td>
-        <td>{{ cellline.celllineethics.donor_consent_form|yesno:"yes,no,-" }}
-        {% if cellline.celllineethics.donor_consent_form_url %}
-            <i>file</i>
-        {% endif %}
-        </td>
-    </tr>
-
-    {% if not cellline.celllineethics.donor_consent_form %}
-        <tr><td class="label">Depositor knows location of consent form:</td><td>{{ cellline.celllineethics.known_location_of_consent_form|yesno:"yes,no,-" }}</td></tr>
-        <tr><td class="label">Depositor can obtain a copy of consent form:</td><td>{{ cellline.celllineethics.copy_of_consent_form_obtainable|yesno:"yes,no,-" }}</td></tr>
-        <tr><td class="label">Depositor can arrange to obtain a new form of consent from the donor:</td><td>{{ cellline.celllineethics.obtain_new_consent_form|yesno:"yes,no,-" }}</td></tr>
-        <tr><td class="label">Donor has agreed to be re-contacted for re-consenting:</td><td>{{ cellline.celllineethics.donor_recontact_agreement|yesno:"yes,no,-" }}</td></tr>
-        {% if cellline.celllineethics.donor_recontact_agreement %}
-            <tr><td class="label">Consent anticipates that the donor will be notified of research results:</td><td>{{ cellline.celllineethics.consent_anticipates_donor_notification_research_results|yesno:"yes,no,-" }}</td></tr>
-            <tr><td class="label">Donor expects to be notified if significant health implications are discovered:</td><td>{{ cellline.celllineethics.donor_expects_notification_health_implications|yesno:"yes,no,-" }}</td></tr>
-        {% endif %}
-    {% endif %}
-
-    <tr>
-        <td class="label">Depositor can provide a copy of consent information provided to donor (in English):</td>
-        <td>{{ cellline.celllineethics.copy_of_donor_consent_information_english_obtainable|yesno:"yes,no,-" }}
-        {% if cellline.celllineethics.copy_of_donor_consent_information_english_url %}
-            <i>file</i>
-        {% endif %}
-        </td>
-    </tr>
-
-    <tr>
-        <td class="label">Depositor can provide a copy of consent form (in English):</td>
-        <td>{{ cellline.celllineethics.copy_of_donor_consent_form_english_obtainable|yesno:"yes,no,-" }}
-        {% if cellline.celllineethics.copy_of_donor_consent_form_english_url %}
-            <i>file</i>
-        {% endif %}
-        </td>
-    </tr>
-
-    <tr><th class="sub-title"><h3>Consent Permissions and Restrictions</h3></th><th></th></tr>
-
-    <tr><td class="label">Consent expressly permits derivation of iPS cells:</td><td>{{ cellline.celllineethics.consent_permits_ips_derivation|yesno:"yes,no,-" }}</td></tr>
-
-    <tr><td class="label">Consent pertains to one specific research project:</td><td>{{ cellline.celllineethics.consent_pertains_specific_research_project|yesno:"yes,no,-" }}</td></tr>
-
-    <tr><td class="label">Consent permits unforeseen future research:</td><td>{{ cellline.celllineethics.consent_permits_future_research|yesno:"yes,no,-" }}</td></tr>
-
-    <tr><td class="label">Future research is permitted only in some areas or types of research:</td><td>{{ cellline.celllineethics.future_research_permitted_specified_areas|yesno:"yes,no,-" }}
-    {% if cellline.celllineethics.future_research_permitted_areas %}
-     - {{ cellline.celllineethics.future_research_permitted_areas }}
-    {% endif %}
-    </td>
-    </tr>
-
-    <tr><td class="label">Consent permits uses for clinical treatment or human applications:</td><td>{{ cellline.celllineethics.consent_permits_clinical_treatment|yesno:"yes,no,-" }}</td></tr>
-
-    <tr><td class="label">Formal permission from the owner for distribution:</td><td>{{ cellline.celllineethics.formal_permission_for_distribution|yesno:"yes,no,-" }}</td></tr>
-
-    <tr>
-        <td class="label">Consent permits research by:</td>
-        <td>
-            Academic institution: {{ cellline.celllineethics.consent_permits_research_by_academic_institution|yesno:"yes,no,-" }}<br/>
-            Public organization: {{ cellline.celllineethics.consent_permits_research_by_org|yesno:"yes,no,-" }}<br/>
-            Non-profit company: {{ cellline.celllineethics.consent_permits_research_by_non_profit_company|yesno:"yes,no,-" }}<br/>
-            For-profit company: {{ cellline.celllineethics.consent_permits_research_by_for_profit_company|yesno:"yes,no,-" }}
-        </td>
-    </tr>
-
-    <tr>
-        <td class="label">Consent permits development of commercial products:</td>
-        <td>{{ cellline.celllineethics.consent_permits_development_of_commercial_products|yesno:"yes,no,-" }}
-        {% if cellline.celllineethics.consent_permits_development_of_commercial_products == False %}
-            <br/>Consent expressly prevents commercial development: {{ cellline.celllineethics.consent_expressly_prevents_commercial_development|yesno:"yes,no,-" }}
-            <br/>Consent expressly prevents financial gain: {{ cellline.celllineethics.consent_expressly_prevents_financial_gain|yesno:"yes,no,-" }}
-        {% endif %}
-        </td>
-    </tr>
-
-    <tr>
-        <td class="label">Further constraints on use of donated material or derived cells:</td>
-        <td>{{ cellline.celllineethics.further_constraints_on_use|yesno:"yes,no,-" }}
-        {% if cellline.celllineethics.further_constraints_on_use %}
-        <br/>{{ cellline.celllineethics.further_constraints_on_use_desc }}
-        {% endif %}
-        </td>
-    </tr>
-
-    <tr><th class="sub-title"><h3>Storage of and Access to Material</h3></th><th></th></tr>
-
-    <tr><td class="label">Consent expressly permits indefinite storage of donated material and derived cells:</td><td>{{ cellline.celllineethics.consent_expressly_permits_indefinite_storage|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Does consent prevent donated material and derived cells from being made available to research anywhere in the world?</td><td>{{ cellline.celllineethics.consent_prevents_availiability_to_worldwide_research|yesno:"yes,no,-" }}</td></tr>
-
-    <tr><th class="sub-title"><h3>Genetic and microbiological testing</h3></th><th></th></tr>
-
-    <tr><td class="label">Consent permits testing for genetic characteristics:</td><td>{{ cellline.celllineethics.consent_permits_genetic_testing|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Consent permits testing for microbiological agents and pathogens:</td><td>{{ cellline.celllineethics.consent_permits_testing_microbiological_agents_pathogens|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Donation and derived information may influence personal future treatment:</td><td>{{ cellline.celllineethics.derived_information_influence_personal_future_treatment|yesno:"yes,no,-" }}</td></tr>
-
-    <tr><th class="sub-title"><h3>Data handling</h3></th><th></th></tr>
-
-
-    <tr><td class="label">Donor informed about data protection:</td><td>{{ cellline.celllineethics.donor_data_protection_informed|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Donated material is coded or pseudonymised:</td><td>{{ cellline.celllineethics.donated_material_code|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Donated material has been rendered unidentifiable (anonymised):</td><td>{{ cellline.celllineethics.donated_material_rendered_unidentifiable|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Is there genetic information associated with the cell line:</td><td>{{ cellline.celllineethics.genetic_information_exists|yesno:"yes,no,-" }}</td></tr>
-
-    {% if cellline.celllineethics.genetic_information_exists %}
-
-    <tr><td class="label">Access policy for genetic information derived from the cell line:</td><td>{{ cellline.celllineethics.genetic_information_access_policy|default:"-" }}</td></tr>
-    {% endif %}
-
-    <tr><td class="label">Genetic information associated with the cell line is available:</td><td>{{ cellline.celllineethics.genetic_information_available|yesno:"yes,no,-" }}</td></tr>
-
-    <tr><th class="sub-title"><h3>Medical Records</h3></th><th></th></tr>
-
-    <tr><td class="label">Consent permits access to medical records:</td><td>{{ cellline.celllineethics.consent_permits_access_medical_records|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Consent permits access to other clinical sources:</td><td>{{ cellline.celllineethics.consent_permits_access_other_clinical_source|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Access to ongoing medical records has been consented:</td><td>{{ cellline.celllineethics.medical_records_access_consented|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Organisation (contact) holding medical records:</td><td>{{ cellline.celllineethics.medical_records_access_consented_organisation_name|default:"-" }}</td></tr>
-
-
-    <tr><th class="sub-title"><h3>Withdrawal</h3></th><th></th></tr>
-
-    <tr><td class="label">Consent permits the donor, upon withdrawal of consent, to stop the use of derived material:</td><td>{{ cellline.celllineethics.consent_permits_stop_of_derived_material_use|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Consent permits the donor, upon withdrawal of consent, to stop delivery or use of information and data about donor:</td><td>{{ cellline.celllineethics.consent_permits_stop_of_delivery_of_information_and_data|yesno:"yes,no,-" }}</td></tr>
-
-    <tr><th class="sub-title"><h3>Ethics Review Panel Details</h3></th><th></th></tr>
-
-    <tr><td class="label">Institutional review board/competent authority approval:</td><td>{{ cellline.celllineethics.authority_approval|yesno:"yes,no,-" }}</td></tr>
-    {% if cellline.celllineethics.authority_approval %}
-    <tr><td class="label">Name of accrediting authority involved:</td><td>{{ cellline.celllineethics.approval_authority_name|default:"-" }}</td></tr>
-    <tr><td class="label">Approval number:</td><td>{{ cellline.celllineethics.approval_number|default:"-" }}</td></tr>
-    {% endif%}
-
-    <tr><td class="label">Ethics review panel provided a favourable opinion in relation of the form of consent:</td><td>{{ cellline.celllineethics.ethics_review_panel_opinion_relation_consent_form|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">Ethics review panel provided a favourable opinion in relation to the project:</td><td>{{ cellline.celllineethics.ethics_review_panel_opinion_project_proposed_use|yesno:"yes,no,-" }}</td></tr>
-
-    <tr><th class="sub-title"><h3>Constraints to Line Usage</h3></th><th></th></tr>
-
-    <tr><td class="label">Supplier of any recombined DNA vectors or commercial kits used:</td><td>{{ cellline.celllineethics.recombined_dna_vectors_supplier|default:"-" }}</td></tr>
-    <tr>
-        <td class="label">Any use or distribution constraints for this supplier:</td>
-        <td>{{ cellline.celllineethics.use_or_distribution_constraints|yesno:"yes,no,-" }}
-        {% if cellline.celllineethics.use_or_distribution_constraints and cellline.celllineethics.use_or_distribution_constraints_desc %}
-             - {{ cellline.celllineethics.use_or_distribution_constraints_desc }}
-        {% endif%}
-        </td>
-    </tr>
-
-    <tr>
-        <td class="label">Depositor third party obligations in regard to the use of the cell line:</td>
-        <td>{{ cellline.celllineethics.third_party_obligations|yesno:"yes,no,-" }}
-        {% if cellline.celllineethics.third_party_obligations and cellline.celllineethics.third_party_obligations_desc %}
-         - {{ cellline.celllineethics.third_party_obligations_desc }}
-        {% endif %}
-        </td>
-    </tr>
-
-<!--     <tr><td class="label">:</td><td>{{ cellline.celllineethics.|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">:</td><td>{{ cellline.celllineethics.|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">:</td><td>{{ cellline.celllineethics.|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">:</td><td>{{ cellline.celllineethics.|yesno:"yes,no,-" }}</td></tr>
-    <tr><td class="label">:</td><td>{{ cellline.celllineethics.|yesno:"yes,no,-" }}</td></tr>
- -->
-
-<!--
-
-
- -->
 
 </table>
