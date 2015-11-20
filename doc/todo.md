@@ -1,5 +1,11 @@
 # TODO
 
+## hPSCreg importer
+
+- Characterization
+- Documents
+- Check for updates for genes in Reprogramming method
+
 ## Exec dashboard
 
 - Data display: depositor data, batch QC data, document management
@@ -115,8 +121,8 @@ Board member -- representing Aidan/Tim and would be used if we need to meet EBiS
 
 As a WP7 member I want to view data stored in the IMS
 
-- Set up production server
-- Display all data in the IMS on the EBISC portal
++ Set up production server
++ Display all data in the IMS on the EBISC portal
 - Change log for production server
 
 1) As an IMS user I want IMS to reflect hPSCreg updates within 24 hours - Done when IMS is pulling hPSCreg data automatically every 24 hours.
