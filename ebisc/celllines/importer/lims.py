@@ -41,6 +41,8 @@ def run():
             batch = CelllineBatch.objects.get(biosamples_id=lims_batch_data.biosamples_batch_id)
             batch.batch_id = lims_batch_data.batch_id
 
+            # Inventory
+
             if 'vials_at_roslin' in lims_batch_data:
                 batch.vials_at_roslin = value_of_int(lims_batch_data.vials_at_roslin)
 
@@ -51,6 +53,8 @@ def run():
                 batch.vials_shipped_to_fraunhoffer = value_of_int(lims_batch_data.vials_shipped_to_fraunhoffer)
             batch.save()
 
+            # Certificate of analysis
+
             if 'certificate_of_analysis' in lims_batch_data:
                 batch.certificate_of_analysis_md5 = value_of_file(
                     lims_batch_data.certificate_of_analysis.file,
@@ -59,6 +63,8 @@ def run():
                     current_md5=batch.certificate_of_analysis_md5,
                 )
                 batch.save()
+
+            # Images
 
             old_images = set([img.image_md5 for img in batch.images.all()])
             if 'images' in lims_batch_data:
@@ -91,6 +97,8 @@ def run():
                         )
                         batch_image.save()
 
+            # Culture conditions
+
             culture_conditions, created = BatchCultureConditions.objects.get_or_create(batch=batch)
             if created:
                 logger.info('Created new batch culture conditions')
@@ -104,6 +112,8 @@ def run():
                 culture_conditions.temperature = lims_batch_data.culture_conditions.temperature
                 culture_conditions.save()
 
+            # Cell line data (ECACC cat no., go live flag and AUAs)
+
             batch.cell_line.ecacc_id = lims_batch_data.ecacc_cat_no
 
             if 'flag_go_live' in lims_batch_data:
@@ -115,6 +125,24 @@ def run():
                 batch.cell_line.available_for_sale = False
 
             batch.cell_line.save()
+
+            if 'e_aua' in lims_batch_data:
+                batch.cell_line.access_and_use_agreement_md5 = value_of_file(
+                    lims_batch_data.e_aua.file,
+                    batch.cell_line.access_and_use_agreement,
+                    source_md5=lims_batch_data.e_aua.md5,
+                    current_md5=batch.cell_line.access_and_use_agreement_md5,
+                )
+                batch.cell_line.save()
+
+            if 'pr_aua' in lims_batch_data:
+                batch.cell_line.access_and_use_agreement_participant_md5 = value_of_file(
+                    lims_batch_data.pr_aua.file,
+                    batch.cell_line.access_and_use_agreement_participant,
+                    source_md5=lims_batch_data.pr_aua.md5,
+                    current_md5=batch.cell_line.access_and_use_agreement_participant_md5,
+                )
+                batch.cell_line.save()
 
         except CelllineBatch.DoesNotExist:
             logger.warn('Unknown batch with biosamples ID = {}'.format(lims_batch_data.biosamples_batch_id))

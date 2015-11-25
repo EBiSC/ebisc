@@ -312,6 +312,9 @@ class CelllineResource(ModelResource):
 
     reprogramming_method = fields.DictField(null=True)
 
+    access_and_use_agreement = fields.DictField(null=True)
+    access_and_use_agreement_participant = fields.DictField(null=True)
+
     batches = fields.ToManyField(CelllineBatchResource, 'batches', null=True, full=True)
 
     class Meta:
@@ -366,6 +369,26 @@ class CelllineResource(ModelResource):
 
         else:
             return None
+
+    def dehydrate_access_and_use_agreement(self, bundle):
+
+        if not bundle.obj.access_and_use_agreement:
+            return None
+        else:
+            return {
+                'file': bundle.obj.access_and_use_agreement.url,
+                'md5': bundle.obj.access_and_use_agreement_md5,
+            }
+
+    def dehydrate_access_and_use_agreement_participant(self, bundle):
+
+        if not bundle.obj.access_and_use_agreement_participant:
+            return None
+        else:
+            return {
+                'file': bundle.obj.access_and_use_agreement_participant.url,
+                'md5': bundle.obj.access_and_use_agreement_participant_md5,
+            }
 
 
 # -----------------------------------------------------------------------------

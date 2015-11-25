@@ -197,6 +197,12 @@ class Cellline(DirtyFieldsMixin, models.Model):
     medical_history = models.CharField(_(u'Medical history'), max_length=500, null=True, blank=True)
     clinical_information = models.CharField(_(u'Clinical information'), max_length=500, null=True, blank=True)
 
+    access_and_use_agreement = models.FileField(_(u'Access and use agreement (AUA)'), upload_to=upload_to, null=True, blank=True)
+    access_and_use_agreement_md5 = models.CharField(_(u'Access and use agreement md5'), max_length=100, null=True, blank=True)
+
+    access_and_use_agreement_participant = models.FileField(_(u'Access and use agreement for participants (prAUA)'), upload_to=upload_to, null=True, blank=True)
+    access_and_use_agreement_participant_md5 = models.CharField(_(u'Access and use agreement for participants md5'), max_length=100, null=True, blank=True)
+
     class Meta:
         verbose_name = _(u'Cell line')
         verbose_name_plural = _(u'Cell lines')
