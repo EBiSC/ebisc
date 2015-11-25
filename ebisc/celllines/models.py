@@ -171,6 +171,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
     )
 
     accepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
+    available_for_sale = models.NullBooleanField(_(u'Available for sale'))
     status = models.ForeignKey('CelllineStatus', verbose_name=_(u'Cell line status'), null=True, blank=True)
 
     name = models.CharField(_(u'Cell line name'), unique=True, max_length=15)

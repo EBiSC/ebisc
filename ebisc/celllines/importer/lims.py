@@ -105,6 +105,15 @@ def run():
                 culture_conditions.save()
 
             batch.cell_line.ecacc_id = lims_batch_data.ecacc_cat_no
+
+            if 'flag_go_live' in lims_batch_data:
+                if lims_batch_data.flag_go_live == '1':
+                    batch.cell_line.available_for_sale = True
+                else:
+                    batch.cell_line.available_for_sale = False
+            else:
+                batch.cell_line.available_for_sale = False
+
             batch.cell_line.save()
 
         except CelllineBatch.DoesNotExist:
