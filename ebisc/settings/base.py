@@ -40,6 +40,7 @@ INSTALLED_APPS = (
 
     'tastypie',
     'django_cleanup',
+    'sorl.thumbnail',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -99,6 +100,11 @@ LOGIN_REDIRECT_URL = '/'
 TASTYPIE_DEFAULT_FORMATS = ['json']
 TASTYPIE_ALLOW_MISSING_SLASH = True
 API_LIMIT_PER_PAGE = 50
+
+# -----------------------------------------------------------------------------
+# Sorl thumbnails
+
+THUMBNAIL_QUALITY = 80
 
 # -----------------------------------------------------------------------------
 # Logging

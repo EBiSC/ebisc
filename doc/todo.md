@@ -42,6 +42,7 @@
     - Cell type
     - Tissue source
 - For sales link to ECACC? ... It would make more sense if users could "fill" their basket on IMS and then just complete the checkout on ECACC.
+- hPSCreg "comparator line"
 
 ## EBiSC Knowledge Community
 
