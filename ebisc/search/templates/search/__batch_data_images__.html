@@ -1,0 +1,15 @@
+<tr>
+    <td colspan="2" class="images">
+        {% for batch in cellline.batches.all %}
+        {% for image in batch.images.all %}
+        <div class="image-with-caption">
+            <img src="{{ image.image_file.url }}">
+            <div class="caption">
+                <div>Timepoint: {{ image.time_point }}</div>
+                <div>Magnification: {{ image.magnification }}</div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endfor %}
+    </td>
+</tr>
