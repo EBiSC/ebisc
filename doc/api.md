@@ -34,6 +34,14 @@ Additional fields and endpoints may be created for future exchanges.
 ### Sample cell line JSON record structure
 
     {
+        "access_and_use_agreement": {
+            "file": "/media/celllines/2015/11/21/25276167-dcc5-4a4c-9652-ed10eb9ed28c/UKBi001-A.eAUA1.pdf",
+            "md5": "05c14fc167c0a946665670846f485492"
+        },
+        "access_and_use_agreement_participant": {
+            "file": "/media/celllines/2015/11/21/25276167-dcc5-4a4c-9652-ed10eb9ed28c/UKBi001-A.prAUA1.pdf",
+            "md5": "05c14fc167c0a946665670846f485492"
+        },
         "alternative_names": [
             "LB-34-1",
             "iLB-MJD4-34m-r1"
@@ -43,7 +51,7 @@ Additional fields and endpoints may be created for future exchanges.
                 "batch_id": "P001",
                 "biosamples_id": "SAMEG301734",
                 "certificate_of_analysis": {
-                    "file": "celllines/2015/09/21/25276167-dcc5-4a4c-9652-ed10eb9ed28c/UKBi008-A.P001.CoA.pdf",
+                    "file": "/media/celllines/2015/09/21/25276167-dcc5-4a4c-9652-ed10eb9ed28c/UKBi008-A.P001.CoA.pdf",
                     "md5": "05c14fc167c0a946665670846f485492"
                 },
                 "culture_conditions": {
@@ -94,12 +102,56 @@ Additional fields and endpoints may be created for future exchanges.
         "depositor": {
             "name": "Universitatsklinikum Bonn"
         },
+        "depositor_cellline_culture_conditions": {
+            "co2_concentration": 5,
+            "culture_history": null,
+            "culture_medium": null,
+            "culture_medium_other": {
+                "base": "KnockOut DMEM",
+                "protein_source": "knockout_serum_replacement",
+                "serum_concentration": 20
+            },
+            "culture_medium_supplements": [
+                {
+                    "amount": "50",
+                    "supplement": "2-mercaptoethanol",
+                    "unit": "mikrometer"
+                },
+                {
+                    "amount": "2",
+                    "supplement": "Glutamax",
+                    "unit": "millimeter"
+                },
+                {
+                    "amount": "1",
+                    "supplement": "NEAA",
+                    "unit": "percent"
+                },
+                {
+                    "amount": "10",
+                    "supplement": "bFGF",
+                    "unit": "nanogram_millilitre"
+                }
+            ],
+            "enzymatically": null,
+            "enzyme_free": null,
+            "feeder_cell_id": "CELDA_000001419",
+            "feeder_cell_type": "Human foreskin fibroblasts",
+            "number_of_vials_banked": "20",
+            "o2_concentration": 21,
+            "other_culture_environment": null,
+            "passage_history": null,
+            "passage_method": "mechanically",
+            "passage_number_banked": "10",
+            "surface_coating": "gelatine"
+        },
         "donor": {
             "biosamples_id": "SAMEA2590985",
             "gender": "male"
         },
         "donor_age": 35-39,
         "ecacc_cat_no": "66540003",
+        "flag_go_live": true,
         "name": "UKBi008-A",
         "primary_cell_type": {
             "name": "Dermal Fibroblasts"
@@ -107,6 +159,7 @@ Additional fields and endpoints may be created for future exchanges.
         "primary_disease": {
             "doid": "DOID:1440",
             "name": "Machado-Joseph disease",
+            "purl": "http://purl.obolibrary.org/obo/DOID_1440",
             "synonyms": [
                 "Azorean disease (disorder)",
                 "MJD",
@@ -114,6 +167,14 @@ Additional fields and endpoints may be created for future exchanges.
             ]
         },
         "primary_disease_diagnosed": "1",
+        "publications": [
+            {
+                "pub": "PubMed",
+                "pub_id": "22113611",
+                "pub_title": "Koch P et al. Excitation-induced ataxin-3 aggregation in neurons from patients with Machado-Joseph disease. Nature. 2011 Nov 23;480(7378):543-6.",
+                "pub_url": "http://www.ncbi.nlm.nih.gov/pubmed/22113611"
+            }
+        ],
         "reprogramming_method": {
             "data": {
                 "absence_reprogramming_vectors": false,
@@ -123,7 +184,14 @@ Additional fields and endpoints may be created for future exchanges.
             },
             "type": "integrating vector"
         },
-        "resource_uri": "/api/v0/cell-lines/SAMEA2590882"
+        "resource_uri": "/api/v0/cell-lines/SAMEA2590882",
+        "virology_screening": {
+            "hepatitis_b": "Negative",
+            "hepatitis_c": "Negative",
+            "hiv1": "Negative",
+            "hiv2": null,
+            "mycoplasma": "Negative"
+        }
     }
 
 #### Primary disease
@@ -175,7 +243,7 @@ The reprogramming method has a different structure depending on the `type`. Poss
         "batch_id": "P001",
         "biosamples_id": "SAMEG301734",
         "certificate_of_analysis": {
-            "file": "celllines/2015/09/21/25276167-dcc5-4a4c-9652-ed10eb9ed28c/UKBi008-A.P001.CoA.pdf",
+            "file": "/media/celllines/2015/09/21/25276167-dcc5-4a4c-9652-ed10eb9ed28c/UKBi008-A.P001.CoA.pdf",
             "md5": "05c14fc167c0a946665670846f485492"
         },
         "culture_conditions": {

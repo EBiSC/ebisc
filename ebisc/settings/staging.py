@@ -5,7 +5,7 @@ TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = ['ebisc-stage.douglasconnect.com']
 
-SERVER_EMAIL = 'EBiSC Staging <joh@douglasconnect.com>'
+SERVER_EMAIL = 'EBiSC Staging <www@douglasconnect.com>'
 
 # -----------------------------------------------------------------------------
 # Database

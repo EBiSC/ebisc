@@ -7,22 +7,13 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CelllineDerivation, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions
+from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllinePublication
 
 
 # -----------------------------------------------------------------------------
 # CelllineDerivation
 
 class CelllineDerivationResource(ModelResource):
-
-    # - primary_cell_type = models.ForeignKey('CellType', verbose_name=_(u'Primary cell type'), null=True, blank=True)
-    # - primary_cell_developmental_stage = models.Charfield(_(u'Primary cell developmental stage'), max_length=45, null=True, blank=True)
-    # - tissue_procurement_location = models.Charfield(_(u'Location of primary tissue procurement'), max_length=45, null=True, blank=True)
-    # - tissue_collection_date = models.DateField(_(u'Tissue collection date'), null=True, blank=True)
-    # - selection_criteria_for_clones = models.TextField(_(u'Selection criteria for clones'), null=True, blank=True)
-    # - xeno_free_conditions = models.NullBooleanField(_(u'Xeno free conditions'), default=None, null=True, blank=True)
-    # - derived_under_gmp = models.NullBooleanField(_(u'Derived under gmp'), default=None, null=True, blank=True)
-    # - available_as_clinical_grade = models.CharField(_(u'Available as clinical grade'), max_length=4, blank=True)
 
     name = fields.CharField('primary_cell_type', null=True)
 
@@ -35,29 +26,74 @@ class CelllineDerivationResource(ModelResource):
 # -----------------------------------------------------------------------------
 # CelllineCultureConditions
 
+class CultureMediumOtherResource(ModelResource):
+
+    base = fields.CharField('base', null=True)
+    protein_source = fields.CharField('protein_source', null=True)
+    serum_concentration = fields.IntegerField('serum_concentration', null=True)
+
+    class Meta:
+        queryset = CultureMediumOther.objects.all()
+        include_resource_uri = False
+        fields = ('base', 'protein_source', 'serum_concentration',)
+
+
+class CelllineCultureMediumSupplementResource(ModelResource):
+
+    supplement = fields.CharField('supplement')
+    amount = fields.CharField('amount', null=True)
+    unit = fields.CharField('unit', null=True)
+
+    class Meta:
+        queryset = CelllineCultureMediumSupplement.objects.all()
+        include_resource_uri = False
+        fields = ('supplement', 'amount', )
+
+
 class CelllineCultureConditionsResource(ModelResource):
 
-    # + culture_medium = models.ForeignKey('CultureMedium', verbose_name=_(u'Culture medium'), blank=True, null=True)
-    # + surface_coating = models.ForeignKey('SurfaceCoating', verbose_name=_(u'Surface coating'), null=True, blank=True)
-    # - feeder_cell_type = models.CharField(_(u'Feeder cell type'), max_length=45, null=True, blank=True)
-    # - feeder_cell_id = models.CharField(_(u'Feeder cell id'), max_length=45, null=True, blank=True)
-    # + passage_method = models.ForeignKey('PassageMethod', verbose_name=_(u'Passage method'), blank=True, null=True)
-    # - enzymatically = models.ForeignKey('Enzymatically', verbose_name=_(u'Enzymatically'), blank=True, null=True)
-    # - enzyme_free = models.ForeignKey('EnzymeFree', verbose_name=_(u'Enzyme free'), blank=True, null=True)
-    # + o2_concentration = models.IntegerField(_(u'O2 concentration'), blank=True, null=True)
-    # + co2_concentration = models.IntegerField(_(u'Co2 concentration'), blank=True, null=True)
-
     surface_coating = fields.CharField('surface_coating', null=True)
-    culture_medium = fields.CharField('culture_medium', null=True)
-    passage_method = fields.CharField('passage_method', null=True)
 
+    feeder_cell_type = fields.CharField('feeder_cell_type', null=True)
+    feeder_cell_id = fields.CharField('feeder_cell_id', null=True)
+    passage_method = fields.CharField('passage_method', null=True)
+    enzymatically = fields.CharField('enzymatically', null=True)
+    enzyme_free = fields.CharField('enzyme_free', null=True)
     o2_concentration = fields.IntegerField('o2_concentration', null=True)
     co2_concentration = fields.IntegerField('co2_concentration', null=True)
+    other_culture_environment = fields.CharField('other_culture_environment', null=True)
+
+    culture_medium = fields.CharField('culture_medium', null=True)
+    culture_medium_other = fields.ToOneField(CultureMediumOtherResource, 'culture_medium_other', null=True, full=True)
+
+    culture_medium_supplements = fields.ToManyField(CelllineCultureMediumSupplementResource, 'medium_supplements', null=True, full=True)
+
+    passage_number_banked = fields.CharField('passage_number_banked', null=True)
+    number_of_vials_banked = fields.CharField('number_of_vials_banked', null=True)
+    passage_history = fields.BooleanField('passage_history', null=True)
+    culture_history = fields.BooleanField('culture_history', null=True)
 
     class Meta:
         queryset = CelllineCultureConditions.objects.all()
         include_resource_uri = False
         fields = ('o2_concentration', 'co2_concentration')
+
+
+# -----------------------------------------------------------------------------
+# CelllineCharacterization
+
+class CelllineCharacterizationResource(ModelResource):
+
+    hiv1 = fields.CharField('get_screening_hiv1_display', null=True)
+    hiv2 = fields.CharField('get_screening_hiv2_display', null=True)
+    hepatitis_b = fields.CharField('get_screening_hepatitis_b_display', null=True)
+    hepatitis_c = fields.CharField('get_screening_hepatitis_c_display', null=True)
+    mycoplasma = fields.CharField('get_screening_mycoplasma_display', null=True)
+
+    class Meta:
+        queryset = CelllineCharacterization.objects.all()
+        include_resource_uri = False
+        fields = ('hiv1', 'hiv2', 'hepatitis_b', 'hepatitis_c', 'mycoplasma',)
 
 
 # -----------------------------------------------------------------------------
@@ -78,11 +114,28 @@ class CelllineKaryotypeResource(ModelResource):
 
 
 # -----------------------------------------------------------------------------
+# Publication
+
+class CelllinePublicationResource(ModelResource):
+
+    pub = fields.CharField('get_reference_type_display')
+    pub_id = fields.CharField('reference_id', null=True)
+    pub_url = fields.CharField('reference_url')
+    pub_title = fields.CharField('reference_title')
+
+    class Meta:
+        queryset = CelllinePublication.objects.all()
+        include_resource_uri = False
+        fields = ('pub', 'pub_id', 'pub_url', 'pub_title')
+
+
+# -----------------------------------------------------------------------------
 # Disease
 
 class DiseaseResource(ModelResource):
 
     doid = fields.CharField('icdcode', null=True)
+    purl = fields.CharField('purl', null=True)
     name = fields.CharField('disease', null=True)
     synonyms = fields.ListField('synonyms', null=True)
 
@@ -141,8 +194,8 @@ class OrganizationResource(ModelResource):
 # Batch Images
 
 class CelllineBatchImagesResource(ModelResource):
-    image_file = fields.FileField('image_file')
-    image_md5 = fields.CharField('image_md5')
+    image_file = fields.FileField('image')
+    image_md5 = fields.CharField('md5')
     magnification = fields.CharField('magnification', null=True)
     time_point = fields.CharField('time_point', null=True)
 
@@ -210,12 +263,10 @@ class CelllineBatchResource(ModelResource):
         if not bundle.obj.certificate_of_analysis:
             return None
         else:
-            res = {
-                'file': bundle.obj.certificate_of_analysis,
+            return {
+                'file': bundle.obj.certificate_of_analysis.url,
                 'md5': bundle.obj.certificate_of_analysis_md5,
             }
-
-            return res
 
 
 # -----------------------------------------------------------------------------
@@ -240,13 +291,16 @@ class CelllineResource(ModelResource):
     biosamples_id = fields.CharField('biosamples_id', unique=True)
     ecacc_cat_no = fields.CharField('ecacc_id', unique=True, null=True)
 
+    flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)
+
     name = fields.CharField('name', unique=True)
     alternative_names = fields.CharField('alternative_names', null=True)
 
     primary_disease_diagnosed = fields.CharField('primary_disease_diagnosis')
     primary_disease = fields.ToOneField(DiseaseResource, 'primary_disease', null=True, full=True)
     primary_cell_type = fields.ToOneField(CelllineDerivationResource, 'derivation', null=True, full=True)
-    # culture_conditions = fields.ToOneField(CelllineCultureConditionsResource, 'celllinecultureconditions', full=True)
+    depositor_cellline_culture_conditions = fields.ToOneField(CelllineCultureConditionsResource, 'celllinecultureconditions', full=True)
+    virology_screening = fields.ToOneField(CelllineCharacterizationResource, 'celllinecharacterization', null=True, full=True)
     cellline_karyotype = fields.ToOneField(CelllineKaryotypeResource, 'karyotype', null=True, full=True)
 
     donor_age = fields.CharField('donor_age', null=True)
@@ -254,7 +308,12 @@ class CelllineResource(ModelResource):
 
     depositor = fields.ToOneField(OrganizationResource, 'generator', null=True, full=True)
 
+    publications = fields.ToManyField(CelllinePublicationResource, 'publications', null=True, full=True)
+
     reprogramming_method = fields.DictField(null=True)
+
+    access_and_use_agreement = fields.DictField(null=True)
+    access_and_use_agreement_participant = fields.DictField(null=True)
 
     batches = fields.ToManyField(CelllineBatchResource, 'batches', null=True, full=True)
 
@@ -310,6 +369,26 @@ class CelllineResource(ModelResource):
 
         else:
             return None
+
+    def dehydrate_access_and_use_agreement(self, bundle):
+
+        if not bundle.obj.access_and_use_agreement:
+            return None
+        else:
+            return {
+                'file': bundle.obj.access_and_use_agreement.url,
+                'md5': bundle.obj.access_and_use_agreement_md5,
+            }
+
+    def dehydrate_access_and_use_agreement_participant(self, bundle):
+
+        if not bundle.obj.access_and_use_agreement_participant:
+            return None
+        else:
+            return {
+                'file': bundle.obj.access_and_use_agreement_participant.url,
+                'md5': bundle.obj.access_and_use_agreement_participant_md5,
+            }
 
 
 # -----------------------------------------------------------------------------

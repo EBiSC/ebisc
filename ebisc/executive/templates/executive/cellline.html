@@ -48,7 +48,7 @@
             <h3>Images</h3>
             {% for image in batch.images.all %}
             <div class="image-with-caption">
-                <img src="{{ image.image_file.url }}">
+                <img src="{{ image.image.url }}">
                 <div class="caption">
                     <div>Timepoint: {{ image.time_point }}</div>
                     <div>Magnification: {{ image.magnification }}</div>
@@ -71,7 +71,21 @@
 
 </div>
 
-{% include 'search/__cellline_data__.html' %}
+<table class="data">
+
+{% include 'search/__cellline_data_general__.html' %}
+
+{% include 'search/__cellline_data_derivation__.html' %}
+
+{% include 'search/__cellline_data_culture_conditions__.html' %}
+
+{% include 'search/__cellline_data_characterization__.html' %}
+
+{% include 'search/__cellline_data_genotyping__.html' %}
+
+{% include 'search/__cellline_data_ethics__.html' %}
+
+</table>
 
 {% endblock %}
 

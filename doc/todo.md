@@ -42,6 +42,7 @@
     - Cell type
     - Tissue source
 - For sales link to ECACC? ... It would make more sense if users could "fill" their basket on IMS and then just complete the checkout on ECACC.
+- hPSCreg "comparator line"
 
 ## EBiSC Knowledge Community
 
@@ -121,8 +122,8 @@ Board member -- representing Aidan/Tim and would be used if we need to meet EBiS
 
 As a WP7 member I want to view data stored in the IMS
 
-- Set up production server
-- Display all data in the IMS on the EBISC portal
++ Set up production server
++ Display all data in the IMS on the EBISC portal
 - Change log for production server
 
 1) As an IMS user I want IMS to reflect hPSCreg updates within 24 hours - Done when IMS is pulling hPSCreg data automatically every 24 hours.

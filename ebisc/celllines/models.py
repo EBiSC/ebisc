@@ -171,6 +171,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
     )
 
     accepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
+    available_for_sale = models.NullBooleanField(_(u'Available for sale'))
     status = models.ForeignKey('CelllineStatus', verbose_name=_(u'Cell line status'), null=True, blank=True)
 
     name = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
@@ -195,6 +196,12 @@ class Cellline(DirtyFieldsMixin, models.Model):
     family_history = models.CharField(_(u'Family history'), max_length=500, null=True, blank=True)
     medical_history = models.CharField(_(u'Medical history'), max_length=500, null=True, blank=True)
     clinical_information = models.CharField(_(u'Clinical information'), max_length=500, null=True, blank=True)
+
+    access_and_use_agreement = models.FileField(_(u'Access and use agreement (AUA)'), upload_to=upload_to, null=True, blank=True)
+    access_and_use_agreement_md5 = models.CharField(_(u'Access and use agreement md5'), max_length=100, null=True, blank=True)
+
+    access_and_use_agreement_participant = models.FileField(_(u'Access and use agreement for participants (prAUA)'), upload_to=upload_to, null=True, blank=True)
+    access_and_use_agreement_participant_md5 = models.CharField(_(u'Access and use agreement for participants md5'), max_length=100, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line')
@@ -271,8 +278,8 @@ class CelllineBatch(models.Model):
 class CelllineBatchImages(models.Model):
 
     batch = models.ForeignKey('CelllineBatch', verbose_name=_(u'Cell line Batch images'), related_name='images')
-    image_file = models.FileField(_(u'Image file'), upload_to=upload_to)
-    image_md5 = models.CharField(_(u'Image file md5'), max_length=100)
+    image = models.ImageField(_(u'Image'), upload_to=upload_to)
+    md5 = models.CharField(_(u'MD5'), max_length=100)
     magnification = models.CharField(_(u'Magnification'), max_length=10, null=True, blank=True)
     time_point = models.CharField(_(u'Time point'), max_length=100, null=True, blank=True)
 
@@ -331,6 +338,7 @@ class Donor(models.Model):
 class Disease(models.Model):
 
     icdcode = models.CharField(_(u'DOID'), max_length=30, unique=True, null=True, blank=True)
+    purl = models.URLField(_(u'Purl'), max_length=300, null=True, blank=True)
     disease = models.CharField(_(u'Disease'), max_length=45, blank=True)
     synonyms = models.CharField(_(u'Synonyms'), max_length=500, null=True, blank=True)
 
@@ -1266,6 +1274,7 @@ class GeneticModificationIsogenic(models.Model):
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 # TODO Cell line differentation 2
+
 
 class Germlayer(models.Model):
 

@@ -4,8 +4,38 @@
 
 {% block article %}
 
-<h1>Cell line <small>{{ cellline.name }}</small></h1>
+<h1>{{ cellline.name }} {% if cellline.alternative_names %}<small>{{ cellline.alternative_names }}</small>{% endif %}</h1>
 
-{% include 'search/__cellline_data__.html' %}
+<ul class="page-menu">
+    <li><a href="#general-information">General information</a></li>
+    <li><a href="#derivation">Derivation</a></li>
+    <li><a href="#culture-conditions">Culture conditions</a></li>
+    <li><a href="#characterization">Characterization</a></li>
+    <li><a href="#genotyping">Genotyping</a></li>
+</ul>
+
+<!-- {% if cellline.ecacc_id %}
+<a class="buy" href="http://hpa-uat.systemassociates.co.uk/products/celllines/ebisc/detail.jsp?refId={{ cellline.ecacc_id }}&collection=ecacc_ebisc"  target="_blank">
+    <button><i class="glyphicon glyphicon-shopping-cart "></i> Purchase cell line</button>
+    <div class="comment">At European Collection of Cell Cultures (ECACC)</div>
+</a>
+{% endif %} -->
+
+<table class="data">
+    {% include 'search/__cellline_data_general__.html' %}
+
+    {% include 'search/__cellline_data_derivation__.html' %}
+
+    {% if cellline.batches.all|length %}
+    {% include 'search/__batch_data_culture_conditions__.html' %}
+    {% include 'search/__batch_data_images__.html' %}
+    {% else %}
+    {% include 'search/__cellline_data_culture_conditions__.html' %}
+    {% endif %}
+
+    {% include 'search/__cellline_data_characterization__.html' %}
+
+    {% include 'search/__cellline_data_genotyping__.html' %}
+</table>
 
 {% endblock %}

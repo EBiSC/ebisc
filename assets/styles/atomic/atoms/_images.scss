@@ -1,9 +1,12 @@
+.data .cellline-batch-images {
+  .image-with-caption {
+    float: left;
+    margin-right: 30px;
+  }
+}
+
 .image-with-caption {
   margin: 1em 0 1.5em 0;
-
-  img {
-    width: 300px;
-  }
 
   .caption {
     font-size: $base_font-size * 0.9;

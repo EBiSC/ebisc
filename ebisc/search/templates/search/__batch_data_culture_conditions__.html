@@ -1,0 +1,14 @@
+<tr><th colspan="2" class="title" id="culture-conditions"><h2>Culture Conditions</h2></th></tr>
+{% for batch in cellline.batches.all %}
+
+{% if cellline.batches.all|length > 1 %}
+<tr><th class="sub-title"><h3>Batch {{ batch.batch_id }}</h3></th></tr>
+{% endif %}
+
+<tr><td class="label">Medium:</td><td>{{ batch.batchcultureconditions.culture_medium|default:"-" }}</td></tr>
+<tr><td class="label">Passage method:</td><td>{{ batch.batchcultureconditions.passage_method|default:"-" }}</td></tr>
+<tr><td class="label">Matrix:</td><td>{{ batch.batchcultureconditions.matrix|default:"-" }}</td></tr>
+<tr><td class="label">CO2 concentration:</td><td>{{ batch.batchcultureconditions.co2_concentration|default:"-" }}</td></tr>
+<tr><td class="label">O2 concentration:</td><td>{{ batch.batchcultureconditions.o2_concentration|default:"-" }}</td></tr>
+<tr><td class="label">Temperature:</td><td>{{ batch.batchcultureconditions.temperature|default:"-" }}</td></tr>
+{% endfor %}

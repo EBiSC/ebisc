@@ -54,7 +54,7 @@ ol {
     @include breakpoint(map-get($breakpoints, medium)) {
       padding: 0px;
     }
-  }        
+  }
 
   @include breakpoint(map-get($breakpoints, small)) {
     li {
@@ -139,5 +139,19 @@ td ul {
     &:last-child {
       margin-bottom: 0;
     }
+  }
+}
+
+.page-menu {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+
+  li {
+    float: left;
+  }
+
+  li + li {
+    margin-left: 20px;
   }
 }
