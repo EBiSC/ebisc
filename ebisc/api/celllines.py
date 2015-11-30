@@ -194,8 +194,8 @@ class OrganizationResource(ModelResource):
 # Batch Images
 
 class CelllineBatchImagesResource(ModelResource):
-    image_file = fields.FileField('image_file')
-    image_md5 = fields.CharField('image_md5')
+    image_file = fields.FileField('image')
+    image_md5 = fields.CharField('md5')
     magnification = fields.CharField('magnification', null=True)
     time_point = fields.CharField('time_point', null=True)
 

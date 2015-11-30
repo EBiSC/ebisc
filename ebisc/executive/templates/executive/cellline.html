@@ -48,7 +48,7 @@
             <h3>Images</h3>
             {% for image in batch.images.all %}
             <div class="image-with-caption">
-                <img src="{{ image.image_file.url }}">
+                <img src="{{ image.image.url }}">
                 <div class="caption">
                     <div>Timepoint: {{ image.time_point }}</div>
                     <div>Magnification: {{ image.magnification }}</div>

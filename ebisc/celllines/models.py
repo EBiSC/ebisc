@@ -278,8 +278,8 @@ class CelllineBatch(models.Model):
 class CelllineBatchImages(models.Model):
 
     batch = models.ForeignKey('CelllineBatch', verbose_name=_(u'Cell line Batch images'), related_name='images')
-    image_file = models.FileField(_(u'Image file'), upload_to=upload_to)
-    image_md5 = models.CharField(_(u'Image file md5'), max_length=100)
+    image = models.ImageField(_(u'Image'), upload_to=upload_to)
+    md5 = models.CharField(_(u'MD5'), max_length=100)
     magnification = models.CharField(_(u'Magnification'), max_length=10, null=True, blank=True)
     time_point = models.CharField(_(u'Time point'), max_length=100, null=True, blank=True)
 

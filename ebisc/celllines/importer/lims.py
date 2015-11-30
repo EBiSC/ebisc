@@ -66,7 +66,7 @@ def run():
 
             # Images
 
-            old_images = set([img.image_md5 for img in batch.images.all()])
+            old_images = set([img.md5 for img in batch.images.all()])
             if 'images' in lims_batch_data:
                 new_images = set([img.md5 for img in lims_batch_data.images])
             else:
@@ -75,7 +75,7 @@ def run():
             # Delete old images that are not in new images
 
             for img_md5 in old_images - new_images:
-                CelllineBatchImages(batch=batch, image_md5=img_md5).delete()
+                CelllineBatchImages(batch=batch, md5=img_md5).delete()
 
             # Add new images
 
@@ -89,11 +89,11 @@ def run():
                         )
                         batch_image.save()
 
-                        batch_image.image_md5 = value_of_file(
+                        batch_image.md5 = value_of_file(
                             image.file,
-                            batch_image.image_file,
+                            batch_image.image,
                             source_md5=image.md5,
-                            current_md5=batch_image.image_md5,
+                            current_md5=batch_image.md5,
                         )
                         batch_image.save()
 
