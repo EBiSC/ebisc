@@ -291,6 +291,8 @@ class CelllineResource(ModelResource):
     biosamples_id = fields.CharField('biosamples_id', unique=True)
     ecacc_cat_no = fields.CharField('ecacc_id', unique=True, null=True)
 
+    flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)
+
     name = fields.CharField('name', unique=True)
     alternative_names = fields.CharField('alternative_names', null=True)
 
@@ -309,6 +311,9 @@ class CelllineResource(ModelResource):
     publications = fields.ToManyField(CelllinePublicationResource, 'publications', null=True, full=True)
 
     reprogramming_method = fields.DictField(null=True)
+
+    access_and_use_agreement = fields.DictField(null=True)
+    access_and_use_agreement_participant = fields.DictField(null=True)
 
     batches = fields.ToManyField(CelllineBatchResource, 'batches', null=True, full=True)
 
@@ -364,6 +369,26 @@ class CelllineResource(ModelResource):
 
         else:
             return None
+
+    def dehydrate_access_and_use_agreement(self, bundle):
+
+        if not bundle.obj.access_and_use_agreement:
+            return None
+        else:
+            return {
+                'file': bundle.obj.access_and_use_agreement.url,
+                'md5': bundle.obj.access_and_use_agreement_md5,
+            }
+
+    def dehydrate_access_and_use_agreement_participant(self, bundle):
+
+        if not bundle.obj.access_and_use_agreement_participant:
+            return None
+        else:
+            return {
+                'file': bundle.obj.access_and_use_agreement_participant.url,
+                'md5': bundle.obj.access_and_use_agreement_participant_md5,
+            }
 
 
 # -----------------------------------------------------------------------------
