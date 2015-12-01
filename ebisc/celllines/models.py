@@ -562,7 +562,7 @@ class CelllineVectorFreeReprogrammingFactors(models.Model):
 # -----------------------------------------------------------------------------
 # Cell line Characterization
 
-class CelllineCharacterization(models.Model):
+class CelllineCharacterization(DirtyFieldsMixin, models.Model):
 
     SCREENING_CHOICES = (
         ('positive', u'Positive'),
@@ -612,7 +612,7 @@ class MarkerMoleculeBase(models.Model):
 
 # Undifferentiated cells
 
-class UndifferentiatedMorphologyMarkerImune(models.Model):
+class UndifferentiatedMorphologyMarkerImune(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=u'Cell line', related_name='undifferentiated_morphology_marker_imune')
     passage_number = models.CharField(u'Passage number', max_length=10, null=True, blank=True)
@@ -622,12 +622,12 @@ class UndifferentiatedMorphologyMarkerImune(models.Model):
         verbose_name_plural = _(u'Markerd Undiff - Imune')
 
 
-class UndifferentiatedMorphologyMarkerImuneMolecule(MarkerMoleculeBase):
+class UndifferentiatedMorphologyMarkerImuneMolecule(DirtyFieldsMixin, MarkerMoleculeBase):
 
     marker = models.ForeignKey(UndifferentiatedMorphologyMarkerImune, verbose_name=u'Marker', related_name='molecules')
 
 
-class UndifferentiatedMorphologyMarkerRtPcr(models.Model):
+class UndifferentiatedMorphologyMarkerRtPcr(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=u'Cell line', related_name='undifferentiated_morphology_marker_rtpcr')
     passage_number = models.CharField(u'Passage number', max_length=10, null=True, blank=True)
@@ -637,12 +637,12 @@ class UndifferentiatedMorphologyMarkerRtPcr(models.Model):
         verbose_name_plural = _(u'Markerd Undiff - RtPcr')
 
 
-class UndifferentiatedMorphologyMarkerRtPcrMolecule(MarkerMoleculeBase):
+class UndifferentiatedMorphologyMarkerRtPcrMolecule(DirtyFieldsMixin, MarkerMoleculeBase):
 
     marker = models.ForeignKey(UndifferentiatedMorphologyMarkerRtPcr, verbose_name=u'Marker', related_name='molecules')
 
 
-class UndifferentiatedMorphologyMarkerFacs(models.Model):
+class UndifferentiatedMorphologyMarkerFacs(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=u'Cell line', related_name='undifferentiated_morphology_marker_facs')
     passage_number = models.CharField(u'Passage number', max_length=10, null=True, blank=True)
@@ -652,12 +652,12 @@ class UndifferentiatedMorphologyMarkerFacs(models.Model):
         verbose_name_plural = _(u'Markerd Undiff - Facs')
 
 
-class UndifferentiatedMorphologyMarkerFacsMolecule(MarkerMoleculeBase):
+class UndifferentiatedMorphologyMarkerFacsMolecule(DirtyFieldsMixin, MarkerMoleculeBase):
 
     marker = models.ForeignKey(UndifferentiatedMorphologyMarkerFacs, verbose_name=u'Marker', related_name='molecules')
 
 
-class UndifferentiatedMorphologyMarkerMorphology(models.Model):
+class UndifferentiatedMorphologyMarkerMorphology(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=u'Cell line', related_name='undifferentiated_morphology_marker_morphology')
     passage_number = models.CharField(u'Passage number', max_length=10, null=True, blank=True)
@@ -924,7 +924,7 @@ class Person(models.Model):
 # -----------------------------------------------------------------------------
 # Publications, documents
 
-class CelllinePublication(models.Model):
+class CelllinePublication(DirtyFieldsMixin, models.Model):
 
     REFERENCE_TYPE_CHOICES = (
         ('pubmed', 'PubMed'),

@@ -953,18 +953,24 @@ def parse_disease_associated_genotype(valuef, source, cell_line):
 def parse_publications(valuef, source, cell_line):
 
     if valuef('registration_reference_publication_pubmed_id', 'int'):
-        # PubMed
-        CelllinePublication(
-            cell_line=cell_line,
-            reference_type='pubmed',
-            reference_id=valuef('registration_reference_publication_pubmed_id', 'int'),
-            reference_url=CelllinePublication.pubmed_url_from_id(valuef('registration_reference_publication_pubmed_id', 'int')),
-            reference_title=valuef('registration_reference'),
-        ).save()
+
+        cell_line_publication, created = CelllinePublication.objects.get_or_create(cell_line=cell_line, reference_id=valuef('registration_reference_publication_pubmed_id'))
+
+        cell_line_publication.reference_type = 'pubmed'
+        cell_line_publication.reference_url = CelllinePublication.pubmed_url_from_id(valuef('registration_reference_publication_pubmed_id', 'int'))
+        cell_line_publication.reference_title = valuef('registration_reference')
+
+        if created or cell_line_publication.is_dirty():
+            cell_line_publication.save()
+            return True
+
+        return False
 
 
 @inject_valuef
 def parse_characterization(valuef, source, cell_line):
+
+    cell_line_characterization, created = CelllineCharacterization.objects.get_or_create(cell_line=cell_line)
 
     certificate_of_analysis_passage_number = valuef('certificate_of_analysis_passage_number')
     screening_hiv1 = valuef('virology_screening_hiv_1_result')
@@ -974,15 +980,24 @@ def parse_characterization(valuef, source, cell_line):
     screening_mycoplasma = valuef('virology_screening_mycoplasma_result')
 
     if len([x for x in (certificate_of_analysis_passage_number, screening_hiv1, screening_hiv2, screening_hepatitis_b, screening_hepatitis_c, screening_mycoplasma) if x is not None]):
-        CelllineCharacterization(
-            cell_line=cell_line,
-            certificate_of_analysis_passage_number=certificate_of_analysis_passage_number,
-            screening_hiv1=screening_hiv1,
-            screening_hiv2=screening_hiv2,
-            screening_hepatitis_b=screening_hepatitis_b,
-            screening_hepatitis_c=screening_hepatitis_c,
-            screening_mycoplasma=screening_mycoplasma,
-        ).save()
+        cell_line_characterization.certificate_of_analysis_passage_number = certificate_of_analysis_passage_number
+        cell_line_characterization.screening_hiv1 = screening_hiv1
+        cell_line_characterization.screening_hiv2 = screening_hiv2
+        cell_line_characterization.screening_hepatitis_b = screening_hepatitis_b
+        cell_line_characterization.screening_hepatitis_c = screening_hepatitis_c
+        cell_line_characterization.screening_mycoplasma = screening_mycoplasma
+
+    if created or cell_line_characterization.is_dirty():
+        if created:
+            logger.info('Added cell line characterization: %s' % cell_line_characterization)
+        else:
+            logger.info('Updated cell line characterization: %s' % cell_line_characterization)
+
+        cell_line_characterization.save()
+
+        return True
+
+    return False
 
 
 @inject_valuef
@@ -998,14 +1013,26 @@ def parse_characterization_markers(valuef, source, cell_line):
     def aux_imune_rtpcr_facs(hescreg_slug, hescreg_slug_passage_number, marker_model, marker_molecule_model):
 
         if valuef(hescreg_slug) is not None:
-            marker = marker_model(
-                cell_line=cell_line,
-                passage_number=valuef(hescreg_slug_passage_number)
-            )
-            marker.save()
+            marker, marker_created = marker_model.objects.get_or_create(cell_line=cell_line)
+
+            marker.passage_number = valuef(hescreg_slug_passage_number)
 
             for string in valuef(hescreg_slug):
                 aux_molecule_result(marker, marker_molecule_model, string)
+
+            dirty = [marker.is_dirty(check_relationship=True)]
+
+            if True in dirty:
+                if marker_created:
+                    logger.info('Added new Undifferentiated marker to cell line')
+                else:
+                    logger.info('Changed Undifferentiated marker of cell line')
+
+                marker.save()
+
+                return True
+
+            return False
 
     def aux_molecule_result(marker, marker_molecule_model, string):
 
@@ -1013,10 +1040,18 @@ def parse_characterization_markers(valuef, source, cell_line):
             (molecule_name, result) = string.split('###')
             try:
                 molecule = molecule_name
-                marker_molecule_model(
-                    marker=marker,
-                    molecule=molecule,
-                    result=result).save()
+
+                marker_molecule, marker_molecule_created = marker_molecule_model.objects.get_or_create(marker=marker, molecule=molecule)
+
+                marker_molecule.result = result
+
+                if marker_molecule_created or marker_molecule.is_dirty():
+                    marker_molecule.save()
+
+                    return True
+
+                return False
+
             except InvalidMoleculeDataException:
                 pass
         else:
@@ -1024,10 +1059,18 @@ def parse_characterization_markers(valuef, source, cell_line):
             try:
                 # molecule = get_or_create_molecule(molecule_name, molecule_kind, molecule_catalog, molecule_catalog_id)
                 molecule = molecule_name
-                marker_molecule_model(
-                    marker=marker,
-                    molecule=molecule,
-                    result=result).save()
+
+                marker_molecule, marker_molecule_created = marker_molecule_model.objects.get_or_create(marker=marker, molecule=molecule)
+
+                marker_molecule.result = result
+
+                if marker_molecule_created or marker_molecule.is_dirty():
+                    marker_molecule.save()
+
+                    return True
+
+                return False
+
             except InvalidMoleculeDataException:
                 pass
 
@@ -1050,38 +1093,59 @@ def parse_characterization_markers(valuef, source, cell_line):
         'undiff_morphology_markers_enc_filename'
     )]):
 
-        UndifferentiatedMorphologyMarkerMorphology(
-            cell_line=cell_line,
-            passage_number=valuef('undiff_morphology_markers_passage_number'),
-            description=valuef('undiff_morphology_markers_description'),
-            data_url=aux_hescreg_data_url(valuef('undiff_morphology_markers_enc_filename')),
-        ).save()
+        undifferentiated_morphology_marker_morphology, undifferentiated_morphology_marker_morphology_created = UndifferentiatedMorphologyMarkerMorphology.objects.get_or_create(cell_line=cell_line)
+
+        undifferentiated_morphology_marker_morphology.passage_number = valuef('undiff_morphology_markers_passage_number')
+        undifferentiated_morphology_marker_morphology.description = valuef('undiff_morphology_markers_description')
+        undifferentiated_morphology_marker_morphology.data_url = aux_hescreg_data_url(valuef('undiff_morphology_markers_enc_filename'))
+
+        if undifferentiated_morphology_marker_morphology_created or undifferentiated_morphology_marker_morphology.is_dirty():
+            if undifferentiated_morphology_marker_morphology_created:
+                logger.info('Added cell line undifferentitated morphology marker: %s' % undifferentiated_morphology_marker_morphology)
+            else:
+                logger.info('Updated cell line  undifferentitated morphology marker: %s' % undifferentiated_morphology_marker_morphology)
+
+            undifferentiated_morphology_marker_morphology.save()
+
+            return True
+
+        return False
+
+    else:
+        try:
+            m = UndifferentiatedMorphologyMarkerMorphology.objects.get(cell_line=cell_line)
+            m.delete()
+
+            logger.info('Deleting cell line undifferentitated morphology marker')
+
+        except UndifferentiatedMorphologyMarkerMorphology.DoesNotExist:
+            return False
 
     # UndifferentiatedMorphologyMarkerExpressionProfile
 
-    if any([valuef(x) for x in (
-        'undiff_exprof_markers_method_name',
-        'undiff_exprof_markers_weblink',
-        'undiff_exprof_markers_enc_filename',
-        'undiff_exprof_markers_passage_number',
-    )]):
-
-        marker = UndifferentiatedMorphologyMarkerExpressionProfile(
-            cell_line=cell_line,
-            method=valuef('undiff_exprof_markers_method_name'),
-            passage_number=valuef('undiff_exprof_markers_passage_number'),
-            data_url=valuef('undiff_exprof_markers_weblink'),
-            uploaded_data_url=aux_hescreg_data_url(valuef('undiff_exprof_markers_enc_filename')),
-        )
-
-        marker.save()
-
-        if valuef('undiff_exprof_expression_array_marker'):
-            aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_expression_array_marker'))
-        elif valuef('undiff_exprof_rna_sequencing_marker'):
-            aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_rna_sequencing_marker'))
-        elif valuef('undiff_exprof_proteomics_marker'):
-            aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_proteomics_marker'))
+    # if any([valuef(x) for x in (
+    #     'undiff_exprof_markers_method_name',
+    #     'undiff_exprof_markers_weblink',
+    #     'undiff_exprof_markers_enc_filename',
+    #     'undiff_exprof_markers_passage_number',
+    # )]):
+    #
+    #     marker = UndifferentiatedMorphologyMarkerExpressionProfile(
+    #         cell_line=cell_line,
+    #         method=valuef('undiff_exprof_markers_method_name'),
+    #         passage_number=valuef('undiff_exprof_markers_passage_number'),
+    #         data_url=valuef('undiff_exprof_markers_weblink'),
+    #         uploaded_data_url=aux_hescreg_data_url(valuef('undiff_exprof_markers_enc_filename')),
+    #     )
+    #
+    #     marker.save()
+    #
+    #     if valuef('undiff_exprof_expression_array_marker'):
+    #         aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_expression_array_marker'))
+    #     elif valuef('undiff_exprof_rna_sequencing_marker'):
+    #         aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_rna_sequencing_marker'))
+    #     elif valuef('undiff_exprof_proteomics_marker'):
+    #         aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_proteomics_marker'))
 
 
 # -----------------------------------------------------------------------------

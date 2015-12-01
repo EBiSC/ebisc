@@ -25,8 +25,8 @@ def run():
     if cellline_ids is None:
         return
 
-    # for cellline_id in [id for id in cellline_ids if id == 'UKKi009-B']:
     for cellline_id in [id for id in cellline_ids]:
+    # for cellline_id in [id for id in cellline_ids if id == 'UKKi007-A']:
         logger.info('Importing data for cell line %s' % cellline_id)
         json = request_get(settings.HPSCREG['cellline_url'] + cellline_id)
 
@@ -114,20 +114,19 @@ def import_cellline(source):
         # parser.parse_str_fingerprinting(source, cell_line),
         # parser.parse_genome_analysis(source, cell_line),
         # parser.parse_genetic_modifications(source, cell_line),
-        # parser.parse_publications(source, cell_line),
-        # parser.parse_characterization(source, cell_line),
-        # parser.parse_characterization_markers(source, cell_line),
+        parser.parse_publications(source, cell_line),
+        parser.parse_characterization(source, cell_line),
+        parser.parse_characterization_markers(source, cell_line),
         # parser.parse_disease_associated_genotype(source, cell_line),
     ]
 
-    parser.parse_hla_typing(source, cell_line),
-    parser.parse_str_fingerprinting(source, cell_line),
-    parser.parse_genome_analysis(source, cell_line),
-    parser.parse_genetic_modifications(source, cell_line),
-    parser.parse_publications(source, cell_line),
-    parser.parse_characterization(source, cell_line),
-    parser.parse_characterization_markers(source, cell_line),
-    parser.parse_disease_associated_genotype(source, cell_line),
+    # parser.parse_hla_typing(source, cell_line),
+    # parser.parse_str_fingerprinting(source, cell_line),
+    # parser.parse_genome_analysis(source, cell_line),
+    # parser.parse_genetic_modifications(source, cell_line),
+    # parser.parse_characterization(source, cell_line),
+    # parser.parse_characterization_markers(source, cell_line),
+    # parser.parse_disease_associated_genotype(source, cell_line),
 
     if True in dirty:
         if cell_line_created:
