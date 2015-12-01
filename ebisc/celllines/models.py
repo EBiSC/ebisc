@@ -669,7 +669,7 @@ class UndifferentiatedMorphologyMarkerMorphology(DirtyFieldsMixin, models.Model)
         verbose_name_plural = _(u'Markerd Undiff - Morphology')
 
 
-class UndifferentiatedMorphologyMarkerExpressionProfile(models.Model):
+class UndifferentiatedMorphologyMarkerExpressionProfile(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=u'Cell line', related_name='undifferentiated_morphology_marker_expression_profile')
     method = models.CharField(u'Method', max_length=100, null=True, blank=True)
@@ -682,7 +682,7 @@ class UndifferentiatedMorphologyMarkerExpressionProfile(models.Model):
         verbose_name_plural = _(u'Markerd Undiff - Expression profile')
 
 
-class UndifferentiatedMorphologyMarkerExpressionProfileMolecule(MarkerMoleculeBase):
+class UndifferentiatedMorphologyMarkerExpressionProfileMolecule(DirtyFieldsMixin, MarkerMoleculeBase):
 
     marker = models.ForeignKey(UndifferentiatedMorphologyMarkerExpressionProfile, verbose_name=u'Marker', related_name='molecules')
 

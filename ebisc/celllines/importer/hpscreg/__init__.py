@@ -124,8 +124,6 @@ def import_cellline(source):
     # parser.parse_str_fingerprinting(source, cell_line),
     # parser.parse_genome_analysis(source, cell_line),
     # parser.parse_genetic_modifications(source, cell_line),
-    # parser.parse_characterization(source, cell_line),
-    # parser.parse_characterization_markers(source, cell_line),
     # parser.parse_disease_associated_genotype(source, cell_line),
 
     if True in dirty:

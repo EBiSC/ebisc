@@ -1097,7 +1097,7 @@ def parse_characterization_markers(valuef, source, cell_line):
 
         undifferentiated_morphology_marker_morphology.passage_number = valuef('undiff_morphology_markers_passage_number')
         undifferentiated_morphology_marker_morphology.description = valuef('undiff_morphology_markers_description')
-        undifferentiated_morphology_marker_morphology.data_url = aux_hescreg_data_url(valuef('undiff_morphology_markers_enc_filename'))
+        undifferentiated_morphology_marker_morphology.data_url = valuef('undiff_morphology_markers_enc_filename')
 
         if undifferentiated_morphology_marker_morphology_created or undifferentiated_morphology_marker_morphology.is_dirty():
             if undifferentiated_morphology_marker_morphology_created:
@@ -1123,29 +1123,40 @@ def parse_characterization_markers(valuef, source, cell_line):
 
     # UndifferentiatedMorphologyMarkerExpressionProfile
 
-    # if any([valuef(x) for x in (
-    #     'undiff_exprof_markers_method_name',
-    #     'undiff_exprof_markers_weblink',
-    #     'undiff_exprof_markers_enc_filename',
-    #     'undiff_exprof_markers_passage_number',
-    # )]):
-    #
-    #     marker = UndifferentiatedMorphologyMarkerExpressionProfile(
-    #         cell_line=cell_line,
-    #         method=valuef('undiff_exprof_markers_method_name'),
-    #         passage_number=valuef('undiff_exprof_markers_passage_number'),
-    #         data_url=valuef('undiff_exprof_markers_weblink'),
-    #         uploaded_data_url=aux_hescreg_data_url(valuef('undiff_exprof_markers_enc_filename')),
-    #     )
-    #
-    #     marker.save()
-    #
-    #     if valuef('undiff_exprof_expression_array_marker'):
-    #         aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_expression_array_marker'))
-    #     elif valuef('undiff_exprof_rna_sequencing_marker'):
-    #         aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_rna_sequencing_marker'))
-    #     elif valuef('undiff_exprof_proteomics_marker'):
-    #         aux_molecule_result(marker, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_proteomics_marker'))
+    if any([valuef(x) for x in (
+        'undiff_exprof_markers_method_name',
+        'undiff_exprof_markers_weblink',
+        'undiff_exprof_markers_enc_filename',
+        'undiff_exprof_markers_passage_number',
+    )]):
+
+        undifferentiated_morphology_marker_expression_profile, undifferentiated_morphology_marker_expression_profile_created = UndifferentiatedMorphologyMarkerExpressionProfile.objects.get_or_create(cell_line=cell_line)
+
+        undifferentiated_morphology_marker_expression_profile.method = valuef('undiff_exprof_markers_method_name')
+        undifferentiated_morphology_marker_expression_profile.passage_number = valuef('undiff_exprof_markers_passage_number')
+        undifferentiated_morphology_marker_expression_profile.data_url = valuef('undiff_exprof_markers_weblink')
+        undifferentiated_morphology_marker_expression_profile.uploaded_data_url = valuef('undiff_exprof_markers_enc_filename')
+
+        if valuef('undiff_exprof_expression_array_marker'):
+            aux_molecule_result(undifferentiated_morphology_marker_expression_profile, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_expression_array_marker'))
+        elif valuef('undiff_exprof_rna_sequencing_marker'):
+            aux_molecule_result(undifferentiated_morphology_marker_expression_profile, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_rna_sequencing_marker'))
+        elif valuef('undiff_exprof_proteomics_marker'):
+            aux_molecule_result(undifferentiated_morphology_marker_expression_profile, UndifferentiatedMorphologyMarkerExpressionProfileMolecule, valuef('undiff_exprof_proteomics_marker'))
+
+        dirty = [undifferentiated_morphology_marker_expression_profile.is_dirty(check_relationship=True)]
+
+        if True in dirty:
+            if undifferentiated_morphology_marker_expression_profile_created:
+                logger.info('Added new Undifferentiated marker to cell line')
+            else:
+                logger.info('Changed Undifferentiated marker of cell line')
+
+            undifferentiated_morphology_marker_expression_profile.save()
+
+            return True
+
+        return False
 
 
 # -----------------------------------------------------------------------------
