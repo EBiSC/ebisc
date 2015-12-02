@@ -1029,7 +1029,7 @@ class CelllineKaryotype(DirtyFieldsMixin, models.Model):
 
 
 # Genome-Wide Assays
-class CelllineHlaTyping(models.Model):
+class CelllineHlaTyping(DirtyFieldsMixin, models.Model):
 
     cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name="hla_typing")
     hla_class = models.CharField(_(u'HLA class'), max_length=10, null=True, blank=True)
@@ -1046,7 +1046,7 @@ class CelllineHlaTyping(models.Model):
         return u'%s' % (self.id,)
 
 
-class CelllineStrFingerprinting(models.Model):
+class CelllineStrFingerprinting(DirtyFieldsMixin, models.Model):
 
     cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name="str_fingerprinting")
     locus = models.CharField(_(u'Locus'), max_length=45, null=True, blank=True)
@@ -1062,7 +1062,7 @@ class CelllineStrFingerprinting(models.Model):
         return u'%s' % (self.id,)
 
 
-class CelllineGenomeAnalysis(models.Model):
+class CelllineGenomeAnalysis(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genome_analysis')
     data = models.CharField(_(u'Data'), max_length=100, null=True, blank=True)
@@ -1078,7 +1078,7 @@ class CelllineGenomeAnalysis(models.Model):
 
 
 # Disease associated genotype
-class CelllineDiseaseGenotype(models.Model):
+class CelllineDiseaseGenotype(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genotyping_variant')
 
@@ -1101,7 +1101,7 @@ class CelllineDiseaseGenotype(models.Model):
         return u'%s' % (self.id,)
 
 
-class CelllineGenotypingSNP(models.Model):
+class CelllineGenotypingSNP(DirtyFieldsMixin, models.Model):
 
     disease_genotype = models.ForeignKey('CelllineDiseaseGenotype', verbose_name=_(u'Cell line disease genotype'), related_name='snps', null=True, blank=True)
 
@@ -1117,7 +1117,7 @@ class CelllineGenotypingSNP(models.Model):
         return u'%s' % (self.id,)
 
 
-class CelllineGenotypingRsNumber(models.Model):
+class CelllineGenotypingRsNumber(DirtyFieldsMixin, models.Model):
 
     disease_genotype = models.ForeignKey('CelllineDiseaseGenotype', verbose_name=_(u'Cell line disease genotype'), related_name='rs_number', null=True, blank=True)
 
@@ -1190,7 +1190,7 @@ class DonorGenotypingRsNumber(models.Model):
 
 
 # Genetic modification
-class CelllineGeneticModification(models.Model):
+class CelllineGeneticModification(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification')
     protocol = models.FileField(_(u'Protocol'), upload_to=upload_to, null=True, blank=True)
@@ -1204,7 +1204,7 @@ class CelllineGeneticModification(models.Model):
         return u'%s' % (self.id,)
 
 
-class GeneticModificationTransgeneExpression(models.Model):
+class GeneticModificationTransgeneExpression(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_transgene_expression')
     genes = models.ManyToManyField(Molecule, blank=True)
@@ -1221,7 +1221,7 @@ class GeneticModificationTransgeneExpression(models.Model):
         return u'%s' % (self.id,)
 
 
-class GeneticModificationGeneKnockOut(models.Model):
+class GeneticModificationGeneKnockOut(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_gene_knock_out')
     target_genes = models.ManyToManyField(Molecule, blank=True)
@@ -1238,7 +1238,7 @@ class GeneticModificationGeneKnockOut(models.Model):
         return u'%s' % (self.id,)
 
 
-class GeneticModificationGeneKnockIn(models.Model):
+class GeneticModificationGeneKnockIn(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_gene_knock_in')
     target_genes = models.ManyToManyField(Molecule, blank=True, related_name='target_genes')
@@ -1256,7 +1256,7 @@ class GeneticModificationGeneKnockIn(models.Model):
         return u'%s' % (self.id,)
 
 
-class GeneticModificationIsogenic(models.Model):
+class GeneticModificationIsogenic(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_isogenic')
     target_locus = models.ManyToManyField(Molecule, blank=True)
