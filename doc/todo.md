@@ -4,7 +4,8 @@
 
 - Characterization
 - Documents
-- Check for updates for genes in Reprogramming method
+- Check for updates for genes in Reprogramming method and Genetic modification
+- Check Disease associated genotype (no data yet)
 
 ## Exec dashboard
 
