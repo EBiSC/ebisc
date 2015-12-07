@@ -51,6 +51,7 @@ def run():
 
             if 'vials_shipped_to_fraunhoffer' in lims_batch_data:
                 batch.vials_shipped_to_fraunhoffer = value_of_int(lims_batch_data.vials_shipped_to_fraunhoffer)
+
             batch.save()
 
             # Certificate of analysis
@@ -99,18 +100,23 @@ def run():
 
             # Culture conditions
 
-            culture_conditions, created = BatchCultureConditions.objects.get_or_create(batch=batch)
-            if created:
-                logger.info('Created new batch culture conditions')
-
             if 'culture_conditions' in lims_batch_data:
+                culture_conditions, created = BatchCultureConditions.objects.get_or_create(batch=batch)
+
                 culture_conditions.culture_medium = lims_batch_data.culture_conditions.medium
                 culture_conditions.matrix = lims_batch_data.culture_conditions.matrix
                 culture_conditions.passage_method = lims_batch_data.culture_conditions.passage_method
                 culture_conditions.o2_concentration = lims_batch_data.culture_conditions.O2_concentration
                 culture_conditions.co2_concentration = lims_batch_data.culture_conditions.CO2_concentration
                 culture_conditions.temperature = lims_batch_data.culture_conditions.temperature
-                culture_conditions.save()
+
+                if created or culture_conditions.is_dirty():
+                    if created:
+                        logger.info('Created new batch culture conditions')
+                    else:
+                        logger.info('Updated batch culture conditions')
+
+                    culture_conditions.save()
 
             # Cell line data (ECACC cat no., go live flag and AUAs)
 

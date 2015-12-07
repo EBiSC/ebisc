@@ -384,7 +384,7 @@ class CelllineCultureConditions(DirtyFieldsMixin, models.Model):
         return u'%s' % (self.id,)
 
 
-class BatchCultureConditions(models.Model):
+class BatchCultureConditions(DirtyFieldsMixin, models.Model):
 
     batch = models.OneToOneField(CelllineBatch, verbose_name=_(u'Batch'))
 
