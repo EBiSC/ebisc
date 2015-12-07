@@ -86,7 +86,7 @@ class Molecule(models.Model):
         ('protein', u'Protein'),
     )
 
-    name = models.CharField(u'name', max_length=20)
+    name = models.CharField(u'name', max_length=200)
     kind = models.CharField(u'Kind', max_length=20, choices=KIND_CHOICES)
 
     class Meta:
@@ -311,7 +311,7 @@ class CelllineAliquot(models.Model):
 # -----------------------------------------------------------------------------
 # Donor
 
-class Donor(models.Model):
+class Donor(DirtyFieldsMixin, models.Model):
 
     biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
     gender = models.ForeignKey(Gender, verbose_name=_(u'Gender'), null=True, blank=True)
@@ -319,7 +319,7 @@ class Donor(models.Model):
     provider_donor_ids = ArrayField(models.CharField(max_length=20), verbose_name=_(u'Provider donor ids'), null=True)
     country_of_origin = models.ForeignKey('Country', verbose_name=_(u'Country of origin'), null=True, blank=True)
     ethnicity = models.CharField(_(u'Ethnicity'), max_length=100, null=True, blank=True)
-    phenotypes = ArrayField(models.CharField(max_length=100), verbose_name=_(u'Phenotypes'), null=True)
+    phenotypes = ArrayField(models.CharField(max_length=500), verbose_name=_(u'Phenotypes'), null=True)
 
     karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
 

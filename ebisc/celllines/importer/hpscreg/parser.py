@@ -242,6 +242,21 @@ def parse_donor(valuef, source):
             logger.warn('Changing donor gender from %s to %s' % (donor.gender, gender))
             donor.gender = gender
 
+        donor.provider_donor_ids = valuef('internal_donor_ids')
+        donor.country_of_origin = term_list_value_of_json(source, 'donor_country_origin', Country)
+        donor.ethnicity = valuef('ethnicity')
+        donor.phenotypes = valuef('donor_phenotypes')
+        donor.karyotype = valuef('donor_karyotype')
+
+        dirty = [donor.is_dirty(check_relationship=True)]
+
+        if True in dirty:
+            logger.info('Updated donor: %s' % donor)
+
+            donor.save()
+
+        return donor
+
     except Donor.DoesNotExist:
         donor = Donor(
             biosamples_id=valuef('biosamples_donor_id'),
@@ -253,13 +268,13 @@ def parse_donor(valuef, source):
             karyotype=valuef('donor_karyotype'),
         )
 
-    try:
-        donor.save()
-    except IntegrityError, e:
-        logger.warn(format_integrity_error(e))
-        return None
+        try:
+            donor.save()
+        except IntegrityError, e:
+            logger.warn(format_integrity_error(e))
+            return None
 
-    return donor
+        return donor
 
 
 @inject_valuef
