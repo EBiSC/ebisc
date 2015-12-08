@@ -32,7 +32,7 @@
     </td>
 </tr>
 
-{% if cellline.undifferentiated_morphology_marker_imune %}
+{% if cellline.undifferentiated_morphology_marker_imune or cellline.undifferentiated_morphology_marker_facs or cellline.undifferentiated_morphology_marker_rtpcr or cellline.undifferentiated_morphology_marker_morphology or cellline.undifferentiated_morphology_marker_expression_profile %}
 <tr><th class="sub-title"><h3>Undifferentiated cells</h3></th></tr>
 
 <tr>
@@ -40,7 +40,7 @@
     <td>
         {% if cellline.undifferentiated_morphology_marker_imune %}
         <p><b>Immune/Markerstaining</b><br/>
-        Passage number: {{ cellline.undifferentiated_morphology_marker_imune.passage_number }}</p>
+        Passage number: {{ cellline.undifferentiated_morphology_marker_imune.passage_number|default:'-' }}</p>
         <table>
         {% for molecule in cellline.undifferentiated_morphology_marker_imune.molecules.all %}
         <tr><td>{{ molecule.molecule }}:</td><td class="center">{{ molecule.result }}</td></tr>
@@ -50,7 +50,7 @@
 
         {% if cellline.undifferentiated_morphology_marker_facs %}
         <p><br/><b>FACS</b><br/>
-        Passage number: {{ cellline.undifferentiated_morphology_marker_facs.passage_number }}</p>
+        Passage number: {{ cellline.undifferentiated_morphology_marker_facs.passage_number|default:'-' }}</p>
         <table>
         {% for molecule in cellline.undifferentiated_morphology_marker_facs.molecules.all %}
         <tr><td>{{ molecule.molecule }}:</td><td class="center">{{ molecule.result }}</td></tr>
@@ -60,7 +60,7 @@
 
         {% if cellline.undifferentiated_morphology_marker_rtpcr %}
         <p><br/><b>RT-PCR</b><br/>
-        Passage number: {{ cellline.undifferentiated_morphology_marker_rtpcr.passage_number }}</p>
+        Passage number: {{ cellline.undifferentiated_morphology_marker_rtpcr.passage_number|default:'-' }}</p>
         <table>
         {% for molecule in cellline.undifferentiated_morphology_marker_rtpcr.molecules.all %}
         <tr><td>{{ molecule.molecule }}:</td><td class="center">{{ molecule.result }}</td></tr>
