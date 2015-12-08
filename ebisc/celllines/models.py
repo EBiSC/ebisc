@@ -234,6 +234,24 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'alternative_names': self.alternative_names,
         }
 
+    def get_latest_batch(self):
+        batches = self.batches.all()
+        active_batch_ids = []
+
+        if batches:
+            for batch in batches:
+                if batch.batch_id and not batch.batch_id.startswith('SAME'):
+                    active_batch_ids.append(batch.batch_id)
+
+            if active_batch_ids:
+                latest_batch_id = sorted(active_batch_ids, lambda a, b: cmp(int(b[1:]), int(a[1:])) != 0 or cmp(a[0], b[0]))[0]
+                return self.batches.get(batch_id=latest_batch_id)
+            else:
+                return None
+
+        else:
+            return None
+
 
 class CelllineStatus(models.Model):
 

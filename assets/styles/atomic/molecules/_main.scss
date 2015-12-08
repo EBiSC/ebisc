@@ -196,16 +196,19 @@
 
 .buy {
   @extend %card;
+  display: block;
   text-align: center;
-  float: right;
+  margin: 3.7rem 0 1rem 0;
 
   button {
     margin: 0 auto;
+    background-color: $color-blue-light;
+    border-color: $color-blue-light;
   }
 
   .comment {
-    margin: 0 auto;
+    margin: 0.5rem auto 0 auto;
     font-size: $font-size-small;
-    font-style: none;
+    font-style: normal;
   }
 }

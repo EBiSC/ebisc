@@ -2,6 +2,8 @@
 
 <tr><td class="label">Cell line name:</td><td>{{ cellline.name|default:"-" }}</td></tr>
 <tr><td class="label">Cell line alternative names:</td><td>{{ cellline.alternative_names|default:"-" }}</td></tr>
+<tr><td class="label">Biosamples ID:</td><td><a href="http://www.ebi.ac.uk/biosamples/sample/{{ cellline.biosamples_id }}" target="_blank"><i class="glyphicon glyphicon-link"></i> {{ cellline.biosamples_id }}</a></td></tr>
+
 
 <tr><td class="label">Depositor:</td><td>{{ cellline.generator.name|default:"-" }}</td></tr>
 {% if cellline.derivation_country %}
@@ -50,6 +52,10 @@
 {% endif %}
 
 <tr><th class="sub-title"><h3>Donor information</h3></th><th></th></tr>
+<tr><td class="label">Biosamples ID:</td><td>{{ cellline.donor.biosamples_id|default:"-" }}</td></tr>
+{% if cellline.donor.provider_donor_ids %}
+<tr><td class="label">Internal donor ID:</td><td>{{ cellline.donor.provider_donor_ids|join:", " }}</td></tr>
+{% endif %}
 {% if cellline.donor.gender %}
 <tr><td class="label">Gender:</td><td>{{ cellline.donor.gender|default:"-" }}</td></tr>
 {% endif %}
