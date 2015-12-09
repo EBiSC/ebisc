@@ -39,16 +39,23 @@ def run(filename):
 
 def create_batch(cell_line, batch_biosamples_id):
 
-    batch, created = CelllineBatch.objects.get_or_create(
-        cell_line=cell_line,
-        batch_id=batch_biosamples_id,  # temporarily use batch_biosamples_id
-        biosamples_id=batch_biosamples_id,
-    )
+    try:
+        batch = CelllineBatch.objects.get(cell_line=cell_line, biosamples_id=batch_biosamples_id)
 
-    if created:
+        logger.info('Batch %s already exists, moving on' % batch.batch_id)
+        return batch
+
+    except CelllineBatch.DoesNotExist:
+        batch = CelllineBatch(
+            cell_line=cell_line,
+            batch_id=batch_biosamples_id,  # temporarily use batch_biosamples_id
+            biosamples_id=batch_biosamples_id,
+        )
+
+        batch.save()
+
         logger.info('Created batch {} for cell line {}'.format(batch, cell_line))
-
-    return batch
+        return batch
 
 
 def create_aliquot(batch, aliquot_biosamples_id):
