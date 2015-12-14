@@ -35,20 +35,20 @@
     </div>
 
     <div class="sidebar" id="sidebar">
-        {% if cellline.ecacc_id %}
+        {% if cellline.ecacc_id and cellline.available_for_sale %}
         <a class="buy" href="http://hpa-uat.systemassociates.co.uk/products/celllines/ebisc/detail.jsp?refId={{ cellline.ecacc_id }}&collection=ecacc_ebisc"  target="_blank">
             <button><i class="glyphicon glyphicon-shopping-cart "></i> Purchase cell line</button>
-            <div class="comment">At European Collection of Cell Cultures (ECACC)</div>
+            <div class="comment">At European Collection of Authenticated Cell Cultures (ECACC)</div>
         </a>
         {% endif %}
 
-        <aside id="scroll-on-page-top">
+        <!-- <aside id="scroll-on-page-top">
             <a class="scroll-on-page-link" href="#general-information">General information</a>
             <a class="scroll-on-page-link" href="#derivation">Derivation</a>
             <a class="scroll-on-page-link" href="#culture-conditions">Culture conditions</a>
             <a class="scroll-on-page-link" href="#characterization">Characterization</a>
             <a class="scroll-on-page-link" href="#genotyping">Genotyping</a>
-        </aside>
+        </aside> -->
     </div>
 
 </div>

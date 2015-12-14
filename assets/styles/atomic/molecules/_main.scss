@@ -73,6 +73,46 @@
 
 .status {
   @extend %card;
+  margin-bottom: 1rem;
+  font-size: $font-size-large;
+  text-align: center;
+
+  h2 {
+    margin-top: 0;
+  }
+
+  > div {
+    display: inline-block;
+    width: 30%;
+    margin: 0.5rem 0;
+    line-height: $font-size-large * 1.6;
+
+    .count {
+      color: $color-blue-light;
+      font-size: $font-size-large * 1.2;
+      padding-right: 0.5rem;
+    }
+  }
+
+  @include breakpoint(map-get($breakpoints, medium)) {
+    font-size: $base-font-size;
+
+    > div {
+      .count {
+        font-size: $base-font-size;
+      }
+    }
+  }
+
+  @include breakpoint(map-get($breakpoints, small)) {
+    text-align: left;
+
+    > div {
+      display: block;
+      width: 100%;
+      margin: 0;
+    }
+  }
 }
 
 .batches {

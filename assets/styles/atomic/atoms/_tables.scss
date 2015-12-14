@@ -10,6 +10,18 @@ td.accepted {
   white-space: nowrap;
 }
 
+td.cellline-status {
+  white-space: nowrap;
+
+  .for-sale {
+    display: inline-block;
+    color: white;
+    background-color: $color-green;
+    padding: 2px 5px;
+    font-weight: bold;
+  }
+}
+
 td.label {
   // width: 1%;
   width: 33%;
@@ -41,7 +53,7 @@ th.sub-title {
     margin: 1.7em 0 0.5em 0;
     padding: 0 10px 0 0;
     text-align: right;
-  }  
+  }
 }
 
 %th-listing {
@@ -86,15 +98,15 @@ th.sub-title {
   tr {
     &:nth-child(even) {
       background-color: $color-table-background;
-    }    
+    }
 
     &:nth-child(odd) {
       background-color: transparent;
-    }    
+    }
 
     &:hover {
       background-color: lighten($color-blue-dark, 65%);
-    }    
+    }
   }
 }
 
@@ -103,6 +115,5 @@ th.sub-title {
     border: solid 1px $base-border-color;
     padding: 10px;
     vertical-align: top;
-  }  
+  }
 }
-

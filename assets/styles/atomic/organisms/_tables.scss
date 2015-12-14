@@ -20,6 +20,11 @@ table {
 
 table.listing {
   @extend %table-listing;
+
+  th {
+    white-space: nowrap;
+    padding-right: 30px;
+  }
 }
 
 .load-more {
