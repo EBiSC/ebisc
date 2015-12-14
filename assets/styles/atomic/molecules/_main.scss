@@ -217,11 +217,15 @@
   display: block;
   text-align: center;
   margin: 3.7rem 0 1rem 0;
+  max-width: 100%;
 
   button {
     margin: 0 auto;
-    background-color: $color-blue-light;
-    border-color: $color-blue-light;
+    background-color: $color-blue-dark;
+    border-color: $color-blue-dark;
+    @include breakpoint(map-get($breakpoints, medium)) {
+      white-space: inherit;
+    }
   }
 
   .comment {
