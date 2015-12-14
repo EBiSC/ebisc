@@ -86,7 +86,7 @@ class Molecule(models.Model):
         ('protein', u'Protein'),
     )
 
-    name = models.CharField(u'name', max_length=20)
+    name = models.CharField(u'name', max_length=200)
     kind = models.CharField(u'Kind', max_length=20, choices=KIND_CHOICES)
 
     class Meta:
@@ -234,6 +234,24 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'alternative_names': self.alternative_names,
         }
 
+    def get_latest_batch(self):
+        batches = self.batches.all()
+        active_batch_ids = []
+
+        if batches:
+            for batch in batches:
+                if batch.batch_id and not batch.batch_id.startswith('SAME'):
+                    active_batch_ids.append(batch.batch_id)
+
+            if active_batch_ids:
+                latest_batch_id = sorted(active_batch_ids, lambda a, b: cmp(int(b[1:]), int(a[1:])) != 0 or cmp(a[0], b[0]))[0]
+                return self.batches.get(batch_id=latest_batch_id)
+            else:
+                return None
+
+        else:
+            return None
+
 
 class CelllineStatus(models.Model):
 
@@ -311,7 +329,7 @@ class CelllineAliquot(models.Model):
 # -----------------------------------------------------------------------------
 # Donor
 
-class Donor(models.Model):
+class Donor(DirtyFieldsMixin, models.Model):
 
     biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
     gender = models.ForeignKey(Gender, verbose_name=_(u'Gender'), null=True, blank=True)
@@ -319,7 +337,7 @@ class Donor(models.Model):
     provider_donor_ids = ArrayField(models.CharField(max_length=20), verbose_name=_(u'Provider donor ids'), null=True)
     country_of_origin = models.ForeignKey('Country', verbose_name=_(u'Country of origin'), null=True, blank=True)
     ethnicity = models.CharField(_(u'Ethnicity'), max_length=100, null=True, blank=True)
-    phenotypes = ArrayField(models.CharField(max_length=100), verbose_name=_(u'Phenotypes'), null=True)
+    phenotypes = ArrayField(models.CharField(max_length=500), verbose_name=_(u'Phenotypes'), null=True)
 
     karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
 
@@ -384,7 +402,7 @@ class CelllineCultureConditions(DirtyFieldsMixin, models.Model):
         return u'%s' % (self.id,)
 
 
-class BatchCultureConditions(models.Model):
+class BatchCultureConditions(DirtyFieldsMixin, models.Model):
 
     batch = models.OneToOneField(CelllineBatch, verbose_name=_(u'Batch'))
 
@@ -562,7 +580,7 @@ class CelllineVectorFreeReprogrammingFactors(models.Model):
 # -----------------------------------------------------------------------------
 # Cell line Characterization
 
-class CelllineCharacterization(models.Model):
+class CelllineCharacterization(DirtyFieldsMixin, models.Model):
 
     SCREENING_CHOICES = (
         ('positive', u'Positive'),
@@ -612,7 +630,7 @@ class MarkerMoleculeBase(models.Model):
 
 # Undifferentiated cells
 
-class UndifferentiatedMorphologyMarkerImune(models.Model):
+class UndifferentiatedMorphologyMarkerImune(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=u'Cell line', related_name='undifferentiated_morphology_marker_imune')
     passage_number = models.CharField(u'Passage number', max_length=10, null=True, blank=True)
@@ -622,12 +640,12 @@ class UndifferentiatedMorphologyMarkerImune(models.Model):
         verbose_name_plural = _(u'Markerd Undiff - Imune')
 
 
-class UndifferentiatedMorphologyMarkerImuneMolecule(MarkerMoleculeBase):
+class UndifferentiatedMorphologyMarkerImuneMolecule(DirtyFieldsMixin, MarkerMoleculeBase):
 
     marker = models.ForeignKey(UndifferentiatedMorphologyMarkerImune, verbose_name=u'Marker', related_name='molecules')
 
 
-class UndifferentiatedMorphologyMarkerRtPcr(models.Model):
+class UndifferentiatedMorphologyMarkerRtPcr(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=u'Cell line', related_name='undifferentiated_morphology_marker_rtpcr')
     passage_number = models.CharField(u'Passage number', max_length=10, null=True, blank=True)
@@ -637,12 +655,12 @@ class UndifferentiatedMorphologyMarkerRtPcr(models.Model):
         verbose_name_plural = _(u'Markerd Undiff - RtPcr')
 
 
-class UndifferentiatedMorphologyMarkerRtPcrMolecule(MarkerMoleculeBase):
+class UndifferentiatedMorphologyMarkerRtPcrMolecule(DirtyFieldsMixin, MarkerMoleculeBase):
 
     marker = models.ForeignKey(UndifferentiatedMorphologyMarkerRtPcr, verbose_name=u'Marker', related_name='molecules')
 
 
-class UndifferentiatedMorphologyMarkerFacs(models.Model):
+class UndifferentiatedMorphologyMarkerFacs(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=u'Cell line', related_name='undifferentiated_morphology_marker_facs')
     passage_number = models.CharField(u'Passage number', max_length=10, null=True, blank=True)
@@ -652,12 +670,12 @@ class UndifferentiatedMorphologyMarkerFacs(models.Model):
         verbose_name_plural = _(u'Markerd Undiff - Facs')
 
 
-class UndifferentiatedMorphologyMarkerFacsMolecule(MarkerMoleculeBase):
+class UndifferentiatedMorphologyMarkerFacsMolecule(DirtyFieldsMixin, MarkerMoleculeBase):
 
     marker = models.ForeignKey(UndifferentiatedMorphologyMarkerFacs, verbose_name=u'Marker', related_name='molecules')
 
 
-class UndifferentiatedMorphologyMarkerMorphology(models.Model):
+class UndifferentiatedMorphologyMarkerMorphology(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=u'Cell line', related_name='undifferentiated_morphology_marker_morphology')
     passage_number = models.CharField(u'Passage number', max_length=10, null=True, blank=True)
@@ -669,7 +687,7 @@ class UndifferentiatedMorphologyMarkerMorphology(models.Model):
         verbose_name_plural = _(u'Markerd Undiff - Morphology')
 
 
-class UndifferentiatedMorphologyMarkerExpressionProfile(models.Model):
+class UndifferentiatedMorphologyMarkerExpressionProfile(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=u'Cell line', related_name='undifferentiated_morphology_marker_expression_profile')
     method = models.CharField(u'Method', max_length=100, null=True, blank=True)
@@ -682,7 +700,7 @@ class UndifferentiatedMorphologyMarkerExpressionProfile(models.Model):
         verbose_name_plural = _(u'Markerd Undiff - Expression profile')
 
 
-class UndifferentiatedMorphologyMarkerExpressionProfileMolecule(MarkerMoleculeBase):
+class UndifferentiatedMorphologyMarkerExpressionProfileMolecule(DirtyFieldsMixin, MarkerMoleculeBase):
 
     marker = models.ForeignKey(UndifferentiatedMorphologyMarkerExpressionProfile, verbose_name=u'Marker', related_name='molecules')
 
@@ -924,7 +942,7 @@ class Person(models.Model):
 # -----------------------------------------------------------------------------
 # Publications, documents
 
-class CelllinePublication(models.Model):
+class CelllinePublication(DirtyFieldsMixin, models.Model):
 
     REFERENCE_TYPE_CHOICES = (
         ('pubmed', 'PubMed'),
@@ -1029,7 +1047,7 @@ class CelllineKaryotype(DirtyFieldsMixin, models.Model):
 
 
 # Genome-Wide Assays
-class CelllineHlaTyping(models.Model):
+class CelllineHlaTyping(DirtyFieldsMixin, models.Model):
 
     cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name="hla_typing")
     hla_class = models.CharField(_(u'HLA class'), max_length=10, null=True, blank=True)
@@ -1046,7 +1064,7 @@ class CelllineHlaTyping(models.Model):
         return u'%s' % (self.id,)
 
 
-class CelllineStrFingerprinting(models.Model):
+class CelllineStrFingerprinting(DirtyFieldsMixin, models.Model):
 
     cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name="str_fingerprinting")
     locus = models.CharField(_(u'Locus'), max_length=45, null=True, blank=True)
@@ -1062,7 +1080,7 @@ class CelllineStrFingerprinting(models.Model):
         return u'%s' % (self.id,)
 
 
-class CelllineGenomeAnalysis(models.Model):
+class CelllineGenomeAnalysis(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genome_analysis')
     data = models.CharField(_(u'Data'), max_length=100, null=True, blank=True)
@@ -1078,7 +1096,7 @@ class CelllineGenomeAnalysis(models.Model):
 
 
 # Disease associated genotype
-class CelllineDiseaseGenotype(models.Model):
+class CelllineDiseaseGenotype(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genotyping_variant')
 
@@ -1101,7 +1119,7 @@ class CelllineDiseaseGenotype(models.Model):
         return u'%s' % (self.id,)
 
 
-class CelllineGenotypingSNP(models.Model):
+class CelllineGenotypingSNP(DirtyFieldsMixin, models.Model):
 
     disease_genotype = models.ForeignKey('CelllineDiseaseGenotype', verbose_name=_(u'Cell line disease genotype'), related_name='snps', null=True, blank=True)
 
@@ -1117,7 +1135,7 @@ class CelllineGenotypingSNP(models.Model):
         return u'%s' % (self.id,)
 
 
-class CelllineGenotypingRsNumber(models.Model):
+class CelllineGenotypingRsNumber(DirtyFieldsMixin, models.Model):
 
     disease_genotype = models.ForeignKey('CelllineDiseaseGenotype', verbose_name=_(u'Cell line disease genotype'), related_name='rs_number', null=True, blank=True)
 
@@ -1190,7 +1208,7 @@ class DonorGenotypingRsNumber(models.Model):
 
 
 # Genetic modification
-class CelllineGeneticModification(models.Model):
+class CelllineGeneticModification(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification')
     protocol = models.FileField(_(u'Protocol'), upload_to=upload_to, null=True, blank=True)
@@ -1204,7 +1222,7 @@ class CelllineGeneticModification(models.Model):
         return u'%s' % (self.id,)
 
 
-class GeneticModificationTransgeneExpression(models.Model):
+class GeneticModificationTransgeneExpression(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_transgene_expression')
     genes = models.ManyToManyField(Molecule, blank=True)
@@ -1221,7 +1239,7 @@ class GeneticModificationTransgeneExpression(models.Model):
         return u'%s' % (self.id,)
 
 
-class GeneticModificationGeneKnockOut(models.Model):
+class GeneticModificationGeneKnockOut(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_gene_knock_out')
     target_genes = models.ManyToManyField(Molecule, blank=True)
@@ -1238,7 +1256,7 @@ class GeneticModificationGeneKnockOut(models.Model):
         return u'%s' % (self.id,)
 
 
-class GeneticModificationGeneKnockIn(models.Model):
+class GeneticModificationGeneKnockIn(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_gene_knock_in')
     target_genes = models.ManyToManyField(Molecule, blank=True, related_name='target_genes')
@@ -1256,7 +1274,7 @@ class GeneticModificationGeneKnockIn(models.Model):
         return u'%s' % (self.id,)
 
 
-class GeneticModificationIsogenic(models.Model):
+class GeneticModificationIsogenic(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_isogenic')
     target_locus = models.ManyToManyField(Molecule, blank=True)

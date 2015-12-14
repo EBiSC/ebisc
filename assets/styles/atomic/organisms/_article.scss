@@ -5,4 +5,29 @@ article {
   padding-top: 30px;
   padding-bottom: 40px;
   min-height: 600px;
+
+  .scroll-on-page {
+    $base-spacing: 1.5em !default;
+    display: inline-block;
+
+    a {
+      color: $action-color;
+      text-decoration: none;
+    }
+
+    aside {
+      @include breakpoint(map-get($breakpoints, small)) {
+        display: none;
+      }
+    }
+
+    .scroll-on-page-link {
+      display: block;
+      margin-right: $base-spacing;
+      margin-left: $base-spacing * 1.6;
+      outline: none;
+      padding: ($base-spacing / 4) 0;
+      font-size: $font-size-small * 1.2;
+    }
+  }
 }

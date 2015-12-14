@@ -118,7 +118,7 @@ def accept(request, biosamples_id):
     action = request.POST.get('action', None)
     redirect_to = redirect(request.POST.get('next', None) and request.POST.get('next') or 'executive:dashboard')
 
-    if action == 'pendng' and cellline.accepted == 'pending':
+    if action == 'pending' and cellline.accepted == 'pending':
         pass
     elif action == 'accepted':
         messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.biosamples_id, cellline.accepted, action))

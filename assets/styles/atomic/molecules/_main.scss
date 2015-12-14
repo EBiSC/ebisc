@@ -76,8 +76,8 @@
 }
 
 .batches {
-  @extend %card;
-  margin-top: 10px;
+  // @extend %card;
+  // margin-top: 10px;
 
   h2 {
     margin-top: 0;
@@ -88,17 +88,35 @@
   }
 
   .accordion .content {
-    .link-to-biosample-ids-file {
-      display: inline-block;
-      border-top: $base-border;
-      margin: 10px 0px;
-      padding-top: 15px;
+
+    h3 {
+      font-size: $base-font-size * 1.2;
+      margin-top: 1.5rem;
+    }
+
+    .certificate-of-anlysis {
+      float: right;
+      padding: 2rem;
+      border: $base-border;
+      font-size: $font-size-large;
+      margin: 1rem;
 
       .glyphicon {
-        float: none;
-        padding-right: 0.5em;
-        color: $action-color;
+        font-size: $font-size-large;
       }
+    }
+
+    .link-to-biosample-ids-file {
+      display: inline-block;
+      // border-top: $base-border;
+      margin: 5px 0px;
+      padding-top: 5px;
+    }
+
+    .glyphicon {
+      float: none;
+      padding-right: 0.5em;
+      color: $action-color;
     }
   }
 }
@@ -196,16 +214,23 @@
 
 .buy {
   @extend %card;
+  display: block;
   text-align: center;
-  float: right;
+  margin: 3.7rem 0 1rem 0;
+  max-width: 100%;
 
   button {
     margin: 0 auto;
+    background-color: $color-blue-dark;
+    border-color: $color-blue-dark;
+    @include breakpoint(map-get($breakpoints, medium)) {
+      white-space: inherit;
+    }
   }
 
   .comment {
-    margin: 0 auto;
+    margin: 0.5rem auto 0 auto;
     font-size: $font-size-small;
-    font-style: none;
+    font-style: normal;
   }
 }

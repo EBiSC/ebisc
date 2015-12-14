@@ -1,4 +1,5 @@
-.data .cellline-batch-images {
+.cellline-batch-images {
+  @include clearfix();
   .image-with-caption {
     float: left;
     margin-right: 30px;
