@@ -19,7 +19,7 @@ def dashboard(request):
     '''Display a list of all cell lines. Provide paging and sorting.'''
 
     COLUMNS = [
-        ('biosamplesID', 'Biosamples ID', 'biosamples_id'),
+        # ('biosamplesID', 'Biosamples ID', 'biosamples_id'),
         ('cellLineName', 'Cell line Name', 'name'),
         ('cellLineAlternativeNames', 'Alternative Names', 'alternative_names'),
         ('disease', 'Disease', 'primary_disease'),
@@ -27,6 +27,7 @@ def dashboard(request):
         ('batches', 'Batches', None),
         ('quantity', 'QTY', None),
         ('sold', 'Sold', None),
+        ('status', 'Status', None),
         # ('accepted', 'Accepted', 'accepted'),
     ]
 
@@ -70,6 +71,8 @@ def dashboard(request):
         'sort_order': sort_order,
         'page': int(page),
         'celllines': celllines,
+        'celllines_registered': Cellline.objects.all(),
+        'celllines_for_sale': Cellline.objects.filter(available_for_sale=True),
     })
 
 
@@ -118,7 +121,7 @@ def accept(request, biosamples_id):
     action = request.POST.get('action', None)
     redirect_to = redirect(request.POST.get('next', None) and request.POST.get('next') or 'executive:dashboard')
 
-    if action == 'pendng' and cellline.accepted == 'pending':
+    if action == 'pending' and cellline.accepted == 'pending':
         pass
     elif action == 'accepted':
         messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.biosamples_id, cellline.accepted, action))

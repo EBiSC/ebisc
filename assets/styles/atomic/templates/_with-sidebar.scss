@@ -5,7 +5,7 @@ body.template-with-sidebar {
     }
 
     .main {
-      @include span(8);
+      @include span(9);
 
       @include breakpoint(map-get($breakpoints, small)) {
         @include span(last 12);
@@ -13,7 +13,7 @@ body.template-with-sidebar {
     }
 
     .sidebar {
-      @include span(last 4);
+      @include span(last 3);
 
       @include breakpoint(map-get($breakpoints, small)) {
         @include span(last 12);

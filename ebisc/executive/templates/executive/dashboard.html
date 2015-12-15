@@ -8,6 +8,14 @@
 
 <h1>Executive dashboard</h1>
 
+<div class="status">
+    <div><span class="count">{{ celllines_registered.count }}</span> Registered cell lines</div>
+    <div><span class="count">{{ celllines_for_sale.count }}</span> Available for sale</div>
+    <div><span class="count">0</span> Vials sold</div>
+</div>
+
+<h2>Registered cell lines</h2>
+
 <table class="listing">
 
     <thead>
@@ -27,14 +35,21 @@
     <tbody>
         {% for cellline in celllines %}
         <tr class="accepted-{{ cellline.accepted }}">
-            <td><a href="{% url 'executive:cellline' cellline.biosamples_id %}">{{ cellline.biosamples_id }}</a></td>
-            <td class="name">{{ cellline.name }}</td>
+            <td><a href="{% url 'executive:cellline' cellline.biosamples_id %}">{{ cellline.name }}</a></td>
+            <!-- <td class="name">{{ cellline.name }}</td> -->
             <td>{{ cellline.alternative_names }}</td>
             <td>{{ cellline.primary_disease|default_if_none:"" }}</td>
             <td>{{ cellline.generator.name }}</td>
             <td class="number">{{ cellline.batches.count }}</td>
-            <td class="number {{ cellline.quantity|default:'empty' }}">{{ cellline.quantity|default:'-' }}</td>
-            <td class="number {{ cellline.sold|default:'empty' }}">{{ cellline.sold|default:'-' }}</td>
+            <td class="number">{{ cellline.quantity|default:'-' }}</td>
+            <td class="number">{{ cellline.sold|default:'-' }}</td>
+            <td class="cellline-status">
+                {% if cellline.available_for_sale %}
+                <span class="for-sale">For sale</span>
+                {% else %}
+                Registered
+                {% endif %}
+            </td>
             <!-- <td class="accepted">{% include 'executive/accepted-status.html' %}</td> -->
         </tr>
         {% endfor %}

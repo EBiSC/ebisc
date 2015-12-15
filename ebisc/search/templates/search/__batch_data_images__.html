@@ -2,7 +2,6 @@
 
 <tr>
     <td colspan="2" class="cellline-batch-images">
-        {% for batch in cellline.batches.all %}
         {% for image in batch.images.all %}
         <div class="image-with-caption">
             {% thumbnail image.image "250" as img %}
@@ -13,7 +12,6 @@
                 <div>Magnification: {{ image.magnification }}</div>
             </div>
         </div>
-        {% endfor %}
         {% endfor %}
     </td>
 </tr>
