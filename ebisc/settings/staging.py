@@ -3,7 +3,7 @@ from .base import *
 DEBUG = False
 TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = ['ebisc-stage.douglasconnect.com']
+ALLOWED_HOSTS = ['cells-stage.ebisc.org']
 
 SERVER_EMAIL = 'EBiSC Staging <www@douglasconnect.com>'
 
