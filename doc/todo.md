@@ -4,7 +4,8 @@
 
 - Characterization
 - Documents
-- Check for updates for genes in Reprogramming method
+- Check for updates for genes in Reprogramming method and Genetic modification
+- Check Disease associated genotype (no data yet)
 
 ## Exec dashboard
 
@@ -42,6 +43,7 @@
     - Cell type
     - Tissue source
 - For sales link to ECACC? ... It would make more sense if users could "fill" their basket on IMS and then just complete the checkout on ECACC.
+- hPSCreg "comparator line"
 
 ## EBiSC Knowledge Community
 

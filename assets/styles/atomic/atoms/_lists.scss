@@ -54,7 +54,7 @@ ol {
     @include breakpoint(map-get($breakpoints, medium)) {
       padding: 0px;
     }
-  }        
+  }
 
   @include breakpoint(map-get($breakpoints, small)) {
     li {

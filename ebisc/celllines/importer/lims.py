@@ -51,6 +51,7 @@ def run():
 
             if 'vials_shipped_to_fraunhoffer' in lims_batch_data:
                 batch.vials_shipped_to_fraunhoffer = value_of_int(lims_batch_data.vials_shipped_to_fraunhoffer)
+
             batch.save()
 
             # Certificate of analysis
@@ -66,7 +67,7 @@ def run():
 
             # Images
 
-            old_images = set([img.image_md5 for img in batch.images.all()])
+            old_images = set([img.md5 for img in batch.images.all()])
             if 'images' in lims_batch_data:
                 new_images = set([img.md5 for img in lims_batch_data.images])
             else:
@@ -75,7 +76,7 @@ def run():
             # Delete old images that are not in new images
 
             for img_md5 in old_images - new_images:
-                CelllineBatchImages(batch=batch, image_md5=img_md5).delete()
+                CelllineBatchImages(batch=batch, md5=img_md5).delete()
 
             # Add new images
 
@@ -89,28 +90,33 @@ def run():
                         )
                         batch_image.save()
 
-                        batch_image.image_md5 = value_of_file(
+                        batch_image.md5 = value_of_file(
                             image.file,
-                            batch_image.image_file,
+                            batch_image.image,
                             source_md5=image.md5,
-                            current_md5=batch_image.image_md5,
+                            current_md5=batch_image.md5,
                         )
                         batch_image.save()
 
             # Culture conditions
 
-            culture_conditions, created = BatchCultureConditions.objects.get_or_create(batch=batch)
-            if created:
-                logger.info('Created new batch culture conditions')
-
             if 'culture_conditions' in lims_batch_data:
+                culture_conditions, created = BatchCultureConditions.objects.get_or_create(batch=batch)
+
                 culture_conditions.culture_medium = lims_batch_data.culture_conditions.medium
                 culture_conditions.matrix = lims_batch_data.culture_conditions.matrix
                 culture_conditions.passage_method = lims_batch_data.culture_conditions.passage_method
                 culture_conditions.o2_concentration = lims_batch_data.culture_conditions.O2_concentration
                 culture_conditions.co2_concentration = lims_batch_data.culture_conditions.CO2_concentration
                 culture_conditions.temperature = lims_batch_data.culture_conditions.temperature
-                culture_conditions.save()
+
+                if created or culture_conditions.is_dirty():
+                    if created:
+                        logger.info('Created new batch culture conditions')
+                    else:
+                        logger.info('Updated batch culture conditions')
+
+                    culture_conditions.save()
 
             # Cell line data (ECACC cat no., go live flag and AUAs)
 

@@ -2,17 +2,55 @@
 
 {% block title %}Cell line {{ cellline.name }}{% endblock %}
 
+{% block body-class %}template-with-sidebar{% endblock%}
+
 {% block article %}
 
-<h1>{{ cellline.name }} {% if cellline.alternative_names %}<small>{{ cellline.alternative_names }}</small>{% endif %}</h1>
+<div class="scroll-on-page">
 
-<!-- {% if cellline.ecacc_id %}
-<a class="buy" href="http://hpa-uat.systemassociates.co.uk/products/celllines/ebisc/detail.jsp?refId={{ cellline.ecacc_id }}&collection=ecacc_ebisc"  target="_blank">
-    <button><i class="glyphicon glyphicon-shopping-cart "></i> Purchase cell line</button>
-    <div class="comment">At European Collection of Cell Cultures (ECACC)</div>
-</a>
-{% endif %} -->
+    <h1>{{ cellline.name }} {% if cellline.alternative_names %}<small>{{ cellline.alternative_names }}</small>{% endif %}</h1>
 
-{% include 'search/__cellline_data__.html' %}
+    <div class="main">
+
+        <table class="data">
+            {% include 'search/__cellline_data_general__.html' %}
+
+            {% include 'search/__cellline_data_derivation__.html' %}
+
+            {% with cellline.get_latest_batch as batch %}
+                {% if batch.batchcultureconditions %}
+                {% include 'search/__batch_data_culture_conditions__.html' %}
+                {% endif %}
+
+                {% if batch.images.all|length %}
+                {% include 'search/__batch_data_images__.html' %}
+                {% endif %}
+            {% endwith %}
+
+            {% include 'search/__cellline_data_characterization__.html' %}
+
+            {% include 'search/__cellline_data_genotyping__.html' %}
+        </table>
+
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        {% if cellline.ecacc_id and cellline.available_for_sale %}
+        <a class="buy" href="http://hpa-uat.systemassociates.co.uk/products/celllines/ebisc/detail.jsp?refId={{ cellline.ecacc_id }}&collection=ecacc_ebisc"  target="_blank">
+            <button><i class="glyphicon glyphicon-shopping-cart "></i> Purchase cell line</button>
+            <div class="comment">At European Collection of Authenticated Cell Cultures (ECACC)</div>
+        </a>
+        {% endif %}
+
+        <!-- <aside id="scroll-on-page-top">
+            <a class="scroll-on-page-link" href="#general-information">General information</a>
+            <a class="scroll-on-page-link" href="#derivation">Derivation</a>
+            <a class="scroll-on-page-link" href="#culture-conditions">Culture conditions</a>
+            <a class="scroll-on-page-link" href="#characterization">Characterization</a>
+            <a class="scroll-on-page-link" href="#genotyping">Genotyping</a>
+        </aside> -->
+    </div>
+
+</div>
 
 {% endblock %}

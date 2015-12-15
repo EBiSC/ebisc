@@ -1,4 +1,4 @@
-.accordion {  
+.accordion {
   $base-border-color: gainsboro !default;
   $base-line-height: 1.5em !default;
   $base-spacing: 1.5em !default;
@@ -11,8 +11,8 @@
   $accordion-menu-sub-background: lighten($accordion-menu-background, 5%);
   $accordion-menu-sub-inset: darken($accordion-menu-sub-background, 6%);
   $accordion-menu-sub-hover: lighten($accordion-menu-sub-background, 2%);
-  $accordion-menu-list-padding: ($base-spacing / 2) 10px;
-  
+  $accordion-menu-list-padding: ($base-spacing * 0.7) 10px;
+
   background-color: $accordion-menu-background;
   border: $accordion-menu-border;
   margin: 0 0 $base-spacing 0;
@@ -29,7 +29,7 @@
       display: block;
       padding: $accordion-menu-list-padding;
       text-decoration: none;
-    }    
+    }
   }
 
   > li {
@@ -69,7 +69,7 @@
       background-color: $accordion-menu-sub-background;
       border-bottom: $accordion-menu-border;
       list-style: none;
-      
+
       &:focus,
       &:hover {
         background-color: $accordion-menu-sub-hover;
@@ -80,5 +80,9 @@
   .is-expanded {
     display: block;
     padding-bottom: 0;
-  }    
+
+    > a {
+      background-color: $light-gray;
+    }
+  }
 }

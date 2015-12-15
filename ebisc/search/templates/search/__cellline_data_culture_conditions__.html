@@ -1,0 +1,63 @@
+<tr><th colspan="2" class="title" id="culture-conditions"><h2>Culture Conditions</h2></th></tr>
+
+
+{% if cellline.celllinecultureconditions.surface_coating %}
+<tr><td class="label">Surface coating:</td><td>{{ cellline.celllinecultureconditions.surface_coating|default:"-" }}</td></tr>
+{% endif %}
+{% if cellline.celllinecultureconditions.feeder_cell_type %}
+<tr><td class="label">Feeder cell type:</td><td>{{ cellline.celllinecultureconditions.feeder_cell_type|default:"-" }}</td></tr>
+{% endif %}
+{% if cellline.celllinecultureconditions.passage_method %}
+<tr><td class="label">Passage method:</td><td>{{ cellline.celllinecultureconditions.passage_method|default:"-" }}</td></tr>
+{% endif %}
+{% if cellline.celllinecultureconditions.enzymatically %}
+<tr><td class="label">Enzymatically:</td><td>{{ cellline.celllinecultureconditions.enzymatically|default:"-" }}</td></tr>
+{% endif %}
+{% if cellline.celllinecultureconditions.enzyme_free %}
+<tr><td class="label">Enzyme free:</td><td>{{ cellline.celllinecultureconditions.enzyme_free|default:"-" }}</td></tr>
+{% endif %}
+{% if cellline.celllinecultureconditions.o2_concentration %}
+<tr><td class="label">O<sub>2</sub> concentration:</td><td>{{ cellline.celllinecultureconditions.o2_concentration }}%</td></tr>
+{% endif %}
+{% if cellline.celllinecultureconditions.co2_concentration %}
+<tr><td class="label">CO<sub>2</sub> concentration:</td><td>{{ cellline.celllinecultureconditions.co2_concentration }}%</td></tr>
+{% endif %}
+
+{% if cellline.celllinecultureconditions.culture_medium %}
+<tr><td class="label">Culture medium:</td><td>{{ cellline.celllinecultureconditions.culture_medium }}</td></tr>
+{% endif %}
+
+{% if cellline.celllinecultureconditions.culture_medium_other %}
+<tr><td class="label">Culture base medium:</td><td>{{ cellline.celllinecultureconditions.culture_medium_other.base }}</td></tr>
+<tr><td class="label">Main protein source:</td><td>{{ cellline.celllinecultureconditions.culture_medium_other.protein_source|default:"-" }}</td></tr>
+{% if cellline.celllinecultureconditions.culture_medium_other.serum_concentration %}
+<tr><td class="label">Serum concentration:</td><td>{{ cellline.celllinecultureconditions.culture_medium_other.serum_concentration }}%</td></tr>
+{% endif %}
+{% endif %}
+
+{% if cellline.celllinecultureconditions.medium_supplements.all|length %}
+<tr>
+    <td class="label">Culture medium supplements:</td>
+    <td>
+        <ul>
+            {% for medium_supplement in cellline.celllinecultureconditions.medium_supplements.all %}
+            <li>{{ medium_supplement }}</li>
+            {% endfor %}
+        </ul>
+    </td>
+</tr>
+{% endif %}
+
+{% if cellline.celllinecultureconditions.passage_number_banked %}
+<tr>
+    <td class="label">Passage Number banked (pre-EBiSC):</td>
+    <td>{{ cellline.celllinecultureconditions.passage_number_banked }}</td>
+</tr>
+{% endif %}
+
+{% if cellline.celllinecultureconditions.number_of_vials_banked %}
+<tr>
+    <td class="label">No. Vials banked (pre-EBiSC):</td>
+    <td>{{ cellline.celllinecultureconditions.number_of_vials_banked }}</td>
+</tr>
+{% endif %}
