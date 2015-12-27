@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllinePublication
+from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllinePublication, CelllineInformationPacks
 
 
 # -----------------------------------------------------------------------------
@@ -101,12 +101,6 @@ class CelllineCharacterizationResource(ModelResource):
 
 class CelllineKaryotypeResource(ModelResource):
 
-    # + karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
-    # + karyotype_method = models.ForeignKey('KaryotypeMethod', verbose_name=_(u'Karyotype method'), null=True, blank=True)
-    # + passage_number = models.IntegerField(_(u'Passage number'), null=True, blank=True)
-
-    # karyotype_method = fields.CharField('karyotype_method', null=True)
-
     class Meta:
         queryset = CelllineKaryotype.objects.all()
         include_resource_uri = False
@@ -153,16 +147,6 @@ class DiseaseResource(ModelResource):
 
 class DonorResource(ModelResource):
 
-    # + biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
-    # + gender = models.ForeignKey(Gender, verbose_name=_(u'Gender'), blank=True, null=True)
-    # - country_of_origin = models.ForeignKey('Country', verbose_name=_(u'Country'), blank=True, null=True)
-    # - providerdonorid = models.CharField(_(u'Provider donor id'), max_length=45, blank=True)
-    # - cellabnormalkaryotype = models.CharField(_(u'Cell abnormal karyotype'), max_length=45, blank=True)
-    # - donorabnormalkaryotype = models.CharField(_(u'Donor abnormal karyotype'), max_length=45, blank=True)
-    # - otherclinicalinformation = models.CharField(_(u'Other clinical information'), max_length=100, blank=True)
-    # - phenotypes = ArrayField(models.CharField(max_length=100), verbose_name=_(u'Phenotypes'), null=True)
-    # - karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
-
     biosamples_id = fields.CharField('biosamples_id', null=True)
     gender = fields.CharField('gender', null=True)
 
@@ -176,11 +160,6 @@ class DonorResource(ModelResource):
 # Organization
 
 class OrganizationResource(ModelResource):
-
-    # + name = models.CharField(_(u'Organization name'), max_length=100, unique=True, null=True, blank=True)
-    # - short_name = models.CharField(_(u'Organization short name'), unique=True, max_length=6, null=True, blank=True)
-    # - contact = models.ForeignKey('Contact', verbose_name=_(u'Contact'), blank=True, null=True)
-    # - type = models.ForeignKey('OrgType', verbose_name=_(u'Orgtype'), blank=True, null=True)
 
     name = fields.CharField('name', null=True)
 
@@ -270,23 +249,24 @@ class CelllineBatchResource(ModelResource):
 
 
 # -----------------------------------------------------------------------------
+# Cell line information packs (CLIPS)
+
+class CelllineInformationPacksResource(ModelResource):
+
+    clip_file = fields.FileField('clip_file')
+    md5 = fields.CharField('md5')
+    version = fields.CharField('version', null=True)
+
+    class Meta:
+        queryset = CelllineInformationPacks.objects.all()
+        include_resource_uri = False
+        fields = ('clip_file', 'md5', 'version', 'updated')
+
+
+# -----------------------------------------------------------------------------
 # Cellline
 
 class CelllineResource(ModelResource):
-
-    # - accepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
-    # + biosamples_id = models.CharField(_(u'Biosamples ID'), unique=True, max_length=12)
-    # + name = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
-    # - donor = models.ForeignKey('Donor', verbose_name=_(u'Donor'), blank=True, null=True)
-    # - donor_age = models.ForeignKey(AgeRange, verbose_name=_(u'Age'), blank=True, null=True)
-    # - generator = models.ForeignKey('Organization', verbose_name=_(u'Generator'), related_name='generator_of_cell_lines')
-    # - owner = models.ForeignKey('Organization', verbose_name=_(u'Owner'), null=True, blank=True, related_name='owner_of_cell_lines')
-    # - primary_disease = models.ForeignKey('Disease', verbose_name=_(u'Diagnosed disease'), blank=True, null=True)
-    # - primary_disease_diagnosis = models.CharField(_(u'Disease diagnosis'), max_length=12, null=True, blank=True)
-    # - primary_disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
-    # - status = models.ForeignKey('CelllineStatus', verbose_name=_(u'Cell line status'), blank=True, null=True)
-    # + alternative_names = models.CharField(_(u'Cell line alternative names'), max_length=500, null=True, blank=True)
-    # - celllineecaccurl = models.URLField(_(u'Cell line ECACC URL'), blank=True, null=True)
 
     biosamples_id = fields.CharField('biosamples_id', unique=True)
     ecacc_cat_no = fields.CharField('ecacc_id', unique=True, null=True)
@@ -312,10 +292,9 @@ class CelllineResource(ModelResource):
 
     reprogramming_method = fields.DictField(null=True)
 
-    access_and_use_agreement = fields.DictField(null=True)
-    access_and_use_agreement_participant = fields.DictField(null=True)
-
     batches = fields.ToManyField(CelllineBatchResource, 'batches', null=True, full=True)
+
+    cell_line_information_packs = fields.ToManyField(CelllineInformationPacksResource, 'clips', null=True, full=True)
 
     class Meta:
         queryset = Cellline.objects.all()
