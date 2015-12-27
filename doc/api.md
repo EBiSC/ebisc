@@ -2,46 +2,39 @@
 
 ## Access
 
-The API can be accessed with an username/key pair. These have been generated for each EBiSC component currently using the API (ECACC, EBI, hPSCreg) and were sent out by email. New credentials will be generated as needed.
+The API can be accessed with an username/key pair. These have been generated for each EBiSC component currently using the API (ECACC, EBI, hPSCreg, BioSamples) and were sent out by email. New credentials will be generated as needed.
 
 The username/key can be specified either in HTTP Request Header or as GET parameters.
 
 **HTTP Request Header**
 
-URL: `https://ebisc.douglasconnect.com/api/v0/cell-lines`
+URL: `https://cells.ebisc.org/api/v0/cell-lines`
 Header: `"Authorization: ApiKey USERNAME:KEY"`
 
 **GET Params**
 
-`https://ebisc.douglasconnect.com/api/v0/cell-lines?username=USERNAME&api_key=KEY`
+`https://cells.ebisc.org/api/v0/cell-lines?username=USERNAME&api_key=KEY`
 
 ## Data and endpoints
 
-Cell line records currently hold data required for two data exchanges:
+Cell line records currently hold data required for three data exchanges:
 
 * IMS/ECACC (cell line data and documents needed for the ECACC catalogue)
+* IMS/LIMS (IMS data that will be imported into LIMS)
 * IMS/EBI (data tracking)
 
 Additional fields and endpoints may be created for future exchanges.
 
 ### Endpoints
 
-1. List of all cell lines in the IMS: `https://ebisc.douglasconnect.com/api/v0/cell-lines`
-2. Individual cell line records that can be accessed via their BioSamples ID: `https://ebisc.douglasconnect.com/api/v0/cell-lines/{BIOSAMPLES_ID}`
-3. List of all batches in the IMS: `https://ebisc.douglasconnect.com/api/v0/batches`
-4. Individual batch records that can be accessed via their BioSamples ID: `https://ebisc.douglasconnect.com/api/v0/batches/{BIOSAMPLES_ID}`
+1. List of all cell lines in the IMS: `https://cells.ebisc.org/api/v0/cell-lines`
+2. Individual cell line records that can be accessed via their BioSamples ID: `https://cells.ebisc.org/api/v0/cell-lines/{BIOSAMPLES_ID}`
+3. List of all batches in the IMS: `https://cells.ebisc.org/api/v0/batches`
+4. Individual batch records that can be accessed via their BioSamples ID: `https://cells.ebisc.org/api/v0/batches/{BIOSAMPLES_ID}`
 
 ### Sample cell line JSON record structure
 
     {
-        "access_and_use_agreement": {
-            "file": "/media/celllines/2015/11/21/25276167-dcc5-4a4c-9652-ed10eb9ed28c/UKBi001-A.eAUA1.pdf",
-            "md5": "05c14fc167c0a946665670846f485492"
-        },
-        "access_and_use_agreement_participant": {
-            "file": "/media/celllines/2015/11/21/25276167-dcc5-4a4c-9652-ed10eb9ed28c/UKBi001-A.prAUA1.pdf",
-            "md5": "05c14fc167c0a946665670846f485492"
-        },
         "alternative_names": [
             "LB-34-1",
             "iLB-MJD4-34m-r1"
@@ -95,6 +88,14 @@ Additional fields and endpoints may be created for future exchanges.
             }
         ],
         "biosamples_id": "SAMEA2590882",
+        "cell_line_information_packs": [
+            {
+                "clip_file": "/media/celllines/2015/12/27/1abeb45f-0d61-47bc-a78f-eaeeff2cb799/UKBi008-A.CLIP.v1.pdf",
+                "md5": "5c49eec2c58e768de88553e085eed576",
+                "updated": "2015-12-27T10:45:52.574218",
+                "version": "v1"
+            }
+        ],
         "cellline_karyotype": {
             "karyotype": "46XX",
             "passage_number": 30
