@@ -101,6 +101,24 @@
 
     </div>
   </li>
+  <li class="tab-header-and-content">
+    <a href="#" class="tab-link">Documents</a>
+    <div class="tab-content">
+        <h2>Cell Line Information Packs (CLIPS)</h2>
+        {% if cellline.clips.all|length %}
+        <ul>
+            {% for clip in cellline.clips.all %}
+            <li>
+                <a href="{{ clip.clip_file.url }}"><i class="glyphicon glyphicon-file"></i> {{ clip.version }}</a>
+                - <small>last update: {{ clip.updated|date:"j M Y" }}</small>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p><span class="comment">No CLIPS available.</span></p>
+        {% endif %}
+    </div>
+  </li>
 </ul>
 
 {% endblock %}
