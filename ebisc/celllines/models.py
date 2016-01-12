@@ -213,7 +213,8 @@ class Cellline(DirtyFieldsMixin, models.Model):
 
     @property
     def ecacc_url(self):
-        return 'https://www.phe-culturecollections.org.uk/products/celllines/generalcell/detail.jsp?refId=%s&collection=ecacc_gc' % self.ecacc_id
+        # return 'https://www.phe-culturecollections.org.uk/products/celllines/ipsc/detail.jsp?refId=%s&collection=ecacc_ipsc' % self.ecacc_id
+        return 'http://hpa-uat.systemassociates.co.uk/products/celllines/ipsc/detail.jsp?refId=%s&collection=ecacc_ipsc' % self.ecacc_id
 
     def to_elastic(self):
 
@@ -283,6 +284,9 @@ class CelllineInformationPacks(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.id,)
+
+    def filename(self):
+        return os.path.basename(self.clip_file.name)
 
 
 # -----------------------------------------------------------------------------

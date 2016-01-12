@@ -119,12 +119,13 @@
   // @extend %card;
   // margin-top: 10px;
 
-  h2 {
-    margin-top: 0;
-  }
-
   .request-bisample-ids {
     margin: 1em 0 1.5em 0;
+  }
+
+  .ecacc-cat-no {
+    margin: 1em 0 1.5em 0;
+    @extend .light-gray;
   }
 
   .accordion .content {
@@ -143,6 +144,11 @@
 
       .glyphicon {
         font-size: $font-size-large;
+      }
+
+      @include breakpoint(map-get($breakpoints, small)) {
+        float: none;
+        text-align: center;
       }
     }
 

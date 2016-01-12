@@ -8,6 +8,7 @@
 
 <h1>{{ cellline.name }} <small>{{ cellline.biosamples_id }}</small></h1>
 
+
 <!-- <div class="status">
     {% if cellline.accepted == 'accepted' or not perms.site.can_manage_executive_dashboard %}
     Status:
@@ -23,6 +24,8 @@
     <div class="tab-content">
         <h2>Batches</h2>
         <!-- <div class="request-bisample-ids"><a href="./">Request new batch and vial Biosample IDs</a></div> -->
+
+        <div class="ecacc-cat-no">ECACC Catalogue No: <a href="{{ cellline.ecacc_url }}" target="_blank">{{ cellline.ecacc_id|default:"/" }}</a></div>
 
         {% if cellline.batches.all|length %}
         <ul class="accordion">
@@ -109,13 +112,13 @@
         <ul>
             {% for clip in cellline.clips.all %}
             <li>
-                <a href="{{ clip.clip_file.url }}"><i class="glyphicon glyphicon-file"></i> {{ clip.version }}</a>
+                <a href="{{ clip.clip_file.url }}"><i class="glyphicon glyphicon-file"></i> {{ clip.filename }}</a>
                 - <small>last update: {{ clip.updated|date:"j M Y" }}</small>
             </li>
             {% endfor %}
         </ul>
         {% else %}
-        <p><span class="comment">No CLIPS available.</span></p>
+        <p><span class="comment">No CLIPs available.</span></p>
         {% endif %}
     </div>
   </li>
