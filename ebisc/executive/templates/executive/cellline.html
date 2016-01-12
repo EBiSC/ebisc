@@ -25,7 +25,7 @@
         <h2>Batches</h2>
         <!-- <div class="request-bisample-ids"><a href="./">Request new batch and vial Biosample IDs</a></div> -->
 
-        <div class="ecacc-cat-no">ECACC Catalogue No: <a href="{{ cellline.ecacc_url }}" target="_blank">{{ cellline.ecacc_id|default:"/" }}</a></div>
+        <div class="ecacc-cat-no">ECACC Catalogue No: {% if cellline.ecacc_id %}<a href="{{ cellline.ecacc_url }}" target="_blank">{{ cellline.ecacc_id|default:"/" }}</a>{% else %}/{% endif %}</div>
 
         {% if cellline.batches.all|length %}
         <ul class="accordion">
