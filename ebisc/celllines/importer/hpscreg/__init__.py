@@ -26,7 +26,7 @@ def run():
         return
 
     for cellline_id in [id for id in cellline_ids]:
-    # for cellline_id in [id for id in cellline_ids if id == 'RCi004-B']:
+    # for cellline_id in [id for id in cellline_ids if id == 'UKBi001-A']:
         logger.info('Importing data for cell line %s' % cellline_id)
         json = request_get(settings.HPSCREG['cellline_url'] + cellline_id)
 
@@ -62,6 +62,7 @@ def import_cellline(source):
     if cell_line_created:
         logger.info('Found new cell line %s' % valuef('name'))
 
+    cell_line.validated = valuef('validation_status')
     cell_line.hescreg_id = valuef('id')
     cell_line.name = valuef('name')
     cell_line.alternative_names = ', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else ''

@@ -170,7 +170,15 @@ class Cellline(DirtyFieldsMixin, models.Model):
         ('rejected', _(u'Rejected')),
     )
 
+    VALIDATION_CHOICES = (
+        ('1', _(u'Validated, visible')),
+        ('2', _(u'Validated, not visible')),
+        ('3', _(u'Unvalidated')),
+        ('5', _(u'Name registered, no data')),
+    )
+
     accepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
+    validated = models.CharField(_(u'Cell line data validation'), max_length=50, choices=VALIDATION_CHOICES, default='5')
     available_for_sale = models.NullBooleanField(_(u'Available for sale'))
     status = models.ForeignKey('CelllineStatus', verbose_name=_(u'Cell line status'), null=True, blank=True)
 
@@ -206,7 +214,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
     class Meta:
         verbose_name = _(u'Cell line')
         verbose_name_plural = _(u'Cell lines')
-        ordering = ['biosamples_id']
+        ordering = ['name']
 
     def __unicode__(self):
         return u'%s' % (self.biosamples_id,)
