@@ -10,6 +10,12 @@ td.accepted {
   white-space: nowrap;
 }
 
+td.validation {
+  .tooltip-item {
+    display: block;
+  }
+}
+
 td.cellline-status {
   white-space: nowrap;
 

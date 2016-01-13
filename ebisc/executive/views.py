@@ -19,11 +19,11 @@ def dashboard(request):
     '''Display a list of all cell lines. Provide paging and sorting.'''
 
     COLUMNS = [
-        # ('biosamplesID', 'Biosamples ID', 'biosamples_id'),
         ('cellLineName', 'Cell line Name', 'name'),
-        ('cellLineAlternativeNames', 'Alternative Names', 'alternative_names'),
+        # ('cellLineAlternativeNames', 'Alternative Names', 'alternative_names'),
         ('disease', 'Disease', 'primary_disease'),
         ('depositor', 'Depositor', 'generator__name'),
+        ('validated', 'Validated', 'validated'),
         ('batches', 'Batches', None),
         ('quantity', 'QTY', None),
         ('sold', 'Sold', None),
@@ -50,7 +50,7 @@ def dashboard(request):
 
     # Pagination
 
-    paginator = Paginator(cellline_objects, 20)
+    paginator = Paginator(cellline_objects, 50)
 
     page = request.GET.get('page')
 
@@ -72,6 +72,7 @@ def dashboard(request):
         'page': int(page),
         'celllines': celllines,
         'celllines_registered': Cellline.objects.all(),
+        'celllines_validated': Cellline.objects.filter(validated__lt=3),
         'celllines_for_sale': Cellline.objects.filter(available_for_sale=True),
     })
 
