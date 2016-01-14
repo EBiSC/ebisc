@@ -177,9 +177,16 @@ class Cellline(DirtyFieldsMixin, models.Model):
         ('5', _(u'Name registered, no data')),
     )
 
+    AVAILABILITY_CHOICES = (
+        ('not_available', _(u'Not available')),
+        ('at_ecacc', _(u'Stocked by ECACC')),
+        ('expand_to_order', _(u'Expand to order')),
+    )
+
     accepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
     validated = models.CharField(_(u'Cell line data validation'), max_length=50, choices=VALIDATION_CHOICES, default='5')
     available_for_sale = models.NullBooleanField(_(u'Available for sale'))
+    availability = models.CharField(_(u'Availability'), max_length=30, choices=AVAILABILITY_CHOICES, default='not_available')
     status = models.ForeignKey('CelllineStatus', verbose_name=_(u'Cell line status'), null=True, blank=True)
 
     name = models.CharField(_(u'Cell line name'), unique=True, max_length=15)

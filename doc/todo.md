@@ -5,6 +5,7 @@
 - cookies?
 - change from BioSamples ID to hPSCreg name in the URLs and tables
 - implement flag "go live" and status/availability to be set in the IMS (exec dash)
+- Set ECACC catalogue numbers for expand to order lines - get all assigned ECACC catalogue numbers from RC
 - change ECACC URL
 - add donor sex to filters
 - full text search?

@@ -20,8 +20,8 @@
         <div>
             <div class="header">Availability</div>
             <div class="data">
-                <div><span class="count">{{ celllines_for_sale.count }}</span> At ECACC</div>
-                <div><span class="count">n/a</span> Expand to order</div>
+                <div><span class="count">{{ celllines_at_ecacc.count }}</span> At ECACC</div>
+                <div><span class="count">{{ celllines_expand_to_order.count }}</span> Expand to order</div>
             </div>
         </div>
         <div>
@@ -53,10 +53,8 @@
 
     <tbody>
         {% for cellline in celllines %}
-        <tr class="accepted-{{ cellline.accepted }}">
+        <tr class="availability-{{ cellline.availability }}">
             <td><a href="{% url 'executive:cellline' cellline.biosamples_id %}">{{ cellline.name }}</a></td>
-            <!-- <td class="name">{{ cellline.name }}</td> -->
-            <!-- <td>{{ cellline.alternative_names }}</td> -->
             <td>{{ cellline.primary_disease|default_if_none:"normal" }}</td>
             <td>{{ cellline.generator.name }}</td>
             <td class="validation">
@@ -87,14 +85,14 @@
             <td class="number">{{ cellline.batches.count }}</td>
             <td class="number"><span class="comment">{{ cellline.quantity|default:'n/a' }}</span></td>
             <td class="number"><span class="comment">{{ cellline.sold|default:'n/a' }}</span></td>
-            <td class="cellline-status">
+            <!-- <td class="cellline-status">
                 {% if cellline.available_for_sale %}
                 <span class="for-sale">For sale</span>
                 {% else %}
                 Not available
                 {% endif %}
-            </td>
-            <!-- <td class="accepted">{% include 'executive/accepted-status.html' %}</td> -->
+            </td> -->
+            <td class="availability">{% include 'executive/availability-status.html' %}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -118,6 +116,6 @@
 
 {% block extra-scripts %}
 {% if perms.site.can_manage_executive_dashboard %}
-{% include 'executive/accepted-script.html' %}
+{% include 'executive/availability-script.html' %}
 {% endif %}
 {% endblock %}

@@ -6,17 +6,36 @@
 
 {% block article %}
 
+<a href="{% url 'executive:dashboard' %}" class="back-link">Return to Dashboard</a>
+
 <h1>{{ cellline.name }} <small>{{ cellline.biosamples_id }}</small></h1>
 
-
-<!-- <div class="status">
-    {% if cellline.accepted == 'accepted' or not perms.site.can_manage_executive_dashboard %}
-    Status:
-    {% else %}
-    Change status:
-    {% endif %}
-    {% include 'executive/accepted-status.html' %}
-</div> -->
+<div class="status">
+    <div class="cell-line-overview">
+        <div>
+            <div class="header">Registration</div>
+            <div class="data">
+                {% if cellline.validated == '1' %}<i class="glyphicon glyphicon-ok success"></i>
+                {% elif cellline.validated == '2' %}<i class="glyphicon glyphicon-ok success"></i><i class="glyphicon glyphicon-minus error"></i>
+                {% else %}<i class="glyphicon glyphicon-minus error"></i>{% endif %}
+                 {{ cellline.get_validated_display }}
+            </div>
+        </div>
+        <div>
+            <div class="header">Availability</div>
+            <div class="data">
+                {% if not perms.site.can_manage_executive_dashboard %}
+                    {% if cellline.availability == 'not_available' %}
+                    <i class="glyphicon glyphicon-minus error"></i>
+                    {% else %}
+                    <i class="glyphicon glyphicon-ok success"></i>
+                    {% endif %}
+                {% endif %}
+                {% include 'executive/availability-status.html' %}
+            </div>
+        </div>
+    </div>
+</div>
 
 <ul class="accordion-tabs-minimal">
   <li class="tab-header-and-content batches">
@@ -54,6 +73,7 @@
                 <div>O2 concentration: {{ batch.batchcultureconditions.o2_concentration }}</div>
                 <div>Temperature: {{ batch.batchcultureconditions.temperature }}</div>
 
+                {% if batch.images.all %}
                 <h3>Images</h3>
                 <div class="cellline-batch-images">
                     {% for image in batch.images.all %}
@@ -68,6 +88,7 @@
                     </div>
                     {% endfor %}
                 </div>
+                {% endif %}
 
             {% else %}
             <p><span class="comment">No data available.</span></p>
@@ -128,7 +149,7 @@
 
 {% block extra-scripts %}
 {% if perms.site.can_manage_executive_dashboard %}
-{% include 'executive/accepted-script.html' %}
+{% include 'executive/availability-script.html' %}
 {% endif %}
 <script>
 $('.js-accordion-trigger').bind('click', function(e){
