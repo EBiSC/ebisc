@@ -12,16 +12,23 @@
     <div class="cell-line-overview">
         <div>
             <div class="header">Registration</div>
-            <div><span class="count">{{ celllines_registered.count }}</span> Registered</div>
-            <div><span class="count">{{ celllines_validated.count }}</span> Validated</div>
+            <div class="data">
+                <div><span class="count">{{ celllines_registered.count }}</span> Registered</div>
+                <div><span class="count">{{ celllines_validated.count }}</span> Validated</div>
+            </div>
         </div>
         <div>
             <div class="header">Availability</div>
-            <div><span class="count">{{ celllines_for_sale.count }}</span> Available for sale</div>
+            <div class="data">
+                <div><span class="count">{{ celllines_for_sale.count }}</span> At ECACC</div>
+                <div><span class="count">n/a</span> Expand to order</div>
+            </div>
         </div>
         <div>
             <div class="header">Sales</div>
-            <div><span class="count">n/a</span> Vials sold</div>
+            <div class="data">
+                <div><span class="count">n/a</span> Vials sold</div>
+            </div>
         </div>
     </div>
 </div>
