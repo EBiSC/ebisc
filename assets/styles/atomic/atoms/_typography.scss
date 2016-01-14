@@ -108,9 +108,3 @@ hr {
 .error {
   color: $color-red-dark;
 }
-
-.back-link {
-  @extend .light-gray;
-  font-size: $font-size-small;
-  margin-top: -5rem;
-}
