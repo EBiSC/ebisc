@@ -23,7 +23,7 @@
 </tr>
 {% endif %}
 
-<tr><th class="sub-title"><h3>Disease information</h3></th><th></th></tr>
+<tr><th class="sub-title"><h3>Disease status</h3></th><th></th></tr>
 {% if cellline.primary_disease_diagnosis == '1' %}
 <tr><td class="label">Diagnosed disease:</td><td>{{ cellline.primary_disease|default:"-" }}</td></tr>
 {% elif cellline.primary_disease_diagnosis == 'carrier' %}
