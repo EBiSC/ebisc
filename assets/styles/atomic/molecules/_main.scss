@@ -307,34 +307,3 @@ table.listing .availability-status .status-label {
     }
   }
 }
-
-// Purchase link
-
-.buy {
-  @extend %card;
-  display: block;
-  text-align: center;
-  margin: 3.7rem 0 1rem 0;
-  max-width: 100%;
-
-  button {
-    margin: 0 auto;
-    background-color: $color-blue-dark;
-    border-color: $color-blue-dark;
-    @include breakpoint(map-get($breakpoints, medium)) {
-      white-space: inherit;
-    }
-  }
-
-  .comment {
-    margin: 0.5rem auto 0 auto;
-    font-size: $font-size-small;
-    font-style: normal;
-  }
-
-  .availability {
-    margin-top: 0.5rem;
-    color: $base-font-color;
-    font-size: $font-size-small;
-  }
-}

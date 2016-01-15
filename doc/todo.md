@@ -8,6 +8,7 @@
 - Set ECACC catalogue numbers for expand to order lines - get all assigned ECACC catalogue numbers from RC
 - change ECACC URL
 - add donor sex to filters
+- bug: can_manage_executive_dashboard works only for superusers
 - full text search?
 - search and filters on exec dash?
 - ontologies?
