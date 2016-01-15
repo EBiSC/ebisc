@@ -12,8 +12,8 @@ def search(request):
 
 
 @permission_required('auth.can_view_cell_lines')
-def cellline(request, biosamples_id):
+def cellline(request, name):
 
     return render(request, 'search/cellline.html', {
-        'cellline': get_object_or_404(Cellline, biosamples_id=biosamples_id)
+        'cellline': get_object_or_404(Cellline, name=name)
     })

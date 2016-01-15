@@ -61,7 +61,7 @@
                 <div>Vials at Roslin: {{ batch.vials_at_roslin }}</div>
                 <div>Vials shipped to ECACC: {{ batch.vials_shipped_to_ecacc }}</div>
                 <div>Vials shipped to Fraunhoffer: {{ batch.vials_shipped_to_fraunhoffer }}</div>
-                <div class="link-to-biosample-ids-file"><a href="{% url 'executive:batch_data' cellline.biosamples_id batch.biosamples_id %}"><i class="glyphicon glyphicon-download"></i>Download vial Biosample IDs file</a></div>
+                <div class="link-to-biosample-ids-file"><a href="{% url 'executive:batch_data' cellline.name batch.biosamples_id %}"><i class="glyphicon glyphicon-download"></i>Download vial Biosample IDs file</a></div>
 
                 <h3>Culture conditions</h3>
                 <div>Medium: {{ batch.batchcultureconditions.culture_medium }}</div>

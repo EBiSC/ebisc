@@ -5,8 +5,8 @@ urlpatterns = patterns('ebisc.executive.views',
     url(r'^$', 'dashboard', name='dashboard'),
 
     # Cell line
-    url(r'^(?P<biosamples_id>[^/]+)/$', 'cellline', name='cellline'),
-    url(r'^(?P<biosamples_id>[^/]+)/accept/$', 'accept', name='accept'),
-    url(r'^(?P<biosamples_id>[^/]+)/availability/$', 'availability', name='availability'),
-    url(r'^(?P<biosamples_id>[^/]+)/(?P<batch_biosample_id>[^/]+)/$', 'batch_data', name='batch_data'),
+    url(r'^(?P<name>[^/]+)/$', 'cellline', name='cellline'),
+    url(r'^(?P<name>[^/]+)/accept/$', 'accept', name='accept'),
+    url(r'^(?P<name>[^/]+)/availability/$', 'availability', name='availability'),
+    url(r'^(?P<name>[^/]+)/(?P<batch_biosample_id>[^/]+)/$', 'batch_data', name='batch_data'),
 )
