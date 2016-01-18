@@ -1,5 +1,6 @@
 .cellline-batch-images {
   @include clearfix();
+  clear: both;
 
   .image-with-caption {
     float: left;

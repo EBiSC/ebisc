@@ -26,9 +26,25 @@
     </a>
     {% endif %}
 
+    {% if cellline.batches.all %}
+    {% with cellline.get_latest_batch as batch %}
+        {% if batch.images.all|length %}
+        {% include 'search/__batch_data_images__.html' %}
+        {% endif %}
+    {% endwith %}
+    {% endif %}
+
         <ul class="accordion-tabs-minimal">
             <li class="tab-header-and-content">
-                <a href="#" class="tab-link is-active">Culture conditions</a>
+                <a href="#" class="tab-link is-active">Derivation</a>
+                <div class="tab-content">
+                    <table class="data">
+                        {% include 'search/__cellline_data_derivation__.html' %}
+                    </table>
+                </div>
+            </li>
+            <li class="tab-header-and-content">
+                <a href="#" class="tab-link">Culture conditions</a>
                 <div class="tab-content">
                     <table class="data">
                         {% if cellline.batches.all %}
@@ -38,22 +54,10 @@
                             {% else %}
                             {% include 'search/__cellline_data_culture_conditions__.html' %}
                             {% endif %}
-
-                            {% if batch.images.all|length %}
-                            {% include 'search/__batch_data_images__.html' %}
-                            {% endif %}
                         {% endwith %}
                         {% else %}
                         {% include 'search/__cellline_data_culture_conditions__.html' %}
                         {% endif %}
-                    </table>
-                </div>
-            </li>
-            <li class="tab-header-and-content">
-                <a href="#" class="tab-link">Derivation</a>
-                <div class="tab-content">
-                    <table class="data">
-                        {% include 'search/__cellline_data_derivation__.html' %}
                     </table>
                 </div>
             </li>

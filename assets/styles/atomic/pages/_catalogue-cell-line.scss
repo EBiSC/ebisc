@@ -65,31 +65,19 @@
     }
   }
 
-
   table.data {
     h2 {
-      // text-align: center;
       border-bottom: none;
       margin-bottom: 0.5rem;
     }
   }
 
+  .cellline-batch-images {
+    padding-top: 2rem;
+  }
+
   .accordion-tabs-minimal {
     clear: both;
     padding-top: 3rem;
-
-    .tab-link {
-      background-color: $color-table-background;
-      color: $base-font-color;
-      border-color: $color-table-background;
-
-      &.is-active {
-        border-bottom-color: $color-table-background;
-      }
-    }
-
-    .tab-content {
-      text-align: left;
-    }
   }
 }
