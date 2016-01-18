@@ -6,6 +6,7 @@ table {
 
 %table-listing {
   width: 100%;
+  max-width: 100%;
   font-size: $font-size-small;
 
   @extend %striped;
@@ -24,6 +25,14 @@ table.listing {
   th {
     white-space: nowrap;
     padding-right: 30px;
+
+    @include breakpoint(map-get($breakpoints, small)) {
+      white-space: normal;
+    }
+  }
+
+  td:first-child {
+    white-space: nowrap;
   }
 }
 

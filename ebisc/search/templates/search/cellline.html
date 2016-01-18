@@ -8,11 +8,66 @@
 
 <div class="catalogue-data">
 
-    <h1>{{ cellline.name }} {% if cellline.alternative_names %}<small>{{ cellline.alternative_names }}</small>{% endif %}</h1>
+    <h1>{{ cellline.name }}</h1>
 
     <table class="data general-info">
         {% include 'search/__cellline_data_general__.html' %}
     </table>
+
+    {% if cellline.batches.all %}
+    {% with cellline.get_latest_batch as batch %}
+        {% if batch.images.all|length %}
+        {% include 'search/__batch_data_images__.html' %}
+        {% endif %}
+    {% endwith %}
+    {% endif %}
+
+    <ul class="accordion-tabs-minimal">
+        <li class="tab-header-and-content">
+            <a href="#" class="tab-link is-active">Derivation</a>
+            <div class="tab-content">
+                <table class="data">
+                    {% include 'search/__cellline_data_derivation__.html' %}
+                </table>
+            </div>
+        </li>
+        <li class="tab-header-and-content">
+            <a href="#" class="tab-link">Culture conditions</a>
+            <div class="tab-content">
+                <table class="data">
+                    {% if cellline.batches.all %}
+                    {% with cellline.get_latest_batch as batch %}
+                        {% if batch.batchcultureconditions %}
+                        {% include 'search/__batch_data_culture_conditions__.html' %}
+                        {% else %}
+                        {% include 'search/__cellline_data_culture_conditions__.html' %}
+                        {% endif %}
+                    {% endwith %}
+                    {% else %}
+                    {% include 'search/__cellline_data_culture_conditions__.html' %}
+                    {% endif %}
+                </table>
+            </div>
+        </li>
+        <li class="tab-header-and-content">
+            <a href="#" class="tab-link">Characterization</a>
+            <div class="tab-content">
+                <table class="data">
+                    {% include 'search/__cellline_data_characterization__.html' %}
+                </table>
+            </div>
+        </li>
+        {% if cellline.karyotype or cellline.str_fingerprinting.all|length or cellline.genome_analysis or cellline.genetic_modification_transgene_expression or cellline.genetic_modification_gene_knock_out or cellline.genetic_modification_gene_knock_in or cellline.genetic_modification_isogenic %}
+        <li class="tab-header-and-content">
+            <a href="#" class="tab-link">Genotyping</a>
+            <div class="tab-content">
+                <table class="data">
+                    {% include 'search/__cellline_data_genotyping__.html' %}
+                </table>
+            </div>
+        </li>
+        {% endif %}
+    </ul>
 
     {% if cellline.ecacc_id and cellline.available_for_sale %}
     <a class="buy" href="{{ cellline.ecacc_url }}"  target="_blank">
@@ -25,61 +80,6 @@
         {% endif %}
     </a>
     {% endif %}
-
-    {% if cellline.batches.all %}
-    {% with cellline.get_latest_batch as batch %}
-        {% if batch.images.all|length %}
-        {% include 'search/__batch_data_images__.html' %}
-        {% endif %}
-    {% endwith %}
-    {% endif %}
-
-        <ul class="accordion-tabs-minimal">
-            <li class="tab-header-and-content">
-                <a href="#" class="tab-link is-active">Derivation</a>
-                <div class="tab-content">
-                    <table class="data">
-                        {% include 'search/__cellline_data_derivation__.html' %}
-                    </table>
-                </div>
-            </li>
-            <li class="tab-header-and-content">
-                <a href="#" class="tab-link">Culture conditions</a>
-                <div class="tab-content">
-                    <table class="data">
-                        {% if cellline.batches.all %}
-                        {% with cellline.get_latest_batch as batch %}
-                            {% if batch.batchcultureconditions %}
-                            {% include 'search/__batch_data_culture_conditions__.html' %}
-                            {% else %}
-                            {% include 'search/__cellline_data_culture_conditions__.html' %}
-                            {% endif %}
-                        {% endwith %}
-                        {% else %}
-                        {% include 'search/__cellline_data_culture_conditions__.html' %}
-                        {% endif %}
-                    </table>
-                </div>
-            </li>
-            <li class="tab-header-and-content">
-                <a href="#" class="tab-link">Characterization</a>
-                <div class="tab-content">
-                    <table class="data">
-                        {% include 'search/__cellline_data_characterization__.html' %}
-                    </table>
-                </div>
-            </li>
-            {% if cellline.karyotype or cellline.str_fingerprinting.all|length or cellline.genome_analysis or cellline.genetic_modification_transgene_expression or cellline.genetic_modification_gene_knock_out or cellline.genetic_modification_gene_knock_in or cellline.genetic_modification_isogenic %}
-            <li class="tab-header-and-content">
-                <a href="#" class="tab-link">Genotyping</a>
-                <div class="tab-content">
-                    <table class="data">
-                        {% include 'search/__cellline_data_genotyping__.html' %}
-                    </table>
-                </div>
-            </li>
-            {% endif %}
-        </ul>
 
 </div>
 

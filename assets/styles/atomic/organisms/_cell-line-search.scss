@@ -1,5 +1,10 @@
 .cell-line-list {
   clear: both;
+  overflow-x: auto;
+
+  @include breakpoint(map-get($breakpoints, small)) {
+    overflow-y: hidden;
+  }
 }
 
 .cell-line-filter {
@@ -21,9 +26,10 @@
       font-size: $font-size-small * 1.1;
       cursor: pointer;
 
-      @include breakpoint(map-get($breakpoints, small)) {
+      @include breakpoint(map-get($breakpoints, medium)) {
         display: block;
         margin-left: 0;
+        margin-top: 20px;
         margin-bottom: 20px;
       }
     }
@@ -40,12 +46,9 @@
   }
 
   #total-count {
-    width: span(4);
-    float: left;
-    text-align: right;
-
-    margin-right: 0.5em;
-    margin-top: 0.5em;
+    position: absolute;
+    right: 1.5rem;
+    top: 3rem;
 
     .count {
       font-size: 240%;
@@ -60,10 +63,13 @@
     }
 
     @include breakpoint(map-get($breakpoints, small)) {
+      position: relative;
       width: span(12);
       float: none;
       text-align: left;
       margin: 0 0 0.5em 0;
+      top: auto;
+      right: auto;
     }
   }
 }

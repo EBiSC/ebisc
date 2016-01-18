@@ -13,6 +13,10 @@
 - [ ] ontologies?
 - [ ] implement CLIP upoload? (to be checked by ECACC if needed)
 
+Data import and display:
+- [ ] get feedback on data displayed in the Catalogue
+- [ ] import ...
+
 Elastic search:
 
 - [x] remove biosamples id from table

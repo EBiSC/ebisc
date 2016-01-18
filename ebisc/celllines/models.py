@@ -233,6 +233,14 @@ class Cellline(DirtyFieldsMixin, models.Model):
 
     def to_elastic(self):
 
+        '''
+        Facets
+        -
+
+        Searching
+        -
+        '''
+
         if self.primary_disease and self.primary_disease_diagnosis != '0':
             disease = self.primary_disease.disease
         elif self.primary_disease_diagnosis == '0':

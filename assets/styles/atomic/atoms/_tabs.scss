@@ -31,7 +31,7 @@
     border-left: solid 1px $tab-inactive-color;
     border-right: solid 1px $tab-inactive-color;
     border-top: $tab-border;
-    color: $tab-link-color;
+    color: $action-color;
     display: block;
     padding: $base-spacing / 2;
     text-decoration: none;
@@ -52,13 +52,18 @@
       border: $tab-border;
       border-bottom-color: $tab-active-background;
       margin-bottom: -1px;
-      color: $action-color;
+      color: $tab-link-color;
       background-color: $tab-active-background;
+      cursor: default;
     }
 
     @include breakpoint(map-get($breakpoints, small)) {
       display: block;
       border-top: $tab-border;
+
+      &.is-active {
+        background-color: $tab-inactive-color;
+      }
 
       &:last-child {
         border-bottom: $tab-border;

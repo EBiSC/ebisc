@@ -265,7 +265,7 @@ table.listing .availability-status .status-label {
 // Filters
 
 .filter-group {
-  $filter-width: 245px;
+  $filter-width: 200px;
 
   margin-top: 10px;
 
@@ -290,6 +290,7 @@ table.listing .availability-status .status-label {
     > .selected-terms {
       width: $filter-width;
       line-height: 1.5em;
+      margin-bottom: 0.8em;
 
       @include transition-opacity(0.1s);
 
