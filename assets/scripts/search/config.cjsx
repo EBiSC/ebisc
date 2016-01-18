@@ -6,10 +6,6 @@ config = {
             label: 'Name'
         }
         {
-            name: 'alternative_names'
-            label: 'Alternative names'
-        }
-        {
             name: 'primary_disease'
             label: 'Disease'
         }
@@ -35,6 +31,8 @@ config = {
         'primary_cell_type.analyzed'
         'primary_disease.analyzed'
         'primary_disease_synonyms'
+        'primary_disease_stage.analyzed'
+        'disease_associated_phenotypes.analyzed'
         'donor_sex.analyzed'
     ]
 
