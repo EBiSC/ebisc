@@ -54,7 +54,7 @@
     <tbody>
         {% for cellline in celllines %}
         <tr class="availability-{{ cellline.availability }}">
-            <td><a href="{% url 'executive:cellline' cellline.biosamples_id %}">{{ cellline.name }}</a></td>
+            <td><a href="{% url 'executive:cellline' cellline.name %}">{{ cellline.name }}</a></td>
             <td>{{ cellline.primary_disease|default_if_none:"normal" }}</td>
             <td>{{ cellline.generator.name }}</td>
             <td class="validation">

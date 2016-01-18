@@ -233,6 +233,22 @@ class Cellline(DirtyFieldsMixin, models.Model):
 
     def to_elastic(self):
 
+        '''
+        Facets
+        - Disease
+        - Donor sex
+        - Primary cell type
+        - Depositor
+
+        Searching
+        - Disease
+        - Donor sex
+        - Primary cell type
+        - Depositor
+        - Alternative name
+        - Biosamples ID
+        '''
+
         if self.primary_disease and self.primary_disease_diagnosis != '0':
             disease = self.primary_disease.disease
         elif self.primary_disease_diagnosis == '0':
@@ -245,9 +261,12 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'name': self.name,
             'primary_disease': disease,
             'primary_disease_synonyms': [s.strip() for s in self.primary_disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.synonyms else None,
+            'primary_disease_stage': self.primary_disease_stage if self.primary_disease_stage else None,
+            'disease_associated_phenotypes': self.disease_associated_phenotypes if self.disease_associated_phenotypes else None,
             'depositor': self.generator.name,
             'primary_cell_type': self.derivation.primary_cell_type.name if self.derivation.primary_cell_type else None,
             'alternative_names': self.alternative_names,
+            'donor_sex': self.donor.gender.name if self.donor.gender else _(u'Not known'),
         }
 
     def get_latest_batch(self):

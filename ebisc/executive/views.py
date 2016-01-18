@@ -78,21 +78,21 @@ def dashboard(request):
 
 
 @permission_required('auth.can_view_executive_dashboard')
-def cellline(request, biosamples_id):
+def cellline(request, name):
 
     '''Display complete information for the selected cell line.'''
 
     return render(request, 'executive/cellline.html', {
-        'cellline': get_object_or_404(Cellline, biosamples_id=biosamples_id)
+        'cellline': get_object_or_404(Cellline, name=name)
     })
 
 
 @permission_required('auth.can_view_executive_dashboard')
-def batch_data(request, biosamples_id, batch_biosample_id):
+def batch_data(request, name, batch_biosample_id):
 
     '''Return batch data as CSV file.'''
 
-    batch = get_object_or_404(CelllineBatch, biosamples_id=batch_biosample_id, cell_line__biosamples_id=biosamples_id)
+    batch = get_object_or_404(CelllineBatch, biosamples_id=batch_biosample_id, cell_line__name=name)
 
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="{}_{}.csv"'.format(batch.cell_line.name, batch.batch_id)
@@ -109,7 +109,7 @@ def batch_data(request, biosamples_id, batch_biosample_id):
 
 @permission_required('auth.can_manage_executive_dashboard')
 @require_POST
-def accept(request, biosamples_id):
+def accept(request, name):
 
     '''
     Perform one of the following transitions:
@@ -117,7 +117,7 @@ def accept(request, biosamples_id):
         Rejected -> Accepted
     '''
 
-    cellline = get_object_or_404(Cellline, biosamples_id=biosamples_id)
+    cellline = get_object_or_404(Cellline, name=name)
 
     action = request.POST.get('action', None)
     redirect_to = redirect(request.POST.get('next', None) and request.POST.get('next') or 'executive:dashboard')
@@ -140,7 +140,7 @@ def accept(request, biosamples_id):
 
 @permission_required('auth.can_manage_executive_dashboard')
 @require_POST
-def availability(request, biosamples_id):
+def availability(request, name):
 
     '''
     Perform one of the following transitions:
@@ -149,7 +149,7 @@ def availability(request, biosamples_id):
         Expand to order -> Not available | Stocked at ECACC | Expand to order
     '''
 
-    cellline = get_object_or_404(Cellline, biosamples_id=biosamples_id)
+    cellline = get_object_or_404(Cellline, name=name)
 
     action = request.POST.get('action', None)
     redirect_to = redirect(request.POST.get('next', None) and request.POST.get('next') or 'executive:dashboard')

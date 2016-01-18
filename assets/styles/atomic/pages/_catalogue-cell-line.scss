@@ -1,0 +1,94 @@
+.catalogue-data {
+  h1 {
+    border-bottom: $base-border;
+    padding-bottom: 1rem;
+  }
+
+  .data {
+    &.general-info {
+      @include span(8);
+
+      @include breakpoint(map-get($breakpoints, small)) {
+        @include span(last 12);
+      }
+
+      h2 {
+        font-size: $base-font-size * 1.4;
+      }
+
+      td {
+        text-align: left;
+      }
+    }
+
+    th.title {
+      padding-bottom: 0;
+    }
+  }
+
+  .buy {
+    @include span(last 4);
+    position: absolute;
+    top: 7rem;
+    right: 1rem;
+
+    @include breakpoint(map-get($breakpoints, small)) {
+      position: relative;
+      @include span(last 12);
+      margin: 3rem 0 0 0;
+      top: auto;
+      right: auto;
+    }
+
+    @extend %card;
+    display: block;
+    text-align: center;
+    margin: 2rem 0 1rem 0;
+    max-width: 100%;
+    width: 250px;
+    float: right;
+
+    button {
+      margin: 0 auto;
+      background-color: $color-blue-dark;
+      border-color: $color-blue-dark;
+      @include breakpoint(map-get($breakpoints, medium)) {
+        white-space: inherit;
+      }
+    }
+
+    .comment {
+      margin: 0.5rem auto 0 auto;
+      font-size: $font-size-small;
+      font-style: normal;
+    }
+
+    .availability {
+      margin-top: 0.5rem;
+      color: $base-font-color;
+      font-weight: bold;
+      font-size: $font-size-small;
+      color: $color-blue-light;
+
+      &.in-stock {
+        color: darken($color-green, 8%);
+      }
+    }
+  }
+
+  table.data {
+    h2 {
+      border-bottom: none;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .cellline-batch-images {
+    padding-top: 2rem;
+  }
+
+  .accordion-tabs-minimal {
+    clear: both;
+    padding-top: 3rem;
+  }
+}

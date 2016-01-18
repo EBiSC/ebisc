@@ -4,7 +4,7 @@
 
     {% if perms.site.can_manage_executive_dashboard %}
 
-        <form class="availability" method="post" action="{% url 'executive:availability' cellline.biosamples_id %}">
+        <form class="availability" method="post" action="{% url 'executive:availability' cellline.name %}">
             {% csrf_token %}
 
             <input type="hidden" name="next" value="{{ request.get_full_path }}">
