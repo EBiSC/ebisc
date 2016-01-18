@@ -248,6 +248,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'depositor': self.generator.name,
             'primary_cell_type': self.derivation.primary_cell_type.name if self.derivation.primary_cell_type else None,
             'alternative_names': self.alternative_names,
+            'donor_sex': self.donor.gender.name if self.donor.gender else _(u'Not known'),
         }
 
     def get_latest_batch(self):

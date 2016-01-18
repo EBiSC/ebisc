@@ -2,10 +2,6 @@ config = {
 
     fields: [
         {
-            name: 'biosamples_id'
-            label: 'Biosamples ID'
-        }
-        {
             name: 'name'
             label: 'Name'
         }
@@ -14,16 +10,20 @@ config = {
             label: 'Alternative names'
         }
         {
-            name: 'depositor'
-            label: 'Depositor'
-        }
-        {
             name: 'primary_disease'
             label: 'Disease'
         }
         {
             name: 'primary_cell_type'
             label: 'Primary cell type'
+        }
+        {
+            name: 'donor_sex'
+            label: 'Donor sex'
+        }
+        {
+            name: 'depositor'
+            label: 'Depositor'
         }
     ]
 
@@ -35,6 +35,7 @@ config = {
         'primary_cell_type.analyzed'
         'primary_disease.analyzed'
         'primary_disease_synonyms'
+        'donor_sex.analyzed'
     ]
 
     facets: [
@@ -46,6 +47,11 @@ config = {
         {
             name: 'primary_cell_type'
             label: 'Primary cell type'
+            selectedTerms: {}
+        }
+        {
+            name: 'donor_sex'
+            label: 'Donor sex'
             selectedTerms: {}
         }
         {
