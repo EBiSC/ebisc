@@ -170,8 +170,23 @@ class Cellline(DirtyFieldsMixin, models.Model):
         ('rejected', _(u'Rejected')),
     )
 
+    VALIDATION_CHOICES = (
+        ('1', _(u'Validated, visible')),
+        ('2', _(u'Validated, not visible')),
+        ('3', _(u'Unvalidated')),
+        ('5', _(u'Name registered, no data')),
+    )
+
+    AVAILABILITY_CHOICES = (
+        ('not_available', _(u'Not available')),
+        ('at_ecacc', _(u'Stocked by ECACC')),
+        ('expand_to_order', _(u'Expand to order')),
+    )
+
     accepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
+    validated = models.CharField(_(u'Cell line data validation'), max_length=50, choices=VALIDATION_CHOICES, default='5')
     available_for_sale = models.NullBooleanField(_(u'Available for sale'))
+    availability = models.CharField(_(u'Availability'), max_length=30, choices=AVAILABILITY_CHOICES, default='not_available')
     status = models.ForeignKey('CelllineStatus', verbose_name=_(u'Cell line status'), null=True, blank=True)
 
     name = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
@@ -206,16 +221,33 @@ class Cellline(DirtyFieldsMixin, models.Model):
     class Meta:
         verbose_name = _(u'Cell line')
         verbose_name_plural = _(u'Cell lines')
-        ordering = ['biosamples_id']
+        ordering = ['name']
 
     def __unicode__(self):
         return u'%s' % (self.biosamples_id,)
 
     @property
     def ecacc_url(self):
-        return 'https://www.phe-culturecollections.org.uk/products/celllines/generalcell/detail.jsp?refId=%s&collection=ecacc_gc' % self.ecacc_id
+        # return 'https://www.phe-culturecollections.org.uk/products/celllines/ipsc/detail.jsp?refId=%s&collection=ecacc_ipsc' % self.ecacc_id
+        return 'http://hpa-uat.systemassociates.co.uk/products/celllines/ipsc/detail.jsp?refId=%s&collection=ecacc_ipsc' % self.ecacc_id
 
     def to_elastic(self):
+
+        '''
+        Facets
+        - Disease
+        - Donor sex
+        - Primary cell type
+        - Depositor
+
+        Searching
+        - Disease
+        - Donor sex
+        - Primary cell type
+        - Depositor
+        - Alternative name
+        - Biosamples ID
+        '''
 
         if self.primary_disease and self.primary_disease_diagnosis != '0':
             disease = self.primary_disease.disease
@@ -229,9 +261,12 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'name': self.name,
             'primary_disease': disease,
             'primary_disease_synonyms': [s.strip() for s in self.primary_disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.synonyms else None,
+            'primary_disease_stage': self.primary_disease_stage if self.primary_disease_stage else None,
+            'disease_associated_phenotypes': self.disease_associated_phenotypes if self.disease_associated_phenotypes else None,
             'depositor': self.generator.name,
             'primary_cell_type': self.derivation.primary_cell_type.name if self.derivation.primary_cell_type else None,
             'alternative_names': self.alternative_names,
+            'donor_sex': self.donor.gender.name if self.donor.gender else _(u'Not known'),
         }
 
     def get_latest_batch(self):
@@ -283,6 +318,9 @@ class CelllineInformationPacks(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.id,)
+
+    def filename(self):
+        return os.path.basename(self.clip_file.name)
 
 
 # -----------------------------------------------------------------------------
