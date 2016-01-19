@@ -9,9 +9,28 @@
 <h1>Executive dashboard</h1>
 
 <div class="status">
-    <div><span class="count">{{ celllines_registered.count }}</span> Registered cell lines</div>
-    <div><span class="count">{{ celllines_for_sale.count }}</span> Available for sale</div>
-    <div><span class="count">0</span> Vials sold</div>
+    <div class="cell-line-overview">
+        <div>
+            <div class="header">Registration</div>
+            <div class="data">
+                <div><span class="count">{{ celllines_registered.count }}</span> Registered</div>
+                <div><span class="count">{{ celllines_validated.count }}</span> Validated</div>
+            </div>
+        </div>
+        <div>
+            <div class="header">Availability</div>
+            <div class="data">
+                <div><span class="count">{{ celllines_at_ecacc.count }}</span> At ECACC</div>
+                <div><span class="count">{{ celllines_expand_to_order.count }}</span> Expand to order</div>
+            </div>
+        </div>
+        <div>
+            <div class="header">Sales</div>
+            <div class="data">
+                <div><span class="count">n/a</span> Vials sold</div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <h2>Registered cell lines</h2>
@@ -34,23 +53,46 @@
 
     <tbody>
         {% for cellline in celllines %}
-        <tr class="accepted-{{ cellline.accepted }}">
-            <td><a href="{% url 'executive:cellline' cellline.biosamples_id %}">{{ cellline.name }}</a></td>
-            <!-- <td class="name">{{ cellline.name }}</td> -->
-            <td>{{ cellline.alternative_names }}</td>
-            <td>{{ cellline.primary_disease|default_if_none:"" }}</td>
+        <tr class="availability-{{ cellline.availability }}">
+            <td><a href="{% url 'executive:cellline' cellline.name %}">{{ cellline.name }}</a></td>
+            <td>{{ cellline.primary_disease|default_if_none:"normal" }}</td>
             <td>{{ cellline.generator.name }}</td>
+            <td class="validation">
+                {% if cellline.validated == '1' %}
+                <div class="tooltip-item">
+                    <i class="glyphicon glyphicon-ok success"></i>
+                    <div class="tooltip">
+                        {{ cellline.get_validated_display }}
+                    </div>
+                </div>
+                {% elif cellline.validated == '2' %}
+                <div class="tooltip-item">
+                    <i class="glyphicon glyphicon-ok success"></i>
+                    <i class="glyphicon glyphicon-minus error"></i>
+                    <div class="tooltip">
+                        {{ cellline.get_validated_display }}
+                    </div>
+                </div>
+                {% else %}
+                <div class="tooltip-item">
+                    <i class="glyphicon glyphicon-minus error"></i>
+                    <div class="tooltip">
+                        {{ cellline.get_validated_display }}
+                    </div>
+                </div>
+                {% endif %}
+            </td>
             <td class="number">{{ cellline.batches.count }}</td>
-            <td class="number">{{ cellline.quantity|default:'-' }}</td>
-            <td class="number">{{ cellline.sold|default:'-' }}</td>
-            <td class="cellline-status">
+            <td class="number"><span class="comment">{{ cellline.quantity|default:'n/a' }}</span></td>
+            <td class="number"><span class="comment">{{ cellline.sold|default:'n/a' }}</span></td>
+            <!-- <td class="cellline-status">
                 {% if cellline.available_for_sale %}
                 <span class="for-sale">For sale</span>
                 {% else %}
-                Registered
+                Not available
                 {% endif %}
-            </td>
-            <!-- <td class="accepted">{% include 'executive/accepted-status.html' %}</td> -->
+            </td> -->
+            <td class="availability">{% include 'executive/availability-status.html' %}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -74,6 +116,6 @@
 
 {% block extra-scripts %}
 {% if perms.site.can_manage_executive_dashboard %}
-{% include 'executive/accepted-script.html' %}
+{% include 'executive/availability-script.html' %}
 {% endif %}
 {% endblock %}

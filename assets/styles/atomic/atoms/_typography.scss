@@ -89,3 +89,22 @@ hr {
   color: lighten($color-text, 30%);
 }
 
+.light-gray {
+  color: lighten($color-text, 30%);
+}
+
+.light-blue {
+  color: $color-blue-light;
+}
+
+.success {
+  color: darken($color-green, 5%);
+}
+
+.warn {
+  color: lighten($color-brown, 25%);
+}
+
+.error {
+  color: $color-red-dark;
+}

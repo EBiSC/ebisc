@@ -5,5 +5,5 @@ urlpatterns = patterns('ebisc.search.views',
     url(r'^$', 'search', name='search'),
 
     # Cell line
-    url(r'^(?P<biosamples_id>[^/]+)/$', 'cellline', name='cellline'),
+    url(r'^(?P<name>[^/]+)/$', 'cellline', name='cellline'),
 )
