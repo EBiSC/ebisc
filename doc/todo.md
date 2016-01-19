@@ -2,23 +2,20 @@
 
 ## Before launch
 
+- [ ] implement CLIP upoload
 - [ ] user management (accounts + open the catalogue)
-- [ ] cookies?
 - [x] change from BioSamples ID to hPSCreg name in the URLs and tables
 - [x] implement flag "go live" and status/availability to be set in the IMS (exec dash)
 - [ ] Set ECACC catalogue numbers for expand to order lines - get all assigned ECACC catalogue numbers from RC
 - [ ] change ECACC URL
-- [ ] bug: can_manage_executive_dashboard works only for superusers
-- [ ] search and filters on exec dash?
-- [ ] ontologies?
-- [ ] implement CLIP upoload? (to be checked by ECACC if needed)
+- [ ] can_manage_executive_dashboard works only for superusers
 
 Data import and display:
 - [ ] get feedback on data displayed in the Catalogue
-- [ ] import ...
+- [ ] import new disease, cell type and characterization data from hPSCreg
+- [ ] ordering in the catalogue (initial state) - has to be alphabetical by name
 
 Elastic search:
-
 - [x] remove biosamples id from table
 - [x] add donor sex to filters
 - [ ] fix filter loading/init on facet additions
