@@ -39,6 +39,7 @@ Additional fields and endpoints may be created for future exchanges.
             "LB-34-1",
             "iLB-MJD4-34m-r1"
         ],
+        "availability": "Stocked by ECACC",
         "batches": [
             {
                 "batch_id": "P001",
@@ -194,6 +195,16 @@ Additional fields and endpoints may be created for future exchanges.
             "mycoplasma": "Negative"
         }
     }
+
+
+#### Availability
+
+Availability field can hold three possible values:
+* Not available
+* Stocked by ECACC
+* Expand to order
+
+If availability is set to `Not available`, the value of `flag_go_live` is `false`. Otherwise `flag_go_live` is `true`.
 
 #### Primary disease
 

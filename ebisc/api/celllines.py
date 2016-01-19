@@ -272,6 +272,7 @@ class CelllineResource(ModelResource):
     ecacc_cat_no = fields.CharField('ecacc_id', unique=True, null=True)
 
     flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)
+    availability = fields.CharField('get_availability_display')
 
     name = fields.CharField('name', unique=True)
     alternative_names = fields.CharField('alternative_names', null=True)
