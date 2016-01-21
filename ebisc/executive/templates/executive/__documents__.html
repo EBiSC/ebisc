@@ -12,7 +12,7 @@
     {% for clip in cellline.clips.all %}
         <tr>
             <td class="center">{{ clip.version }}</td>
-            <td>{{ clip.updated|date:"j M Y" }}</td>
+            <td>{{ clip.updated|date:"j M Y @ H:m" }}</td>
             <td><a href="{{ clip.clip_file.url }}">{{ clip.filename }}</a></td>
         </tr>
     {% endfor %}

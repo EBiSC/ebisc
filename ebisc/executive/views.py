@@ -104,7 +104,10 @@ def cellline(request, name):
             clip.cell_line = cellline
             clip.md5 = hashlib.md5(clip.clip_file.read()).hexdigest()
             clip.save()
+            messages.success(request, format_html(u'A new CLIP <code>{0}</code> has been sucessfully added.', clip.version))
             return redirect('.')
+        else:
+            messages.error(request, format_html(u'Invalid CLIP data submitted. Please check below.'))
     else:
         clip_form = CelllineInformationPackForm()
 
