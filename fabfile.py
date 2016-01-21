@@ -39,6 +39,7 @@ def deploy(option=None):
     with virtualenv():
         run('git pull origin')
         run('pip install -r requirements.txt --upgrade')
+        run('./manage.py migrate')
         run('./manage.py collectstatic --noinput')
         run('touch etc/conf/*.ini')
 
