@@ -116,6 +116,6 @@
 
 {% block extra-scripts %}
 {% if perms.auth.can_manage_executive_dashboard %}
-{% include 'executive/availability-script.html' %}
+    {% include 'executive/availability-script.html' %}
 {% endif %}
 {% endblock %}

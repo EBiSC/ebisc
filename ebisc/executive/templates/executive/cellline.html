@@ -34,37 +34,30 @@
 </div>
 
 <ul class="accordion-tabs-minimal">
-  <li class="tab-header-and-content batches">
-    <a href="#" class="tab-link is-active">Batch data</a>
-    <div class="tab-content">
-        {% include 'executive/__batch-data__.html' %}
-    </div>
-  </li>
-  <li class="tab-header-and-content">
-    <a href="#" class="tab-link">Depositor data</a>
-    <div class="tab-content">
-        {% include 'executive/__depositor-data__.html' %}
-    </div>
-  </li>
-  <li class="tab-header-and-content">
-    <a href="#" class="tab-link">Documents</a>
-    <div class="tab-content">
-        {% include 'executive/__documents__.html' %}
-    </div>
-  </li>
+    <li class="tab-header-and-content batches" data-section="batch-data">
+        <a href="#" class="tab-link">Batch data</a>
+        <div class="tab-content">
+            {% include 'executive/__batch-data__.html' %}
+        </div>
+    </li>
+    <li class="tab-header-and-content" data-section="depositor-data">
+        <a href="#" class="tab-link">Depositor data</a>
+        <div class="tab-content">
+            {% include 'executive/__depositor-data__.html' %}
+        </div>
+    </li>
+    <li class="tab-header-and-content" data-section="documents">
+        <a href="#" class="tab-link">Documents</a>
+        <div class="tab-content">
+            {% include 'executive/__documents__.html' %}
+        </div>
+    </li>
 </ul>
 
 {% endblock %}
 
 {% block extra-scripts %}
 {% if perms.auth.can_manage_executive_dashboard %}
-{% include 'executive/availability-script.html' %}
+    {% include 'executive/availability-script.html' %}
 {% endif %}
-<script>
-$('.js-accordion-trigger').bind('click', function(e){
-  jQuery(this).parent().find('.content').slideToggle('fast');  // apply the toggle to the ul
-  jQuery(this).parent().toggleClass('is-expanded');
-  e.preventDefault();
-});
-</script>
 {% endblock %}
