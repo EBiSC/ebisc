@@ -1,4 +1,5 @@
 import csv
+import hashlib
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -8,9 +9,10 @@ from django.contrib import messages
 from django.utils.html import format_html
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import permission_required
+from django.forms import ModelForm
 
 from ebisc.site.views import render
-from ebisc.celllines.models import Cellline, CelllineBatch
+from ebisc.celllines.models import Cellline, CelllineBatch, CelllineInformationPack
 
 
 @permission_required('auth.can_view_executive_dashboard')
@@ -77,13 +79,41 @@ def dashboard(request):
     })
 
 
+class CelllineInformationPackForm(ModelForm):
+    class Meta:
+        model = CelllineInformationPack
+        fields = ['version', 'clip_file']
+
+
 @permission_required('auth.can_view_executive_dashboard')
 def cellline(request, name):
 
-    '''Display complete information for the selected cell line.'''
+    '''Display complete information for the selected cell line. Allow CLIP uploads for administrators.'''
+
+    cellline = get_object_or_404(Cellline, name=name)
+
+    if not request.user.has_perm('auth.can_manage_executive_dashboard'):
+        return render(request, 'executive/cellline.html', {
+            'cellline': cellline,
+        })
+
+    if request.method == 'POST':
+        clip_form = CelllineInformationPackForm(request.POST, request.FILES)
+        if clip_form.is_valid():
+            clip = clip_form.save(commit=False)
+            clip.cell_line = cellline
+            clip.md5 = hashlib.md5(clip.clip_file.read()).hexdigest()
+            clip.save()
+            messages.success(request, format_html(u'A new CLIP <code>{0}</code> has been sucessfully added.', clip.version))
+            return redirect('.')
+        else:
+            messages.error(request, format_html(u'Invalid CLIP data submitted. Please check below.'))
+    else:
+        clip_form = CelllineInformationPackForm()
 
     return render(request, 'executive/cellline.html', {
-        'cellline': get_object_or_404(Cellline, name=name)
+        'cellline': cellline,
+        'clip_form': clip_form,
     })
 
 

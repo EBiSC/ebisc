@@ -2,7 +2,7 @@
 
 <div class="accepted-status">
 
-    {% if perms.site.can_manage_executive_dashboard %}
+    {% if perms.auth.can_manage_executive_dashboard %}
 
         <form class="accepted" method="post" action="{% url 'executive:accept' cellline.biosamples_id %}">
             {% csrf_token %}

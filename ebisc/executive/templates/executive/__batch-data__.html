@@ -1,0 +1,62 @@
+{% load thumbnail %}
+
+<h2>Batches</h2>
+<!-- <div class="request-bisample-ids"><a href="./">Request new batch and vial Biosample IDs</a></div> -->
+
+<div class="ecacc-cat-no">ECACC Catalogue No: {% if cellline.ecacc_id %}<a href="{{ cellline.ecacc_url }}" target="_blank">{{ cellline.ecacc_id|default:"/" }}</a>{% else %}/{% endif %}</div>
+
+{% if cellline.batches.all|length %}
+<ul class="accordion">
+{% for batch in cellline.batches.all %}
+<li><a href="javascript:void(0)" class="js-accordion-trigger">{% if batch.batch_id == batch.biosamples_id %}{% else %}<b>{{ batch.batch_id }}</b> - {% endif %}{{ batch.biosamples_id }} <small>({{ batch.aliquots.all.count }} vials)</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
+    <div class="content">
+    {% if batch.batch_id and batch.batch_id != batch.biosamples_id %}
+
+        {% if batch.certificate_of_analysis %}
+        <div class="certificate-of-anlysis">
+            <a href="{{ batch.certificate_of_analysis.url }}"><i class="glyphicon glyphicon-file"></i>Certificate of analysis</a>
+        </div>
+        {% endif %}
+
+        <h3>Inventory</h3>
+        <div>Vials at Roslin: {{ batch.vials_at_roslin }}</div>
+        <div>Vials shipped to ECACC: {{ batch.vials_shipped_to_ecacc }}</div>
+        <div>Vials shipped to Fraunhoffer: {{ batch.vials_shipped_to_fraunhoffer }}</div>
+        <div class="link-to-biosample-ids-file"><a href="{% url 'executive:batch_data' cellline.name batch.biosamples_id %}"><i class="glyphicon glyphicon-download"></i>Download vial Biosample IDs file</a></div>
+
+        <h3>Culture conditions</h3>
+        <div>Medium: {{ batch.batchcultureconditions.culture_medium }}</div>
+        <div>Passage method: {{ batch.batchcultureconditions.passage_method }}</div>
+        <div>Matrix: {{ batch.batchcultureconditions.matrix }}</div>
+        <div>CO2 concentration: {{ batch.batchcultureconditions.co2_concentration }}</div>
+        <div>O2 concentration: {{ batch.batchcultureconditions.o2_concentration }}</div>
+        <div>Temperature: {{ batch.batchcultureconditions.temperature }}</div>
+
+        {% if batch.images.all %}
+        <h3>Images</h3>
+        <div class="cellline-batch-images">
+            {% for image in batch.images.all %}
+            <div class="image-with-caption">
+                {% thumbnail image.image "250" as img %}
+                <a href="{{ image.image.url }}"><img src="{{ img.url }}" width="{{ img.width }}" height="{{ img.height }}"></a>
+                {% endthumbnail %}
+                <div class="caption">
+                    <div>Timepoint: {{ image.time_point }}</div>
+                    <div>Magnification: {{ image.magnification }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    {% else %}
+    <p><span class="comment">No data available.</span></p>
+    {% endif %}
+
+    </div>
+</li>
+{% endfor%}
+</ul>
+{% else %}
+<p><span class="comment">Cell line has no batches.</span></p>
+{% endif %}
