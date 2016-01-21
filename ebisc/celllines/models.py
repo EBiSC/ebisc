@@ -305,11 +305,11 @@ class CelllineInformationPack(models.Model):
 
     cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='clips')
 
-    version = models.CharField(_(u'CLIP version'), max_length=10)
+    version = models.CharField(_(u'CLIP version'), max_length=10, help_text='e.g. "v1"')
     created = models.DateTimeField(u'Created', auto_now_add=True)
     updated = models.DateTimeField(u'Updated', auto_now=True)
 
-    clip_file = models.FileField(_(u'CLIP file'), upload_to=upload_to)
+    clip_file = models.FileField(_(u'CLIP file'), upload_to=upload_to, help_text='File name e.g. "UKBi005-A.CLIP.v1.pdf"')
     md5 = models.CharField(_(u'CLIP md5'), max_length=100)
 
     class Meta:

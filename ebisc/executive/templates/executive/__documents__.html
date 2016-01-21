@@ -1,9 +1,9 @@
 <h2>Cell Line Information Packs (CLIPS)</h2>
 {% if cellline.clips.all|length %}
-<table>
+<table class="bordered">
     <thead>
         <tr>
-            <th>Version</th>
+            <th class="center">Version</th>
             <th>Uploaded</th>
             <th>File</th>
         </tr>
@@ -11,7 +11,7 @@
     <tbody>
     {% for clip in cellline.clips.all %}
         <tr>
-            <td>{{ clip.version }}</td>
+            <td class="center">{{ clip.version }}</td>
             <td>{{ clip.updated|date:"j M Y" }}</td>
             <td><a href="{{ clip.clip_file.url }}">{{ clip.filename }}</a></td>
         </tr>
@@ -23,15 +23,17 @@
 {% endif %}
 
 {% if perms.auth.can_manage_executive_dashboard %}
-<h2>Upload a new CLIP</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <table>
-    {{ clip_form }}
-    <tr>
-        <td></td>
-        <td><input type="submit" value="Upload"></td>
-    </tr>
-    </table>
-</form>
+<div class="clip-upload">
+    <h3>Upload a new CLIP</h3>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table>
+        {{ clip_form }}
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Upload"></td>
+        </tr>
+        </table>
+    </form>
+</div>
 {% endif %}
