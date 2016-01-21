@@ -301,15 +301,16 @@ class CelllineStatus(models.Model):
         return self.status
 
 
-class CelllineInformationPacks(models.Model):
+class CelllineInformationPack(models.Model):
 
     cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='clips')
 
-    clip_file = models.FileField(_(u'Cell line information pack (CLIP)'), upload_to=upload_to)
-    md5 = models.CharField(_(u'CLIP md5'), max_length=100)
-    version = models.CharField(_(u'CLIP version'), max_length=10, null=True, blank=True)
+    version = models.CharField(_(u'CLIP version'), max_length=10)
     created = models.DateTimeField(u'Created', auto_now_add=True)
     updated = models.DateTimeField(u'Updated', auto_now=True)
+
+    clip_file = models.FileField(_(u'CLIP file'), upload_to=upload_to)
+    md5 = models.CharField(_(u'CLIP md5'), max_length=100)
 
     class Meta:
         verbose_name = _(u'Cell line information pack')
