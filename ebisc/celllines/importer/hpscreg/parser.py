@@ -192,9 +192,16 @@ def parse_cell_type(valuef, source):
     if value is None:
         return
 
-    cell_type, created = CellType.objects.get_or_create(
-        name=value,
-    )
+    try:
+        cell_type, created = CellType.objects.update_or_create(
+            name=value,
+            defaults={
+                'purl': valuef('primary_celltype_ont_id'),
+            }
+        )
+    except IntegrityError, e:
+        logger.warn(format_integrity_error(e))
+        return None
 
     if created:
         logger.info('Found new cell type: %s' % cell_type)
@@ -495,6 +502,7 @@ def parse_derivation(valuef, source, cell_line):
     cell_line_derivation, cell_line_derivation_created = CelllineDerivation.objects.get_or_create(cell_line=cell_line)
 
     cell_line_derivation.primary_cell_type = parse_cell_type(source)
+    cell_line_derivation.primary_cell_type_not_normalised = valuef('primary_celltype_name_freetext')
     cell_line_derivation.primary_cell_developmental_stage = valuef('dev_stage_primary_cell') if valuef('dev_stage_primary_cell') and valuef('dev_stage_primary_cell') != '0' else ''
     cell_line_derivation.tissue_procurement_location = valuef('location_primary_tissue_procurement')
     cell_line_derivation.tissue_collection_date = valuef('collection_date')

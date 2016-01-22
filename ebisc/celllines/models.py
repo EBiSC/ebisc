@@ -42,6 +42,7 @@ class AgeRange(models.Model):
 class CellType(models.Model):
 
     name = models.CharField(_(u'Cell type'), max_length=100, unique=True)
+    purl = models.URLField(_(u'Purl'), max_length=300, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell type')
@@ -526,6 +527,7 @@ class CelllineDerivation(DirtyFieldsMixin, models.Model):
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='derivation')
 
     primary_cell_type = models.ForeignKey('CellType', verbose_name=_(u'Primary cell type'), null=True, blank=True)
+    primary_cell_type_not_normalised = models.CharField(_(u'Primary cell type name - not normalised'), max_length=100, null=True, blank=True)
     primary_cell_developmental_stage = models.CharField(_(u'Primary cell developmental stage'), max_length=45, null=True, blank=True)
     tissue_procurement_location = models.CharField(_(u'Location of primary tissue procurement'), max_length=45, null=True, blank=True)
     tissue_collection_date = models.DateField(_(u'Tissue collection date'), null=True, blank=True)
