@@ -1,4 +1,7 @@
-.data .cellline-batch-images {
+.cellline-batch-images {
+  @include clearfix();
+  clear: both;
+
   .image-with-caption {
     float: left;
     margin-right: 30px;
@@ -6,7 +9,7 @@
 }
 
 .image-with-caption {
-  margin: 1em 0 1.5em 0;
+  margin: 1.5em 0 1.5em 0;
 
   .caption {
     font-size: $base_font-size * 0.9;

@@ -17,8 +17,8 @@ Celllines = React.createClass
         buildCell = (name, row) ->
             value = row._source[name]
 
-            if name == 'biosamples_id'
-                <a href="./#{value}/">{value}</a>           
+            if name == 'name'
+                <a href="./#{value}/">{value}</a>
             else
                 value
 
@@ -34,4 +34,4 @@ Celllines = React.createClass
         }
         </div>
 
-module.exports = Celllines        
+module.exports = Celllines

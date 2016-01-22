@@ -15,8 +15,8 @@ env.shell = '/bin/sh -c'
 env.activate = '. %s/var/virtualenv/bin/activate' % DESTDIR
 
 env.roledefs = {
-    'production': ['www@ebisc.douglasconnect.com'],
-    'staging': ['www@ebisc-stage.douglasconnect.com'],
+    'production': ['www@cells.ebisc.org'],
+    'staging': ['www@cells-stage.ebisc.org'],
 }
 
 
@@ -39,6 +39,7 @@ def deploy(option=None):
     with virtualenv():
         run('git pull origin')
         run('pip install -r requirements.txt --upgrade')
+        run('./manage.py migrate')
         run('./manage.py collectstatic --noinput')
         run('touch etc/conf/*.ini')
 
@@ -50,10 +51,7 @@ def deploy(option=None):
 def update():
 
     with virtualenv():
-        run('./manage.py import hpscreg --init')
-        run('./manage.py import batches var/batches.csv')
-        run('./manage.py import lims')
-        run('./manage.py import toelastic')
+        run('./manage.py import all')
 
 
 # -----------------------------------------------------------------------------
@@ -77,7 +75,7 @@ def sync_media():
 def sync_db():
     fn = '%s-%s.sql.gz' % (SLUG, str(datetime.datetime.now()).replace(' ', '-'))
 
-    run('pg_dump -h db %s | gzip -c > %s' % (SLUG, fn))
+    run('pg_dump %s | gzip -c > %s' % (SLUG, fn))
     get(fn, fn)
 
     with settings(warn_only=True):

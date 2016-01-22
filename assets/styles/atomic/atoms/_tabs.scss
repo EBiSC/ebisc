@@ -1,0 +1,103 @@
+.accordion-tabs-minimal {
+  $base-border-color: gainsboro !default;
+  $base-background-color: white !default;
+  $base-spacing: 1.5em !default;
+  $action-color: #477DCA !default;
+  $dark-gray: #333 !default;
+  $medium-screen: em(640) !default;
+  $tab-link-color: $base-font-color;
+  $tab-border: 1px solid $base-border-color;
+  $tab-active-background: white;
+  $tab-inactive-color: $color-table-background;
+  $tab-inactive-hover-color: silver;
+  $tab-mode: $medium-screen;
+
+  @include clearfix;
+  line-height: 1.5;
+  padding: 0;
+
+  li.tab-header-and-content {
+    list-style: none;
+    display: inline;
+
+    @include breakpoint(map-get($breakpoints, small)) {
+      display: block;
+      width: 100%;
+    }
+  }
+
+  a.tab-link {
+    background-color: $tab-inactive-color;
+    border-left: solid 1px $tab-inactive-color;
+    border-right: solid 1px $tab-inactive-color;
+    border-top: $tab-border;
+    color: $action-color;
+    display: block;
+    padding: $base-spacing / 2;
+    text-decoration: none;
+
+    @include inline-block;
+    border-top: 0;
+
+    &:hover {
+      color: $action-color;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &.is-active {
+      border-bottom: 0;
+      border: $tab-border;
+      border-bottom-color: $tab-active-background;
+      margin-bottom: -1px;
+      color: $tab-link-color;
+      background-color: $tab-active-background;
+      cursor: default;
+    }
+
+    @include breakpoint(map-get($breakpoints, small)) {
+      display: block;
+      border-top: $tab-border;
+
+      &.is-active {
+        background-color: $tab-inactive-color;
+      }
+
+      &:last-child {
+        border-bottom: $tab-border;
+      }
+    }
+  }
+
+  .tab-content {
+    display: none;
+    padding: $base-spacing 0.6rem;
+    width: 100%;
+
+    border-top: $tab-border;
+    float: left;
+    background-color: transparent;
+
+    h2 {
+      margin-top: 0.5em;
+    }
+
+    table.data {
+      margin-top: -1.3em;
+    }
+
+    &.is-open {
+      background-color: white;
+      border-left: $tab-border;
+      border-right: $tab-border;
+      border-bottom: $tab-border;
+    }
+
+    @include breakpoint(map-get($breakpoints, small)) {
+      border-bottom: $tab-border;
+      margin-bottom: 0.8rem;
+    }
+  }
+}

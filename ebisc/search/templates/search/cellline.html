@@ -2,40 +2,85 @@
 
 {% block title %}Cell line {{ cellline.name }}{% endblock %}
 
+{% block body-class %}template-with-sidebar{% endblock%}
+
 {% block article %}
 
-<h1>{{ cellline.name }} {% if cellline.alternative_names %}<small>{{ cellline.alternative_names }}</small>{% endif %}</h1>
+<div class="catalogue-data">
 
-<ul class="page-menu">
-    <li><a href="#general-information">General information</a></li>
-    <li><a href="#derivation">Derivation</a></li>
-    <li><a href="#culture-conditions">Culture conditions</a></li>
-    <li><a href="#characterization">Characterization</a></li>
-    <li><a href="#genotyping">Genotyping</a></li>
-</ul>
+    <h1>{{ cellline.name }}</h1>
 
-<!-- {% if cellline.ecacc_id %}
-<a class="buy" href="http://hpa-uat.systemassociates.co.uk/products/celllines/ebisc/detail.jsp?refId={{ cellline.ecacc_id }}&collection=ecacc_ebisc"  target="_blank">
-    <button><i class="glyphicon glyphicon-shopping-cart "></i> Purchase cell line</button>
-    <div class="comment">At European Collection of Cell Cultures (ECACC)</div>
-</a>
-{% endif %} -->
+    <table class="data general-info">
+        {% include 'search/__cellline_data_general__.html' %}
+    </table>
 
-<table class="data">
-    {% include 'search/__cellline_data_general__.html' %}
-
-    {% include 'search/__cellline_data_derivation__.html' %}
-
-    {% if cellline.batches.all|length %}
-    {% include 'search/__batch_data_culture_conditions__.html' %}
-    {% include 'search/__batch_data_images__.html' %}
-    {% else %}
-    {% include 'search/__cellline_data_culture_conditions__.html' %}
+    {% if cellline.batches.all %}
+    {% with cellline.get_latest_batch as batch %}
+        {% if batch.images.all|length %}
+        {% include 'search/__batch_data_images__.html' %}
+        {% endif %}
+    {% endwith %}
     {% endif %}
 
-    {% include 'search/__cellline_data_characterization__.html' %}
+    <ul class="accordion-tabs-minimal">
+        <li class="tab-header-and-content">
+            <a href="#" class="tab-link is-active">Derivation</a>
+            <div class="tab-content">
+                <table class="data">
+                    {% include 'search/__cellline_data_derivation__.html' %}
+                </table>
+            </div>
+        </li>
+        <li class="tab-header-and-content">
+            <a href="#" class="tab-link">Culture conditions</a>
+            <div class="tab-content">
+                <table class="data">
+                    {% if cellline.batches.all %}
+                    {% with cellline.get_latest_batch as batch %}
+                        {% if batch.batchcultureconditions %}
+                        {% include 'search/__batch_data_culture_conditions__.html' %}
+                        {% else %}
+                        {% include 'search/__cellline_data_culture_conditions__.html' %}
+                        {% endif %}
+                    {% endwith %}
+                    {% else %}
+                    {% include 'search/__cellline_data_culture_conditions__.html' %}
+                    {% endif %}
+                </table>
+            </div>
+        </li>
+        <li class="tab-header-and-content">
+            <a href="#" class="tab-link">Characterization</a>
+            <div class="tab-content">
+                <table class="data">
+                    {% include 'search/__cellline_data_characterization__.html' %}
+                </table>
+            </div>
+        </li>
+        {% if cellline.karyotype or cellline.str_fingerprinting.all|length or cellline.genome_analysis or cellline.genetic_modification_transgene_expression or cellline.genetic_modification_gene_knock_out or cellline.genetic_modification_gene_knock_in or cellline.genetic_modification_isogenic %}
+        <li class="tab-header-and-content">
+            <a href="#" class="tab-link">Genotyping</a>
+            <div class="tab-content">
+                <table class="data">
+                    {% include 'search/__cellline_data_genotyping__.html' %}
+                </table>
+            </div>
+        </li>
+        {% endif %}
+    </ul>
 
-    {% include 'search/__cellline_data_genotyping__.html' %}
-</table>
+    {% if cellline.ecacc_id and cellline.available_for_sale %}
+    <a class="buy" href="{{ cellline.ecacc_url }}"  target="_blank">
+        <button><i class="glyphicon glyphicon-shopping-cart "></i> Purchase cell line</button>
+        <div class="comment">At European Collection of Authenticated Cell Cultures (ECACC)</div>
+        {% if cellline.availability == 'at_ecacc' %}
+        <div class="availability in-stock">In stock</div>
+        {% else %}
+        <div class="availability">Restocking</div>
+        {% endif %}
+    </a>
+    {% endif %}
+
+</div>
 
 {% endblock %}

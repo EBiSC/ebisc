@@ -10,7 +10,7 @@ from django.conf import settings
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 
-from ebisc.celllines.models import CelllineBatch, BatchCultureConditions, CelllineBatchImages
+from ebisc.celllines.models import CelllineBatch, BatchCultureConditions, CelllineBatchImages, CelllineInformationPack
 
 
 '''
@@ -118,37 +118,54 @@ def run():
 
                     culture_conditions.save()
 
-            # Cell line data (ECACC cat no., go live flag and AUAs)
+            # Cell line data
+
+            # ECACC cat no.
 
             batch.cell_line.ecacc_id = lims_batch_data.ecacc_cat_no
 
-            if 'flag_go_live' in lims_batch_data:
-                if lims_batch_data.flag_go_live == '1':
-                    batch.cell_line.available_for_sale = True
-                else:
-                    batch.cell_line.available_for_sale = False
+            # if 'flag_go_live' in lims_batch_data:
+            #     if lims_batch_data.flag_go_live == '1':
+            #         batch.cell_line.available_for_sale = True
+            #     else:
+            #         batch.cell_line.available_for_sale = False
+            # else:
+            #     batch.cell_line.available_for_sale = False
+            #
+            # batch.cell_line.save()
+
+            # CLIPs
+
+            old_clips = set([clip.md5 for clip in batch.cell_line.clips.all()])
+            if 'cell_line_information_packs' in lims_batch_data:
+                new_clips = set([clip.md5 for clip in lims_batch_data.cell_line_information_packs])
             else:
-                batch.cell_line.available_for_sale = False
+                new_clips = set()
 
-            batch.cell_line.save()
+            # Delete old clips that are not in new clips (or updated clips)
 
-            if 'e_aua' in lims_batch_data:
-                batch.cell_line.access_and_use_agreement_md5 = value_of_file(
-                    lims_batch_data.e_aua.file,
-                    batch.cell_line.access_and_use_agreement,
-                    source_md5=lims_batch_data.e_aua.md5,
-                    current_md5=batch.cell_line.access_and_use_agreement_md5,
-                )
-                batch.cell_line.save()
+            for clip_md5 in old_clips - new_clips:
+                CelllineInformationPack(cell_line=batch.cell_line, md5=clip_md5).delete()
+                logger.info('Deleted old version of CLIP')
 
-            if 'pr_aua' in lims_batch_data:
-                batch.cell_line.access_and_use_agreement_participant_md5 = value_of_file(
-                    lims_batch_data.pr_aua.file,
-                    batch.cell_line.access_and_use_agreement_participant,
-                    source_md5=lims_batch_data.pr_aua.md5,
-                    current_md5=batch.cell_line.access_and_use_agreement_participant_md5,
-                )
-                batch.cell_line.save()
+            # Add new clips (or updated clips)
+
+            if len(new_clips - old_clips) > 0:
+                for clip in lims_batch_data.cell_line_information_packs:
+                    if clip.md5 in (new_clips - old_clips):
+                        cell_line_clip = CelllineInformationPack(
+                            cell_line=batch.cell_line,
+                            version=clip.version,
+                        )
+                        cell_line_clip.save()
+
+                        cell_line_clip.md5 = value_of_file(
+                            clip.file,
+                            cell_line_clip.clip_file,
+                            source_md5=clip.md5,
+                            current_md5=cell_line_clip.md5,
+                        )
+                        cell_line_clip.save()
 
         except CelllineBatch.DoesNotExist:
             logger.warn('Unknown batch with biosamples ID = {}'.format(lims_batch_data.biosamples_batch_id))

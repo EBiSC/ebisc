@@ -1,0 +1,11 @@
+<script>
+$(document).ready(function () {
+    $('form.availability select').change(function (e) {
+        if (confirm('Are you sure you want to change the status of ' + $('input[name=name]', this.form).val() + ' to ' + $('select', this.form).val() + '?')) {
+            this.form.submit();
+        } else {
+            $('select', this.form).val($('input[name=status]', this.form).val());
+        }
+    });
+});
+</script>

@@ -19,6 +19,8 @@
 @import 'atomic/atoms/main';
 @import 'atomic/atoms/messages';
 @import 'atomic/atoms/tables';
+@import 'atomic/atoms/tabs';
+@import 'atomic/atoms/tooltips';
 @import 'atomic/atoms/typography';
 @import 'atomic/atoms/transitions';
 
@@ -42,3 +44,4 @@
 
 @import 'atomic/pages/home';
 @import 'atomic/pages/login';
+@import 'atomic/pages/catalogue-cell-line';

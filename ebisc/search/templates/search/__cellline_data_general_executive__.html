@@ -1,5 +1,29 @@
-<tr><th colspan="2" class="title"><h2>Disease status</h2></th></tr>
+<tr><th colspan="2" class="title" id="general-information"><h2>General Information</h2></th></tr>
 
+<tr><td class="label">Cell line name:</td><td>{{ cellline.name|default:"-" }}</td></tr>
+<tr><td class="label">Cell line alternative names:</td><td>{{ cellline.alternative_names|default:"-" }}</td></tr>
+<tr><td class="label">Biosamples ID:</td><td><a href="http://www.ebi.ac.uk/biosamples/sample/{{ cellline.biosamples_id }}" target="_blank"><i class="glyphicon glyphicon-link"></i> {{ cellline.biosamples_id }}</a></td></tr>
+
+
+<tr><td class="label">Depositor:</td><td>{{ cellline.generator.name|default:"-" }}</td></tr>
+{% if cellline.derivation_country %}
+<tr><td class="label">Derivation country:</td><td>{{ cellline.derivation_country }}</td></tr>
+{% endif %}
+
+{% if cellline.publications.all|length %}
+<tr>
+    <td class="label">Reference publications:</td>
+    <td>
+        <ul>
+            {% for pub in cellline.publications.all %}
+            <li><a href="{{ pub.reference_url }}">{{ pub.reference_title }}</a></li>
+            {% endfor%}
+        </ul>
+    </td>
+</tr>
+{% endif %}
+
+<tr><th class="sub-title"><h3>Disease status</h3></th><th></th></tr>
 {% if cellline.primary_disease_diagnosis == '1' %}
 <tr><td class="label">Diagnosed disease:</td><td>{{ cellline.primary_disease|default:"-" }}</td></tr>
 {% elif cellline.primary_disease_diagnosis == 'carrier' %}
@@ -27,8 +51,11 @@
 <tr><td class="label">Affected status:</td><td>{{ cellline.affected_status }}</td></tr>
 {% endif %}
 
-<tr><th colspan="2" class="title"><h2>Donor information</h2></th></tr>
-<!-- <tr><th class="sub-title"><h3>Donor information</h3></th><th></th></tr> -->
+<tr><th class="sub-title"><h3>Donor information</h3></th><th></th></tr>
+<tr><td class="label">Biosamples ID:</td><td>{{ cellline.donor.biosamples_id|default:"-" }}</td></tr>
+{% if cellline.donor.provider_donor_ids %}
+<tr><td class="label">Internal donor ID:</td><td>{{ cellline.donor.provider_donor_ids|join:", " }}</td></tr>
+{% endif %}
 {% if cellline.donor.gender %}
 <tr><td class="label">Gender:</td><td>{{ cellline.donor.gender|default:"-" }}</td></tr>
 {% endif %}
@@ -46,29 +73,4 @@
 {% endif %}
 {% if cellline.donor.karyotype %}
 <tr><td class="label">Donor karyotype:</td><td>{{ cellline.donor.karyotype|default:"-" }}</td></tr>
-{% endif %}
-
-<tr><th colspan="2" class="title"><h2>General information</h2></th></tr>
-<!-- <tr><th class="sub-title"><h3>General</h3></th><th></th></tr> -->
-
-<tr><td class="label">Depositor:</td><td>{{ cellline.generator.name|default:"-" }}</td></tr>
-<tr><td class="label">Cell line name:</td><td>{{ cellline.name|default:"-" }}</td></tr>
-<tr><td class="label">Cell line alternative names:</td><td>{{ cellline.alternative_names|default:"-" }}</td></tr>
-<tr><td class="label">Biosamples ID:</td><td><a href="http://www.ebi.ac.uk/biosamples/sample/{{ cellline.biosamples_id }}" target="_blank">{{ cellline.biosamples_id }}</a></td></tr>
-
-{% if cellline.derivation_country %}
-<tr><td class="label">Derivation country:</td><td>{{ cellline.derivation_country }}</td></tr>
-{% endif %}
-
-{% if cellline.publications.all|length %}
-<tr>
-    <td class="label">Reference publications:</td>
-    <td>
-        <ul>
-            {% for pub in cellline.publications.all %}
-            <li><a href="{{ pub.reference_url }}">{{ pub.reference_title }}</a></li>
-            {% endfor%}
-        </ul>
-    </td>
-</tr>
 {% endif %}

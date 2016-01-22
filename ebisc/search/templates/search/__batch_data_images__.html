@@ -1,19 +1,15 @@
 {% load thumbnail %}
 
-<tr>
-    <td colspan="2" class="cellline-batch-images">
-        {% for batch in cellline.batches.all %}
-        {% for image in batch.images.all %}
-        <div class="image-with-caption">
-            {% thumbnail image.image "250" as img %}
-            <a href="{{ image.image.url }}"><img src="{{ img.url }}" width="{{ img.width }}" height="{{ img.height }}"></a>
-            {% endthumbnail %}
-            <div class="caption">
-                <div>Timepoint: {{ image.time_point }}</div>
-                <div>Magnification: {{ image.magnification }}</div>
-            </div>
+<div class="cellline-batch-images">
+    {% for image in batch.images.all %}
+    <div class="image-with-caption">
+        {% thumbnail image.image "250" as img %}
+        <a href="{{ image.image.url }}"><img src="{{ img.url }}" width="{{ img.width }}" height="{{ img.height }}"></a>
+        {% endthumbnail %}
+        <div class="caption">
+            <div>Timepoint: {{ image.time_point }}</div>
+            <div>Magnification: {{ image.magnification }}</div>
         </div>
-        {% endfor %}
-        {% endfor %}
-    </td>
-</tr>
+    </div>
+    {% endfor %}
+</div>

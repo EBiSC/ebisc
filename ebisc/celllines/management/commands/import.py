@@ -25,7 +25,6 @@ class Command(DocOptCommand):
     def handle_docopt(self, args):
 
         if args.get('all'):
-            self.init()
             importer.hpscreg.run()
             importer.batches.run('var/batches.csv')
             importer.lims.run()

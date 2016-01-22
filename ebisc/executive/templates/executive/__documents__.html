@@ -1,0 +1,39 @@
+<h2>Cell Line Information Packs (CLIPS)</h2>
+{% if cellline.clips.all|length %}
+<table class="bordered">
+    <thead>
+        <tr>
+            <th class="center">Version</th>
+            <th>Uploaded</th>
+            <th>File</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for clip in cellline.clips.all %}
+        <tr>
+            <td class="center">{{ clip.version }}</td>
+            <td>{{ clip.updated|date:"j M Y @ H:m" }}</td>
+            <td><a href="{{ clip.clip_file.url }}">{{ clip.filename }}</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p><span class="comment">No CLIPs available.</span></p>
+{% endif %}
+
+{% if perms.auth.can_manage_executive_dashboard %}
+<div class="clip-upload">
+    <h3>Upload a new CLIP</h3>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table>
+        {{ clip_form }}
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Upload"></td>
+        </tr>
+        </table>
+    </form>
+</div>
+{% endif %}

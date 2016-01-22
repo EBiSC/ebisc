@@ -156,7 +156,7 @@ def inject_valuef(func):
 @inject_valuef
 def parse_disease(valuef, source):
 
-    if valuef('disease_flag') == 0:
+    if valuef('disease_flag') == '0':
         return None
 
     else:
