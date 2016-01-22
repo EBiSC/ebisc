@@ -26,7 +26,7 @@ def run():
         return
 
     for cellline_id in [id for id in cellline_ids]:
-    # for cellline_id in [id for id in cellline_ids if id == 'UKBi001-A']:
+    # for cellline_id in [id for id in cellline_ids if id == 'UKKi007-B']:
         logger.info('Importing data for cell line %s' % cellline_id)
         json = request_get(settings.HPSCREG['cellline_url'] + cellline_id)
 
@@ -73,6 +73,7 @@ def import_cellline(source):
     cell_line.derivation_country = parser.term_list_value_of_json(source, 'derivation_country', Country)
     cell_line.primary_disease_diagnosis = valuef('disease_flag')
     cell_line.primary_disease = parser.parse_disease(source)
+    cell_line.primary_disease_not_normalised = valuef('disease_other')
     cell_line.primary_disease_stage = valuef('disease_stage')
     cell_line.disease_associated_phenotypes = valuef('disease_associated_phenotypes')
     cell_line.affected_status = valuef('disease_affected_flag')
