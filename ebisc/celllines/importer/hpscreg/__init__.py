@@ -25,6 +25,11 @@ def run():
     if cellline_ids is None:
         return
 
+    # Tests
+
+    # json = request_get('http://test.hescreg.eu/api/export/2')
+    # import_cellline(json)
+
     for cellline_id in [id for id in cellline_ids]:
     # for cellline_id in [id for id in cellline_ids if id == 'UKKi007-B']:
         logger.info('Importing data for cell line %s' % cellline_id)
@@ -118,6 +123,8 @@ def import_cellline(source):
         parser.parse_publications(source, cell_line),
         parser.parse_characterization(source, cell_line),
         parser.parse_characterization_markers(source, cell_line),
+        # parser.parse_characterization_pluritest(source, cell_line),
+        # parser.parse_characterization_epipluriscore(source, cell_line),
         parser.parse_genetic_modifications(source, cell_line),
         parser.parse_disease_associated_genotype(source, cell_line),
     ]
