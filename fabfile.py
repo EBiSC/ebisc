@@ -39,6 +39,7 @@ def deploy(option=None):
     with virtualenv():
         run('git pull origin')
         run('pip install -r requirements.txt --upgrade')
+        run('./manage.py migrate')
         run('./manage.py collectstatic --noinput')
         run('touch etc/conf/*.ini')
 
@@ -74,7 +75,7 @@ def sync_media():
 def sync_db():
     fn = '%s-%s.sql.gz' % (SLUG, str(datetime.datetime.now()).replace(' ', '-'))
 
-    run('pg_dump -h db %s | gzip -c > %s' % (SLUG, fn))
+    run('pg_dump %s | gzip -c > %s' % (SLUG, fn))
     get(fn, fn)
 
     with settings(warn_only=True):

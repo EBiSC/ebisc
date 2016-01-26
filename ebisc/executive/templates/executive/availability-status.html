@@ -2,7 +2,7 @@
 
 <div class="availability-status">
 
-    {% if perms.site.can_manage_executive_dashboard %}
+    {% if perms.auth.can_manage_executive_dashboard %}
 
         <form class="availability" method="post" action="{% url 'executive:availability' cellline.name %}">
             {% csrf_token %}

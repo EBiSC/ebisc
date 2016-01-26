@@ -10,7 +10,7 @@ from django.conf import settings
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 
-from ebisc.celllines.models import CelllineBatch, BatchCultureConditions, CelllineBatchImages, CelllineInformationPacks
+from ebisc.celllines.models import CelllineBatch, BatchCultureConditions, CelllineBatchImages, CelllineInformationPack
 
 
 '''
@@ -145,15 +145,15 @@ def run():
             # Delete old clips that are not in new clips (or updated clips)
 
             for clip_md5 in old_clips - new_clips:
-                CelllineInformationPacks(cell_line=batch.cell_line, md5=clip_md5).delete()
-                logger.info('Deleted old version of CLIP')
+                logger.info('Deleting old version of CLIP')
+                batch.cell_line.clips.filter(md5=clip_md5).delete()
 
             # Add new clips (or updated clips)
 
             if len(new_clips - old_clips) > 0:
                 for clip in lims_batch_data.cell_line_information_packs:
                     if clip.md5 in (new_clips - old_clips):
-                        cell_line_clip = CelllineInformationPacks(
+                        cell_line_clip = CelllineInformationPack(
                             cell_line=batch.cell_line,
                             version=clip.version,
                         )

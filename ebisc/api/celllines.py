@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllinePublication, CelllineInformationPacks
+from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllinePublication, CelllineInformationPack
 
 
 # -----------------------------------------------------------------------------
@@ -251,14 +251,14 @@ class CelllineBatchResource(ModelResource):
 # -----------------------------------------------------------------------------
 # Cell line information packs (CLIPS)
 
-class CelllineInformationPacksResource(ModelResource):
+class CelllineInformationPackResource(ModelResource):
 
     clip_file = fields.FileField('clip_file')
     md5 = fields.CharField('md5')
     version = fields.CharField('version', null=True)
 
     class Meta:
-        queryset = CelllineInformationPacks.objects.all()
+        queryset = CelllineInformationPack.objects.all()
         include_resource_uri = False
         fields = ('clip_file', 'md5', 'version', 'updated')
 
@@ -272,6 +272,7 @@ class CelllineResource(ModelResource):
     ecacc_cat_no = fields.CharField('ecacc_id', unique=True, null=True)
 
     flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)
+    availability = fields.CharField('get_availability_display')
 
     name = fields.CharField('name', unique=True)
     alternative_names = fields.CharField('alternative_names', null=True)
@@ -294,7 +295,7 @@ class CelllineResource(ModelResource):
 
     batches = fields.ToManyField(CelllineBatchResource, 'batches', null=True, full=True)
 
-    cell_line_information_packs = fields.ToManyField(CelllineInformationPacksResource, 'clips', null=True, full=True)
+    cell_line_information_packs = fields.ToManyField(CelllineInformationPackResource, 'clips', null=True, full=True)
 
     class Meta:
         queryset = Cellline.objects.all()

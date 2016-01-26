@@ -42,7 +42,6 @@ def create_batch(cell_line, batch_biosamples_id):
     try:
         batch = CelllineBatch.objects.get(cell_line=cell_line, biosamples_id=batch_biosamples_id)
 
-        logger.info('Batch %s already exists, moving on' % batch.batch_id)
         return batch
 
     except CelllineBatch.DoesNotExist:

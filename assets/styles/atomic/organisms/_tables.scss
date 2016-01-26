@@ -56,6 +56,18 @@ table.listing {
   }
 }
 
+table.striped {
+  @extend %striped;
+}
+
+table.bordered {
+  @extend %bordered;
+
+  th {
+    background-color: $color-table-background;
+  }
+}
+
 // Table for displaying data
 
 table.data {

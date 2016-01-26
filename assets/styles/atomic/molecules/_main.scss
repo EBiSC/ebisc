@@ -156,7 +156,6 @@
 
 // Table for displaying overview info on executive dashboard
 
-
 .batches {
   // @extend %card;
   // margin-top: 10px;
@@ -259,6 +258,42 @@ table.listing .availability-status .status-label {
   }
 
   &.not-available {
+  }
+}
+
+.clip-upload {
+  margin-top: 3rem;
+
+  h3 {
+    font-size: $font-size-large * 1.2;
+    margin-bottom: 1rem;
+  }
+
+  th {
+    text-align: right;
+  }
+
+  td, th {
+    padding: 0.5rem 1rem 1.2rem 0;
+    vertical-align: top;
+
+    br {
+      display: none;
+    }
+  }
+
+  input[type="text"] {
+    max-width: 5rem;
+  }
+
+  .errorlist {
+    margin-bottom: 0.5rem;
+  }
+
+  .helptext {
+    margin-top: -0.4rem;
+    display: block;
+    @extend .comment;
   }
 }
 

@@ -8,7 +8,7 @@
 - [x] implement flag "go live" and status/availability to be set in the IMS (exec dash)
 - [ ] Set ECACC catalogue numbers for expand to order lines - get all assigned ECACC catalogue numbers from RC
 - [ ] change ECACC URL
-- [ ] can_manage_executive_dashboard works only for superusers
+- [x] can_manage_executive_dashboard works only for superusers
 
 Data import and display:
 - [ ] get feedback on data displayed in the Catalogue

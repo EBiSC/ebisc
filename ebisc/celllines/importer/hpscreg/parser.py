@@ -30,6 +30,8 @@ from ebisc.celllines.models import  \
     CelllineNonIntegratingVector,  \
     CelllineIntegratingVector,  \
     CelllineCharacterization,  \
+    CelllineCharacterizationEpipluriscore, \
+    CelllineCharacterizationPluritest, \
     UndifferentiatedMorphologyMarkerImune,  \
     UndifferentiatedMorphologyMarkerImuneMolecule,  \
     UndifferentiatedMorphologyMarkerRtPcr,  \
@@ -59,67 +61,78 @@ from ebisc.celllines.models import  \
 # -----------------------------------------------------------------------------
 # Convert JSON values to python values
 
-def value_of_json(source, field, cast=None):
+def get_in_json(source, path):
+    if isinstance(path, str):
+        return source[path]
+    else:
+        # path is a list
+        if len(path) == 1:
+            return get_in_json(source, path[0])
+        else:
+            return get_in_json(source[path[0]], path[1:])
+
+
+def value_of_json(source, path, cast=None):
 
     if cast == 'bool':
-
-        if source.get(field, None) == '1':
-            return True
-        else:
+        try:
+            if get_in_json(source, path) == '1':
+                return True
+            else:
+                return False
+        except KeyError:
             return False
 
     elif cast == 'nullbool':
-
-        if source.get(field, None) == '1':
-            return True
-        elif source.get(field, None) == '0':
-            return False
-        else:
+        try:
+            if get_in_json(source, path) == '1':
+                return True
+            elif get_in_json(source, path) == '0':
+                return False
+            else:
+                return None
+        except KeyError:
             return None
 
     elif cast == 'int':
-
         try:
-            return int(source[field])
+            return int(get_in_json(source, path))
         except KeyError:
-            pass
+            return None
         except:
-            logger.warn('Invalid field value for int: %s=%s' % (field, source.get(field)))
-
-        return None
+            logger.warn('Invalid field value for int: %s=%s' % (path, get_in_json(source, path)))
+            return None
 
     elif cast == 'gender':
-
         try:
-            return Gender.objects.get(name=source[field])
+            return Gender.objects.get(name=get_in_json(source, path))
         except KeyError:
-            pass
+            return None
         except Gender.DoesNotExist:
-            logger.warn('Invalid donor gender: %s' % source.get(field))
-
-        return None
+            logger.warn('Invalid donor gender: %s' % get_in_json(source, path))
+            return None
 
     elif cast == 'age_range':
-
         try:
-            value = source[field]
+            value = get_in_json(source, path)
             if value == '---':
                 return None
             return AgeRange.objects.get(name=value)
         except KeyError:
-            pass
+            return None
         except AgeRange.DoesNotExist:
-            logger.warn('Invalid age range: %s' % source.get(field))
-
-        return None
+            logger.warn('Invalid age range: %s' % get_in_json(source, path))
+            return None
 
     else:
-        value = source.get(field, None)
-
-        if isinstance(value, str) or isinstance(value, unicode):
-            return value.strip()
-        else:
-            return value
+        try:
+            value = get_in_json(source, path)
+            if isinstance(value, str) or isinstance(value, unicode):
+                return value.strip()
+            else:
+                return value
+        except KeyError:
+            return None
 
 
 def term_list_value_of_json(source, source_field, model, model_field='name'):
@@ -192,9 +205,16 @@ def parse_cell_type(valuef, source):
     if value is None:
         return
 
-    cell_type, created = CellType.objects.get_or_create(
-        name=value,
-    )
+    try:
+        cell_type, created = CellType.objects.update_or_create(
+            name=value,
+            defaults={
+                'purl': valuef('primary_celltype_ont_id'),
+            }
+        )
+    except IntegrityError, e:
+        logger.warn(format_integrity_error(e))
+        return None
 
     if created:
         logger.info('Found new cell type: %s' % cell_type)
@@ -495,6 +515,7 @@ def parse_derivation(valuef, source, cell_line):
     cell_line_derivation, cell_line_derivation_created = CelllineDerivation.objects.get_or_create(cell_line=cell_line)
 
     cell_line_derivation.primary_cell_type = parse_cell_type(source)
+    cell_line_derivation.primary_cell_type_not_normalised = valuef('primary_celltype_name_freetext')
     cell_line_derivation.primary_cell_developmental_stage = valuef('dev_stage_primary_cell') if valuef('dev_stage_primary_cell') and valuef('dev_stage_primary_cell') != '0' else ''
     cell_line_derivation.tissue_procurement_location = valuef('location_primary_tissue_procurement')
     cell_line_derivation.tissue_collection_date = valuef('collection_date')
@@ -1137,6 +1158,36 @@ def parse_characterization(valuef, source, cell_line):
         return True
 
     return False
+
+
+@inject_valuef
+def parse_doc(valuef, source):
+    print valuef('filename_enc')
+
+
+# @inject_valuef
+# def parse_characterization_pluritest(valuef, source, cell_line):
+
+    # for doc in valuef(['characterisation_epipluriscore_data', 'uploads']):
+    #     parse_doc(doc)
+
+    # cell_line_characterization_pluritest, created = CelllineCharacterizationPluritest.objects.get_or_create(cell_line=cell_line)
+    #
+    # cell_line_characterization_pluritest.pluripotency_score = valuef('')
+    # cell_line_characterization_pluritest.novelty_score = valuef('')
+    # cell_line_characterization_pluritest.microarray_url = valuef('')
+    #
+    # if created or cell_line_characterization_pluritest.is_dirty():
+    #     if created:
+    #         logger.info('Added cell line characterization pluritest: %s' % cell_line_characterization_pluritest)
+    #     else:
+    #         logger.info('Updated cell line characterization pluritest: %s' % cell_line_characterization_pluritest)
+    #
+    #     cell_line_characterization_pluritest.save()
+    #
+    #     return True
+    #
+    # return False
 
 
 @inject_valuef
