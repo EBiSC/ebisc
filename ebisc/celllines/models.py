@@ -42,6 +42,7 @@ class AgeRange(models.Model):
 class CellType(models.Model):
 
     name = models.CharField(_(u'Cell type'), max_length=100, unique=True)
+    purl = models.URLField(_(u'Purl'), max_length=300, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell type')
@@ -204,6 +205,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
     derivation_country = models.ForeignKey('Country', verbose_name=_(u'Derivation country'), null=True, blank=True)
 
     primary_disease = models.ForeignKey('Disease', verbose_name=_(u'Diagnosed disease'), null=True, blank=True)
+    primary_disease_not_normalised = models.CharField(_(u'Disease name - not normalised'), max_length=500, null=True, blank=True)
     primary_disease_diagnosis = models.CharField(_(u'Disease diagnosis'), max_length=12, null=True, blank=True)
     primary_disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
     disease_associated_phenotypes = ArrayField(models.CharField(max_length=500), verbose_name=_(u'Disease associated phenotypes'), null=True)
@@ -413,7 +415,7 @@ class Donor(DirtyFieldsMixin, models.Model):
 
 class Disease(models.Model):
 
-    icdcode = models.CharField(_(u'DOID'), max_length=30, unique=True, null=True, blank=True)
+    icdcode = models.CharField(_(u'DOID'), max_length=300, unique=True, null=True, blank=True)
     purl = models.URLField(_(u'Purl'), max_length=300, null=True, blank=True)
     disease = models.CharField(_(u'Disease'), max_length=45, blank=True)
     synonyms = models.CharField(_(u'Synonyms'), max_length=500, null=True, blank=True)
@@ -525,6 +527,7 @@ class CelllineDerivation(DirtyFieldsMixin, models.Model):
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='derivation')
 
     primary_cell_type = models.ForeignKey('CellType', verbose_name=_(u'Primary cell type'), null=True, blank=True)
+    primary_cell_type_not_normalised = models.CharField(_(u'Primary cell type name - not normalised'), max_length=100, null=True, blank=True)
     primary_cell_developmental_stage = models.CharField(_(u'Primary cell developmental stage'), max_length=45, null=True, blank=True)
     tissue_procurement_location = models.CharField(_(u'Location of primary tissue procurement'), max_length=45, null=True, blank=True)
     tissue_collection_date = models.DateField(_(u'Tissue collection date'), null=True, blank=True)
@@ -661,6 +664,40 @@ class CelllineCharacterization(DirtyFieldsMixin, models.Model):
     class Meta:
         verbose_name = _(u'Cell line characterization')
         verbose_name_plural = _(u'Cell line characterizations')
+        ordering = ['cell_line']
+
+    def __unicode__(self):
+        return unicode(self.cell_line)
+
+
+class CelllineCharacterizationPluritest(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
+
+    pluripotency_score = models.CharField(_(u'Pluripotency score'), max_length=10, null=True, blank=True)
+    novelty_score = models.CharField(_(u'Novelty score'), max_length=10, null=True, blank=True)
+    microarray_url = models.URLField(_(u'Microarray data link'), max_length=300, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line characterization Pluritest')
+        verbose_name_plural = _(u'Cell line characterization Pluritests')
+        ordering = ['cell_line']
+
+    def __unicode__(self):
+        return unicode(self.cell_line)
+
+
+class CelllineCharacterizationEpipluriscore(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
+
+    score = models.CharField(_(u'Pluripotency score'), max_length=10, null=True, blank=True)
+    marker_mcpg = models.NullBooleanField(_(u'Marker mCpG'))
+    marker_OCT4 = models.NullBooleanField(_(u'Marker OCT4'))
+
+    class Meta:
+        verbose_name = _(u'Cell line characterization Epipluri score')
+        verbose_name_plural = _(u'Cell line characterization Epipluri scores')
         ordering = ['cell_line']
 
     def __unicode__(self):

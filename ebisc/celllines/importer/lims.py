@@ -145,8 +145,8 @@ def run():
             # Delete old clips that are not in new clips (or updated clips)
 
             for clip_md5 in old_clips - new_clips:
-                CelllineInformationPack(cell_line=batch.cell_line, md5=clip_md5).delete()
-                logger.info('Deleted old version of CLIP')
+                logger.info('Deleting old version of CLIP')
+                batch.cell_line.clips.filter(md5=clip_md5).delete()
 
             # Add new clips (or updated clips)
 
