@@ -670,6 +670,40 @@ class CelllineCharacterization(DirtyFieldsMixin, models.Model):
         return unicode(self.cell_line)
 
 
+class CelllineCharacterizationPluritest(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
+
+    pluripotency_score = models.CharField(_(u'Pluripotency score'), max_length=10, null=True, blank=True)
+    novelty_score = models.CharField(_(u'Novelty score'), max_length=10, null=True, blank=True)
+    microarray_url = models.URLField(_(u'Microarray data link'), max_length=300, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line characterization Pluritest')
+        verbose_name_plural = _(u'Cell line characterization Pluritests')
+        ordering = ['cell_line']
+
+    def __unicode__(self):
+        return unicode(self.cell_line)
+
+
+class CelllineCharacterizationEpipluriscore(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
+
+    score = models.CharField(_(u'Pluripotency score'), max_length=10, null=True, blank=True)
+    marker_mcpg = models.NullBooleanField(_(u'Marker mCpG'))
+    marker_OCT4 = models.NullBooleanField(_(u'Marker OCT4'))
+
+    class Meta:
+        verbose_name = _(u'Cell line characterization Epipluri score')
+        verbose_name_plural = _(u'Cell line characterization Epipluri scores')
+        ordering = ['cell_line']
+
+    def __unicode__(self):
+        return unicode(self.cell_line)
+
+
 class MarkerMoleculeBase(models.Model):
 
     RESULT_CHOICES = (
