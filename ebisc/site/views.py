@@ -38,12 +38,10 @@ def get_menu(request):
         MENU = (
             (reverse('search:search'), 'Cell Line Catalogue'),
             (reverse('executive:dashboard'), 'Executive Dashboard'),
-            ('http://www.ebisc.org/', 'About EBiSC'),
         )
     else:
         MENU = (
             (reverse('search:search'), 'Cell Line Catalogue'),
-            ('http://www.ebisc.org/', 'About EBiSC'),
         )
 
     return Menu(MENU, path)

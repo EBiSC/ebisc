@@ -34,15 +34,15 @@
       }
 
       a {
-        color: $color-text;
+        color: $action-color;
 
         &:hover {
-          color: $action-color;
+          text-decoration: underline;
         }
       }
 
       &.active a {
-        color: $action-color;
+        color: $color-text;
       }
     }
 
