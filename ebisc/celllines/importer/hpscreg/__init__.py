@@ -2,6 +2,7 @@
 hPSCreg JSON data API importer.
 '''
 
+import re
 import functools
 import requests
 
@@ -10,7 +11,7 @@ from django.conf import settings
 import logging
 logger = logging.getLogger('management.commands')
 
-from ebisc.celllines.models import Cellline, Country, CelllineOrganization
+from ebisc.celllines.models import Cellline, Country
 
 from . import parser
 
@@ -26,12 +27,11 @@ def run():
         return
 
     # Tests
-
     # json = request_get('http://test.hescreg.eu/api/export/2')
     # import_cellline(json)
 
-    for cellline_id in [id for id in cellline_ids]:
     # for cellline_id in [id for id in cellline_ids if id != 'BCRTi005-A']:
+    for cellline_id in [id for id in cellline_ids]:
         if cellline_id == 'BCRTi005-A' or cellline_id == 'BCRTi004-A':
             pass
         else:
@@ -130,6 +130,7 @@ def import_cellline(source):
         # parser.parse_characterization_epipluriscore(source, cell_line),
         parser.parse_genetic_modifications(source, cell_line),
         parser.parse_disease_associated_genotype(source, cell_line),
+        check_availability_on_ecacc(cell_line),
     ]
 
     if True in dirty:
@@ -174,5 +175,22 @@ def request_get(url):
         return None
     else:
         return r.json()
+
+
+# -----------------------------------------------------------------------------
+# Check if the cell line exists on ECACC
+
+def check_availability_on_ecacc(cell_line):
+
+    r = requests.get(cell_line.ecacc_url)
+
+    # Highly suspect!!!
+    available = r.status_code == requests.codes.ok and re.search(cell_line.name, r.text) is not None
+
+    if available == cell_line.available_for_sale_at_ecacc:
+        return False
+    else:
+        cell_line.available_for_sale_at_ecacc = available
+        return True
 
 # -----------------------------------------------------------------------------

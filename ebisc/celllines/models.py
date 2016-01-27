@@ -187,6 +187,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
     accepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
     validated = models.CharField(_(u'Cell line data validation'), max_length=50, choices=VALIDATION_CHOICES, default='5')
     available_for_sale = models.NullBooleanField(_(u'Available for sale'))
+    available_for_sale_at_ecacc = models.BooleanField(_(u'Available for sale on ECACC'), default=False)
     availability = models.CharField(_(u'Availability'), max_length=30, choices=AVAILABILITY_CHOICES, default='not_available')
     status = models.ForeignKey('CelllineStatus', verbose_name=_(u'Cell line status'), null=True, blank=True)
 
@@ -231,7 +232,6 @@ class Cellline(DirtyFieldsMixin, models.Model):
     @property
     def ecacc_url(self):
         return 'http://www.phe-culturecollections.org.uk/products/celllines/ipsc/detail.jsp?refId=%s&collection=ecacc_ipsc' % self.ecacc_id
-        # return 'http://hpa-uat.systemassociates.co.uk/products/celllines/ipsc/detail.jsp?refId=%s&collection=ecacc_ipsc' % self.ecacc_id
 
     def to_elastic(self):
 
@@ -268,7 +268,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'depositor': self.generator.name,
             'primary_cell_type': self.derivation.primary_cell_type.name if self.derivation.primary_cell_type else None,
             'alternative_names': self.alternative_names,
-            'donor_sex': self.donor.gender.name if self.donor.gender else _(u'Not known'),
+            'donor_sex': self.donor.gender.name if self.donor and self.donor.gender else _(u'Not known'),
         }
 
     def get_latest_batch(self):
@@ -847,7 +847,7 @@ class CelllineEthics(DirtyFieldsMixin, models.Model):
     further_constraints_on_use_desc = models.TextField(_(u'Further constraints on use'), null=True, blank=True)
 
     consent_expressly_permits_indefinite_storage = models.NullBooleanField(_(u'Consent expressly permits indefinite storage'))
-    consent_prevents_availiability_to_worldwide_research = models.NullBooleanField(_(u'Consent prevents availiability to worldwide research'))
+    consent_prevents_availiability_to_worldwide_research = models.NullBooleanField(_(u'Consent prevents availability to worldwide research'))
 
     consent_permits_genetic_testing = models.NullBooleanField(_(u'Consent permits genetic testing'))
     consent_permits_testing_microbiological_agents_pathogens = models.NullBooleanField(_(u'Consent permits testing for microbiological agents pathogens'))
@@ -1486,6 +1486,5 @@ class CellLineDifferentiationPotencyMolecule(models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.id,)
-
 
 # -----------------------------------------------------------------------------
