@@ -38,7 +38,7 @@
 {% if cellline.primary_disease_stage %}
 <tr><td class="label">Disease stage:</td><td>{{ cellline.primary_disease_stage }}</td></tr>
 {% endif %}
-{% if cellline.disease_associated_phenotypes %}
+{% if cellline.disease_associated_phenotypes|length %}
 <tr><td class="label">Disease associated phenotypes:</td><td>{{ cellline.disease_associated_phenotypes|join:", " }}</td></tr>
 {% endif %}
 {% if cellline.family_history %}
