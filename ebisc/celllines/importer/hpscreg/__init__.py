@@ -31,17 +31,20 @@ def run():
     # import_cellline(json)
 
     for cellline_id in [id for id in cellline_ids]:
-    # for cellline_id in [id for id in cellline_ids if id == 'UKKi007-B']:
-        logger.info('Importing data for cell line %s' % cellline_id)
-        json = request_get(settings.HPSCREG['cellline_url'] + cellline_id)
-
-        if json is None:
-            continue
-        elif type(json) is unicode:
-            # hPSCreg returns 200 and error message instead of 404 NOT_FOUND
-            logger.warn('Invalid cellline data: %s' % json)
+    # for cellline_id in [id for id in cellline_ids if id != 'BCRTi005-A']:
+        if cellline_id == 'BCRTi005-A' or cellline_id == 'BCRTi004-A':
+            pass
         else:
-            import_cellline(json)
+            logger.info('Importing data for cell line %s' % cellline_id)
+            json = request_get(settings.HPSCREG['cellline_url'] + cellline_id)
+
+            if json is None:
+                continue
+            elif type(json) is unicode:
+                # hPSCreg returns 200 and error message instead of 404 NOT_FOUND
+                logger.warn('Invalid cellline data: %s' % json)
+            else:
+                import_cellline(json)
 
 
 # -----------------------------------------------------------------------------
