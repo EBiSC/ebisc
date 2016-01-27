@@ -68,7 +68,7 @@ class CelllineNonIntegratingVectorInline(OneToOneStackedInline):
 
 class CelllineAdmin(admin.ModelAdmin):
 
-    list_display = ['biosamples_id', 'name', 'status', 'alternative_names']
+    list_display = ['name', 'biosamples_id', 'alternative_names', 'availability', 'available_for_sale_at_ecacc']
     inlines = (
         CelllineCharacterizationInline,
         CelllineCultureConditionsInline,
@@ -78,8 +78,8 @@ class CelllineAdmin(admin.ModelAdmin):
         CelllineIntegratingVectorInline,
         CelllineNonIntegratingVectorInline,
     )
-
-    list_filter = ('status',)
+    list_filter = ['availability', 'available_for_sale_at_ecacc']
+    search_fields = ['name', 'biosamples_id']
 
 admin.site.register(Cellline, CelllineAdmin)
 

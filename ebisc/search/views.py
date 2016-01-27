@@ -10,5 +10,5 @@ def search(request):
 
 def cellline(request, name):
     return render(request, 'search/cellline.html', {
-        'cellline': get_object_or_404(Cellline, name=name)
+        'cellline': get_object_or_404(Cellline, name=name, available_for_sale_at_ecacc=True)
     })
