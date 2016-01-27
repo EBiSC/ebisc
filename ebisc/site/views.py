@@ -30,13 +30,21 @@ class Menu(object):
 # -----------------------------------------------------------------------------
 # Document
 
-def get_menu(path):
+def get_menu(request):
 
-    MENU = (
-        (reverse('search:search'), 'Cell Line Catalogue'),
-        (reverse('executive:dashboard'), 'Executive Dashboard'),
-        ('http://www.ebisc.org/', 'About EBiSC'),
-    )
+    path = request.path
+
+    if request.user.has_perm('auth.can_view_executive_dashboard'):
+        MENU = (
+            (reverse('search:search'), 'Cell Line Catalogue'),
+            (reverse('executive:dashboard'), 'Executive Dashboard'),
+            ('http://www.ebisc.org/', 'About EBiSC'),
+        )
+    else:
+        MENU = (
+            (reverse('search:search'), 'Cell Line Catalogue'),
+            ('http://www.ebisc.org/', 'About EBiSC'),
+        )
 
     return Menu(MENU, path)
 
@@ -49,7 +57,7 @@ def document(request, path):
 
 def render(request, path, context={}):
 
-    menu = get_menu(request.path)
+    menu = get_menu(request)
 
     context.update({
         'path': path,
