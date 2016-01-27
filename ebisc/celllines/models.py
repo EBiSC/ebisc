@@ -1066,6 +1066,7 @@ class CelllinePublication(DirtyFieldsMixin, models.Model):
 
 class Document(models.Model):
 
+    # Higly suspect!
     cell_line = models.IntegerField(_(u'Cell line'), null=True, blank=True)
     title = models.CharField(_(u'Title'), max_length=45, blank=True)
     abstract = models.TextField(_(u'Abstract'), null=True, blank=True)

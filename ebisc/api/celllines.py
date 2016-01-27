@@ -298,7 +298,27 @@ class CelllineResource(ModelResource):
     cell_line_information_packs = fields.ToManyField(CelllineInformationPackResource, 'clips', null=True, full=True)
 
     class Meta:
-        queryset = Cellline.objects.all()
+        queryset = Cellline.objects.all().select_related(
+            'donor__gender',
+            'donor_age',
+            'integrating_vector__vector',
+            'non_integrating_vector__vector',
+            'derivation__primary_cell_type',
+            'celllinecharacterization',
+            'karyotype',
+            'generator',
+            'primary_disease',
+            'celllinecultureconditions__culture_medium_other',
+            'integrating_vector__virus',
+
+        ).prefetch_related(
+            'clips',
+            'batches__batchcultureconditions',
+            'batches__images',
+            'publications',
+            'celllinecultureconditions__medium_supplements__unit',
+        )
+
         resource_name = 'cell-lines'
 
         list_allowed_methods = ['get']
@@ -349,26 +369,6 @@ class CelllineResource(ModelResource):
 
         else:
             return None
-
-    def dehydrate_access_and_use_agreement(self, bundle):
-
-        if not bundle.obj.access_and_use_agreement:
-            return None
-        else:
-            return {
-                'file': bundle.obj.access_and_use_agreement.url,
-                'md5': bundle.obj.access_and_use_agreement_md5,
-            }
-
-    def dehydrate_access_and_use_agreement_participant(self, bundle):
-
-        if not bundle.obj.access_and_use_agreement_participant:
-            return None
-        else:
-            return {
-                'file': bundle.obj.access_and_use_agreement_participant.url,
-                'md5': bundle.obj.access_and_use_agreement_participant_md5,
-            }
 
 
 # -----------------------------------------------------------------------------

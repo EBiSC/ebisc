@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'tastypie',
     'django_cleanup',
     'sorl.thumbnail',
+    'debug_toolbar',
 )
 
 MIDDLEWARE_CLASSES = (
