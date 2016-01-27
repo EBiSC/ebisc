@@ -19,3 +19,10 @@ ELASTIC_INDEX = 'ebisc'
 ELASTIC_HOSTS = [{'host': 'localhost', 'port': 9200}]
 
 # -----------------------------------------------------------------------------
+# Middleware class for API debugging
+
+MIDDLEWARE_CLASSES += (
+    'ebisc.middleware.NonHtmlDebugToolbarMiddleware',
+)
+
+# -----------------------------------------------------------------------------
