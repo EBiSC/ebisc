@@ -1,10 +1,6 @@
 <tr><th colspan="2" class="title" id="derivation"><h2>Derivation</h2></th></tr>
 
-{% if cellline.derivation.primary_cell_type_not_normalised %}
-<tr><td class="label">Primary cell type:</td><td>{{ cellline.derivation.primary_cell_type_not_normalised|default:"-" }}</td></tr>
-{% else %}
 <tr><td class="label">Primary cell type:</td><td>{{ cellline.derivation.primary_cell_type.name|default:"-" }}</td></tr>
-{% endif %}
 
 {% if cellline.derivation.primary_cell_developmental_stage %}
 <tr><td class="label">Primary cell developmental stage:</td><td>{{ cellline.derivation.primary_cell_developmental_stage }}</td></tr>

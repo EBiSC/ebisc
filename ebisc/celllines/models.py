@@ -230,8 +230,8 @@ class Cellline(DirtyFieldsMixin, models.Model):
 
     @property
     def ecacc_url(self):
-        # return 'https://www.phe-culturecollections.org.uk/products/celllines/ipsc/detail.jsp?refId=%s&collection=ecacc_ipsc' % self.ecacc_id
-        return 'http://hpa-uat.systemassociates.co.uk/products/celllines/ipsc/detail.jsp?refId=%s&collection=ecacc_ipsc' % self.ecacc_id
+        return 'http://www.phe-culturecollections.org.uk/products/celllines/ipsc/detail.jsp?refId=%s&collection=ecacc_ipsc' % self.ecacc_id
+        # return 'http://hpa-uat.systemassociates.co.uk/products/celllines/ipsc/detail.jsp?refId=%s&collection=ecacc_ipsc' % self.ecacc_id
 
     def to_elastic(self):
 

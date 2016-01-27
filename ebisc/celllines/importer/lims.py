@@ -55,7 +55,6 @@ def run():
             batch.save()
 
             # Certificate of analysis
-
             if 'certificate_of_analysis' in lims_batch_data:
                 batch.certificate_of_analysis_md5 = value_of_file(
                     lims_batch_data.certificate_of_analysis.file,
