@@ -208,7 +208,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
     primary_disease_not_normalised = models.CharField(_(u'Disease name - not normalised'), max_length=500, null=True, blank=True)
     primary_disease_diagnosis = models.CharField(_(u'Disease diagnosis'), max_length=12, null=True, blank=True)
     primary_disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
-    disease_associated_phenotypes = ArrayField(models.CharField(max_length=500), verbose_name=_(u'Disease associated phenotypes'), null=True)
+    disease_associated_phenotypes = ArrayField(models.CharField(max_length=500), verbose_name=_(u'Disease associated phenotypes'), null=True, blank=True)
     affected_status = models.CharField(_(u'Affected status'), max_length=12, null=True, blank=True)
     family_history = models.CharField(_(u'Family history'), max_length=500, null=True, blank=True)
     medical_history = models.CharField(_(u'Medical history'), max_length=500, null=True, blank=True)
