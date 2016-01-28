@@ -75,7 +75,8 @@ def run():
             # Delete old images that are not in new images
 
             for img_md5 in old_images - new_images:
-                CelllineBatchImages(batch=batch, md5=img_md5).delete()
+                logger.info('Deleting old image')
+                batch.images.filter(md5=img_md5).delete()
 
             # Add new images
 
