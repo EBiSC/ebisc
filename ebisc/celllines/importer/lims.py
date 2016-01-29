@@ -75,7 +75,8 @@ def run():
             # Delete old images that are not in new images
 
             for img_md5 in old_images - new_images:
-                CelllineBatchImages(batch=batch, md5=img_md5).delete()
+                logger.info('Deleting old image')
+                batch.images.filter(md5=img_md5).delete()
 
             # Add new images
 
@@ -135,36 +136,36 @@ def run():
 
             # CLIPs
 
-            old_clips = set([clip.md5 for clip in batch.cell_line.clips.all()])
-            if 'cell_line_information_packs' in lims_batch_data:
-                new_clips = set([clip.md5 for clip in lims_batch_data.cell_line_information_packs])
-            else:
-                new_clips = set()
+            # old_clips = set([clip.md5 for clip in batch.cell_line.clips.all()])
+            # if 'cell_line_information_packs' in lims_batch_data:
+            #     new_clips = set([clip.md5 for clip in lims_batch_data.cell_line_information_packs])
+            # else:
+            #     new_clips = set()
 
             # Delete old clips that are not in new clips (or updated clips)
 
-            for clip_md5 in old_clips - new_clips:
-                logger.info('Deleting old version of CLIP')
-                batch.cell_line.clips.filter(md5=clip_md5).delete()
+            # for clip_md5 in old_clips - new_clips:
+            #     logger.info('Deleting old version of CLIP')
+            #     batch.cell_line.clips.filter(md5=clip_md5).delete()
 
             # Add new clips (or updated clips)
 
-            if len(new_clips - old_clips) > 0:
-                for clip in lims_batch_data.cell_line_information_packs:
-                    if clip.md5 in (new_clips - old_clips):
-                        cell_line_clip = CelllineInformationPack(
-                            cell_line=batch.cell_line,
-                            version=clip.version,
-                        )
-                        cell_line_clip.save()
-
-                        cell_line_clip.md5 = value_of_file(
-                            clip.file,
-                            cell_line_clip.clip_file,
-                            source_md5=clip.md5,
-                            current_md5=cell_line_clip.md5,
-                        )
-                        cell_line_clip.save()
+            # if len(new_clips - old_clips) > 0:
+            #     for clip in lims_batch_data.cell_line_information_packs:
+            #         if clip.md5 in (new_clips - old_clips):
+            #             cell_line_clip = CelllineInformationPack(
+            #                 cell_line=batch.cell_line,
+            #                 version=clip.version,
+            #             )
+            #             cell_line_clip.save()
+            #
+            #             cell_line_clip.md5 = value_of_file(
+            #                 clip.file,
+            #                 cell_line_clip.clip_file,
+            #                 source_md5=clip.md5,
+            #                 current_md5=cell_line_clip.md5,
+            #             )
+            #             cell_line_clip.save()
 
         except CelllineBatch.DoesNotExist:
             logger.warn('Unknown batch with biosamples ID = {}'.format(lims_batch_data.biosamples_batch_id))
