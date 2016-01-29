@@ -14,9 +14,11 @@ from ebisc.celllines.models import Cellline, CelllineBatch, CelllineAliquot
 
 def run(filename):
 
-    with open(filename, 'rb') as csvfile:
+    # with open(filename, 'rb') as csvfile:
+    with open(filename, 'rU') as csvfile:
 
-        reader = csv.reader(csvfile, delimiter='\t')
+        # reader = csv.reader(csvfile, delimiter='\t')
+        reader = csv.reader(csvfile, dialect=csv.excel_tab, delimiter='\t')
 
         next(reader, None)
 
