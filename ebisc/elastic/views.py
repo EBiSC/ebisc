@@ -4,6 +4,7 @@ from elasticsearch import Elasticsearch, ElasticsearchException
 
 from django.http import Http404, JsonResponse, HttpResponseNotAllowed
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 
 es = Elasticsearch(settings.ELASTIC_HOSTS)
 
@@ -16,6 +17,7 @@ ENDPOINTS = {
 }
 
 
+@csrf_exempt
 def endpoint(request, path):
 
     if path not in ENDPOINTS:

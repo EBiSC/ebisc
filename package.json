@@ -4,7 +4,6 @@
   "dependencies": {
     "baobab": "^0.4.3",
     "classnames": "^1.2.0",
-    "cookie-dough": "0.0.5",
     "xregexp": "^2.0.0"
   },
   "devDependencies": {
