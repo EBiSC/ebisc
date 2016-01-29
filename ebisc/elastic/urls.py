@@ -1,6 +1,6 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns('',
-    # Index
+urlpatterns = [
+    # Search
     url(r'^(?P<path>.+)$', 'ebisc.elastic.views.endpoint', name='endpoint'),
-)
+]

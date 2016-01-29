@@ -1,5 +1,4 @@
 XRegExp = require('xregexp').XRegExp
-cookie = require('cookie-dough')()
 
 State = require './state'
 Config = require './config'
@@ -10,7 +9,6 @@ elastic = window.elasticsearch.Client
         host: window.location.hostname
         port: window.location.port and window.location.port or (window.location.protocol == 'https:' and 443 or 80)
         path: '/es'
-        headers: 'X-CSRFToken': cookie.get('csrftoken')
 
 # -----------------------------------------------------------------------------
 # Search
