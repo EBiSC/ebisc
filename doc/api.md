@@ -209,8 +209,10 @@ If availability is set to `Not available`, the value of `flag_go_live` is `false
 #### Primary disease
 
 Primary disease data is provided in two fields:
-* `primary_disease_diagnosed` can have values `0`, `1` or `carrier`. If the value is `0`, there is no disease diagnosed and this disease status should be displayed as `Normal`. If the value is `1` or `carrier` the disease has been diagnosed or the donor is a carrier. In these two cases information about the disease is provided in the field `primary_disease`.
-* `primary_disease` fields hold information about the diagnosed disease.
+* `primary_disease_diagnosed` can have values `0`, `1` or `carrier`. If the value is `0`, there is no disease diagnosed and this disease status should be displayed as `normal`. If the value is `1` or `carrier` the disease has been diagnosed or the donor is a carrier.
+* `primary_disease` fields cover two different cases:
+  * If the value of `primary_disease_diagnosed` is `1` or `carrier`, the `primary_disease` fields hold information about the diagnosed disease.
+  * If the value of `primary_disease_diagnosed` is `0`, the `primary_disease` field `name` holds the value `normal`.
 
 Note: Some fields in `primary_disease` will change with the implementation of ontologies.
 
