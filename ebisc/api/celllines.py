@@ -280,7 +280,7 @@ class CelllineResource(ModelResource):
     primary_disease_diagnosed = fields.CharField('primary_disease_diagnosis')
     primary_disease = fields.ToOneField(DiseaseResource, 'primary_disease', null=True, full=True)
     primary_cell_type = fields.ToOneField(CelllineDerivationResource, 'derivation', null=True, full=True)
-    depositor_cellline_culture_conditions = fields.ToOneField(CelllineCultureConditionsResource, 'celllinecultureconditions', full=True)
+    depositor_cellline_culture_conditions = fields.ToOneField(CelllineCultureConditionsResource, 'celllinecultureconditions', full=True, null=True)
     virology_screening = fields.ToOneField(CelllineCharacterizationResource, 'celllinecharacterization', null=True, full=True)
     cellline_karyotype = fields.ToOneField(CelllineKaryotypeResource, 'karyotype', null=True, full=True)
 
