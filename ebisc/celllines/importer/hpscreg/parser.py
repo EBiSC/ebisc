@@ -1132,15 +1132,20 @@ def parse_characterization(valuef, source, cell_line):
 
     cell_line_characterization, created = CelllineCharacterization.objects.get_or_create(cell_line=cell_line)
 
+    certificate_of_analysis_flag = valuef('certificate_of_analysis_flag')
     certificate_of_analysis_passage_number = valuef('certificate_of_analysis_passage_number')
+
+    virology_screening_flag = valuef('virology_screening_flag')
     screening_hiv1 = valuef('virology_screening_hiv_1_result')
     screening_hiv2 = valuef('virology_screening_hiv_2_result')
     screening_hepatitis_b = valuef('virology_screening_hbv_result')
     screening_hepatitis_c = valuef('virology_screening_hcv_result')
     screening_mycoplasma = valuef('virology_screening_mycoplasma_result')
 
-    if len([x for x in (certificate_of_analysis_passage_number, screening_hiv1, screening_hiv2, screening_hepatitis_b, screening_hepatitis_c, screening_mycoplasma) if x is not None]):
+    if len([x for x in (certificate_of_analysis_flag, certificate_of_analysis_passage_number, virology_screening_flag, screening_hiv1, screening_hiv2, screening_hepatitis_b, screening_hepatitis_c, screening_mycoplasma) if x is not None]):
+        cell_line_characterization.certificate_of_analysis_flag = certificate_of_analysis_flag
         cell_line_characterization.certificate_of_analysis_passage_number = certificate_of_analysis_passage_number
+        cell_line_characterization.virology_screening_flag = virology_screening_flag
         cell_line_characterization.screening_hiv1 = screening_hiv1
         cell_line_characterization.screening_hiv2 = screening_hiv2
         cell_line_characterization.screening_hepatitis_b = screening_hepatitis_b

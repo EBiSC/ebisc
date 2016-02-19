@@ -26,29 +26,19 @@ Elastic search:
 
 ### Old data from hPSCreg
 
-primary_celltype_purl
-integrating_vector_gene_list
-non_integrating_vector_gene_list
-vector_free_types
-feeder_cells_name
-culture_conditions_medium_culture_medium_other_supplements
-internal_donor_ids
-disease_associated_phenotypes
-donor_karyotype
-virology_screening_flag
-certificate_of_analysis_flag
+[] primary_celltype_purl
+[x] integrating_vector_gene_list
+[x] non_integrating_vector_gene_list
+[] vector_free_types
+[x] feeder_cells_name
+[x] culture_conditions_medium_culture_medium_other_supplements
+[x] internal_donor_ids
+[x] disease_associated_phenotypes
+[x] donor_karyotype
+[x] virology_screening_flag
+[x] certificate_of_analysis_flag
+[] culture_conditions_medium_culture_medium_protocol_file
 
-primary_celltype_purl
-integrating_vector_gene_list
-non_integrating_vector_gene_list
-vector_free_types
-feeder_cells_name
-culture_conditions_medium_culture_medium_protocol_file
-internal_donor_ids
-disease_associated_phenotypes
-donor_karyotype_flag
-virology_screening_flag
-certificate_of_analysis_flag
 
 ### New data from hPSCreg
 

@@ -82,8 +82,9 @@ class CelllineCultureConditionsResource(ModelResource):
 # -----------------------------------------------------------------------------
 # CelllineCharacterization
 
-class CelllineCharacterizationResource(ModelResource):
+class CelllineCharacterizationVirologyResource(ModelResource):
 
+    virology_screening_flag = fields.CharField('virology_screening_flag', null=True)
     hiv1 = fields.CharField('get_screening_hiv1_display', null=True)
     hiv2 = fields.CharField('get_screening_hiv2_display', null=True)
     hepatitis_b = fields.CharField('get_screening_hepatitis_b_display', null=True)
@@ -93,7 +94,17 @@ class CelllineCharacterizationResource(ModelResource):
     class Meta:
         queryset = CelllineCharacterization.objects.all()
         include_resource_uri = False
-        fields = ('hiv1', 'hiv2', 'hepatitis_b', 'hepatitis_c', 'mycoplasma',)
+        fields = ('virology_screening_flag', 'hiv1', 'hiv2', 'hepatitis_b', 'hepatitis_c', 'mycoplasma',)
+
+
+class CelllineCharacterizationCoAResource(ModelResource):
+
+    certificate_of_analysis_flag = fields.CharField('certificate_of_analysis_flag', null=True)
+
+    class Meta:
+        queryset = CelllineCharacterization.objects.all()
+        include_resource_uri = False
+        fields = ('certificate_of_analysis_flag')
 
 
 # -----------------------------------------------------------------------------
@@ -149,11 +160,14 @@ class DonorResource(ModelResource):
 
     biosamples_id = fields.CharField('biosamples_id', null=True)
     gender = fields.CharField('gender', null=True)
+    internal_donor_ids = fields.ListField('provider_donor_ids', null=True)
+    phenotypes = fields.ListField('phenotypes', null=True)
+    karyotype = fields.CharField('karyotype', null=True)
 
     class Meta:
         queryset = Donor.objects.all()
         include_resource_uri = False
-        fields = ('biosamples_id', 'gender')
+        fields = ('biosamples_id', 'gender', 'internal_donor_ids', 'phenotypes', 'karyotype')
 
 
 # -----------------------------------------------------------------------------
@@ -279,10 +293,12 @@ class CelllineResource(ModelResource):
 
     primary_disease_diagnosed = fields.CharField('primary_disease_diagnosis')
     primary_disease = fields.ToOneField(DiseaseResource, 'primary_disease', null=True, full=True)
+    disease_associated_phenotypes = fields.ListField('disease_associated_phenotypes', null=True)
 
     primary_cell_type = fields.ToOneField(CelllineDerivationResource, 'derivation', null=True, full=True)
     depositor_cellline_culture_conditions = fields.ToOneField(CelllineCultureConditionsResource, 'celllinecultureconditions', full=True, null=True)
-    virology_screening = fields.ToOneField(CelllineCharacterizationResource, 'celllinecharacterization', null=True, full=True)
+    virology_screening = fields.ToOneField(CelllineCharacterizationVirologyResource, 'celllinecharacterization', null=True, full=True)
+    cellline_certificate_of_analysis = fields.ToOneField(CelllineCharacterizationCoAResource, 'celllinecharacterization', null=True, full=True)
     cellline_karyotype = fields.ToOneField(CelllineKaryotypeResource, 'karyotype', null=True, full=True)
 
     donor_age = fields.CharField('donor_age', null=True)
@@ -348,6 +364,9 @@ class CelllineResource(ModelResource):
 
             if bundle.obj.non_integrating_vector.vector:
                 res['data'] = {'vector': bundle.obj.non_integrating_vector.vector}
+                if bundle.obj.non_integrating_vector.genes:
+                    genes = [gene.name for gene in bundle.obj.non_integrating_vector.genes.all()]
+                    res['data']['non_integrating_vector_gene_list'] = genes
 
             return res
 
@@ -365,6 +384,9 @@ class CelllineResource(ModelResource):
                     res['data']['virus'] = bundle.obj.integrating_vector.virus
                 if bundle.obj.integrating_vector.transposon:
                     res['data']['transposon'] = bundle.obj.integrating_vector.transposon
+                if bundle.obj.integrating_vector.genes:
+                    genes = [gene.name for gene in bundle.obj.integrating_vector.genes.all()]
+                    res['data']['integrating_vector_gene_list'] = genes
 
             return res
 
@@ -374,11 +396,12 @@ class CelllineResource(ModelResource):
     def dehydrate(self, bundle):
         if not bundle.obj.primary_disease and bundle.obj.primary_disease_diagnosis == '0':
             bundle.data['primary_disease'] = {
-                'name': 'normal'
+                'name': 'Normal'
             }
             return bundle
         else:
             return bundle
+
 
 # -----------------------------------------------------------------------------
 # Helpers
