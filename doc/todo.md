@@ -2,16 +2,16 @@
 
 ## Before launch
 
-- [ ] implement CLIP upoload
-- [ ] user management (accounts + open the catalogue)
+- [x] implement CLIP upoload
+- [x] user management (accounts + open the catalogue)
 - [x] change from BioSamples ID to hPSCreg name in the URLs and tables
 - [x] implement flag "go live" and status/availability to be set in the IMS (exec dash)
-- [ ] Set ECACC catalogue numbers for expand to order lines - get all assigned ECACC catalogue numbers from RC
-- [ ] change ECACC URL
+- [x] Set ECACC catalogue numbers for expand to order lines - get all assigned ECACC catalogue numbers from RC
+- [x] change ECACC URL
 - [x] can_manage_executive_dashboard works only for superusers
 
 Data import and display:
-- [ ] get feedback on data displayed in the Catalogue
+- [x] get feedback on data displayed in the Catalogue
 - [ ] import new disease, cell type and characterization data from hPSCreg
 - [ ] ordering in the catalogue (initial state) - has to be alphabetical by name
 
@@ -21,6 +21,59 @@ Elastic search:
 - [ ] fix filter loading/init on facet additions
 - [ ] add search fields
 - [ ] reset search input
+
+## LIMS exchange
+
+### Old data from hPSCreg
+
+primary_celltype_purl
+integrating_vector_gene_list
+non_integrating_vector_gene_list
+vector_free_types
+feeder_cells_name
+culture_conditions_medium_culture_medium_other_supplements
+internal_donor_ids
+disease_associated_phenotypes
+donor_karyotype
+virology_screening_flag
+certificate_of_analysis_flag
+
+primary_celltype_purl
+integrating_vector_gene_list
+non_integrating_vector_gene_list
+vector_free_types
+feeder_cells_name
+culture_conditions_medium_culture_medium_protocol_file
+internal_donor_ids
+disease_associated_phenotypes
+donor_karyotype_flag
+virology_screening_flag
+certificate_of_analysis_flag
+
+### New data from hPSCreg
+
+In the depositor culture conditions section:
+
+  1)  "Has Rock inhibitor (Y27632) been used at passage previously with this cell line?" -> “Yes” or “No” or “Unknown”  (Mandatory question)
+  2)  "Has Rock inhibitor (Y27632) been used at cryo previously with this cell line?" -> “Yes” or “No” or “Unknown”  (Mandatory question)
+  3)  "Has Rock inhibitor (Y27632) been used at thaw previously with this cell line?" -> “Yes” or “No” or “Unknown”  (Mandatory question)
+
+In the reprogramming method section.
+
+  If the depositor selects non-intergrating vector then ask:
+  	4) Is reprogramming vector detectable? -> “Yes” or “No” or “Unknown”  (Mandatory question)
+  	if depositor answers “Yes” then ask:
+  		5) “Method used?” -> “immune marker staining” or “PCR” or “rtPCR” or “sequencing”  (Mandatory question)
+  		5b) “Notes on reprogramming vector detection” -> Free text  (Optional question)
+  		5c) “Files and images showing reprogramming vector presence or absence” -> File upload  (Optional question)
+
+  If the depositor selects intergrating vector then ask:
+  	6) Have the reprogramming vectors been silenced? -> “Yes” or “No” or “Unknown”  (Mandatory question)
+  	if depositor answers “Yes” then ask:
+  		7) “Method used?” -> “immune marker staining” or “PCR” or “rtPCR” or “sequencing”  (Mandatory question)
+  		7b) “Notes on reprogramming vector silencing” -> Free text  (Optional question)
+  		7c) “Files and images showing reprogramming vector expressed or silenced” -> File upload  (Optional question)
+
 
 ## hPSCreg importer
 
