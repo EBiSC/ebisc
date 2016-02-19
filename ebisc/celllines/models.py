@@ -651,8 +651,10 @@ class CelllineCharacterization(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
 
+    certificate_of_analysis_flag = models.NullBooleanField(_(u'Certificate of analysis flag'))
     certificate_of_analysis_passage_number = models.CharField(_(u'Certificate of analysis passage number'), max_length=10, null=True, blank=True)
 
+    virology_screening_flag = models.NullBooleanField(_(u'Virology screening flag'))
     screening_hiv1 = models.CharField(_(u'Hiv1 screening'), max_length=20, choices=SCREENING_CHOICES, null=True, blank=True)
     screening_hiv2 = models.CharField(_(u'Hiv2 screening'), max_length=20, choices=SCREENING_CHOICES, null=True, blank=True)
 
