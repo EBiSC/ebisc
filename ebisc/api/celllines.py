@@ -88,7 +88,7 @@ class CelllineCultureConditionsResource(ModelResource):
 
 class CelllineCharacterizationVirologyResource(ModelResource):
 
-    virology_screening_flag = fields.CharField('virology_screening_flag', null=True)
+    virology_screening_flag = fields.BooleanField('virology_screening_flag', null=True)
     hiv1 = fields.CharField('get_screening_hiv1_display', null=True)
     hiv2 = fields.CharField('get_screening_hiv2_display', null=True)
     hepatitis_b = fields.CharField('get_screening_hepatitis_b_display', null=True)
@@ -103,7 +103,7 @@ class CelllineCharacterizationVirologyResource(ModelResource):
 
 class CelllineCharacterizationCoAResource(ModelResource):
 
-    certificate_of_analysis_flag = fields.CharField('certificate_of_analysis_flag', null=True)
+    certificate_of_analysis_flag = fields.BooleanField('certificate_of_analysis_flag', null=True)
 
     class Meta:
         queryset = CelllineCharacterization.objects.all()
@@ -127,13 +127,13 @@ class CelllineKaryotypeResource(ModelResource):
 
 class CelllineDiseaseGenotypeResource(ModelResource):
 
-    carries_disease_phenotype_associated_variants = fields.CharField('carries_disease_phenotype_associated_variants', null=True)
-    variant_of_interest = fields.CharField('variant_of_interest', null=True)
+    carries_disease_phenotype_associated_variants_flag = fields.BooleanField('carries_disease_phenotype_associated_variants', null=True)
+    variant_of_interest_flag = fields.BooleanField('variant_of_interest', null=True)
 
     class Meta:
         queryset = CelllineDiseaseGenotype.objects.all()
         include_resource_uri = False
-        fields = ('carries_disease_phenotype_associated_variants', 'variant_of_interest')
+        fields = ('carries_disease_phenotype_associated_variants_flag', 'variant_of_interest_flag')
 
 
 # -----------------------------------------------------------------------------
