@@ -1068,10 +1068,12 @@ def parse_genetic_modifications(valuef, source, cell_line):
 @inject_valuef
 def parse_disease_associated_genotype(valuef, source, cell_line):
 
-    if valuef('carries_disease_phenotype_associated_variants_flag', 'bool') and valuef('variant_of_interest_flag', 'bool'):
+    if valuef('carries_disease_phenotype_associated_variants_flag'):
 
         cell_line_disease_genotype, cell_line_disease_genotype_created = CelllineDiseaseGenotype.objects.get_or_create(cell_line=cell_line)
 
+        cell_line_disease_genotype.carries_disease_phenotype_associated_variants = valuef('carries_disease_phenotype_associated_variants_flag', 'nullbool')
+        cell_line_disease_genotype.variant_of_interest = valuef('variant_of_interest_flag', 'nullbool')
         cell_line_disease_genotype.allele_carried = valuef('rs_allele_carried')
         cell_line_disease_genotype.cell_line_form = valuef('rs_cell_line_variant_homozygote_heterozygote')
         cell_line_disease_genotype.chormosome = valuef('variant_details_chromosome')

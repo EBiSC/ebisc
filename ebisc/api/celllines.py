@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllinePublication, CelllineInformationPack
+from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype
 
 
 # -----------------------------------------------------------------------------
@@ -120,6 +120,20 @@ class CelllineKaryotypeResource(ModelResource):
         queryset = CelllineKaryotype.objects.all()
         include_resource_uri = False
         fields = ('karyotype', 'passage_number')
+
+
+# -----------------------------------------------------------------------------
+# CelllineGenotyping
+
+class CelllineDiseaseGenotypeResource(ModelResource):
+
+    carries_disease_phenotype_associated_variants = fields.CharField('carries_disease_phenotype_associated_variants', null=True)
+    variant_of_interest = fields.CharField('variant_of_interest', null=True)
+
+    class Meta:
+        queryset = CelllineDiseaseGenotype.objects.all()
+        include_resource_uri = False
+        fields = ('carries_disease_phenotype_associated_variants', 'variant_of_interest')
 
 
 # -----------------------------------------------------------------------------
@@ -304,6 +318,7 @@ class CelllineResource(ModelResource):
     virology_screening = fields.ToOneField(CelllineCharacterizationVirologyResource, 'celllinecharacterization', null=True, full=True)
     cellline_certificate_of_analysis = fields.ToOneField(CelllineCharacterizationCoAResource, 'celllinecharacterization', null=True, full=True)
     cellline_karyotype = fields.ToOneField(CelllineKaryotypeResource, 'karyotype', null=True, full=True)
+    cellline_disease_associated_genotype = fields.ToOneField(CelllineDiseaseGenotypeResource, 'genotyping_variant', null=True, full=True)
 
     donor_age = fields.CharField('donor_age', null=True)
     donor = fields.ToOneField(DonorResource, 'donor', null=True, full=True)
@@ -327,6 +342,7 @@ class CelllineResource(ModelResource):
             'derivation__primary_cell_type',
             'celllinecharacterization',
             'karyotype',
+            'genotyping_variant',
             'generator',
             'primary_disease',
             'celllinecultureconditions__culture_medium_other',

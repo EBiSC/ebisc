@@ -1202,6 +1202,9 @@ class CelllineDiseaseGenotype(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genotyping_variant')
 
+    carries_disease_phenotype_associated_variants = models.NullBooleanField(_(u'Cell line carries variants associated with the disease phenotype'))
+    variant_of_interest = models.NullBooleanField(_(u'Is the variant of interest, e.g. disease associated'))
+
     allele_carried = models.CharField(_(u'Allele carried through'), max_length=12, null=True, blank=True)
     cell_line_form = models.CharField(_(u'Is the cell line homozygote or heterozygot for this variant'), max_length=12, null=True, blank=True)
 
