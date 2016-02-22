@@ -94,6 +94,19 @@ def value_of_json(source, path, cast=None):
         except KeyError:
             return None
 
+    elif cast == 'extended_bool':
+        try:
+            if get_in_json(source, path) == '1':
+                return 'yes'
+            elif get_in_json(source, path) == '0':
+                return 'no'
+            elif get_in_json(source, path) == 'unknown':
+                return 'unknown'
+            else:
+                return 'unknown'
+        except KeyError:
+            return None
+
     elif cast == 'int':
         try:
             return int(get_in_json(source, path))
@@ -559,6 +572,15 @@ def parse_culture_conditions(valuef, source, cell_line):
     cell_line_culture_conditions.co2_concentration = valuef('co2_concentration', 'int')
     cell_line_culture_conditions.passage_number_banked = valuef('passage_number_banked')
     cell_line_culture_conditions.number_of_vials_banked = valuef('number_of_vials_banked')
+
+    if valuef('rock_inhibitor_used_at_passage_flag'):
+        cell_line_culture_conditions.rock_inhibitor_used_at_passage = valuef('rock_inhibitor_used_at_passage_flag', 'extended_bool')
+
+    if valuef('rock_inhibitor_used_at_cryo_flag'):
+        cell_line_culture_conditions.rock_inhibitor_used_at_cryo = valuef('rock_inhibitor_used_at_cryo_flag', 'extended_bool')
+
+    if valuef('rock_inhibitor_used_at_thaw_flag'):
+        cell_line_culture_conditions.rock_inhibitor_used_at_thaw = valuef('rock_inhibitor_used_at_thaw_flag', 'extended_bool')
 
     if not valuef('culture_conditions_medium_culture_medium') == 'other_medium':
         cell_line_culture_conditions.culture_medium = valuef('culture_conditions_medium_culture_medium')
@@ -1132,10 +1154,10 @@ def parse_characterization(valuef, source, cell_line):
 
     cell_line_characterization, created = CelllineCharacterization.objects.get_or_create(cell_line=cell_line)
 
-    certificate_of_analysis_flag = valuef('certificate_of_analysis_flag')
+    certificate_of_analysis_flag = valuef('certificate_of_analysis_flag', 'nullbool')
     certificate_of_analysis_passage_number = valuef('certificate_of_analysis_passage_number')
 
-    virology_screening_flag = valuef('virology_screening_flag')
+    virology_screening_flag = valuef('virology_screening_flag', 'nullbool')
     screening_hiv1 = valuef('virology_screening_hiv_1_result')
     screening_hiv2 = valuef('virology_screening_hiv_2_result')
     screening_hepatitis_b = valuef('virology_screening_hbv_result')

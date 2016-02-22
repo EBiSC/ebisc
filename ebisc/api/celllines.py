@@ -73,6 +73,10 @@ class CelllineCultureConditionsResource(ModelResource):
     passage_history = fields.BooleanField('passage_history', null=True)
     culture_history = fields.BooleanField('culture_history', null=True)
 
+    rock_inhibitor_used_at_passage = fields.CharField('get_rock_inhibitor_used_at_passage_display')
+    rock_inhibitor_used_at_cryo = fields.CharField('get_rock_inhibitor_used_at_cryo_display')
+    rock_inhibitor_used_at_thaw = fields.CharField('get_rock_inhibitor_used_at_thaw_display')
+
     class Meta:
         queryset = CelllineCultureConditions.objects.all()
         include_resource_uri = False

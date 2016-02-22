@@ -453,6 +453,10 @@ class CelllineCultureConditions(DirtyFieldsMixin, models.Model):
     passage_history = models.NullBooleanField(_(u'Passage history (back to reprogramming)'), default=None, null=True, blank=True)
     culture_history = models.NullBooleanField(_(u'Culture history (methods used)'), default=None, null=True, blank=True)
 
+    rock_inhibitor_used_at_passage = models.CharField(u'Rock inhibitor (Y27632) used at passage', max_length=10, choices=EXTENDED_BOOL_CHOICES, default='unknown')
+    rock_inhibitor_used_at_cryo = models.CharField(u'Rock inhibitor (Y27632) used at cryo', max_length=10, choices=EXTENDED_BOOL_CHOICES, default='unknown')
+    rock_inhibitor_used_at_thaw = models.CharField(u'Rock inhibitor (Y27632) used at thaw', max_length=10, choices=EXTENDED_BOOL_CHOICES, default='unknown')
+
     class Meta:
         verbose_name = _(u'Cell line culture conditions')
         verbose_name_plural = _(u'Cell line culture conditions')
