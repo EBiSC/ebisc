@@ -586,6 +586,10 @@ class CelllineNonIntegratingVector(DirtyFieldsMixin, models.Model):
 
     genes = models.ManyToManyField(Molecule, blank=True)
 
+    detectable = models.CharField(u'Is reprogramming vector detectable', max_length=10, choices=EXTENDED_BOOL_CHOICES, default='unknown')
+    methods = ArrayField(models.CharField(max_length=50), verbose_name=_(u'Methods used'), null=True, blank=True)
+    detectable_notes = models.TextField(u'Notes on reprogramming vector detection', null=True, blank=True)
+
     class Meta:
         verbose_name = _(u'Cell line non integrating vector')
         verbose_name_plural = _(u'Cell line non integrating vectors')
@@ -606,6 +610,10 @@ class CelllineIntegratingVector(DirtyFieldsMixin, models.Model):
     absence_reprogramming_vectors = models.NullBooleanField(_(u'Absence of reprogramming vector(s)'), default=None, null=True, blank=True)
 
     genes = models.ManyToManyField(Molecule, blank=True)
+
+    silenced = models.CharField(u'Have the reprogramming vectors been silenced', max_length=10, choices=EXTENDED_BOOL_CHOICES, default='unknown')
+    methods = ArrayField(models.CharField(max_length=50), verbose_name=_(u'Methods used'), null=True, blank=True)
+    silenced_notes = models.TextField(u'Notes on reprogramming vector silencing', null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line integrating vector')

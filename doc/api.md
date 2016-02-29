@@ -201,11 +201,23 @@ Additional fields and endpoints may be created for future exchanges.
             "data": {
                 "absence_reprogramming_vectors": false,
                 "excisable": false,
-                "vector": "virus",
-                "virus": "retrovirus"
+                "integrating_vector_gene_list": [
+                    "KLF4",
+                    "MYC",
+                    "POU5F1",
+                    "SOX2"
+                ],
+                "integrating_vector_methods": null,
+                "integrating_vector_silenced": "unknown",
+                "integrating_vector_silencing_notes": null,
+                "vector": "Virus",
+                "virus": "Retrovirus"
             },
             "type": "integrating vector"
         },
+        "reprogramming_method_vector_free_types": [
+            "vector_free_types_none"
+        ],
         "resource_uri": "/api/v0/cell-lines/SAMEA2590882",
         "virology_screening": {
             "hepatitis_b": "Negative",
@@ -251,34 +263,60 @@ The reprogramming method has a different structure depending on the `type`. Poss
 
 * `integrating vector`
 * `non-integrating vector`
-* `vector-free`
 
 `data` structures depending on the type of the reprogramming methods are:
 
 * for `integrating vector` and `transposon`:
 
         "data": {
+            "absence_reprogramming_vectors": false,
             "excisable": true,
-            "transposon": "sleeping_beauty",
-            "vector": "transposon"
+            "integrating_vector_gene_list": [
+                "KLF4",
+                "MYC",
+                "POU5F1",
+                "SOX2"
+            ],
+            "integrating_vector_methods": null,
+            "integrating_vector_silenced": "unknown",
+            "integrating_vector_silencing_notes": null,
+            "transposon": "Sleeping beauty",
+            "vector": "Transposon"
         }
 
 * for `integrating vector` and `virus`:
 
         "data": {
+            "absence_reprogramming_vectors": false,
             "excisable": false,
-            "virus": "retrovirus",
-            "vector": "virus"
+            "integrating_vector_gene_list": [
+                "KLF4",
+                "MYC",
+                "POU5F1",
+                "SOX2"
+            ],
+            "integrating_vector_methods": null,
+            "integrating_vector_silenced": "unknown",
+            "integrating_vector_silencing_notes": null,
+            "vector": "Virus",
+            "virus": "Retrovirus"
         }
 
 * for `non-integrating vector`:
 
         "data": {
-            "vector": "sendai_virus"
+            "non_integrating_vector_detectable": "unknown",
+            "non_integrating_vector_detection_notes": null,
+            "non_integrating_vector_gene_list": [
+                "KLF4",
+                "L-Myc",
+                "POU5F1",
+                "SOX2",
+                "sh-p53"
+            ],
+            "non_integrating_vector_methods": null,
+            "vector": "Episomal"
         }
-
-* `vector-free` is currently not implemented and will be added in a future release.
-
 
 ### Sample Batch JSON record structure
 

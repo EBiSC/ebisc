@@ -398,6 +398,11 @@ class CelllineResource(ModelResource):
                     genes = [gene.name for gene in bundle.obj.non_integrating_vector.genes.all()]
                     res['data']['non_integrating_vector_gene_list'] = genes
 
+            if bundle.obj.non_integrating_vector.detectable:
+                res['data']['non_integrating_vector_detectable'] = bundle.obj.non_integrating_vector.detectable
+                res['data']['non_integrating_vector_detection_notes'] = bundle.obj.non_integrating_vector.detectable_notes
+                res['data']['non_integrating_vector_methods'] = bundle.obj.non_integrating_vector.methods
+
             return res
 
         elif hasattr(bundle.obj, 'integrating_vector'):
@@ -417,6 +422,11 @@ class CelllineResource(ModelResource):
                 if bundle.obj.integrating_vector.genes:
                     genes = [gene.name for gene in bundle.obj.integrating_vector.genes.all()]
                     res['data']['integrating_vector_gene_list'] = genes
+
+            if bundle.obj.integrating_vector.silenced:
+                res['data']['integrating_vector_silenced'] = bundle.obj.integrating_vector.silenced
+                res['data']['integrating_vector_silencing_notes'] = bundle.obj.integrating_vector.silenced_notes
+                res['data']['integrating_vector_methods'] = bundle.obj.integrating_vector.methods
 
             return res
 
