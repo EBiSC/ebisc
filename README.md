@@ -14,3 +14,7 @@
     bower install
 
 In one shell run `./manage.py runserver` and then in the other `gulp watch`.
+
+## BioSolr repository
+
+https://github.com/flaxsearch/BioSolr

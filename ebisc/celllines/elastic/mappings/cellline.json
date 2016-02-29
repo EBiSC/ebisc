@@ -1,64 +1,75 @@
 {
-    "cellline": {
-        "properties": {
-            "biosamples_id": {
-                "type": "string",
-                "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
-            },
+  "cellline": {
+    "properties": {
 
-            "name": {
-                "type": "string",
-                "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
-            },
-
-            "depositor": {
-                "type": "string",
-                "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
-            },
-
-            "primary_disease": {
-                "type": "string",
-                "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
-            },
-
-            "primary_disease_synonyms": {
-                "type": "string",
-                "index": "analyzed"
-            },
-
-            "primary_disease_stage": {
-                "type": "string",
-                "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
-            },
-
-            "disease_associated_phenotypes": {
-                "type": "string",
-                "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
-            },
-
-            "primary_cell_type": {
-                "type": "string",
-                "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
-            },
-
-            "alternative_names": {
-                "type": "string",
-                "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
-            },
-
-            "donor_sex": {
-                "type": "string",
-                "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
-            }
+      "annotation": {
+        "type": "ontology",
+        "ontology": {
+          "olsBaseURL": "http://www.ebi.ac.uk/ols/beta/api",
+          "olsOntology": "efo",
+          "includeIndirect": true,
+          "includeRelations": true
         }
+      },
+
+      "biosamples_id": {
+        "type": "string",
+        "index": "not_analyzed",
+        "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+      },
+
+      "name": {
+        "type": "string",
+        "index": "not_analyzed",
+        "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+      },
+
+      "depositor": {
+        "type": "string",
+        "index": "not_analyzed",
+        "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+      },
+
+      "primary_disease": {
+        "type": "string",
+        "index": "not_analyzed",
+        "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+      },
+
+      "primary_disease_synonyms": {
+        "type": "string",
+        "index": "analyzed"
+      },
+
+      "primary_disease_stage": {
+        "type": "string",
+        "index": "not_analyzed",
+        "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+      },
+
+      "disease_associated_phenotypes": {
+        "type": "string",
+        "index": "not_analyzed",
+        "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+      },
+
+      "primary_cell_type": {
+        "type": "string",
+        "index": "not_analyzed",
+        "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+      },
+
+      "alternative_names": {
+        "type": "string",
+        "index": "not_analyzed",
+        "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+      },
+
+      "donor_sex": {
+        "type": "string",
+        "index": "not_analyzed",
+        "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+      }
     }
+  }
 }
