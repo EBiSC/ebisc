@@ -29,6 +29,8 @@ from ebisc.celllines.models import  \
     IntegratingVector,  \
     CelllineNonIntegratingVector,  \
     CelllineIntegratingVector,  \
+    CelllineVectorFreeReprogrammingFactors,  \
+    VectorFreeReprogrammingFactor, \
     CelllineCharacterization,  \
     CelllineCharacterizationEpipluriscore, \
     CelllineCharacterizationPluritest, \
@@ -520,6 +522,45 @@ def parse_non_integrating_vector(valuef, source, cell_line):
         return True
 
     return False
+
+
+def parse_vector_free_reprogramming_factor(factor):
+
+    factor, created = VectorFreeReprogrammingFactor.objects.get_or_create(name=factor)
+
+    if created:
+        logger.info('Created new vector free reprogramming factor: %s' % factor)
+
+    return factor
+
+
+@inject_valuef
+def parse_vector_free_reprogramming_factors(valuef, source, cell_line):
+
+    if valuef('vector_free_types') is not None and valuef('vector_free_types'):
+        cell_line_vector_free_reprogramming_factors, cell_line_vector_free_reprogramming_factors_created = CelllineVectorFreeReprogrammingFactors.objects.get_or_create(cell_line=cell_line)
+
+        dirty = [cell_line_vector_free_reprogramming_factors.is_dirty(check_relationship=True)]
+
+        for factor in [parse_vector_free_reprogramming_factor(f) for f in source.get('vector_free_types', [])]:
+            cell_line_vector_free_reprogramming_factors.factors.add(factor)
+
+        if True in dirty:
+            try:
+                cell_line_vector_free_reprogramming_factors.save()
+
+                if cell_line_vector_free_reprogramming_factors_created:
+                    logger.info('Added cell line vector free reprogramming factors: %s' % cell_line_vector_free_reprogramming_factors)
+                else:
+                    logger.info('Updated cell line vector free reprogramming factors: %s' % cell_line_vector_free_reprogramming_factors)
+
+                return True
+
+            except IntegrityError, e:
+                logger.warn(format_integrity_error(e))
+                return None
+
+        return False
 
 
 @inject_valuef

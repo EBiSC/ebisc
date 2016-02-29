@@ -29,7 +29,7 @@ Elastic search:
 [] primary_celltype_purl
 [x] integrating_vector_gene_list
 [x] non_integrating_vector_gene_list
-[] vector_free_types
+[x] vector_free_types
 [x] feeder_cells_name
 [x] culture_conditions_medium_culture_medium_other_supplements
 [x] internal_donor_ids
@@ -37,7 +37,6 @@ Elastic search:
 [x] donor_karyotype
 [x] virology_screening_flag
 [x] certificate_of_analysis_flag
-[] culture_conditions_medium_culture_medium_protocol_file
 
 
 ### New data from hPSCreg

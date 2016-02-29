@@ -328,6 +328,7 @@ class CelllineResource(ModelResource):
     publications = fields.ToManyField(CelllinePublicationResource, 'publications', null=True, full=True)
 
     reprogramming_method = fields.DictField(null=True)
+    reprogramming_method_vector_free_types = fields.DictField(null=True)
 
     batches = fields.ToManyField(CelllineBatchResource, 'batches', null=True, full=True)
 
@@ -347,6 +348,7 @@ class CelllineResource(ModelResource):
             'primary_disease',
             'celllinecultureconditions__culture_medium_other',
             'integrating_vector__virus',
+            'vector_free_reprogramming_factors',
 
         ).prefetch_related(
             'clips',
@@ -375,6 +377,14 @@ class CelllineResource(ModelResource):
 
     def dehydrate_alternative_names(self, bundle):
         return value_list_of_string(bundle.obj.alternative_names)
+
+    def dehydrate_reprogramming_method_vector_free_types(self, bundle):
+        if hasattr(bundle.obj, 'vector_free_reprogramming_factors'):
+            if bundle.obj.vector_free_reprogramming_factors.factors:
+                factors = [factor.name for factor in bundle.obj.vector_free_reprogramming_factors.factors.all()]
+                return factors
+        else:
+            return []
 
     def dehydrate_reprogramming_method(self, bundle):
 

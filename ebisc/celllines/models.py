@@ -617,29 +617,28 @@ class CelllineIntegratingVector(DirtyFieldsMixin, models.Model):
 
 class VectorFreeReprogrammingFactor(models.Model):
 
-    vector_free_reprogramming_factor = models.CharField(_(u'Vector free reprogram factor'), max_length=15, blank=True)
-    reference_id = models.CharField(_(u'Referenceid'), max_length=45, blank=True)
+    name = models.CharField(_(u'Vector free reprogram factor'), max_length=50, unique=True)
 
     class Meta:
         verbose_name = _(u'Vector free reprogram factor')
         verbose_name_plural = _(u'Vector free reprogram factors')
-        ordering = ['vector_free_reprogramming_factor']
+        ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.vector_free_reprogramming_factor,)
+        return u'%s' % (self.name,)
 
 
-class CelllineVectorFreeReprogrammingFactors(models.Model):
+class CelllineVectorFreeReprogrammingFactors(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='vector_free_reprogramming_factors')
-    factor = models.ForeignKey(VectorFreeReprogrammingFactor, verbose_name=_(u'Vector-free reprogramming factor'), null=True, blank=True)
+    factors = models.ManyToManyField(VectorFreeReprogrammingFactor, verbose_name=_(u'Vector-free reprogramming factor'), blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line Vector-free Programming Factor')
         verbose_name_plural = _(u'Cell line Vector-free Programming Factors')
 
     def __unicode__(self):
-        return unicode(self.factor)
+        return u'%s' % (self.id,)
 
 
 # -----------------------------------------------------------------------------
