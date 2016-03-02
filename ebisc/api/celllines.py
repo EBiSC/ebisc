@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype
+from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineCharacterizationEpipluriscore, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype
 
 
 # -----------------------------------------------------------------------------
@@ -99,6 +99,18 @@ class CelllineCharacterizationVirologyResource(ModelResource):
         queryset = CelllineCharacterization.objects.all()
         include_resource_uri = False
         fields = ('virology_screening_flag', 'hiv1', 'hiv2', 'hepatitis_b', 'hepatitis_c', 'mycoplasma',)
+
+
+class CelllineCharacterizationPluritestResource(ModelResource):
+
+    pluritest_flag = fields.BooleanField('pluritest_flag', null=True)
+    pluripotency_score = fields.CharField('pluripotency_score', null=True)
+    novelty_score = fields.CharField('novelty_score', null=True)
+
+    class Meta:
+        queryset = CelllineCharacterizationPluritest.objects.all()
+        include_resource_uri = False
+        fields = ('pluritest_flag', 'pluripotency_score', 'novelty_score',)
 
 
 class CelllineCharacterizationCoAResource(ModelResource):
@@ -300,39 +312,52 @@ class CelllineInformationPackResource(ModelResource):
 
 class CelllineResource(ModelResource):
 
+    # IDs
     biosamples_id = fields.CharField('biosamples_id', unique=True)
     ecacc_cat_no = fields.CharField('ecacc_id', unique=True, null=True)
 
-    flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)
-    availability = fields.CharField('get_availability_display')
-
+    # Names
     name = fields.CharField('name', unique=True)
     alternative_names = fields.CharField('alternative_names', null=True)
 
+    # Availability
+    flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)
+    availability = fields.CharField('get_availability_display')
+
+    # Donor and disease
     primary_disease_diagnosed = fields.CharField('primary_disease_diagnosis')
     primary_disease = fields.ToOneField(DiseaseResource, 'primary_disease', null=True, full=True)
     disease_associated_phenotypes = fields.ListField('disease_associated_phenotypes', null=True)
 
-    primary_cell_type = fields.ToOneField(CelllineDerivationResource, 'derivation', null=True, full=True)
-    depositor_cellline_culture_conditions = fields.ToOneField(CelllineCultureConditionsResource, 'celllinecultureconditions', full=True, null=True)
-    virology_screening = fields.ToOneField(CelllineCharacterizationVirologyResource, 'celllinecharacterization', null=True, full=True)
-    cellline_certificate_of_analysis = fields.ToOneField(CelllineCharacterizationCoAResource, 'celllinecharacterization', null=True, full=True)
-    cellline_karyotype = fields.ToOneField(CelllineKaryotypeResource, 'karyotype', null=True, full=True)
-    cellline_disease_associated_genotype = fields.ToOneField(CelllineDiseaseGenotypeResource, 'genotyping_variant', null=True, full=True)
-
     donor_age = fields.CharField('donor_age', null=True)
     donor = fields.ToOneField(DonorResource, 'donor', null=True, full=True)
 
+    # Depositor
     depositor = fields.ToOneField(OrganizationResource, 'generator', null=True, full=True)
 
-    publications = fields.ToManyField(CelllinePublicationResource, 'publications', null=True, full=True)
-
+    # Derivation
+    primary_cell_type = fields.ToOneField(CelllineDerivationResource, 'derivation', null=True, full=True)
     reprogramming_method = fields.DictField(null=True)
     reprogramming_method_vector_free_types = fields.DictField(null=True)
 
-    batches = fields.ToManyField(CelllineBatchResource, 'batches', null=True, full=True)
+    # Culture conditions
+    depositor_cellline_culture_conditions = fields.ToOneField(CelllineCultureConditionsResource, 'celllinecultureconditions', full=True, null=True)
 
+    # Characterization
+    virology_screening = fields.ToOneField(CelllineCharacterizationVirologyResource, 'celllinecharacterization', null=True, full=True)
+    cellline_certificate_of_analysis = fields.ToOneField(CelllineCharacterizationCoAResource, 'celllinecharacterization', null=True, full=True)
+    characterization_pluritest = fields.ToOneField(CelllineCharacterizationPluritestResource, 'celllinecharacterizationpluritest', null=True, full=True)
+
+    # Genotyping
+    cellline_karyotype = fields.ToOneField(CelllineKaryotypeResource, 'karyotype', null=True, full=True)
+    cellline_disease_associated_genotype = fields.ToOneField(CelllineDiseaseGenotypeResource, 'genotyping_variant', null=True, full=True)
+
+    # Documents
     cell_line_information_packs = fields.ToManyField(CelllineInformationPackResource, 'clips', null=True, full=True)
+    publications = fields.ToManyField(CelllinePublicationResource, 'publications', null=True, full=True)
+
+    # Batches
+    batches = fields.ToManyField(CelllineBatchResource, 'batches', null=True, full=True)
 
     class Meta:
         queryset = Cellline.objects.all().select_related(

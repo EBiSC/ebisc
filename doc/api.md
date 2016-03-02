@@ -108,6 +108,11 @@ Additional fields and endpoints may be created for future exchanges.
             "karyotype": "46XX",
             "passage_number": 30
         },
+        "characterization_pluritest": {
+            "novelty_score": "1.399",
+            "pluripotency_score": "42.031",
+            "pluritest_flag": true
+        },
         "depositor": {
             "name": "Universitatsklinikum Bonn"
         },

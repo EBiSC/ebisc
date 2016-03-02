@@ -1235,30 +1235,45 @@ def parse_doc(valuef, source):
     print valuef('filename_enc')
 
 
-# @inject_valuef
-# def parse_characterization_pluritest(valuef, source, cell_line):
+@inject_valuef
+def parse_characterization_pluritest(valuef, source, cell_line):
 
-    # for doc in valuef(['characterisation_epipluriscore_data', 'uploads']):
+    # for doc in valuef(['characterisation_pluritest_data', 'uploads']):
     #     parse_doc(doc)
 
-    # cell_line_characterization_pluritest, created = CelllineCharacterizationPluritest.objects.get_or_create(cell_line=cell_line)
-    #
-    # cell_line_characterization_pluritest.pluripotency_score = valuef('')
-    # cell_line_characterization_pluritest.novelty_score = valuef('')
-    # cell_line_characterization_pluritest.microarray_url = valuef('')
-    #
-    # if created or cell_line_characterization_pluritest.is_dirty():
-    #     if created:
-    #         logger.info('Added cell line characterization pluritest: %s' % cell_line_characterization_pluritest)
-    #     else:
-    #         logger.info('Updated cell line characterization pluritest: %s' % cell_line_characterization_pluritest)
-    #
-    #     cell_line_characterization_pluritest.save()
-    #
-    #     return True
-    #
-    # return False
+    if valuef('characterisation_pluritest_flag'):
+        cell_line_characterization_pluritest, created = CelllineCharacterizationPluritest.objects.get_or_create(cell_line=cell_line)
 
+        cell_line_characterization_pluritest.pluritest_flag = valuef('characterisation_pluritest_flag', 'nullbool')
+        cell_line_characterization_pluritest.pluripotency_score = valuef(['characterisation_pluritest_data', 'pluripotency_score'])
+        cell_line_characterization_pluritest.novelty_score = valuef(['characterisation_pluritest_data', 'novelty_score'])
+        cell_line_characterization_pluritest.microarray_url = valuef(['characterisation_pluritest_data', 'microarray_url'])
+
+        if created or cell_line_characterization_pluritest.is_dirty():
+            if created:
+                logger.info('Added cell line characterization pluritest: %s' % cell_line_characterization_pluritest)
+            else:
+                logger.info('Updated cell line characterization pluritest: %s' % cell_line_characterization_pluritest)
+
+            cell_line_characterization_pluritest.save()
+
+            return True
+
+        return False
+
+
+# @inject_valuef
+# def parse_characterization_epipluriscore(valuef, source, cell_line):
+#
+#     # for doc in valuef(['characterisation_epipluriscore_data', 'uploads']):
+#     #     parse_doc(doc)
+#
+#     if valuef('characterisation_epipluriscore_flag'):
+#         cell_line_characterization_epipluriscore, created = CelllineCharacterizationEpipluriscore.objects.get_or_create(cell_line=cell_line)
+#
+#         cell_line_characterization_epipluriscore.epipluriscore_flag = valuef('characterisation_epipluriscore_flag', 'nullbool')
+#         cell_line_characterization_epipluriscore.score = valuef(['characterisation_epipluriscore_data', 'score'])
+#
 
 @inject_valuef
 def parse_characterization_markers(valuef, source, cell_line):

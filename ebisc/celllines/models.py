@@ -687,6 +687,7 @@ class CelllineCharacterizationPluritest(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
 
+    pluritest_flag = models.NullBooleanField(_(u'Pluritest flag'))
     pluripotency_score = models.CharField(_(u'Pluripotency score'), max_length=10, null=True, blank=True)
     novelty_score = models.CharField(_(u'Novelty score'), max_length=10, null=True, blank=True)
     microarray_url = models.URLField(_(u'Microarray data link'), max_length=300, null=True, blank=True)
@@ -704,6 +705,7 @@ class CelllineCharacterizationEpipluriscore(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
 
+    epipluriscore_flag = models.NullBooleanField(_(u'EpiPluriScore flag'))
     score = models.CharField(_(u'Pluripotency score'), max_length=10, null=True, blank=True)
     marker_mcpg = models.NullBooleanField(_(u'Marker mCpG'))
     marker_OCT4 = models.NullBooleanField(_(u'Marker OCT4'))
