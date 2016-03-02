@@ -374,6 +374,7 @@ class CelllineAliquot(models.Model):
 
     batch = models.ForeignKey('CelllineBatch', verbose_name=_(u'Cell line'), related_name='aliquots')
     biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    name = models.CharField(_(u'Name'), max_length=50, null=True, blank=True)
 
     derived_from_aliqot = models.ForeignKey('self', verbose_name=_(u'Derived from aliquot'), null=True, blank=True)
 
