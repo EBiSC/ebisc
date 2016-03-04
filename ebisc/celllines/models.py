@@ -1326,6 +1326,8 @@ class DonorGenotypingRsNumber(models.Model):
 class CelllineGeneticModification(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification')
+    genetic_modification_flag = models.NullBooleanField(_(u'Genetic modification flag'))
+    types = ArrayField(models.CharField(max_length=50), verbose_name=_(u'Types of modification'), null=True, blank=True)
     protocol = models.FileField(_(u'Protocol'), upload_to=upload_to, null=True, blank=True)
 
     class Meta:
@@ -1394,7 +1396,7 @@ class GeneticModificationIsogenic(DirtyFieldsMixin, models.Model):
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_isogenic')
     target_locus = models.ManyToManyField(Molecule, blank=True)
     change_type = models.CharField(_(u'Type of change'), max_length=45, null=True, blank=True)
-    modified_sequence = models.CharField(_(u'Modified sequence'), max_length=100, null=True, blank=True)
+    modified_sequence = models.CharField(_(u'Modified sequence'), max_length=500, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Genetic modification - Isogenic modification')
