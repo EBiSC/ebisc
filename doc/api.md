@@ -179,6 +179,21 @@ Additional fields and endpoints may be created for future exchanges.
         "donor_age": 35-39,
         "ecacc_cat_no": "66540003",
         "flag_go_live": true,
+        "genetic_modification": {
+            "genetic_modification_flag": true,
+            "types": [
+                "gen_mod_gene_knock_out"
+            ]
+        },
+        "genetic_modification_gene_knock_in": null,
+        "genetic_modification_gene_knock_out": {
+            "delivery_method": "viral",
+            "target_genes": [
+                "FANCD2"
+            ]
+        },
+        "genetic_modification_isogenic": null,
+        "genetic_modification_transgene_expression": null,
         "name": "UKBi008-A",
         "primary_cell_type": {
             "name": "fibroblast of dermis"
@@ -322,6 +337,44 @@ The reprogramming method has a different structure depending on the `type`. Poss
             "non_integrating_vector_methods": null,
             "vector": "Episomal"
         }
+
+#### Genetic modification
+
+Data for genetic modification is stored in 5 fields. The field `genetic_modification` holds the information if the line has been modified and what types of modification were used.
+The four fields described below contain the details of the modification.
+
+* `genetic_modification_transgene_expression`
+
+        "genetic_modification_transgene_expression": {
+              "delivery_method": null,
+              "genes": []
+        },
+
+* `genetic_modification_gene_knock_in`
+
+        "genetic_modification_gene_knock_in": {
+              "delivery_method": "viral",
+              "target_genes": [],
+              "transgenes": []
+        },
+
+* `genetic_modification_gene_knock_out`
+
+        "genetic_modification_gene_knock_out": {
+              "delivery_method": "viral",
+              "target_genes": [
+                  "FANCD2"
+              ]
+        },
+
+* `genetic_modification_isogenic`
+
+        "genetic_modification_isogenic": {
+              "change_type": "repaired",
+              "modified_sequence": "some text",
+              "target_locus": []
+        },
+
 
 ### Sample Batch JSON record structure
 
