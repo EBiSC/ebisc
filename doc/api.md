@@ -97,9 +97,21 @@ Additional fields and endpoints may be created for future exchanges.
                 "version": "v1"
             }
         ],
+        "cellline_certificate_of_analysis": {
+            "certificate_of_analysis_flag": true
+        },
+        "cellline_disease_associated_genotype": {
+            "carries_disease_phenotype_associated_variants_flag": false,
+            "variant_of_interest_flag": null
+        },
         "cellline_karyotype": {
             "karyotype": "46XX",
             "passage_number": 30
+        },
+        "characterization_pluritest": {
+            "novelty_score": "1.399",
+            "pluripotency_score": "42.031",
+            "pluritest_flag": true
         },
         "depositor": {
             "name": "Universitatsklinikum Bonn"
@@ -145,18 +157,46 @@ Additional fields and endpoints may be created for future exchanges.
             "passage_history": null,
             "passage_method": "mechanically",
             "passage_number_banked": "10",
+            "rock_inhibitor_used_at_cryo": "Unknown",
+            "rock_inhibitor_used_at_passage": "Unknown",
+            "rock_inhibitor_used_at_thaw": "Unknown",
             "surface_coating": "gelatine"
         },
+        "disease_associated_phenotypes": [
+            "Prolonged QT interval on ECG"
+        ],
         "donor": {
             "biosamples_id": "SAMEA2590985",
-            "gender": "male"
+            "gender": "male",
+            "internal_donor_ids": [
+                "NP0014/YO90096"
+            ],
+            "karyotype": null,
+            "phenotypes": [
+                "Cardiac arrhythmia at exercise; normal ECG at rest"
+            ]
         },
         "donor_age": 35-39,
         "ecacc_cat_no": "66540003",
         "flag_go_live": true,
+        "genetic_modification": {
+            "genetic_modification_flag": true,
+            "types": [
+                "gen_mod_gene_knock_out"
+            ]
+        },
+        "genetic_modification_gene_knock_in": null,
+        "genetic_modification_gene_knock_out": {
+            "delivery_method": "viral",
+            "target_genes": [
+                "FANCD2"
+            ]
+        },
+        "genetic_modification_isogenic": null,
+        "genetic_modification_transgene_expression": null,
         "name": "UKBi008-A",
         "primary_cell_type": {
-            "name": "Dermal Fibroblasts"
+            "name": "fibroblast of dermis"
         },
         "primary_disease": {
             "doid": "DOID:1440",
@@ -181,21 +221,42 @@ Additional fields and endpoints may be created for future exchanges.
             "data": {
                 "absence_reprogramming_vectors": false,
                 "excisable": false,
-                "vector": "virus",
-                "virus": "retrovirus"
+                "integrating_vector_gene_list": [
+                    "KLF4",
+                    "MYC",
+                    "POU5F1",
+                    "SOX2"
+                ],
+                "integrating_vector_methods": null,
+                "integrating_vector_silenced": "unknown",
+                "integrating_vector_silencing_notes": null,
+                "vector": "Virus",
+                "virus": "Retrovirus"
             },
             "type": "integrating vector"
         },
+        "reprogramming_method_vector_free_types": [
+            "vector_free_types_none"
+        ],
         "resource_uri": "/api/v0/cell-lines/SAMEA2590882",
         "virology_screening": {
             "hepatitis_b": "Negative",
             "hepatitis_c": "Negative",
             "hiv1": "Negative",
             "hiv2": null,
-            "mycoplasma": "Negative"
+            "mycoplasma": "Negative",
+            "virology_screening_flag": true
         }
     }
 
+
+#### flag Fields
+
+Fields that end with `_flag` can hold three values:
+* `true` or `false` if information for the field is provided by depositors or central facility and marked as being true of false
+* `null` if no information is available (this is the case for fields that are not mandatory)
+
+Examples of these types of fields are: `certificate_of_analysis_flag`, `variant_of_interest_flag`, ...
 
 #### Availability
 
@@ -212,7 +273,7 @@ Primary disease data is provided in two fields:
 * `primary_disease_diagnosed` can have values `0`, `1` or `carrier`. If the value is `0`, there is no disease diagnosed and this disease status should be displayed as `normal`. If the value is `1` or `carrier` the disease has been diagnosed or the donor is a carrier.
 * `primary_disease` fields cover two different cases:
   * If the value of `primary_disease_diagnosed` is `1` or `carrier`, the `primary_disease` fields hold information about the diagnosed disease.
-  * If the value of `primary_disease_diagnosed` is `0`, the `primary_disease` field `name` holds the value `normal`.
+  * If the value of `primary_disease_diagnosed` is `0`, the `primary_disease` field `name` holds the value `Normal`.
 
 Note: Some fields in `primary_disease` will change with the implementation of ontologies.
 
@@ -222,33 +283,97 @@ The reprogramming method has a different structure depending on the `type`. Poss
 
 * `integrating vector`
 * `non-integrating vector`
-* `vector-free`
 
 `data` structures depending on the type of the reprogramming methods are:
 
 * for `integrating vector` and `transposon`:
 
         "data": {
+            "absence_reprogramming_vectors": false,
             "excisable": true,
-            "transposon": "sleeping_beauty",
-            "vector": "transposon"
+            "integrating_vector_gene_list": [
+                "KLF4",
+                "MYC",
+                "POU5F1",
+                "SOX2"
+            ],
+            "integrating_vector_methods": null,
+            "integrating_vector_silenced": "unknown",
+            "integrating_vector_silencing_notes": null,
+            "transposon": "Sleeping beauty",
+            "vector": "Transposon"
         }
 
 * for `integrating vector` and `virus`:
 
         "data": {
+            "absence_reprogramming_vectors": false,
             "excisable": false,
-            "virus": "retrovirus",
-            "vector": "virus"
+            "integrating_vector_gene_list": [
+                "KLF4",
+                "MYC",
+                "POU5F1",
+                "SOX2"
+            ],
+            "integrating_vector_methods": null,
+            "integrating_vector_silenced": "unknown",
+            "integrating_vector_silencing_notes": null,
+            "vector": "Virus",
+            "virus": "Retrovirus"
         }
 
 * for `non-integrating vector`:
 
         "data": {
-            "vector": "sendai_virus"
+            "non_integrating_vector_detectable": "unknown",
+            "non_integrating_vector_detection_notes": null,
+            "non_integrating_vector_gene_list": [
+                "KLF4",
+                "L-Myc",
+                "POU5F1",
+                "SOX2",
+                "sh-p53"
+            ],
+            "non_integrating_vector_methods": null,
+            "vector": "Episomal"
         }
 
-* `vector-free` is currently not implemented and will be added in a future release.
+#### Genetic modification
+
+Data for genetic modification is stored in 5 fields. The field `genetic_modification` holds the information if the line has been modified and what types of modification were used.
+The four fields described below contain the details of the modification.
+
+* `genetic_modification_transgene_expression`
+
+        "genetic_modification_transgene_expression": {
+              "delivery_method": null,
+              "genes": []
+        },
+
+* `genetic_modification_gene_knock_in`
+
+        "genetic_modification_gene_knock_in": {
+              "delivery_method": "viral",
+              "target_genes": [],
+              "transgenes": []
+        },
+
+* `genetic_modification_gene_knock_out`
+
+        "genetic_modification_gene_knock_out": {
+              "delivery_method": "viral",
+              "target_genes": [
+                  "FANCD2"
+              ]
+        },
+
+* `genetic_modification_isogenic`
+
+        "genetic_modification_isogenic": {
+              "change_type": "repaired",
+              "modified_sequence": "some text",
+              "target_locus": []
+        },
 
 
 ### Sample Batch JSON record structure

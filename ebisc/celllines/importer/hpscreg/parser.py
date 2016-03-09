@@ -29,6 +29,8 @@ from ebisc.celllines.models import  \
     IntegratingVector,  \
     CelllineNonIntegratingVector,  \
     CelllineIntegratingVector,  \
+    CelllineVectorFreeReprogrammingFactors,  \
+    VectorFreeReprogrammingFactor, \
     CelllineCharacterization,  \
     CelllineCharacterizationEpipluriscore, \
     CelllineCharacterizationPluritest, \
@@ -52,6 +54,7 @@ from ebisc.celllines.models import  \
     CelllineHlaTyping, \
     CelllineStrFingerprinting, \
     CelllineGenomeAnalysis, \
+    CelllineGeneticModification, \
     GeneticModificationTransgeneExpression, \
     GeneticModificationGeneKnockOut, \
     GeneticModificationGeneKnockIn, \
@@ -91,6 +94,19 @@ def value_of_json(source, path, cast=None):
                 return False
             else:
                 return None
+        except KeyError:
+            return None
+
+    elif cast == 'extended_bool':
+        try:
+            if get_in_json(source, path) == '1':
+                return 'yes'
+            elif get_in_json(source, path) == '0':
+                return 'no'
+            elif get_in_json(source, path) == 'unknown':
+                return 'unknown'
+            else:
+                return 'unknown'
         except KeyError:
             return None
 
@@ -509,6 +525,45 @@ def parse_non_integrating_vector(valuef, source, cell_line):
     return False
 
 
+def parse_vector_free_reprogramming_factor(factor):
+
+    factor, created = VectorFreeReprogrammingFactor.objects.get_or_create(name=factor)
+
+    if created:
+        logger.info('Created new vector free reprogramming factor: %s' % factor)
+
+    return factor
+
+
+@inject_valuef
+def parse_vector_free_reprogramming_factors(valuef, source, cell_line):
+
+    if valuef('vector_free_types') is not None and valuef('vector_free_types'):
+        cell_line_vector_free_reprogramming_factors, cell_line_vector_free_reprogramming_factors_created = CelllineVectorFreeReprogrammingFactors.objects.get_or_create(cell_line=cell_line)
+
+        dirty = [cell_line_vector_free_reprogramming_factors.is_dirty(check_relationship=True)]
+
+        for factor in [parse_vector_free_reprogramming_factor(f) for f in source.get('vector_free_types', [])]:
+            cell_line_vector_free_reprogramming_factors.factors.add(factor)
+
+        if True in dirty:
+            try:
+                cell_line_vector_free_reprogramming_factors.save()
+
+                if cell_line_vector_free_reprogramming_factors_created:
+                    logger.info('Added cell line vector free reprogramming factors: %s' % cell_line_vector_free_reprogramming_factors)
+                else:
+                    logger.info('Updated cell line vector free reprogramming factors: %s' % cell_line_vector_free_reprogramming_factors)
+
+                return True
+
+            except IntegrityError, e:
+                logger.warn(format_integrity_error(e))
+                return None
+
+        return False
+
+
 @inject_valuef
 def parse_derivation(valuef, source, cell_line):
 
@@ -559,6 +614,15 @@ def parse_culture_conditions(valuef, source, cell_line):
     cell_line_culture_conditions.co2_concentration = valuef('co2_concentration', 'int')
     cell_line_culture_conditions.passage_number_banked = valuef('passage_number_banked')
     cell_line_culture_conditions.number_of_vials_banked = valuef('number_of_vials_banked')
+
+    if valuef('rock_inhibitor_used_at_passage_flag'):
+        cell_line_culture_conditions.rock_inhibitor_used_at_passage = valuef('rock_inhibitor_used_at_passage_flag', 'extended_bool')
+
+    if valuef('rock_inhibitor_used_at_cryo_flag'):
+        cell_line_culture_conditions.rock_inhibitor_used_at_cryo = valuef('rock_inhibitor_used_at_cryo_flag', 'extended_bool')
+
+    if valuef('rock_inhibitor_used_at_thaw_flag'):
+        cell_line_culture_conditions.rock_inhibitor_used_at_thaw = valuef('rock_inhibitor_used_at_thaw_flag', 'extended_bool')
 
     if not valuef('culture_conditions_medium_culture_medium') == 'other_medium':
         cell_line_culture_conditions.culture_medium = valuef('culture_conditions_medium_culture_medium')
@@ -872,184 +936,198 @@ def parse_genome_analysis(valuef, source, cell_line):
 @inject_valuef
 def parse_genetic_modifications(valuef, source, cell_line):
 
-    if valuef('genetic_modification_flag', 'bool'):
+    if valuef('genetic_modification_flag') is not None:
 
-        def parse_delivery_method(source, source_field, source_field_other):
+        dirty_genetic_modification = []
 
-            if source_field not in source and source_field_other not in source:
-                return None
+        genetic_modification, genetic_modification_created = CelllineGeneticModification.objects.get_or_create(cell_line=cell_line)
 
-            delivery_method = None
+        genetic_modification.genetic_modification_flag = valuef('genetic_modification_flag', 'nullbool')
+        genetic_modification.types = valuef('genetic_modification_types')
 
-            if valuef(source_field) == 'other':
-                if valuef(source_field_other) is not None:
-                    delivery_method = valuef(source_field_other)
-                else:
-                    delivery_method = u'Other'
+        if genetic_modification_created or genetic_modification.is_dirty():
+            if genetic_modification_created:
+                logger.info('Added cell line genetic modification')
             else:
-                delivery_method = valuef(source_field)
+                logger.info('Updated cell line genetic modification')
 
-            return delivery_method
+            genetic_modification.save()
+            dirty_genetic_modification += [True]
 
-        for modification_type in valuef('genetic_modification_types'):
-            if modification_type == 'gen_mod_transgene_expression':
+        if valuef('genetic_modification_types') is not None:
 
-                transgene_expression, transgene_expression_created = GeneticModificationTransgeneExpression.objects.get_or_create(cell_line=cell_line)
+            def parse_delivery_method(source, source_field, source_field_other):
 
-                transgene_expression.delivery_method = parse_delivery_method(source, 'transgene_delivery_method', 'transgene_delivery_method_other')
-                transgene_expression.virus = term_list_value_of_json(source, 'transgene_viral_method_spec', Virus)
-                transgene_expression.transposon = term_list_value_of_json(source, 'transgene_transposon_method_spec', Transposon)
+                if source_field not in source and source_field_other not in source:
+                    return None
 
-                for gene in [parse_molecule(g) for g in source.get('genetic_modification_transgene_expression_list', [])]:
-                    transgene_expression.genes.add(gene)
+                delivery_method = None
 
-                dirty = [transgene_expression.is_dirty(check_relationship=True)]
-
-                if True in dirty:
-                    if transgene_expression_created:
-                        logger.info('Added transgene expression modification: %s' % transgene_expression)
+                if valuef(source_field) == 'other':
+                    if valuef(source_field_other) is not None:
+                        delivery_method = valuef(source_field_other)
                     else:
-                        logger.info('Updated transgene expression modification: %s' % transgene_expression)
+                        delivery_method = u'Other'
+                else:
+                    delivery_method = valuef(source_field)
 
-                    transgene_expression.save()
+                return delivery_method
 
-                    return True
+            for modification_type in valuef('genetic_modification_types'):
+                if modification_type == 'gen_mod_transgene_expression':
 
-                return False
+                    transgene_expression, transgene_expression_created = GeneticModificationTransgeneExpression.objects.get_or_create(cell_line=cell_line)
 
-            elif modification_type == 'gen_mod_gene_knock_out':
+                    transgene_expression.delivery_method = parse_delivery_method(source, 'transgene_delivery_method', 'transgene_delivery_method_other')
+                    transgene_expression.virus = term_list_value_of_json(source, 'transgene_viral_method_spec', Virus)
+                    transgene_expression.transposon = term_list_value_of_json(source, 'transgene_transposon_method_spec', Transposon)
 
-                gene_knock_out, gene_knock_out_created = GeneticModificationGeneKnockOut.objects.get_or_create(cell_line=cell_line)
+                    for gene in [parse_molecule(g) for g in source.get('genetic_modification_transgene_expression_list', [])]:
+                        transgene_expression.genes.add(gene)
 
-                gene_knock_out.delivery_method = parse_delivery_method(source, 'knockout_delivery_method', 'knockout_delivery_method_other')
-                gene_knock_out.virus = term_list_value_of_json(source, 'knockout_viral_method_spec', Virus)
-                gene_knock_out.transposon = term_list_value_of_json(source, 'knockout_transposon_method_spec', Transposon)
+                    dirty = [transgene_expression.is_dirty(check_relationship=True)]
 
-                for gene in [parse_molecule(g) for g in source.get('genetic_modification_knockout_list', [])]:
-                    gene_knock_out.target_genes.add(gene)
+                    if True in dirty:
+                        if transgene_expression_created:
+                            logger.info('Added transgene expression modification: %s' % transgene_expression)
+                        else:
+                            logger.info('Updated transgene expression modification: %s' % transgene_expression)
 
-                dirty = [gene_knock_out.is_dirty(check_relationship=True)]
+                        transgene_expression.save()
+                        dirty_genetic_modification += [True]
 
-                if True in dirty:
-                    if gene_knock_out_created:
-                        logger.info('Added gene knock-out modification: %s' % gene_knock_out)
-                    else:
-                        logger.info('Updated gene knock-out modification: %s' % gene_knock_out)
+                elif modification_type == 'gen_mod_gene_knock_out':
 
-                    gene_knock_out.save()
+                    gene_knock_out, gene_knock_out_created = GeneticModificationGeneKnockOut.objects.get_or_create(cell_line=cell_line)
 
-                    return True
+                    gene_knock_out.delivery_method = parse_delivery_method(source, 'knockout_delivery_method', 'knockout_delivery_method_other')
+                    gene_knock_out.virus = term_list_value_of_json(source, 'knockout_viral_method_spec', Virus)
+                    gene_knock_out.transposon = term_list_value_of_json(source, 'knockout_transposon_method_spec', Transposon)
 
-                return False
+                    for gene in [parse_molecule(g) for g in source.get('genetic_modification_knockout_list', [])]:
+                        gene_knock_out.target_genes.add(gene)
 
-                # old_genes = set([gene.name for gene in gene_knock_out.target_genes.all()])
-                #
-                # dirty_genes = []
-                #
-                # if valuef('genetic_modification_knockout_list') is None:
-                #
-                #     if not old_genes:
-                #         return []
-                #
-                #     else:
-                #         for gene_name in old_genes:
-                #             g = GeneticModificationGeneKnockOut.objects.get(cell_line=cell_line, target_genes__name=gene_name)
-                #             g.delete()
-                #             dirty_genes += [True]
-                #
-                # else:
-                #     new_genes = []
-                #
-                #     for gene in valuef('genetic_modification_knockout_list'):
-                #         (catalog_id, gene_name, catalog, kind) = gene.split('###')
-                #
-                #         new_genes_list.append((gene_name))
-                #
-                #     new_genes = set(new_genes_list)
-                #
-                #     # Delete old genes that are not in new genes
-                #     for gene_name in (old_genes - new_genes):
-                #         g = GeneticModificationGeneKnockOut.objects.get(cell_line=cell_line, target_genes__name=gene_name)
-                #         g.delete()
-                #         dirty_genes += [True]
-                #
-                #     for gene in valuef('genetic_modification_knockout_list'):
-                #         (catalog_id, gene_name, catalog, kind) = gene.split('###')
-                #
-                #         # Add new genes
-                #         if gene_name in (new_genes - old_genes):
-                #             gene_knock_out.target_genes.add(gene)
-                #             dirty_genes += [True]
-                #
-                #         # Modify existing if data has changed
-                #         else:
-                #           TODO
-                #
-                #     return dirty_genes
+                    dirty = [gene_knock_out.is_dirty(check_relationship=True)]
 
-            elif modification_type == 'gen_mod_gene_knock_in':
+                    if True in dirty:
+                        if gene_knock_out_created:
+                            logger.info('Added gene knock-out modification: %s' % gene_knock_out)
+                        else:
+                            logger.info('Updated gene knock-out modification: %s' % gene_knock_out)
 
-                gene_knock_in, gene_knock_in_created = GeneticModificationGeneKnockIn.objects.get_or_create(cell_line=cell_line)
+                        gene_knock_out.save()
+                        dirty_genetic_modification += [True]
 
-                gene_knock_in.delivery_method = parse_delivery_method(source, 'knockin_delivery_method', 'knockin_delivery_method_other')
-                gene_knock_in.virus = term_list_value_of_json(source, 'knockin_viral_method_spec', Virus)
-                gene_knock_in.transposon = term_list_value_of_json(source, 'knockin_transposon_method_spec', Transposon)
+                    # old_genes = set([gene.name for gene in gene_knock_out.target_genes.all()])
+                    #
+                    # dirty_genes = []
+                    #
+                    # if valuef('genetic_modification_knockout_list') is None:
+                    #
+                    #     if not old_genes:
+                    #         return []
+                    #
+                    #     else:
+                    #         for gene_name in old_genes:
+                    #             g = GeneticModificationGeneKnockOut.objects.get(cell_line=cell_line, target_genes__name=gene_name)
+                    #             g.delete()
+                    #             dirty_genes += [True]
+                    #
+                    # else:
+                    #     new_genes = []
+                    #
+                    #     for gene in valuef('genetic_modification_knockout_list'):
+                    #         (catalog_id, gene_name, catalog, kind) = gene.split('###')
+                    #
+                    #         new_genes_list.append((gene_name))
+                    #
+                    #     new_genes = set(new_genes_list)
+                    #
+                    #     # Delete old genes that are not in new genes
+                    #     for gene_name in (old_genes - new_genes):
+                    #         g = GeneticModificationGeneKnockOut.objects.get(cell_line=cell_line, target_genes__name=gene_name)
+                    #         g.delete()
+                    #         dirty_genes += [True]
+                    #
+                    #     for gene in valuef('genetic_modification_knockout_list'):
+                    #         (catalog_id, gene_name, catalog, kind) = gene.split('###')
+                    #
+                    #         # Add new genes
+                    #         if gene_name in (new_genes - old_genes):
+                    #             gene_knock_out.target_genes.add(gene)
+                    #             dirty_genes += [True]
+                    #
+                    #         # Modify existing if data has changed
+                    #         else:
+                    #           TODO
+                    #
+                    #     return dirty_genes
 
-                for gene in [parse_molecule(g) for g in source.get('genetic_modification_knockin_target_gene_list', [])]:
-                    logger.info('Added gene: %s' % gene)
-                    gene_knock_in.target_genes.add(gene)
+                elif modification_type == 'gen_mod_gene_knock_in':
 
-                for gene in [parse_molecule(g) for g in source.get('genetic_modification_knockin_transgene_list', [])]:
-                    logger.info('Added gene: %s' % gene)
-                    gene_knock_in.transgenes.add(gene)
+                    gene_knock_in, gene_knock_in_created = GeneticModificationGeneKnockIn.objects.get_or_create(cell_line=cell_line)
 
-                dirty = [gene_knock_in.is_dirty(check_relationship=True)]
+                    gene_knock_in.delivery_method = parse_delivery_method(source, 'knockin_delivery_method', 'knockin_delivery_method_other')
+                    gene_knock_in.virus = term_list_value_of_json(source, 'knockin_viral_method_spec', Virus)
+                    gene_knock_in.transposon = term_list_value_of_json(source, 'knockin_transposon_method_spec', Transposon)
 
-                if True in dirty:
-                    if gene_knock_in_created:
-                        logger.info('Added gene knock-in modification: %s' % gene_knock_in)
-                    else:
-                        logger.info('Updated gene knock-in modification: %s' % gene_knock_in)
+                    for gene in [parse_molecule(g) for g in source.get('genetic_modification_knockin_target_gene_list', [])]:
+                        logger.info('Added gene: %s' % gene)
+                        gene_knock_in.target_genes.add(gene)
 
-                    gene_knock_in.save()
+                    for gene in [parse_molecule(g) for g in source.get('genetic_modification_knockin_transgene_list', [])]:
+                        logger.info('Added gene: %s' % gene)
+                        gene_knock_in.transgenes.add(gene)
 
-                    return True
+                    dirty = [gene_knock_in.is_dirty(check_relationship=True)]
 
-                return False
+                    if True in dirty:
+                        if gene_knock_in_created:
+                            logger.info('Added gene knock-in modification: %s' % gene_knock_in)
+                        else:
+                            logger.info('Updated gene knock-in modification: %s' % gene_knock_in)
 
-            elif modification_type == 'gen_mod_isogenic_modification':
+                        gene_knock_in.save()
+                        dirty_genetic_modification += [True]
 
-                isogenic_modification, isogenic_modification_created = GeneticModificationIsogenic.objects.get_or_create(cell_line=cell_line)
+                elif modification_type == 'gen_mod_isogenic_modication':
 
-                isogenic_modification.change_type = valuef('genetic_modification_isogenic_modified_locus_change_type')
-                isogenic_modification.modified_sequence = valuef('genetic_modification_isogenic_modified_locus')
+                    isogenic_modification, isogenic_modification_created = GeneticModificationIsogenic.objects.get_or_create(cell_line=cell_line)
 
-                for gene in [parse_molecule(g) for g in source.get('genetic_modification_isogenic_target_locus_list', [])]:
-                    logger.info('Added gene: %s' % gene)
-                    isogenic_modification.target_locus.add(gene)
+                    isogenic_modification.change_type = valuef('genetic_modification_isogenic_modified_locus_change_type')
+                    isogenic_modification.modified_sequence = valuef('genetic_modification_isogenic_modified_locus')
 
-                dirty = [isogenic_modification.is_dirty(check_relationship=True)]
+                    for gene in [parse_molecule(g) for g in source.get('genetic_modification_isogenic_target_locus_list', [])]:
+                        logger.info('Added gene: %s' % gene)
+                        isogenic_modification.target_locus.add(gene)
 
-                if True in dirty:
-                    if isogenic_modification_created:
-                        logger.info('Added gene isogenic modification: %s' % isogenic_modification)
-                    else:
-                        logger.info('Updated gene isogenic modification: %s' % isogenic_modification)
+                    dirty = [isogenic_modification.is_dirty(check_relationship=True)]
 
-                    isogenic_modification.save()
+                    if True in dirty:
+                        if isogenic_modification_created:
+                            logger.info('Added gene isogenic modification: %s' % isogenic_modification)
+                        else:
+                            logger.info('Updated gene isogenic modification: %s' % isogenic_modification)
 
-                    return True
+                        isogenic_modification.save()
+                        dirty_genetic_modification += [True]
 
-                return False
+        if True in dirty_genetic_modification:
+            logger.info('Modified genetic modification')
+            return True
+        else:
+            return False
 
 
 @inject_valuef
 def parse_disease_associated_genotype(valuef, source, cell_line):
 
-    if valuef('carries_disease_phenotype_associated_variants_flag', 'bool') and valuef('variant_of_interest_flag', 'bool'):
+    if valuef('carries_disease_phenotype_associated_variants_flag'):
 
         cell_line_disease_genotype, cell_line_disease_genotype_created = CelllineDiseaseGenotype.objects.get_or_create(cell_line=cell_line)
 
+        cell_line_disease_genotype.carries_disease_phenotype_associated_variants = valuef('carries_disease_phenotype_associated_variants_flag', 'nullbool')
+        cell_line_disease_genotype.variant_of_interest = valuef('variant_of_interest_flag', 'nullbool')
         cell_line_disease_genotype.allele_carried = valuef('rs_allele_carried')
         cell_line_disease_genotype.cell_line_form = valuef('rs_cell_line_variant_homozygote_heterozygote')
         cell_line_disease_genotype.chormosome = valuef('variant_details_chromosome')
@@ -1132,15 +1210,20 @@ def parse_characterization(valuef, source, cell_line):
 
     cell_line_characterization, created = CelllineCharacterization.objects.get_or_create(cell_line=cell_line)
 
+    certificate_of_analysis_flag = valuef('certificate_of_analysis_flag', 'nullbool')
     certificate_of_analysis_passage_number = valuef('certificate_of_analysis_passage_number')
+
+    virology_screening_flag = valuef('virology_screening_flag', 'nullbool')
     screening_hiv1 = valuef('virology_screening_hiv_1_result')
     screening_hiv2 = valuef('virology_screening_hiv_2_result')
     screening_hepatitis_b = valuef('virology_screening_hbv_result')
     screening_hepatitis_c = valuef('virology_screening_hcv_result')
     screening_mycoplasma = valuef('virology_screening_mycoplasma_result')
 
-    if len([x for x in (certificate_of_analysis_passage_number, screening_hiv1, screening_hiv2, screening_hepatitis_b, screening_hepatitis_c, screening_mycoplasma) if x is not None]):
+    if len([x for x in (certificate_of_analysis_flag, certificate_of_analysis_passage_number, virology_screening_flag, screening_hiv1, screening_hiv2, screening_hepatitis_b, screening_hepatitis_c, screening_mycoplasma) if x is not None]):
+        cell_line_characterization.certificate_of_analysis_flag = certificate_of_analysis_flag
         cell_line_characterization.certificate_of_analysis_passage_number = certificate_of_analysis_passage_number
+        cell_line_characterization.virology_screening_flag = virology_screening_flag
         cell_line_characterization.screening_hiv1 = screening_hiv1
         cell_line_characterization.screening_hiv2 = screening_hiv2
         cell_line_characterization.screening_hepatitis_b = screening_hepatitis_b
@@ -1165,30 +1248,45 @@ def parse_doc(valuef, source):
     print valuef('filename_enc')
 
 
-# @inject_valuef
-# def parse_characterization_pluritest(valuef, source, cell_line):
+@inject_valuef
+def parse_characterization_pluritest(valuef, source, cell_line):
 
-    # for doc in valuef(['characterisation_epipluriscore_data', 'uploads']):
+    # for doc in valuef(['characterisation_pluritest_data', 'uploads']):
     #     parse_doc(doc)
 
-    # cell_line_characterization_pluritest, created = CelllineCharacterizationPluritest.objects.get_or_create(cell_line=cell_line)
-    #
-    # cell_line_characterization_pluritest.pluripotency_score = valuef('')
-    # cell_line_characterization_pluritest.novelty_score = valuef('')
-    # cell_line_characterization_pluritest.microarray_url = valuef('')
-    #
-    # if created or cell_line_characterization_pluritest.is_dirty():
-    #     if created:
-    #         logger.info('Added cell line characterization pluritest: %s' % cell_line_characterization_pluritest)
-    #     else:
-    #         logger.info('Updated cell line characterization pluritest: %s' % cell_line_characterization_pluritest)
-    #
-    #     cell_line_characterization_pluritest.save()
-    #
-    #     return True
-    #
-    # return False
+    if valuef('characterisation_pluritest_flag'):
+        cell_line_characterization_pluritest, created = CelllineCharacterizationPluritest.objects.get_or_create(cell_line=cell_line)
 
+        cell_line_characterization_pluritest.pluritest_flag = valuef('characterisation_pluritest_flag', 'nullbool')
+        cell_line_characterization_pluritest.pluripotency_score = valuef(['characterisation_pluritest_data', 'pluripotency_score'])
+        cell_line_characterization_pluritest.novelty_score = valuef(['characterisation_pluritest_data', 'novelty_score'])
+        cell_line_characterization_pluritest.microarray_url = valuef(['characterisation_pluritest_data', 'microarray_url'])
+
+        if created or cell_line_characterization_pluritest.is_dirty():
+            if created:
+                logger.info('Added cell line characterization pluritest: %s' % cell_line_characterization_pluritest)
+            else:
+                logger.info('Updated cell line characterization pluritest: %s' % cell_line_characterization_pluritest)
+
+            cell_line_characterization_pluritest.save()
+
+            return True
+
+        return False
+
+
+# @inject_valuef
+# def parse_characterization_epipluriscore(valuef, source, cell_line):
+#
+#     # for doc in valuef(['characterisation_epipluriscore_data', 'uploads']):
+#     #     parse_doc(doc)
+#
+#     if valuef('characterisation_epipluriscore_flag'):
+#         cell_line_characterization_epipluriscore, created = CelllineCharacterizationEpipluriscore.objects.get_or_create(cell_line=cell_line)
+#
+#         cell_line_characterization_epipluriscore.epipluriscore_flag = valuef('characterisation_epipluriscore_flag', 'nullbool')
+#         cell_line_characterization_epipluriscore.score = valuef(['characterisation_epipluriscore_data', 'score'])
+#
 
 @inject_valuef
 def parse_characterization_markers(valuef, source, cell_line):

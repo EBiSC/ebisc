@@ -374,6 +374,7 @@ class CelllineAliquot(models.Model):
 
     batch = models.ForeignKey('CelllineBatch', verbose_name=_(u'Cell line'), related_name='aliquots')
     biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    name = models.CharField(_(u'Name'), max_length=50, null=True, blank=True)
 
     derived_from_aliqot = models.ForeignKey('self', verbose_name=_(u'Derived from aliquot'), null=True, blank=True)
 
@@ -452,6 +453,10 @@ class CelllineCultureConditions(DirtyFieldsMixin, models.Model):
     number_of_vials_banked = models.CharField(_(u'No. Vials banked (pre-EBiSC)'), max_length=10, null=True, blank=True)
     passage_history = models.NullBooleanField(_(u'Passage history (back to reprogramming)'), default=None, null=True, blank=True)
     culture_history = models.NullBooleanField(_(u'Culture history (methods used)'), default=None, null=True, blank=True)
+
+    rock_inhibitor_used_at_passage = models.CharField(u'Rock inhibitor (Y27632) used at passage', max_length=10, choices=EXTENDED_BOOL_CHOICES, default='unknown')
+    rock_inhibitor_used_at_cryo = models.CharField(u'Rock inhibitor (Y27632) used at cryo', max_length=10, choices=EXTENDED_BOOL_CHOICES, default='unknown')
+    rock_inhibitor_used_at_thaw = models.CharField(u'Rock inhibitor (Y27632) used at thaw', max_length=10, choices=EXTENDED_BOOL_CHOICES, default='unknown')
 
     class Meta:
         verbose_name = _(u'Cell line culture conditions')
@@ -582,6 +587,10 @@ class CelllineNonIntegratingVector(DirtyFieldsMixin, models.Model):
 
     genes = models.ManyToManyField(Molecule, blank=True)
 
+    detectable = models.CharField(u'Is reprogramming vector detectable', max_length=10, choices=EXTENDED_BOOL_CHOICES, default='unknown')
+    methods = ArrayField(models.CharField(max_length=50), verbose_name=_(u'Methods used'), null=True, blank=True)
+    detectable_notes = models.TextField(u'Notes on reprogramming vector detection', null=True, blank=True)
+
     class Meta:
         verbose_name = _(u'Cell line non integrating vector')
         verbose_name_plural = _(u'Cell line non integrating vectors')
@@ -603,6 +612,10 @@ class CelllineIntegratingVector(DirtyFieldsMixin, models.Model):
 
     genes = models.ManyToManyField(Molecule, blank=True)
 
+    silenced = models.CharField(u'Have the reprogramming vectors been silenced', max_length=10, choices=EXTENDED_BOOL_CHOICES, default='unknown')
+    methods = ArrayField(models.CharField(max_length=50), verbose_name=_(u'Methods used'), null=True, blank=True)
+    silenced_notes = models.TextField(u'Notes on reprogramming vector silencing', null=True, blank=True)
+
     class Meta:
         verbose_name = _(u'Cell line integrating vector')
         verbose_name_plural = _(u'Cell line integrating vectors')
@@ -613,29 +626,28 @@ class CelllineIntegratingVector(DirtyFieldsMixin, models.Model):
 
 class VectorFreeReprogrammingFactor(models.Model):
 
-    vector_free_reprogramming_factor = models.CharField(_(u'Vector free reprogram factor'), max_length=15, blank=True)
-    reference_id = models.CharField(_(u'Referenceid'), max_length=45, blank=True)
+    name = models.CharField(_(u'Vector free reprogram factor'), max_length=50, unique=True)
 
     class Meta:
         verbose_name = _(u'Vector free reprogram factor')
         verbose_name_plural = _(u'Vector free reprogram factors')
-        ordering = ['vector_free_reprogramming_factor']
+        ordering = ['name']
 
     def __unicode__(self):
-        return u'%s' % (self.vector_free_reprogramming_factor,)
+        return u'%s' % (self.name,)
 
 
-class CelllineVectorFreeReprogrammingFactors(models.Model):
+class CelllineVectorFreeReprogrammingFactors(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='vector_free_reprogramming_factors')
-    factor = models.ForeignKey(VectorFreeReprogrammingFactor, verbose_name=_(u'Vector-free reprogramming factor'), null=True, blank=True)
+    factors = models.ManyToManyField(VectorFreeReprogrammingFactor, verbose_name=_(u'Vector-free reprogramming factor'), blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line Vector-free Programming Factor')
         verbose_name_plural = _(u'Cell line Vector-free Programming Factors')
 
     def __unicode__(self):
-        return unicode(self.factor)
+        return u'%s' % (self.id,)
 
 
 # -----------------------------------------------------------------------------
@@ -651,8 +663,10 @@ class CelllineCharacterization(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
 
+    certificate_of_analysis_flag = models.NullBooleanField(_(u'Certificate of analysis flag'))
     certificate_of_analysis_passage_number = models.CharField(_(u'Certificate of analysis passage number'), max_length=10, null=True, blank=True)
 
+    virology_screening_flag = models.NullBooleanField(_(u'Virology screening flag'))
     screening_hiv1 = models.CharField(_(u'Hiv1 screening'), max_length=20, choices=SCREENING_CHOICES, null=True, blank=True)
     screening_hiv2 = models.CharField(_(u'Hiv2 screening'), max_length=20, choices=SCREENING_CHOICES, null=True, blank=True)
 
@@ -674,6 +688,7 @@ class CelllineCharacterizationPluritest(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
 
+    pluritest_flag = models.NullBooleanField(_(u'Pluritest flag'))
     pluripotency_score = models.CharField(_(u'Pluripotency score'), max_length=10, null=True, blank=True)
     novelty_score = models.CharField(_(u'Novelty score'), max_length=10, null=True, blank=True)
     microarray_url = models.URLField(_(u'Microarray data link'), max_length=300, null=True, blank=True)
@@ -691,6 +706,7 @@ class CelllineCharacterizationEpipluriscore(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
 
+    epipluriscore_flag = models.NullBooleanField(_(u'EpiPluriScore flag'))
     score = models.CharField(_(u'Pluripotency score'), max_length=10, null=True, blank=True)
     marker_mcpg = models.NullBooleanField(_(u'Marker mCpG'))
     marker_OCT4 = models.NullBooleanField(_(u'Marker OCT4'))
@@ -1196,6 +1212,9 @@ class CelllineDiseaseGenotype(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genotyping_variant')
 
+    carries_disease_phenotype_associated_variants = models.NullBooleanField(_(u'Cell line carries variants associated with the disease phenotype'))
+    variant_of_interest = models.NullBooleanField(_(u'Is the variant of interest, e.g. disease associated'))
+
     allele_carried = models.CharField(_(u'Allele carried through'), max_length=12, null=True, blank=True)
     cell_line_form = models.CharField(_(u'Is the cell line homozygote or heterozygot for this variant'), max_length=12, null=True, blank=True)
 
@@ -1307,6 +1326,8 @@ class DonorGenotypingRsNumber(models.Model):
 class CelllineGeneticModification(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification')
+    genetic_modification_flag = models.NullBooleanField(_(u'Genetic modification flag'))
+    types = ArrayField(models.CharField(max_length=50), verbose_name=_(u'Types of modification'), null=True, blank=True)
     protocol = models.FileField(_(u'Protocol'), upload_to=upload_to, null=True, blank=True)
 
     class Meta:
@@ -1375,7 +1396,7 @@ class GeneticModificationIsogenic(DirtyFieldsMixin, models.Model):
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_isogenic')
     target_locus = models.ManyToManyField(Molecule, blank=True)
     change_type = models.CharField(_(u'Type of change'), max_length=45, null=True, blank=True)
-    modified_sequence = models.CharField(_(u'Modified sequence'), max_length=100, null=True, blank=True)
+    modified_sequence = models.CharField(_(u'Modified sequence'), max_length=500, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Genetic modification - Isogenic modification')
