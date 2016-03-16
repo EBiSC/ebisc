@@ -33,15 +33,16 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'ebisc',
+    'ebisc.cms',
     'ebisc.site',
     'ebisc.celllines',
-    'ebisc.search',
     'ebisc.executive',
 
     'tastypie',
     'django_cleanup',
     'sorl.thumbnail',
     'debug_toolbar',
+    'markdown_deux',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -150,6 +151,18 @@ LIMS = {
     'url': 'http://www.ebi.ac.uk/~ebiscdcc/api/batch.json',
     'username': 'ebisc',
     'password': 'ebisc321',
+}
+
+# -----------------------------------------------------------------------------
+# Markdown
+
+MARKDOWN_DEUX_STYLES = {
+    "default": {
+        "extras": {
+            "code-friendly": None,
+        },
+        "safe_mode": False,
+    },
 }
 
 # -----------------------------------------------------------------------------
