@@ -1,0 +1,36 @@
+.steps {
+  display: table;
+  border-top: $base-border;
+  margin-top: 1rem;
+
+  > div {
+    display: table-row;
+  }
+
+  .label, .description {
+    display: table-cell;
+    padding: 1.5rem 0;
+    border-bottom: $base-border;
+  }
+
+  .label {
+    white-space: nowrap;
+    padding-right: 1rem;
+
+    > span {
+      display: inline-block;
+      background-color: $color-blue-light;
+      color: white;
+      padding: 0.5rem 0.7rem 0.6rem 0.7rem;
+      font-size: 1.1rem;
+      line-height: 1rem;
+      font-weight: bold;
+      border-radius: 50px;
+      box-sizing: border-box;
+      min-width: 2rem;
+    }
+  }
+
+  .description {
+  }
+}

@@ -1,9 +1,20 @@
 header {
   @include organism;
   position: relative;
+  min-height: 105px;
 
   .logo {
     display: inline-block;
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    @include breakpoint(map-get($breakpoints, medium)) {
+      width: 100px;
+      padding-top: 15px;
+    }
   }
 
   .collapsible-menu {
@@ -11,19 +22,14 @@ header {
     margin-left: 40px;
 
     @include breakpoint(map-get($breakpoints, medium)) {
-      margin-left: 15px;
-    }
-
-    .collapsible-menu-items
-    {
-      li a
-      {
-      }
+      margin-left: 5px;
     }
   }
 
   .user-account {
-    float: right;
+    position: absolute;
+    top: 10px;
+    right: 20px;
     font-size: $font-size-small;
   }
 }

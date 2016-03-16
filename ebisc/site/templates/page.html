@@ -2,8 +2,12 @@
 
 {% load markdown_deux_tags %}
 
+{% block body-class %}template-default{% endblock%}
+
 {% block title %}{{ page.title }}{% endblock %}
 
 {% block article %}
-{{ page.body|markdown|safe }}
+<div class="text-page">
+    {{ page.body|markdown|safe }}
+</div>
 {% endblock %}
