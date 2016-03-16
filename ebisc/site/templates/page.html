@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% load markdown_deux_tags %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block article %}
+{{ page.body|markdown|safe }}
+{% endblock %}
