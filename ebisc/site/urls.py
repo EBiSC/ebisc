@@ -1,7 +1,11 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-from .views import document
+from . import views
 
-urlpatterns = patterns('',
-    url(r'(?P<path>.*)', document, name='document'),
-)
+urlpatterns = [
+    # Cellline search
+    url(r'^$', views.search, name='search'),
+
+    # Pages
+    url(r'(?P<path>.*)', views.page, name='page'),
+]

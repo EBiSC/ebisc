@@ -1,0 +1,19 @@
+.text-page {
+  max-width: 900px;
+
+  @include breakpoint(map-get($breakpoints, large)) {
+    max-width: auto;
+  }
+
+  h2, h3, h4 {
+    color: $action-color;
+  }
+
+  ul {
+    @extend %bulleted-ul;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+}
