@@ -45,6 +45,8 @@ def get_menu(request):
 
     MENU = [
         (reverse('site:search'), 'Cell Line Catalogue'),
+        ('/customer-information/', 'For customers'),
+        ('/depositors/', 'For depositors'),
     ]
 
     if request.user.has_perm('auth.can_view_executive_dashboard'):
