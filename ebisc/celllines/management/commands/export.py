@@ -11,6 +11,7 @@ from ebisc.celllines import exporter
 DOCS = '''
 Usage:
   export ecacc
+  export batches
 '''
 
 
@@ -23,3 +24,7 @@ class Command(DocOptCommand):
 
         if args.get('ecacc'):
             exporter.ecacc.run()
+
+        if args.get('batches'):
+            logger.info('Exporting batches')
+            exporter.batches.run()
