@@ -84,6 +84,11 @@ hr {
   }
 }
 
+.large {
+  font-size: $font-size-large;
+  color: darken($color-text, 10%);
+}
+
 .comment {
   font-style: italic;
   color: lighten($color-text, 30%);
