@@ -126,6 +126,7 @@ def run():
             # ECACC cat no.
 
             batch.cell_line.ecacc_id = lims_batch_data.ecacc_cat_no
+            batch.cell_line.save()
 
             # if 'flag_go_live' in lims_batch_data:
             #     if lims_batch_data.flag_go_live == '1':
@@ -135,7 +136,6 @@ def run():
             # else:
             #     batch.cell_line.available_for_sale = False
             #
-            # batch.cell_line.save()
 
             # CLIPs
 
