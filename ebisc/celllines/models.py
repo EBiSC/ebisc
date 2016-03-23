@@ -381,7 +381,7 @@ class CelllineAliquot(models.Model):
     class Meta:
         verbose_name = _(u'Cell line aliquot')
         verbose_name_plural = _(u'Cell line aliquotes')
-        ordering = ['biosamples_id']
+        ordering = ['name']
 
     def __unicode__(self):
         return u'%s' % (self.biosamples_id,)
