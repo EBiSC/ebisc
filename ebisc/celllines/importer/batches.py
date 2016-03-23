@@ -18,7 +18,8 @@ def run(filename):
     with open(filename, 'rU') as csvfile:
 
         # reader = csv.reader(csvfile, delimiter='\t')
-        reader = csv.reader(csvfile, dialect=csv.excel_tab, delimiter='\t')
+        reader = csv.reader(csvfile, dialect=csv.excel_tab, delimiter=',')
+        # reader = csv.reader(csvfile, dialect=csv.excel_tab, delimiter='\t')
 
         next(reader, None)
 
