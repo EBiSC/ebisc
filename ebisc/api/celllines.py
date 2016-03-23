@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineCharacterizationEpipluriscore, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
+from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineCharacterizationEpipluriscore, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
 
 
 # -----------------------------------------------------------------------------
@@ -335,6 +335,19 @@ class BatchCultureConditionsResource(ModelResource):
 
 
 # -----------------------------------------------------------------------------
+# Batch Vials
+
+class CelllineAliquotResource(ModelResource):
+    biosamples_id = fields.CharField('biosamples_id')
+    name = fields.CharField('name')
+
+    class Meta:
+        queryset = CelllineAliquot.objects.all()
+        include_resource_uri = False
+        fields = ('biosamples_id', 'name')
+
+
+# -----------------------------------------------------------------------------
 # Batch
 
 class CelllineBatchResource(ModelResource):
@@ -351,6 +364,8 @@ class CelllineBatchResource(ModelResource):
     certificate_of_analysis = fields.DictField(null=True)
 
     images = fields.ToManyField(CelllineBatchImagesResource, 'images', null=True, full=True)
+
+    vials = fields.ToManyField(CelllineAliquotResource, 'aliquots', null=True, full=True)
 
     class Meta:
         queryset = CelllineBatch.objects.all()

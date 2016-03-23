@@ -129,10 +129,11 @@ def batch_data(request, name, batch_biosample_id):
 
     writer = csv.writer(response)
 
-    writer.writerow(['Cell line Biosample ID', 'Cell line name', 'Batch Biosample ID', 'Batch ID', 'Vial Biosample ID'])
+    # writer.writerow(['Cell line Biosample ID', 'Cell line name', 'Batch Biosample ID', 'Batch ID', 'Vial Biosample ID'])
+    writer.writerow(['Cell line alternative names', 'Cell line name', 'ECACC Cat. no.', 'Batch ID', 'Batch Biosample ID', 'Vial number', 'Vial Biosample ID'])
 
     for aliquot in batch.aliquots.all():
-        writer.writerow([batch.cell_line.biosamples_id, batch.cell_line.name, batch.biosamples_id, batch.batch_id, aliquot.biosamples_id])
+        writer.writerow([batch.cell_line.alternative_names, batch.cell_line.name, batch.cell_line.ecacc_id, batch.batch_id, batch.biosamples_id, aliquot.name, aliquot.biosamples_id])
 
     return response
 
