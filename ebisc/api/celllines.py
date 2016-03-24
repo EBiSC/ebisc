@@ -355,6 +355,8 @@ class CelllineBatchResource(ModelResource):
     biosamples_id = fields.CharField('biosamples_id', unique=True)
     batch_id = fields.CharField('batch_id')
 
+    batch_type = fields.CharField('get_batch_type_display')
+
     vials_at_roslin = fields.IntegerField('vials_at_roslin', null=True)
     vials_shipped_to_ecacc = fields.IntegerField('vials_shipped_to_ecacc', null=True)
     vials_shipped_to_fraunhoffer = fields.IntegerField('vials_shipped_to_fraunhoffer', null=True)
