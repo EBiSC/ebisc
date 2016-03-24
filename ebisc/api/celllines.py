@@ -424,6 +424,9 @@ class CelllineResource(ModelResource):
     name = fields.CharField('name', unique=True)
     alternative_names = fields.CharField('alternative_names', null=True)
 
+    # Validation
+    validation_status = fields.CharField('get_validated_display')
+
     # Availability
     flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)
     availability = fields.CharField('get_availability_display')
