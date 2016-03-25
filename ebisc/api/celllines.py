@@ -340,6 +340,7 @@ class BatchCultureConditionsResource(ModelResource):
 class CelllineAliquotResource(ModelResource):
     biosamples_id = fields.CharField('biosamples_id')
     name = fields.CharField('name')
+    number = fields.CharField('number')
 
     class Meta:
         queryset = CelllineAliquot.objects.all()
