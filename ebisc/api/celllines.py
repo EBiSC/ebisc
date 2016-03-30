@@ -340,6 +340,7 @@ class BatchCultureConditionsResource(ModelResource):
 class CelllineAliquotResource(ModelResource):
     biosamples_id = fields.CharField('biosamples_id')
     name = fields.CharField('name')
+    number = fields.CharField('number')
 
     class Meta:
         queryset = CelllineAliquot.objects.all()
@@ -354,6 +355,8 @@ class CelllineBatchResource(ModelResource):
 
     biosamples_id = fields.CharField('biosamples_id', unique=True)
     batch_id = fields.CharField('batch_id')
+
+    batch_type = fields.CharField('get_batch_type_display')
 
     vials_at_roslin = fields.IntegerField('vials_at_roslin', null=True)
     vials_shipped_to_ecacc = fields.IntegerField('vials_shipped_to_ecacc', null=True)
@@ -423,6 +426,9 @@ class CelllineResource(ModelResource):
     # Names
     name = fields.CharField('name', unique=True)
     alternative_names = fields.CharField('alternative_names', null=True)
+
+    # Validation
+    validation_status = fields.CharField('get_validated_display')
 
     # Availability
     flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)
