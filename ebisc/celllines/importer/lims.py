@@ -90,9 +90,12 @@ def run():
                         )
                         batch_image.save()
 
+                        filename, file_extension = os.path.splitext(image.file)
+
                         batch_image.md5 = value_of_file(
                             image.file,
                             batch_image.image,
+                            filename='%s-%s.%s' % (lims_batch.cell_line, hashlib.md5(os.path.basename(image.file)).hexdigest(), file_extension),
                             source_md5=image.md5,
                             current_md5=batch_image.md5,
                         )
@@ -123,6 +126,7 @@ def run():
             # ECACC cat no.
 
             batch.cell_line.ecacc_id = lims_batch_data.ecacc_cat_no
+            batch.cell_line.save()
 
             # if 'flag_go_live' in lims_batch_data:
             #     if lims_batch_data.flag_go_live == '1':
@@ -132,7 +136,6 @@ def run():
             # else:
             #     batch.cell_line.available_for_sale = False
             #
-            # batch.cell_line.save()
 
             # CLIPs
 
@@ -186,15 +189,19 @@ def value_of_int(value):
     return value
 
 
-def value_of_file(value, file_field, source_md5=None, current_md5=None):
+def value_of_file(value, file_field, filename=None, source_md5=None, current_md5=None):
 
-    # Save file and return its md5
+    # Save file for file_field and return its md5
 
     if value == '':
         file_field.delete()
         return None
 
-    source_filename = os.path.basename(value)
+    if filename is None:
+        source_filename = os.path.basename(value)
+    else:
+        source_filename = filename
+
     current_filename = os.path.basename(file_field.name)
 
     if source_md5 is not None and current_md5 is not None and source_md5 == current_md5 and source_filename == current_filename:
@@ -210,8 +217,7 @@ def value_of_file(value, file_field, source_md5=None, current_md5=None):
             f.write(chunk)
 
         f.seek(0)
-        file_field.save(os.path.basename(value), File(f), save=False)
-
+        file_field.save(source_filename, File(f), save=False)
         file_field.instance.save()
 
         f.seek(0)

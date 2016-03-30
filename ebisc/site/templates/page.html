@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% load markdown_deux_tags %}
+
+{% block body-class %}template-default{% endblock%}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block article %}
+<div class="text-page">
+    {{ page.body|markdown|safe }}
+</div>
+{% endblock %}

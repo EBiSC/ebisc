@@ -2,13 +2,10 @@
 
 ## Before launch
 
-- [x] implement CLIP upoload
-- [x] user management (accounts + open the catalogue)
-- [x] change from BioSamples ID to hPSCreg name in the URLs and tables
-- [x] implement flag "go live" and status/availability to be set in the IMS (exec dash)
-- [x] Set ECACC catalogue numbers for expand to order lines - get all assigned ECACC catalogue numbers from RC
-- [x] change ECACC URL
-- [x] can_manage_executive_dashboard works only for superusers
+- [] user management (create accounts for exec dash)
+- [] display static documents for depositors and customers
+- [] ontology search
+- [] exec dash documentation
 
 Data import and display:
 - [x] get feedback on data displayed in the Catalogue
@@ -16,20 +13,23 @@ Data import and display:
 - [ ] ordering in the catalogue (initial state) - has to be alphabetical by name
 
 Elastic search:
-- [x] remove biosamples id from table
-- [x] add donor sex to filters
 - [ ] fix filter loading/init on facet additions
 - [ ] add search fields
 - [ ] reset search input
 
 ## LIMS exchange
 
+### Batch and Vial biosample data
+
+- [] making new batches
+- [] producing print labels
+
+
 ### Old data from hPSCreg
 
-[] primary_celltype_purl
 [x] integrating_vector_gene_list
 [x] non_integrating_vector_gene_list
-[] vector_free_types
+[x] vector_free_types
 [x] feeder_cells_name
 [x] culture_conditions_medium_culture_medium_other_supplements
 [x] internal_donor_ids
@@ -37,18 +37,17 @@ Elastic search:
 [x] donor_karyotype
 [x] virology_screening_flag
 [x] certificate_of_analysis_flag
-[] culture_conditions_medium_culture_medium_protocol_file
 
 
 ### New data from hPSCreg
 
-In the depositor culture conditions section:
+1) In the depositor culture conditions section:
 
   1)  "Has Rock inhibitor (Y27632) been used at passage previously with this cell line?" -> “Yes” or “No” or “Unknown”  (Mandatory question)
   2)  "Has Rock inhibitor (Y27632) been used at cryo previously with this cell line?" -> “Yes” or “No” or “Unknown”  (Mandatory question)
   3)  "Has Rock inhibitor (Y27632) been used at thaw previously with this cell line?" -> “Yes” or “No” or “Unknown”  (Mandatory question)
 
-In the reprogramming method section.
+2) In the reprogramming method section.
 
   If the depositor selects non-intergrating vector then ask:
   	4) Is reprogramming vector detectable? -> “Yes” or “No” or “Unknown”  (Mandatory question)
@@ -64,6 +63,9 @@ In the reprogramming method section.
   		7b) “Notes on reprogramming vector silencing” -> Free text  (Optional question)
   		7c) “Files and images showing reprogramming vector expressed or silenced” -> File upload  (Optional question)
 
+3) Characterization
+
+4) Genetic modification
 
 ## hPSCreg importer
 
@@ -72,7 +74,20 @@ In the reprogramming method section.
 - Check for updates for genes in Reprogramming method and Genetic modification
 - Check Disease associated genotype (no data yet)
 
+## ECACC catalogue numbers
+
+1) The IMS currently holds ECACC numbers for go_live lines
+2) This week I’ve asked Rachel to send me the already assigned ECACC numbers for all lines, and I received a spreadsheet with the ECACC numbers matched to cell line names
+3) We have to update the IMS with this data
+4) Then we can proceed with:
+  - assigning numbers to lines already in the IMS that don’t have ECACC numbers yet
+  - implementing assignment of ECACC numbers when new line is imported
+
+## Predeposition process
+
 ## Exec dashboard
+
+- [] implement flag "go live" and status/availability/recall to be set in the IMS (exec dash) - add comments (and history of changes)
 
 - Data display: depositor data, batch QC data, document management
 - EBiSC Board Members (set user accounts)
@@ -96,7 +111,6 @@ In the reprogramming method section.
 ## Cell line Catalog
 
 - Table:
-    - Biosamples ID
     - Name
     - Depositor
     - Disease
@@ -107,6 +121,7 @@ In the reprogramming method section.
     - Depositor
     - Cell type
     - Tissue source
+    - Donor sex
 - For sales link to ECACC? ... It would make more sense if users could "fill" their basket on IMS and then just complete the checkout on ECACC.
 - hPSCreg "comparator line"
 

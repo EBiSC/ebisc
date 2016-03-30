@@ -1,4 +1,5 @@
 import csv
+import re
 
 import logging
 logger = logging.getLogger('management.commands')
@@ -24,12 +25,12 @@ def run(filename):
 
         for row in reader:
 
-            (vial_biosamples_id, _, _, cellline_biosamples_id, _, _, _, _, batch_biosamples_id) = row
+            (vial_biosamples_id, vial_name, _, cellline_biosamples_id, _, _, _, _, batch_biosamples_id) = row
 
             try:
                 cell_line = Cellline.objects.get(biosamples_id=cellline_biosamples_id)
                 batch = create_batch(cell_line, batch_biosamples_id)
-                create_aliquot(batch, vial_biosamples_id)
+                create_aliquot(batch, vial_biosamples_id, vial_name)
 
             except Cellline.DoesNotExist:
                 pass
@@ -59,12 +60,19 @@ def create_batch(cell_line, batch_biosamples_id):
         return batch
 
 
-def create_aliquot(batch, aliquot_biosamples_id):
+def create_aliquot(batch, aliquot_biosamples_id, aliquot_name):
 
     aliquot, created = CelllineAliquot.objects.get_or_create(
         batch=batch,
         biosamples_id=aliquot_biosamples_id,
     )
+
+    aliquot_number = re.split('[\s]+', aliquot_name)[-1]
+
+    aliquot.name = aliquot_name
+    aliquot.number = aliquot_number
+
+    aliquot.save()
 
     if created:
         logger.info('Created aliquot {} for cell line {} and batch {}'.format(aliquot, batch.cell_line, batch))

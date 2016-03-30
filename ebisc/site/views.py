@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import os
-
 import django.shortcuts
 from django.http import Http404
 from django.template import TemplateDoesNotExist
 from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404
+
+from ebisc.cms.models import Page
+from ebisc.celllines.models import Cellline
 
 
 # -----------------------------------------------------------------------------
@@ -28,29 +30,44 @@ class Menu(object):
 
 
 # -----------------------------------------------------------------------------
-# Document
+# Catalog (cellines are served under pages)
+
+def search(request):
+    return render(request, 'catalog/search.html', {})
+
+
+# -----------------------------------------------------------------------------
+# Pages
 
 def get_menu(request):
 
     path = request.path
 
+    MENU = [
+        (reverse('site:search'), 'Cell Line Catalogue'),
+        ('/customer-information/', 'For customers'),
+        ('/depositors/', 'For depositors'),
+    ]
+
     if request.user.has_perm('auth.can_view_executive_dashboard'):
-        MENU = (
-            (reverse('search:search'), 'Cell Line Catalogue'),
-            (reverse('executive:dashboard'), 'Executive Dashboard'),
-        )
-    else:
-        MENU = (
-            (reverse('search:search'), 'Cell Line Catalogue'),
-        )
+        MENU = MENU + [(reverse('executive:dashboard'), 'Executive Dashboard')]
 
     return Menu(MENU, path)
 
 
-def document(request, path):
+def page(request, path):
 
-    path = 'site/' + path
-    return render(request, os.path.join(path.encode('ascii', 'ignore'), 'index.html'))
+    try:
+        name = path.rstrip('/')
+        return render(request, 'catalog/cellline.html', {
+            'cellline': Cellline.objects.get(name=name, available_for_sale_at_ecacc=True)
+        })
+    except Cellline.DoesNotExist:
+        pass
+
+    return render(request, 'page.html', {
+        'page': get_object_or_404(Page, path='/' + path, published=True)
+    })
 
 
 def render(request, path, context={}):

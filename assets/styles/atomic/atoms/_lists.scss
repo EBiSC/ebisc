@@ -21,6 +21,29 @@ ol {
       display: inline-block;
     }
   }
+
+  &%bulleted-ul {
+    list-style-type: none;
+    margin-bottom: $small-spacing;
+    padding-left: 0;
+
+    li {
+      padding-left: 2rem;
+      padding-bottom: $small-spacing/2;
+      text-indent: -0rem;
+      position: relative;
+
+      &:before {
+        content: "\2022";
+        position: absolute;
+        left: 0.8rem;
+        top: 0.8rem;
+        font-size: 2.2rem;
+        line-height: 0rem;
+        color: $medium-gray;
+      }
+    }
+  }
 }
 
 

@@ -27,6 +27,7 @@
 @import 'atomic/molecules/main';
 @import 'atomic/molecules/forms';
 @import 'atomic/molecules/pagination';
+@import 'atomic/molecules/steps';
 @import 'atomic/molecules/tables';
 
 @import 'atomic/organisms/organism';
@@ -45,3 +46,4 @@
 @import 'atomic/pages/home';
 @import 'atomic/pages/login';
 @import 'atomic/pages/catalogue-cell-line';
+@import 'atomic/pages/text-page';

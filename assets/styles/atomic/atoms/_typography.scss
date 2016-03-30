@@ -84,6 +84,11 @@ hr {
   }
 }
 
+.large {
+  font-size: $font-size-large;
+  color: darken($color-text, 10%);
+}
+
 .comment {
   font-style: italic;
   color: lighten($color-text, 30%);
@@ -111,4 +116,10 @@ hr {
 
 .errorlist {
   color: $color-red-light;
+}
+
+.highlight {
+  @extend .lead;
+  @extend %card;
+  margin: 2rem 0 1rem 0;
 }

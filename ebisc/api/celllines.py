@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype
+from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineCharacterizationEpipluriscore, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
 
 
 # -----------------------------------------------------------------------------
@@ -101,6 +101,18 @@ class CelllineCharacterizationVirologyResource(ModelResource):
         fields = ('virology_screening_flag', 'hiv1', 'hiv2', 'hepatitis_b', 'hepatitis_c', 'mycoplasma',)
 
 
+class CelllineCharacterizationPluritestResource(ModelResource):
+
+    pluritest_flag = fields.BooleanField('pluritest_flag', null=True)
+    pluripotency_score = fields.CharField('pluripotency_score', null=True)
+    novelty_score = fields.CharField('novelty_score', null=True)
+
+    class Meta:
+        queryset = CelllineCharacterizationPluritest.objects.all()
+        include_resource_uri = False
+        fields = ('pluritest_flag', 'pluripotency_score', 'novelty_score',)
+
+
 class CelllineCharacterizationCoAResource(ModelResource):
 
     certificate_of_analysis_flag = fields.BooleanField('certificate_of_analysis_flag', null=True)
@@ -135,6 +147,95 @@ class CelllineDiseaseGenotypeResource(ModelResource):
         include_resource_uri = False
         fields = ('carries_disease_phenotype_associated_variants_flag', 'variant_of_interest_flag')
 
+
+# -----------------------------------------------------------------------------
+# CelllineGenoticModification
+
+class GeneticModificationResource(ModelResource):
+
+    genetic_modification_flag = fields.BooleanField('genetic_modification_flag', null=True)
+    types = fields.ListField('types', null=True)
+
+    class Meta:
+        queryset = CelllineGeneticModification.objects.all()
+        include_resource_uri = False
+        fields = ('genetic_modification_flag', 'types')
+
+
+class GeneticModificationTransgeneExpressionResource(ModelResource):
+
+    delivery_method = fields.CharField('delivery_method', null=True)
+    genes = fields.DictField(null=True)
+
+    class Meta:
+        queryset = GeneticModificationTransgeneExpression.objects.all()
+        include_resource_uri = False
+        fields = ('delivery_method', 'genes')
+
+    def dehydrate_genes(self, bundle):
+        if hasattr(bundle.obj, 'genes'):
+            return [gene.name for gene in bundle.obj.genes.all()]
+        else:
+            return []
+
+
+class GeneticModificationGeneKnockOutResource(ModelResource):
+
+    delivery_method = fields.CharField('delivery_method', null=True)
+    target_genes = fields.DictField(null=True)
+
+    class Meta:
+        queryset = GeneticModificationGeneKnockOut.objects.all()
+        include_resource_uri = False
+        fields = ('delivery_method', 'target_genes')
+
+    def dehydrate_target_genes(self, bundle):
+        if hasattr(bundle.obj, 'target_genes'):
+            return [gene.name for gene in bundle.obj.target_genes.all()]
+        else:
+            return []
+
+
+class GeneticModificationGeneKnockInResource(ModelResource):
+
+    delivery_method = fields.CharField('delivery_method', null=True)
+    target_genes = fields.DictField(null=True)
+    transgenes = fields.DictField(null=True)
+
+    class Meta:
+        queryset = GeneticModificationGeneKnockIn.objects.all()
+        include_resource_uri = False
+        fields = ('delivery_method', 'target_genes', 'transgenes')
+
+    def dehydrate_target_genes(self, bundle):
+        if hasattr(bundle.obj, 'target_genes'):
+            return [gene.name for gene in bundle.obj.target_genes.all()]
+        else:
+            return []
+
+    def dehydrate_transgenes(self, bundle):
+        if hasattr(bundle.obj, 'transgenes'):
+            return [gene.name for gene in bundle.obj.transgenes.all()]
+        else:
+            return []
+
+
+class GeneticModificationIsogenicResource(ModelResource):
+
+    change_type = fields.CharField('change_type', null=True)
+    modified_sequence = fields.CharField('modified_sequence', null=True)
+    target_locus = fields.DictField(null=True)
+
+    class Meta:
+        queryset = GeneticModificationIsogenic.objects.all()
+        include_resource_uri = False
+        fields = ('change_type', 'modified_sequence', 'target_locus')
+
+    def dehydrate_target_locus(self, bundle):
+        if hasattr(bundle.obj, 'target_locus'):
+            return [locus.name for locus in bundle.obj.target_locus.all()]
+        else:
+            return []
 
 # -----------------------------------------------------------------------------
 # Publication
@@ -234,12 +335,28 @@ class BatchCultureConditionsResource(ModelResource):
 
 
 # -----------------------------------------------------------------------------
+# Batch Vials
+
+class CelllineAliquotResource(ModelResource):
+    biosamples_id = fields.CharField('biosamples_id')
+    name = fields.CharField('name')
+    number = fields.CharField('number')
+
+    class Meta:
+        queryset = CelllineAliquot.objects.all()
+        include_resource_uri = False
+        fields = ('biosamples_id', 'name')
+
+
+# -----------------------------------------------------------------------------
 # Batch
 
 class CelllineBatchResource(ModelResource):
 
     biosamples_id = fields.CharField('biosamples_id', unique=True)
     batch_id = fields.CharField('batch_id')
+
+    batch_type = fields.CharField('get_batch_type_display')
 
     vials_at_roslin = fields.IntegerField('vials_at_roslin', null=True)
     vials_shipped_to_ecacc = fields.IntegerField('vials_shipped_to_ecacc', null=True)
@@ -250,6 +367,8 @@ class CelllineBatchResource(ModelResource):
     certificate_of_analysis = fields.DictField(null=True)
 
     images = fields.ToManyField(CelllineBatchImagesResource, 'images', null=True, full=True)
+
+    vials = fields.ToManyField(CelllineAliquotResource, 'aliquots', null=True, full=True)
 
     class Meta:
         queryset = CelllineBatch.objects.all()
@@ -300,38 +419,60 @@ class CelllineInformationPackResource(ModelResource):
 
 class CelllineResource(ModelResource):
 
+    # IDs
     biosamples_id = fields.CharField('biosamples_id', unique=True)
     ecacc_cat_no = fields.CharField('ecacc_id', unique=True, null=True)
 
-    flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)
-    availability = fields.CharField('get_availability_display')
-
+    # Names
     name = fields.CharField('name', unique=True)
     alternative_names = fields.CharField('alternative_names', null=True)
 
+    # Validation
+    validation_status = fields.CharField('get_validated_display')
+
+    # Availability
+    flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)
+    availability = fields.CharField('get_availability_display')
+
+    # Donor and disease
     primary_disease_diagnosed = fields.CharField('primary_disease_diagnosis')
     primary_disease = fields.ToOneField(DiseaseResource, 'primary_disease', null=True, full=True)
     disease_associated_phenotypes = fields.ListField('disease_associated_phenotypes', null=True)
 
-    primary_cell_type = fields.ToOneField(CelllineDerivationResource, 'derivation', null=True, full=True)
-    depositor_cellline_culture_conditions = fields.ToOneField(CelllineCultureConditionsResource, 'celllinecultureconditions', full=True, null=True)
-    virology_screening = fields.ToOneField(CelllineCharacterizationVirologyResource, 'celllinecharacterization', null=True, full=True)
-    cellline_certificate_of_analysis = fields.ToOneField(CelllineCharacterizationCoAResource, 'celllinecharacterization', null=True, full=True)
-    cellline_karyotype = fields.ToOneField(CelllineKaryotypeResource, 'karyotype', null=True, full=True)
-    cellline_disease_associated_genotype = fields.ToOneField(CelllineDiseaseGenotypeResource, 'genotyping_variant', null=True, full=True)
-
     donor_age = fields.CharField('donor_age', null=True)
     donor = fields.ToOneField(DonorResource, 'donor', null=True, full=True)
 
+    # Depositor
     depositor = fields.ToOneField(OrganizationResource, 'generator', null=True, full=True)
 
+    # Derivation
+    primary_cell_type = fields.ToOneField(CelllineDerivationResource, 'derivation', null=True, full=True)
+    reprogramming_method = fields.DictField(null=True)
+    reprogramming_method_vector_free_types = fields.DictField(null=True)
+
+    # Culture conditions
+    depositor_cellline_culture_conditions = fields.ToOneField(CelllineCultureConditionsResource, 'celllinecultureconditions', full=True, null=True)
+
+    # Characterization
+    virology_screening = fields.ToOneField(CelllineCharacterizationVirologyResource, 'celllinecharacterization', null=True, full=True)
+    cellline_certificate_of_analysis = fields.ToOneField(CelllineCharacterizationCoAResource, 'celllinecharacterization', null=True, full=True)
+    characterization_pluritest = fields.ToOneField(CelllineCharacterizationPluritestResource, 'celllinecharacterizationpluritest', null=True, full=True)
+
+    # Genotyping
+    cellline_karyotype = fields.ToOneField(CelllineKaryotypeResource, 'karyotype', null=True, full=True)
+    cellline_disease_associated_genotype = fields.ToOneField(CelllineDiseaseGenotypeResource, 'genotyping_variant', null=True, full=True)
+    genetic_modification = fields.ToOneField(GeneticModificationResource, 'genetic_modification', null=True, full=True)
+    genetic_modification_gene_knock_out = fields.ToOneField(GeneticModificationGeneKnockOutResource, 'genetic_modification_gene_knock_out', null=True, full=True)
+    genetic_modification_gene_knock_in = fields.ToOneField(GeneticModificationGeneKnockInResource, 'genetic_modification_gene_knock_in', null=True, full=True)
+    genetic_modification_transgene_expression = fields.ToOneField(GeneticModificationTransgeneExpressionResource, 'genetic_modification_transgene_expression', null=True, full=True)
+    genetic_modification_isogenic = fields.ToOneField(GeneticModificationIsogenicResource, 'genetic_modification_isogenic', null=True, full=True)
+
+    # Documents
+    cell_line_information_packs = fields.ToManyField(CelllineInformationPackResource, 'clips', null=True, full=True)
     publications = fields.ToManyField(CelllinePublicationResource, 'publications', null=True, full=True)
 
-    reprogramming_method = fields.DictField(null=True)
-
+    # Batches
     batches = fields.ToManyField(CelllineBatchResource, 'batches', null=True, full=True)
-
-    cell_line_information_packs = fields.ToManyField(CelllineInformationPackResource, 'clips', null=True, full=True)
 
     class Meta:
         queryset = Cellline.objects.all().select_related(
@@ -347,6 +488,7 @@ class CelllineResource(ModelResource):
             'primary_disease',
             'celllinecultureconditions__culture_medium_other',
             'integrating_vector__virus',
+            'vector_free_reprogramming_factors',
 
         ).prefetch_related(
             'clips',
@@ -376,6 +518,14 @@ class CelllineResource(ModelResource):
     def dehydrate_alternative_names(self, bundle):
         return value_list_of_string(bundle.obj.alternative_names)
 
+    def dehydrate_reprogramming_method_vector_free_types(self, bundle):
+        if hasattr(bundle.obj, 'vector_free_reprogramming_factors'):
+            if bundle.obj.vector_free_reprogramming_factors.factors:
+                factors = [factor.name for factor in bundle.obj.vector_free_reprogramming_factors.factors.all()]
+                return factors
+        else:
+            return []
+
     def dehydrate_reprogramming_method(self, bundle):
 
         if hasattr(bundle.obj, 'non_integrating_vector'):
@@ -387,6 +537,11 @@ class CelllineResource(ModelResource):
                 if bundle.obj.non_integrating_vector.genes:
                     genes = [gene.name for gene in bundle.obj.non_integrating_vector.genes.all()]
                     res['data']['non_integrating_vector_gene_list'] = genes
+
+            if bundle.obj.non_integrating_vector.detectable:
+                res['data']['non_integrating_vector_detectable'] = bundle.obj.non_integrating_vector.detectable
+                res['data']['non_integrating_vector_detection_notes'] = bundle.obj.non_integrating_vector.detectable_notes
+                res['data']['non_integrating_vector_methods'] = bundle.obj.non_integrating_vector.methods
 
             return res
 
@@ -407,6 +562,11 @@ class CelllineResource(ModelResource):
                 if bundle.obj.integrating_vector.genes:
                     genes = [gene.name for gene in bundle.obj.integrating_vector.genes.all()]
                     res['data']['integrating_vector_gene_list'] = genes
+
+            if bundle.obj.integrating_vector.silenced:
+                res['data']['integrating_vector_silenced'] = bundle.obj.integrating_vector.silenced
+                res['data']['integrating_vector_silencing_notes'] = bundle.obj.integrating_vector.silenced_notes
+                res['data']['integrating_vector_methods'] = bundle.obj.integrating_vector.methods
 
             return res
 

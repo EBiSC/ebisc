@@ -13,19 +13,15 @@ class NonHtmlDebugToolbarMiddleware(object):
 
     @staticmethod
     def process_response(request, response):
-        if request.GET.get('debug') == '':
-            if response['Content-Type'] == 'application/octet-stream':
-                print '11111111111'
-                new_content = '<html><body>Binary Data, ' \
-                    'Length: {}</body></html>'.format(len(response.content))
-                response = HttpResponse(new_content)
-            elif response['Content-Type'] == 'application/json':
-                content = response.content
-                try:
-                    json_ = json.loads(content)
-                    content = json.dumps(json_, sort_keys=True, indent=2)
-                except ValueError:
-                    pass
-                response = HttpResponse('<html><body><pre>{}'
-                                        '</pre></body></html>'.format(content))
+        if response['Content-Type'] in ['application/octet-stream', 'application/vnd.ms-excel']:
+            new_content = '<html><body>Binary Data, Length: {}</body></html>'.format(len(response.content))
+            response = HttpResponse(new_content)
+        elif request.GET.get('debug') and response['Content-Type'] == 'application/json':
+            content = response.content
+            try:
+                json_ = json.loads(content)
+                content = json.dumps(json_, sort_keys=True, indent=2)
+            except ValueError:
+                pass
+            response = HttpResponse('<html><body><pre>{}</pre></body></html>'.format(content))
         return response
