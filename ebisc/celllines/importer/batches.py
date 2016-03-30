@@ -1,4 +1,5 @@
 import csv
+import re
 
 import logging
 logger = logging.getLogger('management.commands')
@@ -66,7 +67,10 @@ def create_aliquot(batch, aliquot_biosamples_id, aliquot_name):
         biosamples_id=aliquot_biosamples_id,
     )
 
+    aliquot_number = re.split('[\s]+', aliquot_name)[-1]
+
     aliquot.name = aliquot_name
+    aliquot.number = aliquot_number
 
     aliquot.save()
 

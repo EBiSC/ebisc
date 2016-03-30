@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineCharacterizationEpipluriscore, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
+from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineCharacterizationEpipluriscore, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
 
 
 # -----------------------------------------------------------------------------
@@ -335,12 +335,28 @@ class BatchCultureConditionsResource(ModelResource):
 
 
 # -----------------------------------------------------------------------------
+# Batch Vials
+
+class CelllineAliquotResource(ModelResource):
+    biosamples_id = fields.CharField('biosamples_id')
+    name = fields.CharField('name')
+    number = fields.CharField('number')
+
+    class Meta:
+        queryset = CelllineAliquot.objects.all()
+        include_resource_uri = False
+        fields = ('biosamples_id', 'name')
+
+
+# -----------------------------------------------------------------------------
 # Batch
 
 class CelllineBatchResource(ModelResource):
 
     biosamples_id = fields.CharField('biosamples_id', unique=True)
     batch_id = fields.CharField('batch_id')
+
+    batch_type = fields.CharField('get_batch_type_display')
 
     vials_at_roslin = fields.IntegerField('vials_at_roslin', null=True)
     vials_shipped_to_ecacc = fields.IntegerField('vials_shipped_to_ecacc', null=True)
@@ -351,6 +367,8 @@ class CelllineBatchResource(ModelResource):
     certificate_of_analysis = fields.DictField(null=True)
 
     images = fields.ToManyField(CelllineBatchImagesResource, 'images', null=True, full=True)
+
+    vials = fields.ToManyField(CelllineAliquotResource, 'aliquots', null=True, full=True)
 
     class Meta:
         queryset = CelllineBatch.objects.all()
@@ -408,6 +426,9 @@ class CelllineResource(ModelResource):
     # Names
     name = fields.CharField('name', unique=True)
     alternative_names = fields.CharField('alternative_names', null=True)
+
+    # Validation
+    validation_status = fields.CharField('get_validated_display')
 
     # Availability
     flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)

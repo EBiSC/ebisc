@@ -12,6 +12,7 @@ Usage:
     import all
     import hpscreg [--init]
     import lims
+    import batches_types <filename>
     import batches <filename>
     import toelastic
 '''
@@ -41,6 +42,9 @@ class Command(DocOptCommand):
 
         if args.get('batches'):
             importer.batches.run(args.get('<filename>'))
+
+        if args.get('batches_types'):
+            importer.batches_types.run(args.get('<filename>'))
 
         if args.get('toelastic'):
             importer.toelastic.run()
