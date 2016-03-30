@@ -2,16 +2,6 @@
   "cellline": {
     "properties": {
 
-      "annotation": {
-        "type": "ontology",
-        "ontology": {
-          "olsBaseURL": "http://www.ebi.ac.uk/ols/beta/api",
-          "olsOntology": "efo",
-          "includeIndirect": true,
-          "includeRelations": true
-        }
-      },
-
       "biosamples_id": {
         "type": "string",
         "index": "not_analyzed",
@@ -54,9 +44,13 @@
       },
 
       "primary_cell_type": {
-        "type": "string",
-        "index": "not_analyzed",
-        "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+        "type": "ontology",
+        "ontology": {
+          "olsBaseURL": "http://www.ebi.ac.uk/ols/beta/api",
+          "olsOntology": "efo",
+          "includeIndirect": true,
+          "includeRelations": false
+        }
       },
 
       "alternative_names": {

@@ -225,7 +225,7 @@ def parse_cell_type(valuef, source):
         cell_type, created = CellType.objects.update_or_create(
             name=value,
             defaults={
-                'purl': valuef('primary_celltype_ont_id'),
+                'purl': valuef('primary_celltype_purl'),
             }
         )
     except IntegrityError, e:
