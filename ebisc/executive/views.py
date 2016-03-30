@@ -133,7 +133,12 @@ def batch_data(request, name, batch_biosample_id):
 
     for aliquot in batch.aliquots.all():
 
-        writer.writerow([batch.cell_line.alternative_names, batch.cell_line.name, batch.cell_line.ecacc_id, batch.batch_id, batch.biosamples_id, 'vial %s' % aliquot.number, aliquot.biosamples_id])
+        if batch.cell_line.alternative_names:
+            cell_line_name = batch.cell_line.alternative_names.replace(",", ";")
+        else:
+            cell_line_name = batch.cell_line.name
+
+        writer.writerow([cell_line_name, batch.cell_line.name, batch.cell_line.ecacc_id, batch.batch_id, batch.biosamples_id, 'vial %s' % aliquot.number, aliquot.biosamples_id])
 
     return response
 
