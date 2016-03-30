@@ -29,6 +29,7 @@ config = {
         'alternative_names.analyzed'
         'depositor.analyzed'
         'primary_cell_type.analyzed'
+        'primary_cell_type_ancestors'
         'primary_disease.analyzed'
         'primary_disease_synonyms'
         'primary_disease_stage.analyzed'

@@ -44,13 +44,9 @@
       },
 
       "primary_cell_type": {
-        "type": "ontology",
-        "ontology": {
-          "olsBaseURL": "http://www.ebi.ac.uk/ols/beta/api",
-          "olsOntology": "efo",
-          "includeIndirect": true,
-          "includeRelations": false
-        }
+        "type": "string",
+        "index": "not_analyzed",
+        "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
       },
 
       "alternative_names": {

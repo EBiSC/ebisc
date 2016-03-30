@@ -235,6 +235,8 @@ class Cellline(DirtyFieldsMixin, models.Model):
 
     def to_elastic(self):
 
+        from ebisc import ontology
+
         '''
         Facets
         - Disease
@@ -266,7 +268,8 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'primary_disease_stage': self.primary_disease_stage if self.primary_disease_stage else None,
             'disease_associated_phenotypes': self.disease_associated_phenotypes if self.disease_associated_phenotypes else None,
             'depositor': self.generator.name,
-            'primary_cell_type': self.derivation.primary_cell_type.purl if self.derivation.primary_cell_type else None,
+            'primary_cell_type': ontology.label_of_purl(self.derivation.primary_cell_type.purl if self.derivation.primary_cell_type else None),
+            'primary_cell_type_ancestors': ontology.ancestor_labels_of_purl(self.derivation.primary_cell_type.purl if self.derivation.primary_cell_type else None),
             'alternative_names': self.alternative_names,
             'donor_sex': self.donor.gender.name if self.donor and self.donor.gender else _(u'Not known'),
         }
