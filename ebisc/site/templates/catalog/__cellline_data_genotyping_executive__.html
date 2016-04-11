@@ -2,8 +2,30 @@
 
     {% include 'catalog/__cellline_data_karyotyping__.html' %}
 
-    {% if cellline.genome_analysis %}
+    {% if cellline.str_fingerprinting.all|length or cellline.genome_analysis %}
     <tr><th class="sub-title"><h3>Genotyping</h3></th><th></th></tr>
+
+    {% if cellline.str_fingerprinting.all|length %}
+    <tr>
+        <td class="label">STR/Fingerprinting:</td>
+        <td>
+            <table>
+                <tr>
+                    <th>Locus</th>
+                    <th>Allele 1</th>
+                    <th>Allele 2</th>
+                </tr>
+                {% for locus in cellline.str_fingerprinting.all %}
+                <tr>
+                    <td>{{ locus.locus }}</td>
+                    <td class="center">{{ locus.allele1 }}</td>
+                    <td class="center">{{ locus.allele2 }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+    {% endif %}
 
     {% if cellline.genome_analysis %}
     <tr>
