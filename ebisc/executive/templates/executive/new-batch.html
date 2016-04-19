@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Cell line {{ cellline.name }}{% endblock %}
+
+{% block article %}
+
+<h1>{{ cellline.name }} <small>{{ cellline.biosamples_id }}</small></h1>
+
+<p><a href="{% url 'executive:cellline' cellline.name %}">Back to cell line page</a></p>
+
+<h2>Create new batch</h2>
+
+<p>Creating a new batch will ... </p>
+
+<form method="post">
+    {% csrf_token %}
+    <table>
+    {{ new_batch_form }}
+    <tr>
+        <td></td>
+        <td><input type="submit" value="Create batch"></td>
+    </tr>
+    </table>
+</form>
+
+
+{% endblock %}

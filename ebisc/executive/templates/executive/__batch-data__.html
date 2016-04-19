@@ -1,14 +1,15 @@
 {% load thumbnail %}
 
 <h2>Batches</h2>
-<!-- <div class="request-bisample-ids"><a href="./">Request new batch and vial Biosample IDs</a></div> -->
 
-<div class="ecacc-cat-no">ECACC Catalogue No: {% if cellline.ecacc_id %}<a href="{{ cellline.ecacc_url }}" target="_blank">{{ cellline.ecacc_id|default:"/" }}</a>{% else %}/{% endif %}</div>
+{% if perms.auth.can_manage_executive_dashboard %}
+<div class="request-bisample-ids"><a href="{% url 'executive:new_batch' cellline.name %}">Create a new batch</a> (request new batch and vial Biosample IDs)</div>
+{% endif %}
 
 {% if cellline.batches.all|length %}
 <ul class="accordion">
 {% for batch in cellline.batches.all %}
-<li><a href="javascript:void(0)" class="js-accordion-trigger">{% if batch.batch_id == batch.biosamples_id %}{% else %}<b>{{ batch.batch_id }}</b> - {% endif %}{{ batch.biosamples_id }} <small>({{ batch.aliquots.all.count }} vials)</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
+<li><a href="javascript:void(0)" class="js-accordion-trigger">{% if batch.batch_id == batch.biosamples_id %}{% else %}<b>{{ batch.batch_id }}</b> - {% endif %}{{ batch.biosamples_id }} - {{ batch.aliquots.all.count }} vials - <small>{{ batch.get_batch_type_display }}</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
     <div class="content">
     {% if batch.batch_id and batch.batch_id != batch.biosamples_id %}
 

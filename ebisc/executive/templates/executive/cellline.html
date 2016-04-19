@@ -9,6 +9,15 @@
 <div class="status">
     <div class="cell-line-overview">
         <div>
+            <div class="header">Identifiers</div>
+            <div class="data">
+                <div><span class="light-gray">hPSCreg name:</span> {{ cellline.name }}<br/>
+                <span class="light-gray">Depositor names:</span> {% if cellline.alternative_names %}{{ cellline.alternative_names }}{% else %}/{% endif %}<br/>
+                <span class="light-gray">BiosampleID:</span> {{ cellline.biosamples_id }}<br/>
+                <span class="light-gray">ECACC Cat. No:</span> {% if cellline.ecacc_id %}<a href="{{ cellline.ecacc_url }}" target="_blank">{{ cellline.ecacc_id }}</a>{% else %}/{% endif %}</div>
+            </div>
+        </div>
+        <div>
             <div class="header">Registration</div>
             <div class="data">
                 {% if cellline.validated == '1' %}<i class="glyphicon glyphicon-ok success"></i>

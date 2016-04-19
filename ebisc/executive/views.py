@@ -145,6 +145,32 @@ def batch_data(request, name, batch_biosample_id):
     return response
 
 
+class NewBatchForm(ModelForm):
+    class Meta:
+        model = CelllineBatch
+        fields = ['cell_line', 'biosamples_id', 'batch_id', 'batch_type']
+
+
+@permission_required('auth.can_manage_executive_dashboard')
+def new_batch(request, name):
+
+    cellline = get_object_or_404(Cellline, name=name)
+
+    if request.method == 'POST':
+        new_batch_form = NewBatchForm(request.POST)
+        if new_batch_form.is_valid():
+            return redirect('.')
+        else:
+            messages.error(request, format_html(u'Invalid batch data submitted. Please check below.'))
+    else:
+        new_batch_form = NewBatchForm()
+
+    return render(request, 'executive/new-batch.html', {
+        'cellline': cellline,
+        'new_batch_form': new_batch_form,
+    })
+
+
 @permission_required('auth.can_manage_executive_dashboard')
 @require_POST
 def accept(request, name):
