@@ -1,6 +1,8 @@
 import csv
 import hashlib
 
+from django import forms
+
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
@@ -145,10 +147,15 @@ def batch_data(request, name, batch_biosample_id):
     return response
 
 
-class NewBatchForm(ModelForm):
-    class Meta:
-        model = CelllineBatch
-        fields = ['cell_line', 'biosamples_id', 'batch_id', 'batch_type']
+BATCH_TYPE_CHOICES = (
+    ('depositor', 'Depositor Expansion'),
+    ('central_facility', 'Central Facility Expansion'),
+)
+
+
+class NewBatchForm(forms.Form):
+    batch_id = forms.CharField(label='Batch ID', max_length=10, help_text='ex. P001')
+    batch_type = forms.CharField(label='Batch Type', max_length=50, widget=forms.Select(choices=BATCH_TYPE_CHOICES))
 
 
 @permission_required('auth.can_manage_executive_dashboard')
