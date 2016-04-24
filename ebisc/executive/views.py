@@ -1,5 +1,6 @@
 import csv
 import hashlib
+from sets import Set
 
 from django import forms
 
@@ -12,6 +13,7 @@ from django.utils.html import format_html
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import permission_required
 from django.forms import ModelForm
+from django.core.validators import RegexValidator
 
 from ebisc.site.views import render
 from ebisc.celllines.models import Cellline, CelllineBatch, CelllineInformationPack
@@ -119,6 +121,60 @@ def cellline(request, name):
     })
 
 
+BATCH_TYPE_CHOICES = (
+    ('depositor', 'Depositor Expansion'),
+    ('central_facility', 'Central Facility Expansion'),
+)
+
+
+class NewBatchForm(forms.Form):
+    cellline_name = forms.CharField(label='Cell line name', max_length=15, widget=forms.TextInput(attrs={'readonly': True}))
+    cellline_biosample_id = forms.CharField(label='Cell line Biosample ID', max_length=20, widget=forms.TextInput(attrs={'readonly': True}))
+    batch_id = forms.CharField(
+        label='Batch ID', max_length=5, help_text='ex. P001', widget=forms.TextInput(attrs={'class': 'small'}),
+        validators=[RegexValidator('^[a-zA-Z]{1}[0-9]{3}$', message='Batch ID is not in the correct format (letter + 3 digits)')]
+    )
+    batch_type = forms.CharField(label='Batch Type', max_length=50, widget=forms.Select(choices=BATCH_TYPE_CHOICES))
+    number_of_vials = forms.IntegerField(label='Number of vials in batch', min_value=1, widget=forms.TextInput(attrs={'class': 'small'}))
+    derived_from = forms.CharField(label='Derived from', max_length=20, help_text='BiosampleID of cellline or vial that the batch was derived from')
+
+    def clean(self):
+        cleaned_data = super(NewBatchForm, self).clean()
+        cellline_biosample_id = cleaned_data.get('cellline_biosample_id')
+        batch_id = cleaned_data.get('batch_id')
+
+        cellline = Cellline.objects.get(biosamples_id=cellline_biosample_id)
+
+        if cellline_biosample_id and batch_id:
+            existing_batch_ids = Set([b.batch_id for b in CelllineBatch.objects.filter(cell_line__biosamples_id=cellline_biosample_id)])
+
+            if batch_id in existing_batch_ids:
+                raise forms.ValidationError(
+                    'A batch with this Batch ID for cell line %(cellline_name)s already exists.',
+                    params={'cellline_name': cellline.name}
+                )
+
+
+@permission_required('auth.can_manage_executive_dashboard')
+def new_batch(request, name):
+
+    cellline = get_object_or_404(Cellline, name=name)
+
+    if request.method == 'POST':
+        new_batch_form = NewBatchForm(request.POST)
+        if new_batch_form.is_valid():
+            return redirect('.')
+        else:
+            messages.error(request, format_html(u'Invalid batch data submitted. Please check below.'))
+    else:
+        new_batch_form = NewBatchForm(initial={'cellline_name': cellline.name, 'cellline_biosample_id': cellline.biosamples_id})
+
+    return render(request, 'executive/create-batch/new-batch.html', {
+        'cellline': cellline,
+        'new_batch_form': new_batch_form,
+    })
+
+
 @permission_required('auth.can_view_executive_dashboard')
 def batch_data(request, name, batch_biosample_id):
 
@@ -145,37 +201,6 @@ def batch_data(request, name, batch_biosample_id):
         writer.writerow([cell_line_name, batch.cell_line.name, batch.cell_line.ecacc_id, batch.batch_id, batch.biosamples_id, 'vial %s' % aliquot_number, aliquot.biosamples_id])
 
     return response
-
-
-BATCH_TYPE_CHOICES = (
-    ('depositor', 'Depositor Expansion'),
-    ('central_facility', 'Central Facility Expansion'),
-)
-
-
-class NewBatchForm(forms.Form):
-    batch_id = forms.CharField(label='Batch ID', max_length=10, help_text='ex. P001')
-    batch_type = forms.CharField(label='Batch Type', max_length=50, widget=forms.Select(choices=BATCH_TYPE_CHOICES))
-
-
-@permission_required('auth.can_manage_executive_dashboard')
-def new_batch(request, name):
-
-    cellline = get_object_or_404(Cellline, name=name)
-
-    if request.method == 'POST':
-        new_batch_form = NewBatchForm(request.POST)
-        if new_batch_form.is_valid():
-            return redirect('.')
-        else:
-            messages.error(request, format_html(u'Invalid batch data submitted. Please check below.'))
-    else:
-        new_batch_form = NewBatchForm()
-
-    return render(request, 'executive/new-batch.html', {
-        'cellline': cellline,
-        'new_batch_form': new_batch_form,
-    })
 
 
 @permission_required('auth.can_manage_executive_dashboard')

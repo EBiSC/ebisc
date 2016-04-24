@@ -27,7 +27,7 @@
     <h3>Upload a new CLIP</h3>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <table>
+        <table class="form">
         {{ clip_form }}
         <tr>
             <td></td>

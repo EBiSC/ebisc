@@ -95,3 +95,38 @@ table.data {
     }
   }
 }
+
+// Table for forms
+
+table.form {
+  td, th {
+    padding: 0.5rem 1rem 1.2rem 0;
+    vertical-align: top;
+
+    br {
+      display: none;
+    }
+  }
+
+  th {
+    text-align: right;
+  }
+
+  .errorlist {
+    margin-bottom: 0.5rem;
+  }
+
+  .helptext {
+    margin-top: -0.4rem;
+    display: block;
+    @extend .comment;
+  }
+
+  input[type="text"] {
+    margin-top: -0.5rem;
+  }
+
+  input[type="text"].small {
+    max-width: 5rem;
+  }
+}

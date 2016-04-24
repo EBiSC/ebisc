@@ -273,31 +273,8 @@ table.listing .availability-status .status-label {
     margin-bottom: 1rem;
   }
 
-  th {
-    text-align: right;
-  }
-
-  td, th {
-    padding: 0.5rem 1rem 1.2rem 0;
-    vertical-align: top;
-
-    br {
-      display: none;
-    }
-  }
-
   input[type="text"] {
     max-width: 5rem;
-  }
-
-  .errorlist {
-    margin-bottom: 0.5rem;
-  }
-
-  .helptext {
-    margin-top: -0.4rem;
-    display: block;
-    @extend .comment;
   }
 }
 
