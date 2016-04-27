@@ -182,6 +182,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
         ('not_available', _(u'Not available')),
         ('at_ecacc', _(u'Stocked by ECACC')),
         ('expand_to_order', _(u'Expand to order')),
+        ('restricted_distribution', _(u'Restricted distribution')),
     )
 
     accepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
