@@ -187,14 +187,16 @@ def new_batch(request, name):
             vials = []
 
             for i in list(range(1, number_of_vials + 1)):
-                vial_number = str(i).zfill(3)
+                vial_number = str(i).zfill(4)
 
                 # Request Biosample IDs for vial
                 url = '%s/sampletab/api/v2/source/EBiSCIMS/sample?apikey=%s' % (biosamples_url, biosamples_key)
                 headers = {'Accept': 'text/plain', 'Content-Type': 'application/xml'}
-                xml = """<?xml version="1.0" encoding="UTF-8"?><BioSample xmlns="http://www.ebi.ac.uk/biosamples/SampleGroupExport/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" submissionReleaseDate="2115/03/04" xsi:schemaLocation="http://wwwdev.ebi.ac.uk/biosamples/assets/xsd/v1.0/BioSDSchema.xsd"><Property class="Sample Name" characteristic="true" comment="false" type="STRING"><QualifiedValue><Value>%s vial %s</Value></QualifiedValue></Property><derivedFrom>%s</derivedFrom></BioSample>""" % (cellline_name, vial_number, derived_from)
+                xml = """<?xml version="1.0" encoding="UTF-8"?><BioSample xmlns="http://www.ebi.ac.uk/biosamples/SampleGroupExport/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" submissionReleaseDate="2115/03/04" xsi:schemaLocation="http://wwwdev.ebi.ac.uk/biosamples/assets/xsd/v1.0/BioSDSchema.xsd"><Property class="Sample Name" characteristic="true" comment="false" type="STRING"><QualifiedValue><Value>%s %s vial %s</Value></QualifiedValue></Property><derivedFrom>%s</derivedFrom></BioSample>""" % (cellline_name, batch_id, vial_number, derived_from)
 
                 r = requests.post(url, data=xml, headers=headers)
+
+                print 'Status code: %s' % r.status_code
 
                 # Save vial number, vial BioSample ID
                 if r.status_code == 202:
@@ -237,7 +239,7 @@ def new_batch(request, name):
                 vial = CelllineAliquot(
                     batch=batch,
                     biosamples_id=v[1],
-                    name='%s vial %s' % (cellline_name, v[0]),
+                    name='%s %s vial %s' % (cellline_name, batch_id, v[0]),
                     number=v[0],
                     # derived_from_aliqot=derived_from,
                 )
