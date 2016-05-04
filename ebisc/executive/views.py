@@ -83,6 +83,7 @@ def dashboard(request):
         'celllines_validated': Cellline.objects.filter(validated__lt=3),
         'celllines_at_ecacc': Cellline.objects.filter(availability='at_ecacc'),
         'celllines_expand_to_order': Cellline.objects.filter(availability='expand_to_order'),
+        'celllines_restricted_distribution': Cellline.objects.filter(availability='restricted_distribution'),
     })
 
 
@@ -341,6 +342,10 @@ def availability(request, name):
     elif action == 'expand_to_order':
         messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.name, cellline.availability, action))
         cellline.availability = 'expand_to_order'
+        cellline.available_for_sale = True
+    elif action == 'restricted_distribution':
+        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.name, cellline.availability, action))
+        cellline.availability = 'restricted_distribution'
         cellline.available_for_sale = True
     elif action == 'not_available':
         messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.name, cellline.availability, action))

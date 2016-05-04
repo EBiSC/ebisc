@@ -238,6 +238,12 @@
       border: solid 1px $color-green;
     }
 
+    &.restricted-distribution {
+      background-color: white;
+      color: darken($color-green, 15%);
+      border: solid 1px $color-green;
+    }
+
     &.not-available {
       background-color: white;
       border: $base-border;
@@ -255,6 +261,13 @@ table.listing .availability-status .status-label {
   }
 
   &.expand-to-order {
+    background-color: white;
+    color: $color-green;
+    color: $base-font-color;
+    border: solid 1px $color-green;
+  }
+
+  &.restricted-distribution {
     background-color: white;
     color: $color-green;
     color: $base-font-color;

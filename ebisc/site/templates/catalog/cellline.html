@@ -73,7 +73,7 @@
     <a class="buy" href="{{ cellline.ecacc_url }}"  target="_blank">
         <button><i class="glyphicon glyphicon-shopping-cart "></i> Purchase cell line</button>
         <div class="comment">At European Collection of Authenticated Cell Cultures (ECACC)</div>
-        {% if cellline.availability == 'at_ecacc' %}
+        {% if cellline.availability == 'at_ecacc' or cellline.availability == 'restricted_distribution' %}
         <div class="availability in-stock">In stock</div>
         {% else %}
         <div class="availability">Restocking</div>
