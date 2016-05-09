@@ -1,0 +1,14 @@
+// Clips
+
+.clip-upload {
+  margin-top: 3rem;
+
+  h3 {
+    font-size: $font-size-large * 1.2;
+    margin-bottom: 1rem;
+  }
+
+  input[type="text"] {
+    max-width: 5rem;
+  }
+}

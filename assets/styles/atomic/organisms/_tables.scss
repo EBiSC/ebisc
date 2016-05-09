@@ -120,6 +120,23 @@ table.form {
     margin-top: -0.4rem;
     display: block;
     @extend .comment;
+
+    .tooltip-item {
+      margin-top: 0.5rem;
+      text-align: left;
+
+      .tooltip {
+        width: 300px;
+        max-width: none;
+        text-align: left;
+        left: -0.3rem;
+        padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+
+        &::after {
+          text-align: left;
+        }
+      }
+    }
   }
 
   input[type="text"] {
