@@ -12,3 +12,16 @@
     max-width: 5rem;
   }
 }
+
+.note {
+  margin-top: 3rem;
+  border-top: $base-border;
+  padding-top: 1rem;
+  font-style: italic;
+
+  .bulleted-ul {
+    li:before {
+      font-size: 1.4rem;
+    }
+  }
+}

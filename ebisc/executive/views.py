@@ -165,7 +165,7 @@ class NewBatchForm(forms.Form):
                 )
 
 
-@permission_required('auth.can_manage_executive_dashboard')
+@permission_required('auth.can_view_executive_dashboard')
 def new_batch(request, name):
 
     cellline = get_object_or_404(Cellline, name=name)

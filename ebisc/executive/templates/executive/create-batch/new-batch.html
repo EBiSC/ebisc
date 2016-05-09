@@ -2,15 +2,11 @@
 
 {% block title %}Cell line {{ cellline.name }}{% endblock %}
 
-{% block body-class %}template-with-sidebar{% endblock%}
-
 {% block article %}
 
 <h1>{{ cellline.name }} <small>{{ cellline.biosamples_id }}</small></h1>
 
 <p class="back-link"><a href="{% url 'executive:cellline' cellline.name %}"><i class="glyphicon glyphicon-chevron-left"></i> Back to cell line page</a></p>
-
-<div class="main">
 
 <h2 class="no-margin">Create a new batch</h2>
 
@@ -29,16 +25,14 @@
     </table>
 </form>
 
+
+<div class="note">
+    <p><b>Access to created IDs</b><br/>
+    The created Biosample IDs will be available in two places:</p>
+    <ul class="bulleted-ul">
+      <li>They will be exported to the FTP site and made available for import to LIMS (<i>within 24 hours</i>)</li>
+      <li>A link to a printer friendly .csv file will be displayed alongside cell line batch data in this Executive dashboard.</li>
+    </ul>
 </div>
 
-<div class="sidebar">
-    <div class="card">
-        <p><b>Access to created IDs</b><br/>
-            The created Biosample IDs will be available in two places:</p>
-        <ul class="bulleted-ul">
-          <li>They will be exported to the FTP site and made available for import to LIMS (<i>within 24 hours</i>)</li>
-          <li>A link to a printer friendly .csv file will be displayed alongside cell line batch data in this Executive dashboard.</li>
-        </ul>
-    </div>
-</div>
 {% endblock %}

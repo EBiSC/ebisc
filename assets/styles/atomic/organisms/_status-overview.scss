@@ -20,10 +20,22 @@
 
     > div {
       display: inline-block;
-      min-width: 30%;
       line-height: $font-size-large * 1.6;
       text-align: left;
       vertical-align: top;
+      min-width: 32%;
+
+      &.sales {
+        min-width: 20%;
+      }
+
+      &.registration {
+        min-width: 30%;
+      }
+
+      &.availability {
+        min-width: 45%;
+      }
 
       .header {
         font-size: $font-size-large * 1.3;
@@ -38,11 +50,6 @@
           display: inline-block;
           margin-right: 0.5rem;
           padding-right: 0.5rem;
-          border-right: solid 1px $base-border-color;
-
-          &:last-child {
-            border-right: none;
-          }
 
           .count {
             color: $color-blue-light;
@@ -50,20 +57,47 @@
             font-size: $font-size-large * 1.2;
           }
         }
+
+        &.with-sparators {
+          > div {
+            border-right: solid 1px $base-border-color;
+
+            &:last-child {
+              border-right: none;
+            }
+          }
+        }
       }
     }
 
     @include breakpoint(map-get($breakpoints, medium)) {
-      font-size: $base-font-size;
-
       > div {
-        .count {
-          font-size: $base-font-size;
+
+        &.sales {
+          min-width: 20%;
+        }
+
+        &.registration {
+          min-width: 25%;
+        }
+
+        &.availability {
+          min-width: 40%;
         }
 
         .header {
-          font-size: $font-size-large * 1.2;
+          font-size: $font-size-large;
           padding-bottom: 0.5rem;
+        }
+
+        .data {
+          > div {
+            font-size: $font-size-small;
+
+            .count {
+             font-size: $base-font-size;
+           }
+          }
         }
       }
     }
