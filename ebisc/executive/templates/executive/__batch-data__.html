@@ -3,7 +3,7 @@
 <h2>Batches</h2>
 
 {% if perms.auth.can_manage_executive_dashboard %}
-<div class="request-bisample-ids"><a href="{% url 'executive:new_batch' cellline.name %}">Create a new batch</a> (request new batch and vial Biosample IDs)</div>
+<div class="request-bisample-ids"><a href="{% url 'executive:new_batch' cellline.name %}">Create a new batch</a> <small>(request new batch and vial Biosample IDs)</small></div>
 {% endif %}
 
 {% if cellline.batches.all|length %}
@@ -13,6 +13,10 @@
     <div class="content">
     {% if batch.batch_id and batch.batch_id != batch.biosamples_id %}
 
+        <div class="link-to-biosample-ids-file">
+            <a href="{% url 'executive:batch_data' cellline.name batch.biosamples_id %}"><i class="glyphicon glyphicon-download"></i>Download vial Biosample IDs file</a>
+        </div>
+
         {% if batch.certificate_of_analysis %}
         <div class="certificate-of-anlysis">
             <a href="{{ batch.certificate_of_analysis.url }}"><i class="glyphicon glyphicon-file"></i>Certificate of analysis</a>
@@ -20,18 +24,25 @@
         {% endif %}
 
         <h3>Inventory</h3>
-        <div>Vials at Roslin: {{ batch.vials_at_roslin }}</div>
-        <div>Vials shipped to ECACC: {{ batch.vials_shipped_to_ecacc }}</div>
-        <div>Vials shipped to Fraunhoffer: {{ batch.vials_shipped_to_fraunhoffer }}</div>
-        <div class="link-to-biosample-ids-file"><a href="{% url 'executive:batch_data' cellline.name batch.biosamples_id %}"><i class="glyphicon glyphicon-download"></i>Download vial Biosample IDs file</a></div>
+        {% if batch.vials_at_roslin or batch.vials_shipped_to_ecacc or batch.vials_shipped_to_fraunhoffer %}
+        <div>Vials at Roslin: {{ batch.vials_at_roslin|default_if_none:"-" }}</div>
+        <div>Vials shipped to ECACC: {{ batch.vials_shipped_to_ecacc|default_if_none:"-" }}</div>
+        <div>Vials shipped to Fraunhoffer: {{ batch.vials_shipped_to_fraunhoffer|default_if_none:"-" }}</div>
+        {% else %}
+        <p><span class="comment">No data available.</span></p>
+        {% endif %}
 
         <h3>Culture conditions</h3>
-        <div>Medium: {{ batch.batchcultureconditions.culture_medium }}</div>
-        <div>Passage method: {{ batch.batchcultureconditions.passage_method }}</div>
-        <div>Matrix: {{ batch.batchcultureconditions.matrix }}</div>
-        <div>CO2 concentration: {{ batch.batchcultureconditions.co2_concentration }}</div>
-        <div>O2 concentration: {{ batch.batchcultureconditions.o2_concentration }}</div>
-        <div>Temperature: {{ batch.batchcultureconditions.temperature }}</div>
+        {% if batch.batchcultureconditions %}
+        <div>Medium: {{ batch.batchcultureconditions.culture_medium|default_if_none:"-" }}</div>
+        <div>Passage method: {{ batch.batchcultureconditions.passage_method|default_if_none:"-" }}</div>
+        <div>Matrix: {{ batch.batchcultureconditions.matrix|default_if_none:"-" }}</div>
+        <div>CO2 concentration: {{ batch.batchcultureconditions.co2_concentration|default_if_none:"-" }}</div>
+        <div>O2 concentration: {{ batch.batchcultureconditions.o2_concentration|default_if_none:"-" }}</div>
+        <div>Temperature: {{ batch.batchcultureconditions.temperature|default_if_none:"-" }}</div>
+        {% else %}
+        <p><span class="comment">No data available.</span></p>
+        {% endif %}
 
         {% if batch.images.all %}
         <h3>Images</h3>

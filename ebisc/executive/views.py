@@ -138,7 +138,7 @@ class NewBatchForm(forms.Form):
         label='Batch ID', max_length=5, help_text='ex. P001', widget=forms.TextInput(attrs={'class': 'small'}),
         validators=[RegexValidator('^[a-zA-Z]{1}[0-9]{3}$', message='Batch ID is not in the correct format (letter + 3 digits)')]
     )
-    batch_type = forms.CharField(label='Batch Type', max_length=50, widget=forms.Select(choices=BATCH_TYPE_CHOICES))
+    batch_type = forms.CharField(label='Batch Type', max_length=50, widget=forms.Select(choices=BATCH_TYPE_CHOICES), help_text=format_html(u'<div class="tooltip-item"><span class="glyphicon glyphicon-question-sign"></span><div class="tooltip"><p><b>Depositor expansion batch:</b> A batch-worth of empty vials are sent to the depositor, with EBiSC labels and EBiSC vial IDs. The depositor fills the vials and ships them back to central facility.</p><p><b>Central facility expansion batch:</b> Central facility expand the batch and then fill EBiSC vials with EBiSC vial labels. The batch is expanded from a small number of unlabeled vials sent by depositor or from vials already banked at CF.</p></div></div>'))
     number_of_vials = forms.IntegerField(label='Number of vials in batch', min_value=1, widget=forms.TextInput(attrs={'class': 'small'}))
     derived_from = forms.CharField(label='Derived from', max_length=20, help_text='BiosampleID of cellline or vial that the batch was derived from')
 
@@ -199,7 +199,7 @@ def new_batch(request, name):
 
                 print 'Status code: %s' % r.status_code
 
-                # Save vial number, vial BioSample ID
+                # Store vial number, vial BioSample ID
                 if r.status_code == 202:
                     vials.append((vial_number, r.text))
                     print 'Vial ID: %s' % r.text
@@ -207,12 +207,12 @@ def new_batch(request, name):
                     messages.error(request, format_html(u'There was a problem requesting the BioSampleID. Please try again.'))
                     return redirect('.')
 
-            # Request Biosample ID for batch
             vial_list = ''
 
             for v in vials:
                 vial_list += '<Id>%s</Id>' % v[1]
 
+            # Request Biosample ID for batch
             url = '%s/sampletab/api/v2/source/EBiSCIMS/group?apikey=%s' % (biosamples_url, biosamples_key)
             headers = {'Accept': 'text/plain', 'Content-Type': 'application/xml'}
             xml = """<?xml version="1.0" encoding="UTF-8"?><BioSampleGroup xmlns="http://www.ebi.ac.uk/biosamples/SampleGroupExport/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ebi.ac.uk/biosamples/SampleGroupExport/1.0 http://www.ebi.ac.uk/biosamples/assets/xsd/v1.0/BioSDSchema.xsd"><Property class="Group Name" characteristic="true" comment="false" type="STRING"><QualifiedValue><Value>%s batch %s</Value></QualifiedValue></Property><SampleIds>%s</SampleIds></BioSampleGroup>""" % (cellline_name, batch_id, vial_list)
@@ -242,11 +242,12 @@ def new_batch(request, name):
                     biosamples_id=v[1],
                     name='%s %s vial %s' % (cellline_name, batch_id, v[0]),
                     number=v[0],
-                    # derived_from_aliqot=derived_from,
+                    derived_from=derived_from,
                 )
                 vial.save()
 
-            return redirect('.')
+            messages.success(request, format_html(u'A new batch <code><strong>{0}</strong></code> for cell line <code><strong>{1}</strong></code> has been sucessfully created.', batch_id, cellline_name))
+            return redirect('executive:cellline', cellline_name)
         else:
             messages.error(request, format_html(u'Invalid batch data submitted. Please check below.'))
     else:
