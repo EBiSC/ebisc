@@ -24,12 +24,16 @@
 @import 'atomic/atoms/typography';
 @import 'atomic/atoms/transitions';
 
-@import 'atomic/molecules/main';
+@import 'atomic/molecules/main-menu';
 @import 'atomic/molecules/forms';
 @import 'atomic/molecules/pagination';
 @import 'atomic/molecules/steps';
 @import 'atomic/molecules/tables';
 
+@import 'atomic/organisms/batch-list';
+@import 'atomic/organisms/filters';
+@import 'atomic/organisms/status-overview';
+@import 'atomic/organisms/status-management';
 @import 'atomic/organisms/organism';
 @import 'atomic/organisms/cell-line-search';
 @import 'atomic/organisms/tables';
@@ -46,4 +50,5 @@
 @import 'atomic/pages/home';
 @import 'atomic/pages/login';
 @import 'atomic/pages/catalogue-cell-line';
+@import 'atomic/pages/executive-dashboard';
 @import 'atomic/pages/text-page';

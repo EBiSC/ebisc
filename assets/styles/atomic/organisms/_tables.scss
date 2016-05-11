@@ -95,3 +95,55 @@ table.data {
     }
   }
 }
+
+// Table for forms
+
+table.form {
+  td, th {
+    padding: 0.5rem 1rem 1.2rem 0;
+    vertical-align: top;
+
+    br {
+      display: none;
+    }
+  }
+
+  th {
+    text-align: right;
+  }
+
+  .errorlist {
+    margin-bottom: 0.5rem;
+  }
+
+  .helptext {
+    margin-top: -0.4rem;
+    display: block;
+    @extend .comment;
+
+    .tooltip-item {
+      margin-top: 0.5rem;
+      text-align: left;
+
+      .tooltip {
+        width: 300px;
+        max-width: none;
+        text-align: left;
+        left: -0.3rem;
+        padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+
+        &::after {
+          text-align: left;
+        }
+      }
+    }
+  }
+
+  input[type="text"] {
+    margin-top: -0.5rem;
+  }
+
+  input[type="text"].small {
+    max-width: 5rem;
+  }
+}

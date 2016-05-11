@@ -1,0 +1,27 @@
+// Clips
+
+.clip-upload {
+  margin-top: 3rem;
+
+  h3 {
+    font-size: $font-size-large * 1.2;
+    margin-bottom: 1rem;
+  }
+
+  input[type="text"] {
+    max-width: 5rem;
+  }
+}
+
+.note {
+  margin-top: 3rem;
+  border-top: $base-border;
+  padding-top: 1rem;
+  font-style: italic;
+
+  .bulleted-ul {
+    li:before {
+      font-size: 1.4rem;
+    }
+  }
+}

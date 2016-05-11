@@ -76,3 +76,8 @@ select {
   max-width: 100%;
   width: auto;
 }
+
+input[readonly] {
+  background-color: lighten($light-gray, 7%);
+  color: lighten($color-text, 7%);
+}

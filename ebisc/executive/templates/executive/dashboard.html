@@ -10,24 +10,24 @@
 
 <div class="status">
     <div class="cell-line-overview">
-        <div>
+        <div class="registration">
             <div class="header">Registration</div>
-            <div class="data">
+            <div class="data with-sparators">
                 <div><span class="count">{{ celllines_registered.count }}</span> Registered</div>
                 <div><span class="count">{{ celllines_validated.count }}</span> Validated</div>
             </div>
         </div>
-        <div>
+        <div class="availability">
             <div class="header">Availability</div>
-            <div class="data">
+            <div class="data with-sparators">
                 <div><span class="count">{{ celllines_at_ecacc.count }}</span> At ECACC</div>
                 <div><span class="count">{{ celllines_expand_to_order.count }}</span> Expand to order</div>
                 <div><span class="count">{{ celllines_restricted_distribution.count }}</span> Restricted distribution</div>
             </div>
         </div>
-        <div>
+        <div class="sales">
             <div class="header">Sales</div>
-            <div class="data">
+            <div class="data with-sparators">
                 <div><span class="count">n/a</span> Vials sold</div>
             </div>
         </div>
