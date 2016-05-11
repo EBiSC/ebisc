@@ -11,7 +11,7 @@
             <input type="hidden" name="name" value="{{ cellline.name }}">
             <input type="hidden" name="status" value="{{ cellline.availability }}">
 
-            <select name="action" class="{% if cellline.availability == 'not_available' %}not-available{% elif cellline.availability == 'expand_to_order' %}expand-to-order{% else %}at-ecacc{% endif %}">
+            <select name="action" class="{% if cellline.availability == 'not_available' %}not-available{% elif cellline.availability == 'expand_to_order' %}expand-to-order{% elif cellline.availability == 'restricted_distribution' %}restricted-distribution{% else %}at-ecacc{% endif %}">
                 {% for choice in cellline.AVAILABILITY_CHOICES %}
                 {% if choice.0 == cellline.availability %}
                 <option value="{{ choice.0 }}" selected>{{ choice.1 }}</option>
@@ -31,6 +31,8 @@
         <span class="status-label not-available">{{ cellline.get_availability_display }}</span>
         {% elif cellline.availability == 'expand_to_order' %}
         <span class="status-label expand-to-order">{{ cellline.get_availability_display }}</span>
+        {% elif cellline.availability == 'restricted_distribution' %}
+        <span class="status-label restricted-distribution">{{ cellline.get_availability_display }}</span>
         {% endif %}
 
     {% endif %}

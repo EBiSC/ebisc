@@ -1,0 +1,9 @@
+{% if cellline.karyotype %}
+<tr><th class="sub-title"><h3>Karyotyping</h3></th><th></th></tr>
+
+{% if cellline.karyotype.passage_number %}
+<tr><td class="label">Passage number:</td><td>{{ cellline.karyotype.passage_number|default:"-" }}</td></tr>
+{% endif %}
+<tr><td class="label">Cell line karyotype:</td><td>{{ cellline.karyotype.karyotype|default:"-" }}</td></tr>
+<tr><td class="label">Karyotyping method:</td><td>{{ cellline.karyotype.karyotype_method|default:"-" }}</td></tr>
+{% endif %}

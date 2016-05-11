@@ -347,6 +347,9 @@ class CelllineAliquotResource(ModelResource):
         include_resource_uri = False
         fields = ('biosamples_id', 'name')
 
+    def dehydrate_number(self, bundle):
+        return bundle.obj.number.zfill(3)
+
 
 # -----------------------------------------------------------------------------
 # Batch
