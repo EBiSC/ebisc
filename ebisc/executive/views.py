@@ -130,8 +130,8 @@ def cellline(request, name):
 
 
 BATCH_TYPE_CHOICES = (
-    ('depositor', 'Depositor Expansion'),
     ('central_facility', 'Central Facility Expansion'),
+    ('depositor', 'Depositor Expansion'),
 )
 
 
