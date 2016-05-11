@@ -12,6 +12,13 @@
 
 <p>By submitting the form below, you will create <b>Biosample accessions</b> for a new batch and vials contained in this batch.</p>
 
+<p>You can access the created Biosample IDs via:
+  <ul class="bulleted-ul">
+    <li>FTP site where they will be available for import to LIMS (<i>within 24 hours</i>)</li>
+    <li>Printer friendly .csv file accessible alongside the cell line batch data in the Executive dashboard.</li>
+  </ul>
+</p>
+
 <hr>
 
 <form method="post">
@@ -24,15 +31,5 @@
     </tr>
     </table>
 </form>
-
-
-<div class="note">
-    <p><b>Access to created IDs</b><br/>
-    The created Biosample IDs will be available in two places:</p>
-    <ul class="bulleted-ul">
-      <li>They will be exported to the FTP site and made available for import to LIMS (<i>within 24 hours</i>)</li>
-      <li>A link to a printer friendly .csv file will be displayed alongside cell line batch data in this Executive dashboard.</li>
-    </ul>
-</div>
 
 {% endblock %}

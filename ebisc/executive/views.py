@@ -22,6 +22,10 @@ from ebisc.site.views import render
 from ebisc.celllines.models import Cellline, CelllineBatch, CelllineInformationPack, CelllineAliquot
 
 
+class BiosamplesError(Exception):
+    pass
+
+
 @permission_required('auth.can_view_executive_dashboard')
 def dashboard(request):
 
@@ -142,12 +146,6 @@ class NewBatchForm(forms.Form):
     number_of_vials = forms.IntegerField(label='Number of vials in batch', min_value=1, widget=forms.TextInput(attrs={'class': 'small'}))
     derived_from = forms.CharField(label='Derived from', max_length=20, help_text='BiosampleID of cellline or vial that the batch was derived from')
 
-    # def clean_cellline_name(self):
-    #     return self.initial.cellline_name
-    #
-    # def clean_cellline_biosample_id(self):
-    #     return self.initial.cellline_biosample_id
-
     def clean(self):
         cleaned_data = super(NewBatchForm, self).clean()
         cellline_biosample_id = cleaned_data.get('cellline_biosample_id')
@@ -170,13 +168,16 @@ def new_batch(request, name):
 
     cellline = get_object_or_404(Cellline, name=name)
 
-    if request.method == 'POST':
+    if request.method != 'POST':
+        new_batch_form = NewBatchForm(initial={'cellline_name': cellline.name, 'cellline_biosample_id': cellline.biosamples_id})
+    else:
         new_batch_form = NewBatchForm(request.POST)
-        if new_batch_form.is_valid():
+        if not new_batch_form.is_valid():
+            messages.error(request, format_html(u'Invalid batch data submitted. Please check below.'))
+        else:
             data = new_batch_form.cleaned_data
 
             cellline_name = data['cellline_name']
-            cellline_biosample_id = data['cellline_biosample_id']
             batch_type = data['batch_type']
             batch_id = data['batch_id']
             number_of_vials = data['number_of_vials']
@@ -187,71 +188,80 @@ def new_batch(request, name):
 
             vials = []
 
-            for i in list(range(1, number_of_vials + 1)):
-                vial_number = str(i).zfill(4)
+            try:
 
-                # Request Biosample IDs for vial
-                url = '%s/sampletab/api/v2/source/EBiSCIMS/sample?apikey=%s' % (biosamples_url, biosamples_key)
+                for i in list(range(1, number_of_vials + 1)):
+                    vial_number = str(i).zfill(4)
+
+                    # Request Biosample IDs for vial
+                    url = '%s/sampletab/api/v2/source/EBiSCIMS/sample?apikey=%s' % (biosamples_url, biosamples_key)
+                    headers = {'Accept': 'text/plain', 'Content-Type': 'application/xml'}
+                    xml = '''
+<?xml version="1.0" encoding="UTF-8"?>
+    <BioSample xmlns="http://www.ebi.ac.uk/biosamples/SampleGroupExport/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" submissionReleaseDate="2115/03/04" xsi:schemaLocation="http://wwwdev.ebi.ac.uk/biosamples/assets/xsd/v1.0/BioSDSchema.xsd">
+        <Property class="Sample Name" characteristic="true" comment="false" type="STRING">
+            <QualifiedValue>
+                <Value>%s %s vial %s</Value>
+            </QualifiedValue>
+        </Property>
+        <derivedFrom>%s</derivedFrom>
+    </BioSample>
+                    ''' % (cellline_name, batch_id, vial_number, derived_from)
+
+                    r = requests.post(url, data=xml.strip(), headers=headers)
+
+                    # Store vial number, vial BioSample ID
+                    if r.status_code == 202:
+                        vials.append((vial_number, r.text))
+                    else:
+                        raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'))
+
+                vial_list = ''.join(['<Id>%s</Id>' % v[1] for v in vials])
+
+                # Request Biosample ID for batch
+                url = '%s/sampletab/api/v2/source/EBiSCIMS/group?apikey=%s' % (biosamples_url, biosamples_key)
                 headers = {'Accept': 'text/plain', 'Content-Type': 'application/xml'}
-                xml = """<?xml version="1.0" encoding="UTF-8"?><BioSample xmlns="http://www.ebi.ac.uk/biosamples/SampleGroupExport/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" submissionReleaseDate="2115/03/04" xsi:schemaLocation="http://wwwdev.ebi.ac.uk/biosamples/assets/xsd/v1.0/BioSDSchema.xsd"><Property class="Sample Name" characteristic="true" comment="false" type="STRING"><QualifiedValue><Value>%s %s vial %s</Value></QualifiedValue></Property><derivedFrom>%s</derivedFrom></BioSample>""" % (cellline_name, batch_id, vial_number, derived_from)
+                xml = '''
+<?xml version="1.0" encoding="UTF-8"?>
+    <BioSampleGroup xmlns="http://www.ebi.ac.uk/biosamples/SampleGroupExport/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ebi.ac.uk/biosamples/SampleGroupExport/1.0 http://www.ebi.ac.uk/biosamples/assets/xsd/v1.0/BioSDSchema.xsd">
+        <Property class="Group Name" characteristic="true" comment="false" type="STRING">
+            <QualifiedValue>
+                <Value>%s batch %s</Value>
+            </QualifiedValue>
+        </Property>
+    <SampleIds>%s</SampleIds></BioSampleGroup>''' % (cellline_name, batch_id, vial_list)
 
-                r = requests.post(url, data=xml, headers=headers)
+                r = requests.post(url, data=xml.strip(), headers=headers)
 
-                print 'Status code: %s' % r.status_code
-
-                # Store vial number, vial BioSample ID
                 if r.status_code == 202:
-                    vials.append((vial_number, r.text))
-                    print 'Vial ID: %s' % r.text
+                    batch_biosamples_id = r.text
                 else:
-                    messages.error(request, format_html(u'There was a problem requesting the BioSampleID. Please try again.'))
-                    return redirect('.')
+                    raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'))
 
-            vial_list = ''
-
-            for v in vials:
-                vial_list += '<Id>%s</Id>' % v[1]
-
-            # Request Biosample ID for batch
-            url = '%s/sampletab/api/v2/source/EBiSCIMS/group?apikey=%s' % (biosamples_url, biosamples_key)
-            headers = {'Accept': 'text/plain', 'Content-Type': 'application/xml'}
-            xml = """<?xml version="1.0" encoding="UTF-8"?><BioSampleGroup xmlns="http://www.ebi.ac.uk/biosamples/SampleGroupExport/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ebi.ac.uk/biosamples/SampleGroupExport/1.0 http://www.ebi.ac.uk/biosamples/assets/xsd/v1.0/BioSDSchema.xsd"><Property class="Group Name" characteristic="true" comment="false" type="STRING"><QualifiedValue><Value>%s batch %s</Value></QualifiedValue></Property><SampleIds>%s</SampleIds></BioSampleGroup>""" % (cellline_name, batch_id, vial_list)
-
-            r = requests.post(url, data=xml, headers=headers)
-
-            if r.status_code == 202:
-                batch_biosamples_id = r.text
-                print 'Batch ID: %s' % r.text
-            else:
-                messages.error(request, format_html(u'There was a problem requesting the BioSampleID. Please try again.'))
-                return redirect('.')
-
-            # Save batch
-            batch = CelllineBatch(
-                cell_line=cellline,
-                biosamples_id=batch_biosamples_id,
-                batch_id=batch_id,
-                batch_type=batch_type,
-            )
-            batch.save()
-
-            # Save vials
-            for v in vials:
-                vial = CelllineAliquot(
-                    batch=batch,
-                    biosamples_id=v[1],
-                    name='%s %s vial %s' % (cellline_name, batch_id, v[0]),
-                    number=v[0],
-                    derived_from=derived_from,
+                # Save batch
+                batch = CelllineBatch(
+                    cell_line=cellline,
+                    biosamples_id=batch_biosamples_id,
+                    batch_id=batch_id,
+                    batch_type=batch_type,
                 )
-                vial.save()
+                batch.save()
 
-            messages.success(request, format_html(u'A new batch <code><strong>{0}</strong></code> for cell line <code><strong>{1}</strong></code> has been sucessfully created.', batch_id, cellline_name))
-            return redirect('executive:cellline', cellline_name)
-        else:
-            messages.error(request, format_html(u'Invalid batch data submitted. Please check below.'))
-    else:
-        new_batch_form = NewBatchForm(initial={'cellline_name': cellline.name, 'cellline_biosample_id': cellline.biosamples_id})
+                # Save vials
+                for v in vials:
+                    CelllineAliquot(
+                        batch=batch,
+                        biosamples_id=v[1],
+                        name='%s %s vial %s' % (cellline_name, batch_id, v[0]),
+                        number=v[0],
+                        derived_from=derived_from,
+                    ).save()
+
+                messages.success(request, format_html(u'A new batch <code><strong>{0}</strong></code> for cell line <code><strong>{1}</strong></code> has been sucessfully created.', batch_id, cellline_name))
+                return redirect('executive:cellline', cellline_name)
+
+            except BiosamplesError, e:
+                messages.error(request, e.message)
 
     return render(request, 'executive/create-batch/new-batch.html', {
         'cellline': cellline,
