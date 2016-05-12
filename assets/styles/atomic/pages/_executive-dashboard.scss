@@ -124,7 +124,7 @@ table.listing .availability-status .status-label {
       }
     }
 
-    .link-to-biosample-ids-file {
+    .biosample-ids-file {
       @extend .file-link;
       display: inline-block;
       margin-top: 1rem;
@@ -136,6 +136,13 @@ table.listing .availability-status .status-label {
       color: $action-color;
     }
   }
+}
+
+// Cell line ids
+
+.cell-line-ids-file {
+  float: right;
+  margin-top: 1.5rem;
 }
 
 // Clips

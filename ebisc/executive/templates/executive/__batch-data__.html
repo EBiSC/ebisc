@@ -13,7 +13,7 @@
     <div class="content">
     {% if batch.batch_id and batch.batch_id != batch.biosamples_id %}
 
-        <div class="link-to-biosample-ids-file">
+        <div class="biosample-ids-file">
             <a href="{% url 'executive:batch_data' cellline.name batch.biosamples_id %}"><i class="glyphicon glyphicon-download"></i>Download vial Biosample IDs file</a>
         </div>
 

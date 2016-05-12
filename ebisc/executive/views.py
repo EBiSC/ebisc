@@ -2,6 +2,7 @@ import csv
 import hashlib
 import requests
 from sets import Set
+from datetime import datetime
 
 from django import forms
 
@@ -293,6 +294,41 @@ def batch_data(request, name, batch_biosample_id):
         aliquot_number = aliquot.number.zfill(3)
 
         writer.writerow([cell_line_name, batch.cell_line.name, batch.cell_line.ecacc_id, batch.batch_id, batch.biosamples_id, 'vial %s' % aliquot_number, aliquot.biosamples_id])
+
+    return response
+
+
+@permission_required('auth.can_view_executive_dashboard')
+def cell_line_ids(request):
+
+    '''Return cell line IDs as CSV file.'''
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="ebisc_cell_line_ids-{}.csv"'.format(datetime.date(datetime.now()))
+
+    writer = csv.writer(response)
+
+    writer.writerow(['hPSCreg name', 'Depositor', 'Depositor names', 'BioSamples ID', 'ECACC Cat. No', 'Depositor Donor ID', 'BioSamples Donor ID'])
+
+    for cell_line in Cellline.objects.all():
+
+        if cell_line.alternative_names:
+            cell_line_alternative_names = cell_line.alternative_names.replace(",", ";")
+        else:
+            cell_line_alternative_names = ''
+
+        if cell_line.donor:
+            donor_biosamples_id = cell_line.donor.biosamples_id
+
+            if cell_line.donor.provider_donor_ids:
+                donor_depositor_names = '; '.join([str(n) for n in cell_line.donor.provider_donor_ids])
+            else:
+                donor_depositor_names = ''
+        else:
+            donor_biosamples_id = ''
+            donor_depositor_names = ''
+
+        writer.writerow([cell_line.name, cell_line.generator, cell_line_alternative_names, cell_line.biosamples_id, cell_line.ecacc_id, donor_depositor_names, donor_biosamples_id])
 
     return response
 

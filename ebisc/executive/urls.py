@@ -1,8 +1,12 @@
 from django.conf.urls import patterns, url
 
 urlpatterns = patterns('ebisc.executive.views',
+
     # Index
     url(r'^$', 'dashboard', name='dashboard'),
+
+    # IDs for registered cell lines
+    url(r'^cell-line-ids/$', 'cell_line_ids', name='cell_line_ids'),
 
     # Cell line
     url(r'^(?P<name>[^/]+)/$', 'cellline', name='cellline'),
