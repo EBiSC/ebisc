@@ -1,13 +1,19 @@
-.cell-line-list {
-  clear: both;
-  overflow-x: auto;
-
-  @include breakpoint(map-get($breakpoints, small)) {
-    overflow-y: hidden;
-  }
-}
-
 .cell-line-filter {
+
+  .search {
+    @include clearfix;
+    width: 100%;
+
+    input {
+      float: left;
+      margin: 0;
+    }
+
+    input[type="text"] {
+      max-width: 60%;
+      margin-right: 8px;
+    }
+  }
 
   #filter {
     margin-bottom: 30px;
@@ -70,6 +76,35 @@
       margin: 0 0 0.5em 0;
       top: auto;
       right: auto;
+    }
+  }
+}
+
+.cell-line-list {
+  clear: both;
+  overflow-x: auto;
+
+  @include breakpoint(map-get($breakpoints, small)) {
+    overflow-y: hidden;
+  }
+}
+
+.load-more {
+  display: none;
+  text-align: center;
+  margin: 40px 0px;
+
+  button {
+    @extend %inverse-button;
+    margin: 0 auto;
+    width: span(3);
+
+    @include breakpoint(map-get($breakpoints, medium)) {
+      width: span(4);
+    }
+
+    @include breakpoint(map-get($breakpoints, small)) {
+      width: span(7);
     }
   }
 }

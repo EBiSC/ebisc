@@ -1,3 +1,12 @@
+img {
+  margin: 0;
+  max-width: 100%;
+}
+
+a img {
+  border: none;
+}
+
 .cellline-batch-images {
   @include clearfix();
   clear: both;
