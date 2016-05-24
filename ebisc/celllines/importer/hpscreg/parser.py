@@ -1204,6 +1204,16 @@ def parse_publications(valuef, source, cell_line):
 
         return False
 
+    else:
+
+        if CelllinePublication.objects.filter(cell_line=cell_line):
+            cell_line_publication = CelllinePublication.objects.get(cell_line=cell_line)
+            cell_line_publication.delete()
+            return True
+
+        else:
+            return False
+
 
 @inject_valuef
 def parse_characterization(valuef, source, cell_line):
