@@ -88,15 +88,21 @@
     </ul>
 
     {% if cellline.ecacc_id and cellline.available_for_sale %}
-    <a class="buy" href="{{ cellline.ecacc_url }}"  target="_blank">
-        <button><i class="glyphicon glyphicon-shopping-cart "></i> Purchase cell line</button>
-        <div class="comment">At European Collection of Authenticated Cell Cultures (ECACC)</div>
-        {% if cellline.availability == 'at_ecacc' or cellline.availability == 'restricted_distribution' %}
-        <div class="availability in-stock">In stock</div>
-        {% else %}
-        <div class="availability">Restocking</div>
+    <div class="buy">
+        <a class="ecacc-link" href="{{ cellline.ecacc_url }}"  target="_blank">
+            <button><i class="glyphicon glyphicon-shopping-cart "></i> Purchase cell line</button>
+            <div class="comment">At European Collection of Authenticated Cell Cultures (ECACC)</div>
+            {% if cellline.availability == 'at_ecacc' or cellline.availability == 'restricted_distribution' %}
+            <div class="availability in-stock">In stock</div>
+            {% else %}
+            <div class="availability">Restocking</div>
+            {% endif %}
+        </a>
+
+        {% if cellline.get_latest_clip %}
+        <a class="clip" href="{{ cellline.get_latest_clip.clip_file.url }}"><i class="glyphicon glyphicon-file"></i> Cell line information pack</a>
         {% endif %}
-    </a>
+    </div>
     {% endif %}
 
 </div>
