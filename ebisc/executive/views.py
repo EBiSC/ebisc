@@ -308,7 +308,7 @@ def cell_line_ids(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['hPSCreg name', 'Depositor', 'Depositor names', 'BioSamples ID', 'ECACC Cat. No', 'Depositor Donor ID', 'BioSamples Donor ID'])
+    writer.writerow(['hPSCreg name', 'Depositor', 'Depositor names', 'BioSamples Cell line ID', 'ECACC Cat. No', 'Depositor Donor ID', 'BioSamples Donor ID'])
 
     for cell_line in Cellline.objects.all():
 
