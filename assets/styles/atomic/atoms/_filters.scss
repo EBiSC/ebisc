@@ -1,0 +1,46 @@
+// Filters
+
+.filter-group {
+  $filter-width: 200px;
+
+  margin-top: 10px;
+
+  > .filter {
+    display: inline-block;
+    vertical-align: top;
+
+    > .dropdown {
+      display: inline-block;
+      width: $filter-width;
+      margin-right: 5px;
+
+      .dropdown-button {
+        min-width: $filter-width;
+      }
+
+      @include breakpoint(map-get($breakpoints, small)) {
+        display: block;
+      }
+    }
+
+    > .selected-terms {
+      width: $filter-width;
+      line-height: 1.5em;
+      margin-bottom: 0.8em;
+
+      @include transition-opacity(0.1s);
+
+      .term {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: $font-size-small * 1.1;
+        color: $dark-gray;
+
+        .remove {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

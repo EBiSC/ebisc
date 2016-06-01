@@ -33,6 +33,10 @@ h2 {
   @include breakpoint(map-get($breakpoints, small)) {
     font-size: $base-font-size * 1.4;
   }
+
+  &.no-margin {
+    margin-top: 0;
+  }
 }
 
 h3 {
@@ -122,4 +126,14 @@ hr {
   @extend .lead;
   @extend %card;
   margin: 2rem 0 1rem 0;
+}
+
+.back-link {
+  margin-top: -1rem;
+  padding-top: 0;
+  padding-bottom: 1.5rem;
+}
+
+.center {
+  text-align: center;
 }

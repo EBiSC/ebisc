@@ -1,0 +1,161 @@
+// Notes
+
+.note {
+  margin-top: 3rem;
+  border-top: $base-border;
+  padding-top: 1rem;
+  font-style: italic;
+
+  .bulleted-ul {
+    li:before {
+      font-size: 1.4rem;
+    }
+  }
+}
+
+// Availability status
+
+.availability-status {
+  display: inline-block;
+
+  .status-label {
+    display: inline-block;
+    min-width: 140px;
+  }
+
+  select {
+    font-size: $font-size-small;
+
+    &.at-ecacc {
+      background-color: $color-green;
+      border: $base-border;
+      color: white;
+      font-weight: bold;
+    }
+
+    &.expand-to-order {
+      background-color: white;
+      color: darken($color-green, 15%);
+      border: solid 1px $color-green;
+    }
+
+    &.restricted-distribution {
+      background-color: white;
+      color: darken($color-green, 15%);
+      border: solid 1px $color-green;
+    }
+
+    &.not-available {
+      background-color: white;
+      border: $base-border;
+    }
+  }
+}
+
+table.listing .availability-status .status-label {
+  padding: 2px 10px;
+
+  &.at-ecacc {
+    background-color: $color-green;
+    color: white;
+    font-weight: bold;
+  }
+
+  &.expand-to-order {
+    background-color: white;
+    color: $color-green;
+    color: $base-font-color;
+    border: solid 1px $color-green;
+  }
+
+  &.restricted-distribution {
+    background-color: white;
+    color: $color-green;
+    color: $base-font-color;
+    border: solid 1px $color-green;
+  }
+
+  &.not-available {
+  }
+}
+
+// Batch data on executive dashboard
+
+.batches {
+
+  .request-bisample-ids {
+    margin: 1em 0 1.5em 0;
+    font-size: $font-size-large;
+  }
+
+  .accordion .content {
+
+    h3 {
+      font-size: $base-font-size * 1.2;
+      margin-top: 1.5rem;
+    }
+
+    .file-link {
+      padding: 1rem;
+      border: $base-border;
+      font-size: $font-size-large;
+
+      .glyphicon {
+        font-size: $font-size-large;
+      }
+
+      @include breakpoint(map-get($breakpoints, small)) {
+        font-size: $base-font-size;
+
+        .glyphicon {
+          font-size: $base-font-size;
+        }
+      }
+    }
+
+    .certificate-of-anlysis {
+      @extend .file-link;
+      display: inline-block;
+      margin-top: 1rem;
+      margin-left: 1rem;
+
+      @include breakpoint(map-get($breakpoints, small)) {
+        margin-left: 0;
+      }
+    }
+
+    .biosample-ids-file {
+      @extend .file-link;
+      display: inline-block;
+      margin-top: 1rem;
+    }
+
+    .glyphicon {
+      float: none;
+      padding-right: 0.5em;
+      color: $action-color;
+    }
+  }
+}
+
+// Cell line ids
+
+.cell-line-ids-file {
+  float: right;
+  margin-top: 1.5rem;
+}
+
+// Clips
+
+.clip-upload {
+  margin-top: 3rem;
+
+  h3 {
+    font-size: $font-size-large * 1.2;
+    margin-bottom: 1rem;
+  }
+
+  input[type="text"] {
+    max-width: 5rem;
+  }
+}

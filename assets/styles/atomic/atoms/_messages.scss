@@ -49,3 +49,10 @@ $error-color: lighten($color-red-light, 20%);
 .message-error {
   @include message($error-color);
 }
+
+.messages {
+  @include container();
+
+  margin-top: 10px;
+  margin-bottom: 10px;
+}

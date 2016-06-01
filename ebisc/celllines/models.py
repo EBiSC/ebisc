@@ -182,6 +182,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
         ('not_available', _(u'Not available')),
         ('at_ecacc', _(u'Stocked by ECACC')),
         ('expand_to_order', _(u'Expand to order')),
+        ('restricted_distribution', _(u'Restricted distribution')),
     )
 
     accepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
@@ -289,6 +290,23 @@ class Cellline(DirtyFieldsMixin, models.Model):
         else:
             return None
 
+    def get_latest_clip(self):
+        clips = self.clips.all()
+        clips_versions = []
+
+        if clips:
+            for clip in clips:
+                clips_versions.append(clip.version)
+
+            if clips_versions:
+                latest_version = sorted(clips_versions, lambda a, b: cmp(int(b[1:]), int(a[1:])) != 0 or cmp(a[0], b[0]))[0]
+                return self.clips.get(version=latest_version)
+            else:
+                return None
+
+        else:
+            return None
+
 
 class CelllineStatus(models.Model):
 
@@ -383,8 +401,7 @@ class CelllineAliquot(models.Model):
     biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
     name = models.CharField(_(u'Name'), max_length=50, null=True, blank=True)
     number = models.CharField(_(u'Number'), max_length=10, null=True, blank=True)
-
-    derived_from_aliqot = models.ForeignKey('self', verbose_name=_(u'Derived from aliquot'), null=True, blank=True)
+    derived_from = models.CharField(_(u'Biosamples ID of sample from which the vial was derived'), max_length=12, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line aliquot')

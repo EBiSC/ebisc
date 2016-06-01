@@ -24,6 +24,76 @@ header {
     @include breakpoint(map-get($breakpoints, medium)) {
       margin-left: 5px;
     }
+
+    button {
+      outline: none;
+    }
+
+    .collapsible-menu-toggle {
+      display: none;
+    }
+
+    @include breakpoint(map-get($breakpoints, small)) {
+      position: absolute;
+      right: 0px;
+      top: 50px;
+      width: 100%;
+
+      .collapsible-menu-toggle {
+        display: block;
+        float: right;
+        margin-right: 20px;
+      }
+    }
+
+    .collapsible-menu-items {
+      li {
+        display: inline-block;
+        margin-right: 18px;
+        font-size: $base-font-size * 0.9;
+
+        &:last-child {
+          margin-right: 0px;
+        }
+
+        @include breakpoint(map-get($breakpoints, medium)) {
+          margin-right: 11px;
+        }
+
+        a {
+          color: $action-color;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+
+        &.active a {
+          color: $color-text;
+        }
+      }
+
+      @include breakpoint(map-get($breakpoints, small)) {
+        display: none;
+
+        margin-left: 0;
+        padding-left: 0;
+
+        background-color: rgba(255,255,255,0.9);
+        border-top: solid 1px $base-border-color;
+        border-bottom: solid 1px $base-border-color;
+        margin-top: 55px;
+        padding: 10px;
+        z-index: 100;
+        position: relative;
+
+        li {
+          display: block;
+          font-size: $font-size-large;
+          margin: 10px 0px 10px 0px;
+        }
+      }
+    }
   }
 
   .user-account {

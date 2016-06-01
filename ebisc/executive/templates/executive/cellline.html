@@ -9,25 +9,46 @@
 <div class="status">
     <div class="cell-line-overview">
         <div>
-            <div class="header">Registration</div>
+            <div class="header">Status</div>
             <div class="data">
-                {% if cellline.validated == '1' %}<i class="glyphicon glyphicon-ok success"></i>
-                {% elif cellline.validated == '2' %}<i class="glyphicon glyphicon-ok success"></i><i class="glyphicon glyphicon-minus error"></i>
-                {% else %}<i class="glyphicon glyphicon-minus error"></i>{% endif %}
-                 {{ cellline.get_validated_display }}
+                <div>
+                    <p><span class="light-gray">Registration in hPSCreg:</span><br/>
+                        {% if cellline.validated == '1' %}<i class="glyphicon glyphicon-ok success"></i>
+                        {% elif cellline.validated == '2' %}<i class="glyphicon glyphicon-ok success"></i><i class="glyphicon glyphicon-minus error"></i>
+                        {% else %}<i class="glyphicon glyphicon-minus error"></i>{% endif %}
+                        {{ cellline.get_validated_display }}</p>
+
+                    <div><span class="light-gray">Availability:</span></div>
+                        {% if not perms.auth.can_manage_executive_dashboard %}
+                        {% if cellline.availability == 'not_available' %}
+                        <i class="glyphicon glyphicon-minus error"></i>
+                        {% else %}
+                        <i class="glyphicon glyphicon-ok success"></i>
+                        {% endif %}
+                        {% endif %}
+                        {% include 'executive/availability-status.html' %}</p>
+                </div>
             </div>
         </div>
         <div>
-            <div class="header">Availability</div>
+            <div class="header">Cell line</div>
             <div class="data">
-                {% if not perms.auth.can_manage_executive_dashboard %}
-                    {% if cellline.availability == 'not_available' %}
-                    <i class="glyphicon glyphicon-minus error"></i>
-                    {% else %}
-                    <i class="glyphicon glyphicon-ok success"></i>
-                    {% endif %}
-                {% endif %}
-                {% include 'executive/availability-status.html' %}
+                <div>
+                    <span class="light-gray">Depositor:</span> {{ cellline.generator }}<br/>
+                    <span class="light-gray">hPSCreg name:</span> {{ cellline.name }}<br/>
+                    <span class="light-gray">Depositor names:</span> {% if cellline.alternative_names %}{{ cellline.alternative_names }}{% else %}/{% endif %}<br/>
+                    <span class="light-gray">BioSamples ID:</span> {{ cellline.biosamples_id }}<br/>
+                    <span class="light-gray">ECACC Cat. No:</span> {% if cellline.ecacc_id %}<a href="{{ cellline.ecacc_url }}" target="_blank">{{ cellline.ecacc_id }}</a>{% else %}/{% endif %}
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="header">Donor</div>
+            <div class="data">
+                <div>
+                    <span class="light-gray">Depositor Donor ID:</span> {% if cellline.donor.provider_donor_ids %}{{ cellline.donor.provider_donor_ids|join:", " }}{% else %}/{% endif %}<br/>
+                    <span class="light-gray">BioSamples Donor ID:</span> {{ cellline.donor.biosamples_id|default:"-" }}<br/>
+                </div>
             </div>
         </div>
     </div>

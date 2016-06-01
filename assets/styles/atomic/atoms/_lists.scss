@@ -22,7 +22,7 @@ ol {
     }
   }
 
-  &%bulleted-ul {
+  &%bulleted-ul, &.bulleted-ul {
     list-style-type: none;
     margin-bottom: $small-spacing;
     padding-left: 0;
@@ -45,7 +45,6 @@ ol {
     }
   }
 }
-
 
 @mixin thumbnail-links($cols) {
   display: inline-block;

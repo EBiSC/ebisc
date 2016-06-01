@@ -154,6 +154,14 @@ LIMS = {
 }
 
 # -----------------------------------------------------------------------------
+# BioSamples
+
+BIOSAMPLES = {
+    'url': 'http://www.ebi.ac.uk/biosamples/beta',
+    'key': 'WNTGPBNW0NGC3876',
+}
+
+# -----------------------------------------------------------------------------
 # Markdown
 
 MARKDOWN_DEUX_STYLES = {

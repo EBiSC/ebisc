@@ -1,6 +1,5 @@
 @import 'vendor/susy';
 @import 'vendor/bourbon';
-// @import 'vendor/bitters';
 @import 'vendor/breakpoint';
 
 @import 'base/variables';
@@ -16,34 +15,29 @@
 @import 'atomic/atoms/forms';
 @import 'atomic/atoms/images';
 @import 'atomic/atoms/lists';
-@import 'atomic/atoms/main';
 @import 'atomic/atoms/messages';
+@import 'atomic/atoms/pagination';
+@import 'atomic/atoms/steps';
 @import 'atomic/atoms/tables';
 @import 'atomic/atoms/tabs';
 @import 'atomic/atoms/tooltips';
 @import 'atomic/atoms/typography';
 @import 'atomic/atoms/transitions';
+@import 'atomic/atoms/filters';
 
-@import 'atomic/molecules/main';
-@import 'atomic/molecules/forms';
-@import 'atomic/molecules/pagination';
-@import 'atomic/molecules/steps';
-@import 'atomic/molecules/tables';
-
+@import 'atomic/organisms/status-overview';
 @import 'atomic/organisms/organism';
 @import 'atomic/organisms/cell-line-search';
-@import 'atomic/organisms/tables';
 @import 'atomic/organisms/body';
 @import 'atomic/organisms/article';
 @import 'atomic/organisms/header';
-@import 'atomic/organisms/messages';
 @import 'atomic/organisms/footer';
 
 @import 'atomic/templates/default';
 @import 'atomic/templates/with-sidebar';
 @import 'atomic/templates/grid';
 
-@import 'atomic/pages/home';
 @import 'atomic/pages/login';
 @import 'atomic/pages/catalogue-cell-line';
+@import 'atomic/pages/executive-dashboard';
 @import 'atomic/pages/text-page';
