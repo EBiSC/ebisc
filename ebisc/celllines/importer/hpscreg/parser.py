@@ -267,22 +267,25 @@ def parse_organization(valuef, source):
 @inject_valuef
 def parse_donor(valuef, source):
 
-    # gender = valuef('gender_primary_cell', 'gender')
-
     gender = term_list_value_of_json(source, 'gender_primary_cell', Gender)
 
     try:
         donor = Donor.objects.get(biosamples_id=valuef('biosamples_donor_id'))
 
-        if donor.gender != gender:
+        if donor.gender != gender and gender is not None:
             logger.warn('Changing donor gender from %s to %s' % (donor.gender, gender))
             donor.gender = gender
 
-        donor.provider_donor_ids = valuef('internal_donor_ids')
-        donor.country_of_origin = term_list_value_of_json(source, 'donor_country_origin', Country)
-        donor.ethnicity = valuef('ethnicity')
-        donor.phenotypes = valuef('donor_phenotypes')
-        donor.karyotype = valuef('donor_karyotype')
+        if valuef('internal_donor_ids') is not None:
+            donor.provider_donor_ids = valuef('internal_donor_ids')
+        if valuef('donor_country_origin') is not None:
+            donor.country_of_origin = term_list_value_of_json(source, 'donor_country_origin', Country)
+        if valuef('ethnicity') is not None:
+            donor.ethnicity = valuef('ethnicity')
+        if valuef('donor_phenotypes') is not None:
+            donor.phenotypes = valuef('donor_phenotypes')
+        if valuef('donor_karyotype') is not None:
+            donor.karyotype = valuef('donor_karyotype')
 
         dirty = [donor.is_dirty(check_relationship=True)]
 

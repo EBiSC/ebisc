@@ -145,12 +145,13 @@ class NewBatchForm(forms.Form):
     )
     batch_type = forms.CharField(label='Batch Type', max_length=50, widget=forms.Select(choices=BATCH_TYPE_CHOICES), help_text=format_html(u'<div class="tooltip-item"><span class="glyphicon glyphicon-question-sign"></span><div class="tooltip"><p><b>Depositor expansion batch:</b> A batch-worth of empty vials are sent to the depositor, with EBiSC labels and EBiSC vial IDs. The depositor fills the vials and ships them back to central facility.</p><p><b>Central facility expansion batch:</b> Central facility expand the batch and then fill EBiSC vials with EBiSC vial labels. The batch is expanded from a small number of unlabeled vials sent by depositor or from vials already banked at CF.</p></div></div>'))
     number_of_vials = forms.IntegerField(label='Number of vials in batch', min_value=1, widget=forms.TextInput(attrs={'class': 'small'}))
-    derived_from = forms.CharField(label='Derived from', max_length=20, help_text='BiosampleID of cellline or vial that the batch was derived from')
+    derived_from = forms.CharField(label='Derived from', max_length=20, help_text='BiosampleID of cell line or vial that the batch was derived from')
 
     def clean(self):
         cleaned_data = super(NewBatchForm, self).clean()
         cellline_biosample_id = cleaned_data.get('cellline_biosample_id')
         batch_id = cleaned_data.get('batch_id')
+        derived_from = cleaned_data.get('derived_from')
 
         cellline = Cellline.objects.get(biosamples_id=cellline_biosample_id)
 
@@ -161,6 +162,15 @@ class NewBatchForm(forms.Form):
                 raise forms.ValidationError(
                     'A batch with this Batch ID for cell line %(cellline_name)s already exists.',
                     params={'cellline_name': cellline.name}
+                )
+
+        if cellline_biosample_id and derived_from:
+            existing_vial_ids = Set([v.biosamples_id for v in CelllineAliquot.objects.filter(batch__cell_line__biosamples_id=cellline_biosample_id)])
+
+            if derived_from != cellline.biosamples_id and derived_from not in existing_vial_ids:
+                raise forms.ValidationError(
+                    'Derived from Biosamples ID: %(derived_from)s does not match the cell line ID or any vial IDs from this cell line.',
+                    params={'derived_from': derived_from}
                 )
 
 
