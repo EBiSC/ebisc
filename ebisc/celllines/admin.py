@@ -100,3 +100,9 @@ admin.site.register(CelllineBatch, CelllineBatchAdmin)
 
 
 # -----------------------------------------------------------------------------
+# Clips
+
+class CelllineInformationPackAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(CelllineInformationPack, CelllineInformationPackAdmin)
