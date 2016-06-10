@@ -2,9 +2,9 @@
 
 <h2>Batches</h2>
 
-{% if perms.auth.can_view_executive_dashboard %}
+<!-- {% if perms.auth.can_view_executive_dashboard %}
 <div class="request-bisample-ids"><a href="{% url 'executive:new_batch' cellline.name %}">Create a new batch</a> <small>(request new batch and vial Biosample IDs)</small></div>
-{% endif %}
+{% endif %} -->
 
 {% if cellline.batches.all|length %}
 <ul class="accordion">
