@@ -103,6 +103,6 @@ admin.site.register(CelllineBatch, CelllineBatchAdmin)
 # Clips
 
 class CelllineInformationPackAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['cell_line', 'version', 'created', 'updated']
 
 admin.site.register(CelllineInformationPack, CelllineInformationPackAdmin)

@@ -335,7 +335,8 @@ class CelllineInformationPack(models.Model):
     class Meta:
         verbose_name = _(u'Cell line information pack')
         verbose_name_plural = _(u'Cell line information packs')
-        ordering = []
+        ordering = ['-updated']
+        unique_together = (('cell_line', 'version'))
 
     def __unicode__(self):
         return u'%s' % (self.id,)
