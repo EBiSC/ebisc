@@ -32,7 +32,6 @@ from ebisc.celllines.models import  \
     CelllineVectorFreeReprogrammingFactors,  \
     VectorFreeReprogrammingFactor, \
     CelllineCharacterization,  \
-    CelllineCharacterizationEpipluriscore, \
     CelllineCharacterizationPluritest, \
     UndifferentiatedMorphologyMarkerImune,  \
     UndifferentiatedMorphologyMarkerImuneMolecule,  \
