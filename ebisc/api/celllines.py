@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineCharacterizationEpipluriscore, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
+from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
 
 
 # -----------------------------------------------------------------------------
@@ -236,6 +236,7 @@ class GeneticModificationIsogenicResource(ModelResource):
             return [locus.name for locus in bundle.obj.target_locus.all()]
         else:
             return []
+
 
 # -----------------------------------------------------------------------------
 # Publication
@@ -542,45 +543,55 @@ class CelllineResource(ModelResource):
 
         if hasattr(bundle.obj, 'non_integrating_vector'):
 
-            res = {'type': 'Non-integrating vector'}
+            data = {}
 
             if bundle.obj.non_integrating_vector.vector:
-                res['data'] = {'vector': bundle.obj.non_integrating_vector.vector}
+                data['vector'] = bundle.obj.non_integrating_vector.vector
                 if bundle.obj.non_integrating_vector.genes:
                     genes = [gene.name for gene in bundle.obj.non_integrating_vector.genes.all()]
-                    res['data']['non_integrating_vector_gene_list'] = genes
+                    data['non_integrating_vector_gene_list'] = genes
 
             if bundle.obj.non_integrating_vector.detectable:
-                res['data']['non_integrating_vector_detectable'] = bundle.obj.non_integrating_vector.detectable
-                res['data']['non_integrating_vector_detection_notes'] = bundle.obj.non_integrating_vector.detectable_notes
-                res['data']['non_integrating_vector_methods'] = bundle.obj.non_integrating_vector.methods
+                data.update({
+                    'non_integrating_vector_detectable': bundle.obj.non_integrating_vector.detectable,
+                    'non_integrating_vector_detection_notes': bundle.obj.non_integrating_vector.detectable_notes,
+                    'non_integrating_vector_methods': bundle.obj.non_integrating_vector.methods,
+                })
 
-            return res
+            return {
+                'type': 'Non-integrating vector',
+                'data': data
+            }
 
         elif hasattr(bundle.obj, 'integrating_vector'):
 
-            res = {'type': 'Integrating vector'}
+            data = {}
 
             if bundle.obj.integrating_vector.vector:
-                res['data'] = {
+                data.update({
                     'vector': bundle.obj.integrating_vector.vector,
                     'excisable': bundle.obj.integrating_vector.excisable,
                     'absence_reprogramming_vectors': bundle.obj.integrating_vector.absence_reprogramming_vectors,
-                }
+                })
                 if bundle.obj.integrating_vector.virus:
-                    res['data']['virus'] = bundle.obj.integrating_vector.virus
+                    data['virus'] = bundle.obj.integrating_vector.virus
                 if bundle.obj.integrating_vector.transposon:
-                    res['data']['transposon'] = bundle.obj.integrating_vector.transposon
+                    data['transposon'] = bundle.obj.integrating_vector.transposon
                 if bundle.obj.integrating_vector.genes:
                     genes = [gene.name for gene in bundle.obj.integrating_vector.genes.all()]
-                    res['data']['integrating_vector_gene_list'] = genes
+                    data['integrating_vector_gene_list'] = genes
 
             if bundle.obj.integrating_vector.silenced:
-                res['data']['integrating_vector_silenced'] = bundle.obj.integrating_vector.silenced
-                res['data']['integrating_vector_silencing_notes'] = bundle.obj.integrating_vector.silenced_notes
-                res['data']['integrating_vector_methods'] = bundle.obj.integrating_vector.methods
+                data.update({
+                    'integrating_vector_silenced': bundle.obj.integrating_vector.silenced,
+                    'integrating_vector_silencing_notes': bundle.obj.integrating_vector.silenced_notes,
+                    'integrating_vector_methods': bundle.obj.integrating_vector.methods,
+                })
 
-            return res
+            return {
+                'type': 'Integrating vector',
+                'data': data,
+            }
 
         else:
             return None
