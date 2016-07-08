@@ -448,7 +448,7 @@ class CelllineResource(ModelResource):
     availability = fields.CharField('get_availability_display')
 
     # Donor and disease
-    primary_disease_diagnosed = fields.CharField('primary_disease_diagnosis')
+    primary_disease_diagnosed = fields.CharField('primary_disease_diagnosis', null=True)
     primary_disease = fields.ToOneField(DiseaseResource, 'primary_disease', null=True, full=True)
     disease_associated_phenotypes = fields.ListField('disease_associated_phenotypes', null=True)
 

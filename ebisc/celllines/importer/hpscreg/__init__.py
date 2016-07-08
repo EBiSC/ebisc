@@ -30,7 +30,7 @@ def run():
     # json = request_get('http://test.hescreg.eu/api/export/2')
     # import_cellline(json)
 
-    # for cellline_id in [id for id in cellline_ids if id == 'UKKi007-B']:
+    # for cellline_id in [id for id in cellline_ids if id == 'EDi001-A']:
     for cellline_id in [id for id in cellline_ids]:
         if cellline_id == 'BCRTi005-A' or cellline_id == 'BCRTi004-A':
             pass
@@ -107,9 +107,13 @@ def import_cellline(source):
     # Vector
 
     if valuef('vector_type') == 'Integrating':
+        if cell_line.non_integrating_vector:
+            print '####'
         dirty += [parser.parse_integrating_vector(source, cell_line)]
 
     if valuef('vector_type') == 'Non-integrating':
+        if cell_line.integrating_vector:
+            print '-----'
         dirty += [parser.parse_non_integrating_vector(source, cell_line)]
 
     dirty += [
