@@ -11,7 +11,7 @@ from django.conf import settings
 import logging
 logger = logging.getLogger('management.commands')
 
-from ebisc.celllines.models import Cellline, Country
+from ebisc.celllines.models import Cellline, Country, CelllineNonIntegratingVector, CelllineIntegratingVector
 
 from . import parser
 
@@ -107,13 +107,25 @@ def import_cellline(source):
     # Vector
 
     if valuef('vector_type') == 'Integrating':
-        if cell_line.non_integrating_vector:
-            print '####'
+        try:
+            v = CelllineNonIntegratingVector.objects.get(cell_line=cell_line)
+            v.delete()
+            dirty += [True]
+
+        except CelllineNonIntegratingVector.DoesNotExist:
+            pass
+
         dirty += [parser.parse_integrating_vector(source, cell_line)]
 
     if valuef('vector_type') == 'Non-integrating':
-        if cell_line.integrating_vector:
-            print '-----'
+        try:
+            v = CelllineIntegratingVector.objects.get(cell_line=cell_line)
+            v.delete()
+            dirty += [True]
+
+        except CelllineIntegratingVector.DoesNotExist:
+            pass
+
         dirty += [parser.parse_non_integrating_vector(source, cell_line)]
 
     dirty += [

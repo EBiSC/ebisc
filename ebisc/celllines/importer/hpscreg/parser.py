@@ -1255,9 +1255,9 @@ def parse_characterization(valuef, source, cell_line):
     return False
 
 
-@inject_valuef
-def parse_doc(valuef, source):
-    print valuef('filename_enc')
+# @inject_valuef
+# def parse_doc(valuef, source):
+#     print valuef('filename_enc')
 
 
 @inject_valuef
