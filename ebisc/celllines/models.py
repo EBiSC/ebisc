@@ -444,8 +444,8 @@ class Disease(models.Model):
 
     icdcode = models.CharField(_(u'DOID'), max_length=300, unique=True, null=True, blank=True)
     purl = models.URLField(_(u'Purl'), max_length=300, null=True, blank=True)
-    disease = models.CharField(_(u'Disease'), max_length=45, blank=True)
-    synonyms = models.CharField(_(u'Synonyms'), max_length=500, null=True, blank=True)
+    disease = models.CharField(_(u'Disease'), max_length=200, blank=True)
+    synonyms = models.CharField(_(u'Synonyms'), max_length=2000, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Disease')
