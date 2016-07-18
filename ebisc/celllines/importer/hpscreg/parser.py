@@ -1286,6 +1286,15 @@ def parse_characterization_pluritest(valuef, source, cell_line):
 
         return False
 
+    else:
+        try:
+            p = CelllineCharacterizationPluritest.objects.get(cell_line=cell_line)
+            p.delete()
+            return True
+
+        except CelllineCharacterizationPluritest.DoesNotExist:
+            pass
+
 
 # @inject_valuef
 # def parse_characterization_epipluriscore(valuef, source, cell_line):

@@ -50,6 +50,10 @@ class CelllineDerivationInline(OneToOneStackedInline):
     model = CelllineDerivation
 
 
+class CelllineCharacterizationPluritestInline(OneToOneStackedInline):
+    model = CelllineCharacterizationPluritest
+
+
 class CelllineEthicsInline(OneToOneStackedInline):
     model = CelllineEthics
 
@@ -73,6 +77,7 @@ class CelllineAdmin(admin.ModelAdmin):
         CelllineCharacterizationInline,
         CelllineCultureConditionsInline,
         CelllineDerivationInline,
+        CelllineCharacterizationPluritestInline,
         CelllineEthicsInline,
         CelllineValueInline,
         CelllineIntegratingVectorInline,
