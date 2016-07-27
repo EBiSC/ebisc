@@ -98,6 +98,18 @@ hr {
   color: lighten($color-text, 30%);
 }
 
+.user-note {
+  font-size: $base-font-size * 0.9;
+  color: lighten($color-text, 30%);
+  line-height: 1.3rem;
+  margin: 0.5rem 0;
+
+  a {
+    color: lighten($color-text, 30%);
+    text-decoration: underline;
+  }
+}
+
 .light-gray {
   color: lighten($color-text, 30%);
 }
