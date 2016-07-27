@@ -11,7 +11,7 @@ from django.conf import settings
 import logging
 logger = logging.getLogger('management.commands')
 
-from ebisc.celllines.models import Cellline, Country
+from ebisc.celllines.models import Cellline, Country, CelllineNonIntegratingVector, CelllineIntegratingVector
 
 from . import parser
 
@@ -30,7 +30,7 @@ def run():
     # json = request_get('http://test.hescreg.eu/api/export/2')
     # import_cellline(json)
 
-    # for cellline_id in [id for id in cellline_ids if id == 'UKKi007-B']:
+    # for cellline_id in [id for id in cellline_ids if id == 'EDi001-A']:
     for cellline_id in [id for id in cellline_ids]:
         if cellline_id == 'BCRTi005-A' or cellline_id == 'BCRTi004-A':
             pass
@@ -107,9 +107,25 @@ def import_cellline(source):
     # Vector
 
     if valuef('vector_type') == 'Integrating':
+        try:
+            v = CelllineNonIntegratingVector.objects.get(cell_line=cell_line)
+            v.delete()
+            dirty += [True]
+
+        except CelllineNonIntegratingVector.DoesNotExist:
+            pass
+
         dirty += [parser.parse_integrating_vector(source, cell_line)]
 
     if valuef('vector_type') == 'Non-integrating':
+        try:
+            v = CelllineIntegratingVector.objects.get(cell_line=cell_line)
+            v.delete()
+            dirty += [True]
+
+        except CelllineIntegratingVector.DoesNotExist:
+            pass
+
         dirty += [parser.parse_non_integrating_vector(source, cell_line)]
 
     dirty += [

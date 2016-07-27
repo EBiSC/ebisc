@@ -19,13 +19,15 @@ def run(filename):
     with open(filename, 'rU') as csvfile:
 
         # reader = csv.reader(csvfile, delimiter='\t')
-        reader = csv.reader(csvfile, dialect=csv.excel_tab, delimiter='\t')
+        # reader = csv.reader(csvfile, dialect=csv.excel_tab, delimiter='\t')
+        reader = csv.reader(csvfile, dialect=csv.excel_tab, delimiter=',')
 
         next(reader, None)
 
         for row in reader:
 
-            (vial_biosamples_id, vial_name, _, cellline_biosamples_id, _, _, _, _, batch_biosamples_id) = row
+            # (vial_biosamples_id, vial_name, _, cellline_biosamples_id, _, _, _, _, batch_biosamples_id) = row
+            (vial_biosamples_id, vial_name, _, _, _, cellline_biosamples_id, _, _, _, _, _, _, batch_biosamples_id, _, _, _, _) = row
 
             try:
                 cell_line = Cellline.objects.get(biosamples_id=cellline_biosamples_id)

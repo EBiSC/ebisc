@@ -335,7 +335,8 @@ class CelllineInformationPack(models.Model):
     class Meta:
         verbose_name = _(u'Cell line information pack')
         verbose_name_plural = _(u'Cell line information packs')
-        ordering = []
+        ordering = ['-updated']
+        unique_together = (('cell_line', 'version'))
 
     def __unicode__(self):
         return u'%s' % (self.id,)
@@ -443,8 +444,8 @@ class Disease(models.Model):
 
     icdcode = models.CharField(_(u'DOID'), max_length=300, unique=True, null=True, blank=True)
     purl = models.URLField(_(u'Purl'), max_length=300, null=True, blank=True)
-    disease = models.CharField(_(u'Disease'), max_length=45, blank=True)
-    synonyms = models.CharField(_(u'Synonyms'), max_length=500, null=True, blank=True)
+    disease = models.CharField(_(u'Disease'), max_length=200, blank=True)
+    synonyms = models.CharField(_(u'Synonyms'), max_length=2000, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Disease')
