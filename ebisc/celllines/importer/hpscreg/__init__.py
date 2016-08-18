@@ -79,30 +79,12 @@ def import_cellline(source):
     cell_line.generator = generator
     cell_line.owner = owner
     cell_line.derivation_country = parser.term_list_value_of_json(source, 'derivation_country', Country)
-    cell_line.primary_disease_diagnosis = valuef('disease_flag')
-    cell_line.primary_disease = parser.parse_disease(source)
-    cell_line.primary_disease_not_normalised = valuef('disease_other')
-    cell_line.primary_disease_stage = valuef('disease_stage')
     cell_line.disease_associated_phenotypes = valuef('disease_associated_phenotypes')
-    cell_line.affected_status = valuef('disease_affected_flag')
     cell_line.family_history = valuef('family_history')
     cell_line.medical_history = valuef('medical_history')
     cell_line.clinical_information = valuef('clinical_information')
 
     dirty = [cell_line.is_dirty(check_relationship=True)]
-
-    # # Organizations
-    #
-    # for organization, organization_role in organizations:
-    #
-    #     cell_line_organization, created = CelllineOrganization.objects.get_or_create(
-    #         cell_line=cell_line,
-    #         organization=organization,
-    #         cell_line_org_type=organization_role,
-    #     )
-    #     if created:
-    #         logger.info('Added organization %s as %s' % (organization, organization_role))
-    #
 
     # Vector
 
@@ -110,25 +92,24 @@ def import_cellline(source):
         try:
             v = CelllineNonIntegratingVector.objects.get(cell_line=cell_line)
             v.delete()
-            dirty += [True]
-
+            dirty.append(True)
         except CelllineNonIntegratingVector.DoesNotExist:
             pass
 
-        dirty += [parser.parse_integrating_vector(source, cell_line)]
+        dirty.append(parser.parse_integrating_vector(source, cell_line))
 
     if valuef('vector_type') == 'Non-integrating':
         try:
             v = CelllineIntegratingVector.objects.get(cell_line=cell_line)
             v.delete()
-            dirty += [True]
-
+            dirty.append(True)
         except CelllineIntegratingVector.DoesNotExist:
             pass
 
-        dirty += [parser.parse_non_integrating_vector(source, cell_line)]
+        dirty.append(parser.parse_non_integrating_vector(source, cell_line))
 
     dirty += [
+        parser.parse_diseases(source, cell_line),
         parser.parse_ethics(source, cell_line),
         parser.parse_derivation(source, cell_line),
         parser.parse_vector_free_reprogramming_factors(source, cell_line),

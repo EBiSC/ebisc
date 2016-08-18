@@ -21,6 +21,7 @@ from ebisc.celllines.models import  \
     Unit,  \
     Donor,  \
     Disease,  \
+    CelllineDisease,  \
     CelllineCultureConditions,  \
     CultureMediumOther,  \
     CelllineCultureMediumSupplement,  \
@@ -171,9 +172,6 @@ def term_list_value(value, model, model_field='name'):
     return value
 
 
-# -----------------------------------------------------------------------------
-# Specific parsers
-
 def inject_valuef(func):
     def wrapper(source, *args):
         args = [functools.partial(value_of_json, source), source] + list(args)
@@ -181,35 +179,92 @@ def inject_valuef(func):
     return wrapper
 
 
-@inject_valuef
-def parse_disease(valuef, source):
+# -----------------------------------------------------------------------------
+# Specific parsers
 
-    if valuef('disease_flag') == '0':
+def parse_diseases(source, cell_line):
+
+    cell_line_diseases_old = list(cell_line.diseases.all().order_by('id'))
+    cell_line_diseases_old_ids = set([d.id for d in cell_line_diseases_old])
+
+    # Parse diseases (and correctly save them)
+
+    for ds in source.get('diseases', []):
+        parse_disease(ds, cell_line)
+
+    cell_line_diseases_new = list(cell_line.diseases.all().order_by('id'))
+    cell_line_diseases_new_ids = set([d.id for d in cell_line_diseases_new])
+
+    # Delete existing cell line diseases that are not present in new data
+
+    to_delete = cell_line_diseases_old_ids - cell_line_diseases_new_ids
+
+    for cell_line_disease in [cd for cd in cell_line_diseases_old if cd.id in to_delete]:
+        logger.info('Deleting obsolete cell line disease %s' % cell_line_disease)
+        cell_line_disease.delete()
+
+    # Check for changes (dirty)
+
+    if (cell_line_diseases_old_ids != cell_line_diseases_new_ids):
+        return True
+    else:
+        def diseases_equal(a, b):
+            return (
+                a.primary_disease == b.primary_disease and
+                a.disease_stage == b.disease_stage and
+                a.affected_status == b.affected_status and
+                a.notes == b.notes
+            )
+        for (old, new) in zip(cell_line_diseases_old, cell_line_diseases_new):
+            if not diseases_equal(old, new):
+                return True
+
+    return False
+
+
+@inject_valuef
+def parse_disease(valuef, source, cell_line):
+
+    if not valuef('purl'):
+        logger.warn('Missing disease purl for cell line %s' % cell_line)
         return None
 
+    # Update or create the disease
+
+    if valuef('synonyms') is None:
+        synonyms = []
     else:
-        if valuef('disease_doid_synonyms') is None:
-            synonyms = None
-        else:
-            synonyms = ', '.join([s.split('EXACT')[0].strip() for s in valuef('disease_doid_synonyms').split(',')])
+        synonyms = valuef('synonyms')
 
-        try:
-            disease, created = Disease.objects.update_or_create(
-                icdcode=valuef('disease_doid'),
-                disease=valuef('disease_doid_name'),
-                defaults={
-                    'synonyms': synonyms,
-                    'purl': valuef('disease_purl'),
-                }
-            )
-        except IntegrityError, e:
-            logger.warn(format_integrity_error(e))
-            return None
+    disease, created = Disease.objects.update_or_create(
+        purl=valuef('purl'),
+        defaults={
+            'name': valuef('purl_name'),
+            'synonyms': ', '.join(synonyms),
+        }
+    )
 
-        if created:
-            logger.info('Found new disease: %s' % disease)
+    if created:
+        logger.info('Created new disease: %s' % disease)
 
-        return disease
+    # Update or create cell line disease
+
+    cell_line_disease, created = CelllineDisease.objects.update_or_create(
+        cell_line=cell_line,
+        disease=disease,
+        disease_not_normalised=valuef('other'),
+        defaults={
+            'primary_disease': valuef('primary', 'bool'),
+            'disease_stage': valuef('stage'),
+            'affected_status': valuef('affected'),
+            'notes': valuef('free_text'),
+        }
+    )
+
+    if created:
+        logger.info('Created new cell line disease: %s' % disease)
+
+    return cell_line_disease
 
 
 @inject_valuef
@@ -763,107 +818,83 @@ def parse_hla_typing(valuef, source, cell_line):
         dirty = []
 
         if valuef('hla_i_a_all1') or valuef('hla_i_a_all2'):
-
             hla_typing, hla_typing_created = CelllineHlaTyping.objects.get_or_create(cell_line=cell_line, hla='A')
-
             hla_typing.hla_class = 'I'
             hla_typing.hla_allele_1 = valuef('hla_i_a_all1')
             hla_typing.hla_allele_2 = valuef('hla_i_a_all2')
 
             if hla_typing_created or hla_typing.is_dirty():
                 hla_typing.save()
-
                 dirty += [True]
 
         if valuef('hla_i_b_all1') or valuef('hla_i_b_all2'):
-
             hla_typing, hla_typing_created = CelllineHlaTyping.objects.get_or_create(cell_line=cell_line, hla='B')
-
             hla_typing.hla_class = 'I'
             hla_typing.hla_allele_1 = valuef('hla_i_b_all1')
             hla_typing.hla_allele_2 = valuef('hla_i_b_all2')
 
             if hla_typing_created or hla_typing.is_dirty():
                 hla_typing.save()
-
                 dirty += [True]
 
         if valuef('hla_i_c_all1') or valuef('hla_i_c_all2'):
-
             hla_typing, hla_typing_created = CelllineHlaTyping.objects.get_or_create(cell_line=cell_line, hla='C')
-
             hla_typing.hla_class = 'I'
             hla_typing.hla_allele_1 = valuef('hla_i_c_all1')
             hla_typing.hla_allele_2 = valuef('hla_i_c_all2')
 
             if hla_typing_created or hla_typing.is_dirty():
                 hla_typing.save()
-
                 dirty += [True]
 
         if valuef('hla_ii_dp_all1') or valuef('hla_ii_dp_all2'):
-
             hla_typing, hla_typing_created = CelllineHlaTyping.objects.get_or_create(cell_line=cell_line, hla='DP')
-
             hla_typing.hla_class = 'II'
             hla_typing.hla_allele_1 = valuef('hla_ii_dp_all1')
             hla_typing.hla_allele_2 = valuef('hla_ii_dp_all2')
 
             if hla_typing_created or hla_typing.is_dirty():
                 hla_typing.save()
-
                 dirty += [True]
 
         if valuef('hla_ii_dm_all1') or valuef('hla_ii_dm_all2'):
-
             hla_typing, hla_typing_created = CelllineHlaTyping.objects.get_or_create(cell_line=cell_line, hla='DM')
-
             hla_typing.hla_class = 'II'
             hla_typing.hla_allele_1 = valuef('hla_ii_dm_all1')
             hla_typing.hla_allele_2 = valuef('hla_ii_dm_all2')
 
             if hla_typing_created or hla_typing.is_dirty():
                 hla_typing.save()
-
                 dirty += [True]
 
         if valuef('hla_ii_doa_all1') or valuef('hla_ii_doa_all2'):
-
             hla_typing, hla_typing_created = CelllineHlaTyping.objects.get_or_create(cell_line=cell_line, hla='DOA')
-
             hla_typing.hla_class = 'II'
             hla_typing.hla_allele_1 = valuef('hla_ii_doa_all1')
             hla_typing.hla_allele_2 = valuef('hla_ii_doa_all2')
 
             if hla_typing_created or hla_typing.is_dirty():
                 hla_typing.save()
-
                 dirty += [True]
 
         if valuef('hla_ii_dq_all1') or valuef('hla_ii_dq_all2'):
-
             hla_typing, hla_typing_created = CelllineHlaTyping.objects.get_or_create(cell_line=cell_line, hla='DQ')
-
             hla_typing.hla_class = 'II'
             hla_typing.hla_allele_1 = valuef('hla_ii_dq_all1')
             hla_typing.hla_allele_2 = valuef('hla_ii_dq_all2')
 
             if hla_typing_created or hla_typing.is_dirty():
                 hla_typing.save()
-
                 dirty += [True]
 
         if valuef('hla_ii_dr_all1') or valuef('hla_ii_dr_all2'):
-
             hla_typing, hla_typing_created = CelllineHlaTyping.objects.get_or_create(cell_line=cell_line, hla='DR')
-
             hla_typing.hla_class = 'II'
             hla_typing.hla_allele_1 = valuef('hla_ii_dr_all1')
             hla_typing.hla_allele_2 = valuef('hla_ii_dr_all2')
 
             if hla_typing_created or hla_typing.is_dirty():
                 hla_typing.save()
-
                 dirty += [True]
 
 

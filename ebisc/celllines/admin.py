@@ -21,7 +21,7 @@ class OneToOneStackedInline(admin.StackedInline):
 
 
 # -----------------------------------------------------------------------------
-# Directories
+# Dictionaries
 
 class GenderAdmin(admin.ModelAdmin):
     pass
@@ -36,7 +36,20 @@ admin.site.register(AgeRange, AgeRangeAdmin)
 
 
 # -----------------------------------------------------------------------------
+# Disease
+
+class DiseaseAdmin(admin.ModelAdmin):
+    list_display = ['purl', 'name']
+
+admin.site.register(Disease, DiseaseAdmin)
+
+
+# -----------------------------------------------------------------------------
 # CellLine
+
+class CelllineDiseaseInline(StackedInline):
+    model = CelllineDisease
+
 
 class CelllineCharacterizationInline(OneToOneStackedInline):
     model = CelllineCharacterization
@@ -71,9 +84,9 @@ class CelllineNonIntegratingVectorInline(OneToOneStackedInline):
 
 
 class CelllineAdmin(admin.ModelAdmin):
-
     list_display = ['name', 'biosamples_id', 'alternative_names', 'availability', 'available_for_sale_at_ecacc']
     inlines = (
+        CelllineDiseaseInline,
         CelllineCharacterizationInline,
         CelllineCultureConditionsInline,
         CelllineDerivationInline,

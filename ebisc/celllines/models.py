@@ -206,12 +206,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
     owner = models.ForeignKey('Organization', verbose_name=_(u'Owner'), null=True, blank=True, related_name='owner_of_cell_lines')
     derivation_country = models.ForeignKey('Country', verbose_name=_(u'Derivation country'), null=True, blank=True)
 
-    primary_disease = models.ForeignKey('Disease', verbose_name=_(u'Diagnosed disease'), null=True, blank=True)
-    primary_disease_not_normalised = models.CharField(_(u'Disease name - not normalised'), max_length=500, null=True, blank=True)
-    primary_disease_diagnosis = models.CharField(_(u'Disease diagnosis'), max_length=12, null=True, blank=True)
-    primary_disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
     disease_associated_phenotypes = ArrayField(models.CharField(max_length=500), verbose_name=_(u'Disease associated phenotypes'), null=True, blank=True)
-    affected_status = models.CharField(_(u'Affected status'), max_length=12, null=True, blank=True)
     family_history = models.CharField(_(u'Family history'), max_length=500, null=True, blank=True)
     medical_history = models.CharField(_(u'Medical history'), max_length=500, null=True, blank=True)
     clinical_information = models.CharField(_(u'Clinical information'), max_length=500, null=True, blank=True)
@@ -306,6 +301,9 @@ class Cellline(DirtyFieldsMixin, models.Model):
 
         else:
             return None
+
+    def has_diagnosed_diseases(self):
+        return self.diseases.count() > 0
 
 
 class CelllineStatus(models.Model):
@@ -442,18 +440,40 @@ class Donor(DirtyFieldsMixin, models.Model):
 
 class Disease(models.Model):
 
-    icdcode = models.CharField(_(u'DOID'), max_length=300, unique=True, null=True, blank=True)
-    purl = models.URLField(_(u'Purl'), max_length=300, null=True, blank=True)
-    disease = models.CharField(_(u'Disease'), max_length=200, blank=True)
+    purl = models.URLField(_(u'Purl'), unique=True)
+    name = models.CharField(_(u'Name'), max_length=200, null=True, blank=True)
     synonyms = models.CharField(_(u'Synonyms'), max_length=2000, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Disease')
         verbose_name_plural = _(u'Diseases')
+        ordering = ['purl']
+
+    def __unicode__(self):
+        return u'%s' % self.purl
+
+
+class CelllineDisease(models.Model):
+
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='diseases')
+    disease = models.ForeignKey('Disease', verbose_name=_(u'Diagnosed disease'), null=True, blank=True)
+    disease_not_normalised = models.CharField(_(u'Disease name - not normalised'), max_length=500, null=True, blank=True)
+
+    primary_disease = models.BooleanField(_(u'Primary disease'), default=False)
+
+    disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
+    affected_status = models.CharField(_(u'Affected status'), max_length=12, null=True, blank=True)
+
+    notes = models.TextField(_(u'Notes'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line disease')
+        verbose_name_plural = _(u'Cell line diseases')
+        unique_together = [('cell_line', 'disease', 'disease_not_normalised')]
         ordering = ['disease']
 
     def __unicode__(self):
-        return u'%s' % (self.disease,)
+        return u'%s - %s' % (self.cell_line, self.disease)
 
 
 # -----------------------------------------------------------------------------
