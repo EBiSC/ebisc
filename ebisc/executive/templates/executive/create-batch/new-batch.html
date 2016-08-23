@@ -4,6 +4,8 @@
 
 {% block article %}
 
+{% if perms.auth.can_manage_executive_dashboard %}
+
 <h1>{{ cellline.name }} <small>{{ cellline.biosamples_id }}</small></h1>
 
 <p class="back-link"><a href="{% url 'executive:cellline' cellline.name %}"><i class="glyphicon glyphicon-chevron-left"></i> Back to cell line page</a></p>
@@ -31,5 +33,9 @@
     </tr>
     </table>
 </form>
+
+{% else %}
+<p><i>You do not have permission to access this page.</i></p>
+{% endif %}
 
 {% endblock %}

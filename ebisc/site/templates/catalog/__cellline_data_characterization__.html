@@ -32,7 +32,7 @@
     </td>
 </tr>
 
-{% if cellline.undifferentiated_morphology_marker_imune or cellline.undifferentiated_morphology_marker_facs or cellline.undifferentiated_morphology_marker_rtpcr or cellline.undifferentiated_morphology_marker_morphology or cellline.undifferentiated_morphology_marker_expression_profile %}
+{% if cellline.undifferentiated_morphology_marker_imune or cellline.undifferentiated_morphology_marker_facs or cellline.undifferentiated_morphology_marker_rtpcr or cellline.undifferentiated_morphology_marker_morphology or cellline.undifferentiated_morphology_marker_expression_profile or cellline.celllinecharacterizationpluritest %}
 <tr><th class="sub-title"><h3>Undifferentiated cells</h3></th></tr>
 
 <tr>
@@ -98,5 +98,23 @@
 
     </td>
 </tr>
+
+{% if cellline.celllinecharacterizationpluritest and cellline.celllinecharacterizationpluritest.pluripotency_score %}
+<tr>
+  <td class="label">PluriTest assessment for pluripotency:</td>
+  <td>
+    Pluripotency score: {{ cellline.celllinecharacterizationpluritest.pluripotency_score }}
+    {% if cellline.celllinecharacterizationpluritest.novelty_score %}
+    <br/>Novelty score: {{ cellline.celllinecharacterizationpluritest.novelty_score }}
+    {% endif %}
+    {% if cellline.celllinecharacterizationpluritest.microarray_url %}
+    <br/>Microarray data: <a href="{{ cellline.celllinecharacterizationpluritest.microarray_url }}" target="_blank">{{ cellline.celllinecharacterizationpluritest.microarray_url }}</a>
+    {% endif %}
+    <div class="user-note">
+      The PluriTest is a diagnostic test based on the DNA microarray. The pluripotency score differentiates between pluripotent and non-pluripotent phenotypes. The novelty score is a measure of technical as well as biological variations in the data. <a href="http://www.nature.com/nmeth/journal/v8/n4/full/nmeth.1580.html" target="_blank">www.nature.com/nmeth/journal/v8/n4/full/nmeth.1580.html</a>
+    </div>
+  </td>
+</tr>
+{% endif %}
 
 {% endif %}
