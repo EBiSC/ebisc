@@ -195,7 +195,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
     name = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
     alternative_names = models.CharField(_(u'Cell line alternative names'), max_length=500, null=True, blank=True)
 
-    biosamples_id = models.CharField(_(u'Biosamples ID'), unique=True, max_length=12)
+    biosamples_id = models.CharField(_(u'Biosamples ID'), unique=True, max_length=100)
     hescreg_id = models.CharField(_(u'hESCreg ID'), unique=True, max_length=10, null=True, blank=True)
     ecacc_id = models.CharField(_(u'ECACC ID'), unique=True, max_length=10, null=True, blank=True)
 
@@ -357,7 +357,7 @@ class CelllineBatch(models.Model):
     )
 
     cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='batches')
-    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=100, unique=True)
 
     batch_id = models.CharField(_(u'Batch ID'), max_length=12)
     batch_type = models.CharField(_(u'Batch type'), max_length=50, choices=BATCH_TYPE_CHOICES, default='unknown')
@@ -399,7 +399,7 @@ class CelllineBatchImages(models.Model):
 class CelllineAliquot(models.Model):
 
     batch = models.ForeignKey('CelllineBatch', verbose_name=_(u'Cell line'), related_name='aliquots')
-    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=100, unique=True)
     name = models.CharField(_(u'Name'), max_length=50, null=True, blank=True)
     number = models.CharField(_(u'Number'), max_length=10, null=True, blank=True)
     derived_from = models.CharField(_(u'Biosamples ID of sample from which the vial was derived'), max_length=12, null=True, blank=True)
@@ -418,7 +418,7 @@ class CelllineAliquot(models.Model):
 
 class Donor(DirtyFieldsMixin, models.Model):
 
-    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=100, unique=True)
     gender = models.ForeignKey(Gender, verbose_name=_(u'Gender'), null=True, blank=True)
 
     provider_donor_ids = ArrayField(models.CharField(max_length=20), verbose_name=_(u'Provider donor ids'), null=True)
