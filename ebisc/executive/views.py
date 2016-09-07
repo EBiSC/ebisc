@@ -301,9 +301,7 @@ def batch_data(request, name, batch_biosample_id):
         else:
             cell_line_name = batch.cell_line.name
 
-        aliquot_number = aliquot.number.zfill(3)
-
-        writer.writerow([cell_line_name, batch.cell_line.name, batch.cell_line.ecacc_id, batch.batch_id, batch.biosamples_id, 'vial %s' % aliquot_number, aliquot.biosamples_id])
+        writer.writerow([cell_line_name, batch.cell_line.name, batch.cell_line.ecacc_id, batch.batch_id, batch.biosamples_id, 'Vial %s' % aliquot.number, aliquot.biosamples_id])
 
     return response
 
