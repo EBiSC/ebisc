@@ -19,6 +19,7 @@ def run():
         'cell_line_biosamples_id',
         'batch_no',
         'batch_biosamples_id',
+        'batch_type',
     ))
 
     for batch in CelllineBatch.objects.all().order_by('cell_line__name'):
@@ -28,6 +29,7 @@ def run():
             batch.cell_line.biosamples_id,
             batch.batch_id,
             batch.biosamples_id,
+            batch.batch_type,
         ))
 
 # -----------------------------------------------------------------------------
