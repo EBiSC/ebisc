@@ -7,6 +7,8 @@ ALLOWED_HOSTS = ['cells-stage.ebisc.org']
 
 SERVER_EMAIL = 'EBiSC Staging <www@douglasconnect.com>'
 
+BIOSAMPLES_ADMINS = ADMINS
+
 # -----------------------------------------------------------------------------
 # Database
 
