@@ -348,18 +348,6 @@ class CelllineAliquotResource(ModelResource):
         include_resource_uri = False
         fields = ('biosamples_id', 'name')
 
-    # Vial names without batch names for LIMS export
-    def dehydrate_name(self, bundle):
-        fixed_name = bundle.obj.name.split()
-        if len(fixed_name) == 4:
-            fixed_name = " ".join([fixed_name[0], fixed_name[2], fixed_name[3]])
-        else:
-            fixed_name = " ".join([fixed_name[0], fixed_name[1], fixed_name[2]])
-        return fixed_name
-
-    def dehydrate_number(self, bundle):
-        return bundle.obj.number.zfill(4)
-
 
 # -----------------------------------------------------------------------------
 # Batch

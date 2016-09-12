@@ -98,9 +98,10 @@ class BatchAliquotInline(TabularInline):
 
 class CelllineBatchAdmin(admin.ModelAdmin):
 
-    list_display = ['biosamples_id', 'batch_id', 'cell_line', 'get_cell_line_name']
+    list_display = ['biosamples_id', 'batch_id', 'batch_type', 'cell_line', 'get_cell_line_name']
     search_fields = ['biosamples_id', 'cell_line__name', 'cell_line__biosamples_id']
     inlines = (BatchAliquotInline,)
+    list_filter = ['batch_type']
 
     def get_cell_line_name(self, obj):
         return obj.cell_line.name
