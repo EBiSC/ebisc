@@ -7,6 +7,10 @@ ALLOWED_HOSTS = ['cells.ebisc.org', 'cell.ebisc.org', 'catalog.ebisc.org', 'cata
 
 SERVER_EMAIL = 'EBiSC <www@douglasconnect.com>'
 
+BIOSAMPLES_ADMINS = ADMINS + (
+    ('Biosamples', 'biosamples@ebi.ac.uk'),
+)
+
 # -----------------------------------------------------------------------------
 # Database
 
@@ -20,5 +24,13 @@ DATABASES = {
 
 ELASTIC_INDEX = 'ebisc'
 ELASTIC_HOSTS = [{'host': 'localhost', 'port': 9200}]
+
+# -----------------------------------------------------------------------------
+# BioSamples
+
+BIOSAMPLES = {
+    'url': 'http://www.ebi.ac.uk/biosamples',
+    'key': 'WNTGPBNW0NGC3876',
+}
 
 # -----------------------------------------------------------------------------
