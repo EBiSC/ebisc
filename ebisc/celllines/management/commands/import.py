@@ -14,6 +14,7 @@ Usage:
     import lims
     import batches_types <filename>
     import batches <filename>
+    import batches_extra <filename>
     import toelastic
 '''
 
@@ -27,7 +28,6 @@ class Command(DocOptCommand):
 
         if args.get('all'):
             importer.hpscreg.run()
-            importer.batches.run('var/batches.csv')
             importer.lims.run()
             importer.toelastic.run()
 
@@ -42,6 +42,9 @@ class Command(DocOptCommand):
 
         if args.get('batches'):
             importer.batches.run(args.get('<filename>'))
+
+        if args.get('batches_extra'):
+            importer.batches_extra.run(args.get('<filename>'))
 
         if args.get('batches_types'):
             importer.batches_types.run(args.get('<filename>'))

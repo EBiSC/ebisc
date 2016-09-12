@@ -12,7 +12,7 @@ from ebisc.celllines.models import Cellline, CelllineBatch
 
 def run():
 
-    writer = csv.writer(sys.stdout, dialect=csv.excel_tab)
+    writer = csv.writer(sys.stdout, dialect=csv.excel_tab, delimiter=',')
 
     writer.writerow((
         'cell_line_name',
