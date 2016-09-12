@@ -15,6 +15,7 @@ Usage:
     import batches_types <filename>
     import batches <filename>
     import batches_extra <filename>
+    import ecacc_cat_numbers <filename>
     import toelastic
 '''
 
@@ -48,6 +49,9 @@ class Command(DocOptCommand):
 
         if args.get('batches_types'):
             importer.batches_types.run(args.get('<filename>'))
+
+        if args.get('ecacc_cat_numbers'):
+            importer.ecacc_cat_numbers.run(args.get('<filename>'))
 
         if args.get('toelastic'):
             importer.toelastic.run()
