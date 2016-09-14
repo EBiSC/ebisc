@@ -14,7 +14,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = '@!7ju$b1*1c5!dihak)cw3ao1ema&2quw3s*9l#&8^v8ob%gw1'
 
 # -----------------------------------------------------------------------------
-# Admins & managers
+# Admins
 
 ADMINS = (
     ('Joh Dokler', 'joh@douglasconnect.com'),

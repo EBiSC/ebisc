@@ -30,7 +30,7 @@ def run(filename):
             # (vial_biosamples_id, vial_name, _, cellline_biosamples_id, _, _, _, _, batch_biosamples_id) = row
             (vial_biosamples_id, vial_name_old, vial_name, _, _, cellline_biosamples_id, _, _, _, _, _, _, batch_biosamples_id, _, batch_name, _, _) = row
 
-            extra_lines_with_complete_data = ['SAMEA4096428', 'SAMEA4309665']
+            extra_lines_with_complete_data = ['SAMEA4084718', 'SAMEA4084680', 'SAMEA4084491', 'SAMEA4309630', 'SAMEA4096428', 'SAMEA4309665']
 
             if vial_name and cellline_biosamples_id not in extra_lines_with_complete_data:
                 logger.info('Skipping complete batch {} for cell line {}'.format(batch_name, cellline_biosamples_id))
