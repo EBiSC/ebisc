@@ -68,6 +68,14 @@ def import_cellline(source):
         })
 
     if cell_line_created:
+
+        # ECACC catalogue number assignment for new cell lines
+        ecacc_cat_number = str(int(cell_line.id) + 66540000 - 100)
+        if ecacc_cat_number <= '66999999':
+            cell_line.ecacc_id = ecacc_cat_number
+        else:
+            logger.warn('Ran out of ECACC catalogue numbers for cell line %s' % valuef('name'))
+
         logger.info('Found new cell line %s' % valuef('name'))
 
     cell_line.validated = valuef('validation_status')

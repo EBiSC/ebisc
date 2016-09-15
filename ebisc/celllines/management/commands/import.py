@@ -12,7 +12,6 @@ Usage:
     import all
     import hpscreg [--init]
     import lims
-    import ecacc_cat_numbers <filename>
     import toelastic
 '''
 
@@ -37,9 +36,6 @@ class Command(DocOptCommand):
         if args.get('lims'):
             logger.info('Synchronizing batch data with LIMS')
             importer.lims.run()
-
-        if args.get('ecacc_cat_numbers'):
-            importer.ecacc_cat_numbers.run(args.get('<filename>'))
 
         if args.get('toelastic'):
             importer.toelastic.run()
