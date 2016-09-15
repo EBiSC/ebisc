@@ -29,13 +29,13 @@ def run(filename):
 
                 if cell_line.ecacc_id:
                     if cell_line.ecacc_id == ecacc_cat_number:
-                        logger.info('Numbers {} match for cell line {}'.format(cell_line.ecacc_id, cell_line.name))
+                        pass
                     else:
-                        logger.warn('Numbers dont match for cell line {}, old: {}, new: {}'.format(cell_line.name, cell_line.ecacc_id, ecacc_cat_number))
+                        logger.warn('Numbers don\'t match for cell line {}, old: {}, new: {}'.format(cell_line.name, cell_line.ecacc_id, ecacc_cat_number))
                 else:
                     logger.info('Found new ecacc num for line {}'.format(cell_line.name))
-                    # cell_line.ecacc_id = ecacc_cat_number
-                    # cell_line.save()
+                    cell_line.ecacc_id = ecacc_cat_number
+                    cell_line.save()
 
             except Cellline.DoesNotExist:
                 logger.warn('Cell line with name {} does not exists'.format(cell_line_name))
