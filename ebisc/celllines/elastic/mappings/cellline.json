@@ -42,6 +42,12 @@
                 "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
             },
 
+            "non_disease_associated_phenotypes": {
+                "type": "string",
+                "index": "not_analyzed",
+                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+            },
+
             "primary_cell_type": {
                 "type": "string",
                 "index": "not_analyzed",
