@@ -281,13 +281,12 @@ class DonorResource(ModelResource):
     biosamples_id = fields.CharField('biosamples_id', null=True)
     gender = fields.CharField('gender', null=True)
     internal_donor_ids = fields.ListField('provider_donor_ids', null=True)
-    phenotypes = fields.ListField('phenotypes', null=True)
     karyotype = fields.CharField('karyotype', null=True)
 
     class Meta:
         queryset = Donor.objects.all()
         include_resource_uri = False
-        fields = ('biosamples_id', 'gender', 'internal_donor_ids', 'phenotypes', 'karyotype')
+        fields = ('biosamples_id', 'gender', 'internal_donor_ids', 'karyotype')
 
 
 # -----------------------------------------------------------------------------
@@ -439,6 +438,7 @@ class CelllineResource(ModelResource):
     primary_disease_diagnosed = fields.CharField('primary_disease_diagnosis', null=True)
     primary_disease = fields.ToOneField(DiseaseResource, 'primary_disease', null=True, full=True)
     disease_associated_phenotypes = fields.ListField('disease_associated_phenotypes', null=True)
+    non_disease_associated_phenotypes = fields.ListField('non_disease_associated_phenotypes', null=True)
 
     donor_age = fields.CharField('donor_age', null=True)
     donor = fields.ToOneField(DonorResource, 'donor', null=True, full=True)

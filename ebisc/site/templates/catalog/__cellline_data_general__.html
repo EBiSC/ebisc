@@ -14,6 +14,9 @@
 {% if cellline.disease_associated_phenotypes|length %}
 <tr><td class="label">Disease associated phenotypes:</td><td>{{ cellline.disease_associated_phenotypes|join:", " }}</td></tr>
 {% endif %}
+{% if cellline.non_disease_associated_phenotypes|length %}
+<tr><td class="label">Non-disease associated phenotypes:</td><td>{{ cellline.non_disease_associated_phenotypes|join:", " }}</td></tr>
+{% endif %}
 {% if cellline.family_history %}
 <tr><td class="label">Family history:</td><td>{{ cellline.family_history }}</td></tr>
 {% endif %}
@@ -40,9 +43,6 @@
 {% endif %}
 {% if cellline.donor.ethnicity %}
 <tr><td class="label">Ethnicity:</td><td>{{ cellline.donor.ethnicity|default:"-" }}</td></tr>
-{% endif %}
-{% if cellline.donor.phenotypes %}
-<tr><td class="label">Donor phenotypes:</td><td>{{ cellline.donor.phenotypes|default:"-"|join:", " }}</td></tr>
 {% endif %}
 {% if cellline.donor.karyotype %}
 <tr><td class="label">Donor karyotype:</td><td>{{ cellline.donor.karyotype|default:"-" }}</td></tr>
