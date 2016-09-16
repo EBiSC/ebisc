@@ -281,8 +281,6 @@ def parse_donor(valuef, source):
             donor.country_of_origin = term_list_value_of_json(source, 'donor_country_origin', Country)
         if valuef('ethnicity') is not None:
             donor.ethnicity = valuef('ethnicity')
-        if valuef('donor_phenotypes') is not None:
-            donor.phenotypes = valuef('donor_phenotypes')
         if valuef('donor_karyotype') is not None:
             donor.karyotype = valuef('donor_karyotype')
 
@@ -302,7 +300,6 @@ def parse_donor(valuef, source):
             gender=gender,
             country_of_origin=term_list_value_of_json(source, 'donor_country_origin', Country),
             ethnicity=valuef('ethnicity'),
-            phenotypes=valuef('donor_phenotypes'),
             karyotype=valuef('donor_karyotype'),
         )
 
