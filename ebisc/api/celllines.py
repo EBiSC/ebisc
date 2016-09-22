@@ -131,7 +131,7 @@ class CelllineKaryotypeResource(ModelResource):
     class Meta:
         queryset = CelllineKaryotype.objects.all()
         include_resource_uri = False
-        fields = ('karyotype', 'passage_number')
+        fields = ('karyotype', 'karyotype_method', 'passage_number')
 
 
 # -----------------------------------------------------------------------------
