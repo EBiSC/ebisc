@@ -36,7 +36,7 @@
 <tr><td class="label">Disease (depositor's term):</td><td>{{ cellline.primary_disease_not_normalised }}</td></tr>
 {% endif %}
 {% if cellline.primary_disease_stage %}
-<tr><td class="label">Disease stage:</td><td>{{ cellline.primary_disease_stage }}</td></tr>
+<tr><td class="label">Disease stage:</td><td>{{ cellline.primary_disease_stage|capfirst }}</td></tr>
 {% endif %}
 {% if cellline.disease_associated_phenotypes|length %}
 <tr><td class="label">Disease associated phenotypes:</td><td>{{ cellline.disease_associated_phenotypes|join:", " }}</td></tr>
@@ -54,7 +54,7 @@
 <tr><td class="label">Clinical information:</td><td>{{ cellline.clinical_information }}</td></tr>
 {% endif %}
 {% if cellline.affected_status %}
-<tr><td class="label">Affected status:</td><td>{{ cellline.affected_status }}</td></tr>
+<tr><td class="label">Affected status:</td><td>{{ cellline.affected_status|capfirst }}</td></tr>
 {% endif %}
 
 <tr><th class="sub-title"><h3>Donor information</h3></th><th></th></tr>
@@ -63,16 +63,16 @@
 <tr><td class="label">Internal donor ID:</td><td>{{ cellline.donor.provider_donor_ids|join:", " }}</td></tr>
 {% endif %}
 {% if cellline.donor.gender %}
-<tr><td class="label">Gender:</td><td>{{ cellline.donor.gender|default:"-" }}</td></tr>
+<tr><td class="label">Gender:</td><td>{{ cellline.donor.gender|capfirst }}</td></tr>
 {% endif %}
 {% if cellline.donor_age %}
-<tr><td class="label">Age:</td><td>{{ cellline.donor_age|default:"-" }}</td></tr>
+<tr><td class="label">Age:</td><td>{{ cellline.donor_age }}</td></tr>
 {% endif %}
 {% if cellline.donor.country_of_origin %}
-<tr><td class="label">Country of origin:</td><td>{{ cellline.donor.country_of_origin|default:"-" }}</td></tr>
+<tr><td class="label">Country of origin:</td><td>{{ cellline.donor.country_of_origin }}</td></tr>
 {% endif %}
 {% if cellline.donor.ethnicity %}
-<tr><td class="label">Ethnicity:</td><td>{{ cellline.donor.ethnicity|default:"-" }}</td></tr>
+<tr><td class="label">Ethnicity:</td><td>{{ cellline.donor.ethnicity|capfirst }}</td></tr>
 {% endif %}
 {% if cellline.donor.karyotype %}
 <tr><td class="label">Donor karyotype:</td><td>{{ cellline.donor.karyotype|default:"-" }}</td></tr>
