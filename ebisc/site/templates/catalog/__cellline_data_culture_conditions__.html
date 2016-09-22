@@ -8,13 +8,11 @@
 <tr><td class="label">Feeder cell type:</td><td>{{ cellline.celllinecultureconditions.feeder_cell_type|default:"-" }}</td></tr>
 {% endif %}
 {% if cellline.celllinecultureconditions.passage_method %}
-<tr><td class="label">Passage method:</td><td>{{ cellline.celllinecultureconditions.passage_method|default:"-" }}</td></tr>
-{% endif %}
-{% if cellline.celllinecultureconditions.enzymatically %}
-<tr><td class="label">Enzymatically:</td><td>{{ cellline.celllinecultureconditions.enzymatically|default:"-" }}</td></tr>
-{% endif %}
-{% if cellline.celllinecultureconditions.enzyme_free %}
-<tr><td class="label">Enzyme free:</td><td>{{ cellline.celllinecultureconditions.enzyme_free|default:"-" }}</td></tr>
+<tr><td class="label">Passage method:</td><td>
+  {{ cellline.celllinecultureconditions.passage_method|default:"-" }}
+  {% if cellline.celllinecultureconditions.enzymatically %}/ {{ cellline.celllinecultureconditions.enzymatically|default:"-" }}{% endif %}
+  {% if cellline.celllinecultureconditions.enzyme_free %}/ {{ cellline.celllinecultureconditions.enzyme_free|default:"-" }}{% endif %}
+</td></tr>
 {% endif %}
 {% if cellline.celllinecultureconditions.o2_concentration %}
 <tr><td class="label">O<sub>2</sub> concentration:</td><td>{{ cellline.celllinecultureconditions.o2_concentration }}%</td></tr>
@@ -24,7 +22,7 @@
 {% endif %}
 
 {% if cellline.celllinecultureconditions.culture_medium %}
-<tr><td class="label">Culture medium:</td><td>{{ cellline.celllinecultureconditions.culture_medium }}</td></tr>
+<tr><td class="label">Culture medium:</td><td>{{ cellline.celllinecultureconditions.culture_medium|safe }}</td></tr>
 {% endif %}
 
 {% if cellline.celllinecultureconditions.culture_medium_other %}
