@@ -607,7 +607,7 @@ def parse_culture_conditions(valuef, source, cell_line):
     cell_line_culture_conditions.feeder_cell_id = valuef('feeder_cells_ont_id')
     cell_line_culture_conditions.feeder_cell_type = valuef('feeder_cells_name')
 
-    if valuef('passage_method') == 'other':
+    if valuef('passage_method') == 'other' or valuef('passage_method') == 'Other':
         if valuef('passage_method_other') is not None:
             cell_line_culture_conditions.passage_method = valuef('passage_method_other')
         else:
@@ -615,7 +615,7 @@ def parse_culture_conditions(valuef, source, cell_line):
     else:
         cell_line_culture_conditions.passage_method = valuef('passage_method')
 
-    if valuef('passage_method_enzymatic') == 'other':
+    if valuef('passage_method_enzymatic') == 'other' or valuef('passage_method_enzymatic') == 'Other':
         if valuef('passage_method_enzymatic_other') is not None:
             cell_line_culture_conditions.enzymatically = valuef('passage_method_enzymatic_other')
         else:
@@ -623,7 +623,7 @@ def parse_culture_conditions(valuef, source, cell_line):
     else:
         cell_line_culture_conditions.enzymatically = valuef('passage_method_enzymatic')
 
-    if valuef('passage_method_enzyme_free') == 'other':
+    if valuef('passage_method_enzyme_free') == 'other' or valuef('passage_method_enzyme_free') == 'Other':
         if valuef('passage_method_enzyme_free_other') is not None:
             cell_line_culture_conditions.enzyme_free = valuef('passage_method_enzyme_free_other')
         else:
@@ -753,7 +753,7 @@ def parse_karyotyping(valuef, source, cell_line):
 
     if valuef('karyotyping_flag', 'bool'):
 
-        if valuef('karyotyping_method') == 'other':
+        if valuef('karyotyping_method') == 'Other' or valuef('karyotyping_method') == 'other':
             if valuef('karyotyping_method_other') is not None:
                 karyotype_method = valuef('karyotyping_method_other')
             else:

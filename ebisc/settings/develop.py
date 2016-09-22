@@ -28,12 +28,3 @@ MIDDLEWARE_CLASSES += (
 )
 
 # -----------------------------------------------------------------------------
-# hPSCreg
-
-HPSCREG = {
-    'list_url': 'http://hpscreg.eu/api/full_list',
-    'cellline_url': 'http://hpscreg.eu/api/export_readable/',
-    'username': 'ebiscims',
-    'password': 'cWNJnc6p',
-}
-# -----------------------------------------------------------------------------
