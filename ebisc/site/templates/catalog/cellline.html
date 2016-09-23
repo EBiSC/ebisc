@@ -12,7 +12,9 @@
 
     <table class="data general-info">
         {% include 'catalog/__cellline_data_general__.html' %}
+        {% include 'catalog/__cellline_data_related_lines__.html' %}
     </table>
+
 
     {% if cellline.batches.all %}
     {% with cellline.get_latest_batch as batch %}

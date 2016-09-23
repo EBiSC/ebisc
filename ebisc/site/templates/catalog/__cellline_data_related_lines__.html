@@ -1,0 +1,10 @@
+{% if same_donor_lines %}
+<tr><th colspan="2" class="title"><h2>Related lines</h2></th></tr>
+
+{% if same_donor_lines %}
+<tr>
+  <td class="label">From the same donor:</td>
+  <td>{% for line in same_donor_lines %}<a href="{% url 'site:page' line.name %}">{{ line.name }}</a>{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</td>
+</tr>
+{% endif %}
+{% endif %}

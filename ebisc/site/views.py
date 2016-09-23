@@ -59,8 +59,12 @@ def page(request, path):
 
     try:
         name = path.rstrip('/')
+        cellline = Cellline.objects.get(name=name, available_for_sale_at_ecacc=True)
+        same_donor_lines = Cellline.objects.filter(donor=cellline.donor, available_for_sale_at_ecacc=True).exclude(name=cellline.name)
+
         return render(request, 'catalog/cellline.html', {
-            'cellline': Cellline.objects.get(name=name, available_for_sale_at_ecacc=True)
+            'cellline': cellline,
+            'same_donor_lines': same_donor_lines
         })
     except Cellline.DoesNotExist:
         pass
