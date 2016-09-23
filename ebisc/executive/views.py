@@ -6,6 +6,7 @@ from datetime import datetime
 
 from django import forms
 
+from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
@@ -16,8 +17,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import permission_required
 from django.forms import ModelForm
 from django.core.validators import RegexValidator
-
-from django.conf import settings
+from django.core.mail import send_mail
 
 from ebisc.site.views import render
 from ebisc.celllines.models import Cellline, CelllineBatch, CelllineInformationPack, CelllineAliquot
@@ -200,7 +200,6 @@ def new_batch(request, name):
             vials = []
 
             try:
-
                 for i in list(range(1, number_of_vials + 1)):
                     vial_number = str(i).zfill(4)
 
@@ -225,7 +224,7 @@ def new_batch(request, name):
                     if r.status_code == 202:
                         vials.append((vial_number, r.text))
                     else:
-                        raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'))
+                        raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'), r.status_code, r.text)
 
                 vial_list = ''.join(['<Id>%s</Id>' % v[1] for v in vials])
 
@@ -247,7 +246,7 @@ def new_batch(request, name):
                 if r.status_code == 202:
                     batch_biosamples_id = r.text
                 else:
-                    raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'))
+                    raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'), r.status_code, r.text)
 
                 # Save batch
                 batch = CelllineBatch(
@@ -271,8 +270,16 @@ def new_batch(request, name):
                 messages.success(request, format_html(u'A new batch <code><strong>{0}</strong></code> for cell line <code><strong>{1}</strong></code> has been sucessfully created.', batch_id, cellline_name))
                 return redirect('executive:cellline', cellline_name)
 
-            except BiosamplesError, e:
-                messages.error(request, e.message)
+            except BiosamplesError, (message, status_code, text):
+                messages.error(request, message)
+                if hasattr(settings, 'BIOSAMPLES_ADMINS'):
+                    send_mail(
+                        'EBiSC Biosamples API error',
+                        'Status code: %s\n\nMessage: %s' % (status_code, text),
+                        settings.SERVER_EMAIL,
+                        ['%s <%s>' % (admin[0], admin[1]) for admin in settings.BIOSAMPLES_ADMINS],
+                        fail_silently=False,
+                    )
 
     return render(request, 'executive/create-batch/new-batch.html', {
         'cellline': cellline,
@@ -301,9 +308,7 @@ def batch_data(request, name, batch_biosample_id):
         else:
             cell_line_name = batch.cell_line.name
 
-        aliquot_number = aliquot.number.zfill(3)
-
-        writer.writerow([cell_line_name, batch.cell_line.name, batch.cell_line.ecacc_id, batch.batch_id, batch.biosamples_id, 'vial %s' % aliquot_number, aliquot.biosamples_id])
+        writer.writerow([cell_line_name, batch.cell_line.name, batch.cell_line.ecacc_id, batch.batch_id, batch.biosamples_id, 'Vial %s' % aliquot.number, aliquot.biosamples_id])
 
     return response
 

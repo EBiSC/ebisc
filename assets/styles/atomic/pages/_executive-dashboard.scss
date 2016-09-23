@@ -1,3 +1,17 @@
+// User Guide
+
+.dashboard-user-guide {
+  position: fixed;
+  bottom: 70px;
+  right: 0px;
+  background-color: $color-blue-light;
+  padding: 0.3rem 0.5rem;
+
+  a {
+    color: white;
+  }
+}
+
 // Notes
 
 .note {

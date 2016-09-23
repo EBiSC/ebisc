@@ -68,6 +68,14 @@ def import_cellline(source):
         })
 
     if cell_line_created:
+
+        # ECACC catalogue number assignment for new cell lines
+        ecacc_cat_number = str(int(cell_line.id) + 66540000 - 100)
+        if ecacc_cat_number <= '66999999':
+            cell_line.ecacc_id = ecacc_cat_number
+        else:
+            logger.warn('Ran out of ECACC catalogue numbers for cell line %s' % valuef('name'))
+
         logger.info('Found new cell line %s' % valuef('name'))
 
     cell_line.validated = valuef('validation_status')
@@ -84,6 +92,7 @@ def import_cellline(source):
     cell_line.primary_disease_not_normalised = valuef('disease_other')
     cell_line.primary_disease_stage = valuef('disease_stage')
     cell_line.disease_associated_phenotypes = valuef('disease_associated_phenotypes')
+    cell_line.non_disease_associated_phenotypes = valuef('donor_phenotypes')
     cell_line.affected_status = valuef('disease_affected_flag')
     cell_line.family_history = valuef('family_history')
     cell_line.medical_history = valuef('medical_history')

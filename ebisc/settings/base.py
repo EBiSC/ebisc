@@ -14,7 +14,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = '@!7ju$b1*1c5!dihak)cw3ao1ema&2quw3s*9l#&8^v8ob%gw1'
 
 # -----------------------------------------------------------------------------
-# Admins & managers
+# Admins
 
 ADMINS = (
     ('Joh Dokler', 'joh@douglasconnect.com'),
@@ -138,8 +138,8 @@ LOGGING = {
 # hPSCreg
 
 HPSCREG = {
-    'list_url': 'http://hpscreg.eu/api/full_list',
-    'cellline_url': 'http://hpscreg.eu/api/export/',
+    'list_url': 'https://hpscreg.eu/api/full_list',
+    'cellline_url': 'https://hpscreg.eu/api/export_readable/',
     'username': 'ebiscims',
     'password': 'cWNJnc6p',
 }

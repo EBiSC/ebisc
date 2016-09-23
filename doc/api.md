@@ -418,16 +418,16 @@ Additional fields and endpoints may be created for future exchanges.
         "disease_associated_phenotypes": [
             "Prolonged QT interval on ECG"
         ],
+        "non_disease_associated_phenotypes": [
+            "Cardiac arrhythmia at exercise; normal ECG at rest"
+        ]
         "donor": {
             "biosamples_id": "SAMEA2590985",
             "gender": "male",
             "internal_donor_ids": [
                 "NP0014/YO90096"
             ],
-            "karyotype": null,
-            "phenotypes": [
-                "Cardiac arrhythmia at exercise; normal ECG at rest"
-            ]
+            "karyotype": null
         },
         "donor_age": 35-39,
         "ecacc_cat_no": "66540003",

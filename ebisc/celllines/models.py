@@ -195,7 +195,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
     name = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
     alternative_names = models.CharField(_(u'Cell line alternative names'), max_length=500, null=True, blank=True)
 
-    biosamples_id = models.CharField(_(u'Biosamples ID'), unique=True, max_length=12)
+    biosamples_id = models.CharField(_(u'Biosamples ID'), unique=True, max_length=100)
     hescreg_id = models.CharField(_(u'hESCreg ID'), unique=True, max_length=10, null=True, blank=True)
     ecacc_id = models.CharField(_(u'ECACC ID'), unique=True, max_length=10, null=True, blank=True)
 
@@ -210,7 +210,8 @@ class Cellline(DirtyFieldsMixin, models.Model):
     primary_disease_not_normalised = models.CharField(_(u'Disease name - not normalised'), max_length=500, null=True, blank=True)
     primary_disease_diagnosis = models.CharField(_(u'Disease diagnosis'), max_length=12, null=True, blank=True)
     primary_disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
-    disease_associated_phenotypes = ArrayField(models.CharField(max_length=500), verbose_name=_(u'Disease associated phenotypes'), null=True, blank=True)
+    disease_associated_phenotypes = ArrayField(models.CharField(max_length=700), verbose_name=_(u'Disease associated phenotypes'), null=True, blank=True)
+    non_disease_associated_phenotypes = ArrayField(models.CharField(max_length=700), verbose_name=_(u'Non-disease associated phenotypes'), null=True, blank=True)
     affected_status = models.CharField(_(u'Affected status'), max_length=12, null=True, blank=True)
     family_history = models.CharField(_(u'Family history'), max_length=500, null=True, blank=True)
     medical_history = models.CharField(_(u'Medical history'), max_length=500, null=True, blank=True)
@@ -266,6 +267,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'primary_disease_synonyms': [s.strip() for s in self.primary_disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.synonyms else None,
             'primary_disease_stage': self.primary_disease_stage if self.primary_disease_stage else None,
             'disease_associated_phenotypes': self.disease_associated_phenotypes if self.disease_associated_phenotypes else None,
+            'non_disease_associated_phenotypes': self.non_disease_associated_phenotypes if self.non_disease_associated_phenotypes else None,
             'depositor': self.generator.name,
             'primary_cell_type': self.derivation.primary_cell_type.name if self.derivation.primary_cell_type else None,
             'alternative_names': self.alternative_names,
@@ -357,7 +359,7 @@ class CelllineBatch(models.Model):
     )
 
     cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='batches')
-    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=100, unique=True)
 
     batch_id = models.CharField(_(u'Batch ID'), max_length=12)
     batch_type = models.CharField(_(u'Batch type'), max_length=50, choices=BATCH_TYPE_CHOICES, default='unknown')
@@ -399,7 +401,7 @@ class CelllineBatchImages(models.Model):
 class CelllineAliquot(models.Model):
 
     batch = models.ForeignKey('CelllineBatch', verbose_name=_(u'Cell line'), related_name='aliquots')
-    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=100, unique=True)
     name = models.CharField(_(u'Name'), max_length=50, null=True, blank=True)
     number = models.CharField(_(u'Number'), max_length=10, null=True, blank=True)
     derived_from = models.CharField(_(u'Biosamples ID of sample from which the vial was derived'), max_length=12, null=True, blank=True)
@@ -418,13 +420,12 @@ class CelllineAliquot(models.Model):
 
 class Donor(DirtyFieldsMixin, models.Model):
 
-    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=100, unique=True)
     gender = models.ForeignKey(Gender, verbose_name=_(u'Gender'), null=True, blank=True)
 
     provider_donor_ids = ArrayField(models.CharField(max_length=20), verbose_name=_(u'Provider donor ids'), null=True)
     country_of_origin = models.ForeignKey('Country', verbose_name=_(u'Country of origin'), null=True, blank=True)
     ethnicity = models.CharField(_(u'Ethnicity'), max_length=100, null=True, blank=True)
-    phenotypes = ArrayField(models.CharField(max_length=500), verbose_name=_(u'Phenotypes'), null=True)
 
     karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
 
