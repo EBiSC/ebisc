@@ -60,11 +60,15 @@ def page(request, path):
     try:
         name = path.rstrip('/')
         cellline = Cellline.objects.get(name=name, available_for_sale_at_ecacc=True)
-        same_donor_lines = Cellline.objects.filter(donor=cellline.donor, available_for_sale_at_ecacc=True).exclude(name=cellline.name)
+
+        same_donor_lines = Cellline.objects.filter(donor=cellline.donor, available_for_sale_at_ecacc=True).exclude(name=cellline.name).order_by('name')
+
+        if cellline.derived_from:
+            same_donor_lines = Cellline.objects.filter(donor=cellline.donor, available_for_sale_at_ecacc=True).exclude(name=cellline.name).exclude(name=cellline.derived_from.name).exclude(name__regex='(-\d+)$').order_by('name')
 
         return render(request, 'catalog/cellline.html', {
             'cellline': cellline,
-            'same_donor_lines': same_donor_lines
+            'same_donor_lines': same_donor_lines,
         })
     except Cellline.DoesNotExist:
         pass

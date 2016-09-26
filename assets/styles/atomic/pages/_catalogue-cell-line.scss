@@ -1,7 +1,11 @@
 .catalogue-data {
   h1 {
-    border-bottom: $base-border;
-    padding-bottom: 1rem;
+    // border-bottom: $base-border;
+    padding-bottom: 0rem;
+  }
+
+  .card.general-info {
+    @include clearfix();
   }
 
   .data {
@@ -30,7 +34,7 @@
     @include span(last 4);
     position: absolute;
     top: 7rem;
-    right: 1rem;
+    right: 3rem;
 
     @include breakpoint(map-get($breakpoints, small)) {
       position: relative;
@@ -42,6 +46,7 @@
 
     .ecacc-link {
       @extend %card;
+      background-color: lighten($color-placeholder, 1%);
       display: block;
       text-align: center;
       margin: 2rem 0 1rem 0;
@@ -83,6 +88,7 @@
 
     .clip {
       @extend %card;
+      background-color: lighten($color-placeholder, 1%);
       max-width: 100%;
       width: 250px;
       float: right;

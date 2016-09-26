@@ -10,10 +10,12 @@
 
     <h1>{{ cellline.name }}</h1>
 
-    <table class="data general-info">
-        {% include 'catalog/__cellline_data_general__.html' %}
-        {% include 'catalog/__cellline_data_related_lines__.html' %}
-    </table>
+    <div class="card general-info">
+      <table class="data general-info">
+          {% include 'catalog/__cellline_data_general__.html' %}
+          {% include 'catalog/__cellline_data_related_lines__.html' %}
+      </table>
+    </div>
 
 
     {% if cellline.batches.all %}

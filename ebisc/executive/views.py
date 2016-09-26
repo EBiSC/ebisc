@@ -124,9 +124,15 @@ def cellline(request, name):
     else:
         clip_form = CelllineInformationPackForm()
 
+    same_donor_lines = Cellline.objects.filter(donor=cellline.donor).exclude(name=cellline.name).exclude(name__regex='(-\d+)$').order_by('name')
+
+    if cellline.derived_from:
+        same_donor_lines = Cellline.objects.filter(donor=cellline.donor).exclude(name=cellline.name).exclude(name=cellline.derived_from.name).exclude(name__regex='(-\d+)$').order_by('name')
+
     return render(request, 'executive/cellline.html', {
         'cellline': cellline,
         'clip_form': clip_form,
+        'same_donor_lines': same_donor_lines,
     })
 
 
