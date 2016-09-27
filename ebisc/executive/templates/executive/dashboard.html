@@ -13,16 +13,16 @@
         <div class="registration">
             <div class="header">Registration</div>
             <div class="data with-sparators">
-                <div><span class="count">{{ celllines_registered.count }}</span> Registered</div>
-                <div><span class="count">{{ celllines_validated.count }}</span> Validated</div>
+                <div><span class="count">{{ celllines_registered }}</span> Registered</div>
+                <div><span class="count">{{ celllines_validated }}</span> Validated</div>
             </div>
         </div>
         <div class="availability">
             <div class="header">Availability</div>
             <div class="data with-sparators">
-                <div><span class="count">{{ celllines_at_ecacc.count }}</span> At ECACC</div>
-                <div><span class="count">{{ celllines_expand_to_order.count }}</span> Expand to order</div>
-                <div><span class="count">{{ celllines_restricted_distribution.count }}</span> Restricted distribution</div>
+                <div><span class="count">{{ celllines_at_ecacc }}</span> At ECACC</div>
+                <div><span class="count">{{ celllines_expand_to_order }}</span> Expand to order</div>
+                <div><span class="count">{{ celllines_restricted_distribution }}</span> Restricted distribution</div>
             </div>
         </div>
         <div class="sales">
@@ -41,11 +41,11 @@
 <h2>Registered cell lines</h2>
 
 <form class="dashboard-search-filter" action="{% url 'executive:dashboard' %}" method="get">
-  <input class="search" type="text" name="q" value="{% if search_query %}{{ search_query }}{% endif %}" placeholder="Cell line name or ID">
+  <input class="search" type="text" name="q" value="{% if search_query %}{{ search_query }}{% endif %}" placeholder="Search names or IDs">
   <select name="disease" class="{% if filters.disease %}selected{% endif %}">
     <option value selected>Any Disease</option>
     {% for disease in diseases %}
-    <option value="{{ disease }}" {% if filters.disease == disease %}selected{% endif %}>{{ disease }}</option>
+    <option value="{{ disease }}" {% if filters.disease == disease.disease %}selected{% endif %}>{{ disease }}</option>
     {% endfor %}
   </select>
   <select name="depositor" class="{% if filters.depositor %}selected{% endif %}">
@@ -60,7 +60,8 @@
     <option value="{{ status.0 }}" {% if filters.availability == status.0 %}selected{% endif %}>{{ status.1 }}</option>
     {% endfor %}
   </select>
-  <input type="submit" value="Show">
+  <input type="submit" value="Filter">
+  <a href="{% url 'executive:dashboard' %}" class="reset">Reset filters</a>
 </form>
 
 <table class="listing">
@@ -70,7 +71,7 @@
             {% for column in columns %}
             <th{% if sort_column == column.0 %} class="order-by {{ sort_order }}"{% endif %}>
                 {% if column.2 %}
-                <a class="sort" href="?{% if filters.availability %}availability={{ filters.availability }}&{% endif %}sc={{ column.0 }}{% if sort_column == column.0 %}{% if sort_order == 'asc' %}&so=desc{% endif %}{% endif %}">{{ column.1 }}</a>
+                <a class="sort" href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if filters.disease %}disease={{ filters.disease }}&{% endif %}{% if filters.depositor %}depositor={{ filters.depositor }}&{% endif %}{% if filters.availability %}availability={{ filters.availability }}&{% endif %}sc={{ column.0 }}{% if sort_column == column.0 %}{% if sort_order == 'asc' %}&so=desc{% endif %}{% endif %}">{{ column.1 }}</a>
                 {% else %}
                 {{ column.1 }}
                 {% endif %}

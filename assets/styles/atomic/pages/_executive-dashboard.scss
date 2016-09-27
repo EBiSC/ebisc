@@ -11,16 +11,9 @@
     margin-right: 10px;
   }
 
-  input[type="submit"], input[type="reset"] {
+  input[type="submit"] {
     font-size: $font-size-small * 1.1;
     padding: 4px 20px 5px 20px;
-  }
-
-  input[type="reset"] {
-    background-color: white;
-    color: $color-blue-dark;
-    border-color: $color-blue-dark;
-    font-weight: normal;
   }
 
   select {
@@ -37,6 +30,12 @@
       color: $color-text;
       border-color: $dark-gray;
     }
+  }
+
+  .reset {
+    font-size: $font-size-small * 1.1;
+    display: inline-block;
+    margin-left: 3px;
   }
 }
 
@@ -183,7 +182,7 @@ table.listing .availability-status .status-label {
     .biosample-ids-file {
       @extend .file-link;
       display: inline-block;
-      margin-top: 1rem;
+      margin-top: 0.8rem;
     }
 
     .glyphicon {

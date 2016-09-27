@@ -19,6 +19,7 @@ from django.forms import ModelForm
 from django.core.validators import RegexValidator
 from django.core.mail import send_mail
 from django.db.models import Q
+from django.db.models.functions import Lower
 
 from ebisc.site.views import render
 from ebisc.celllines.models import Cellline, CelllineBatch, CelllineInformationPack, CelllineAliquot, Disease, Organization
@@ -52,7 +53,7 @@ def dashboard(request):
     search_query = request.GET.get('q', None)
 
     if search_query:
-        cellline_objects = cellline_objects.filter(Q(name__icontains=request.GET.get('q')) | Q(ecacc_id__icontains=request.GET.get('q')) | Q(biosamples_id__icontains=request.GET.get('q')))
+        cellline_objects = cellline_objects.filter(Q(name__icontains=request.GET.get('q')) | Q(ecacc_id__icontains=request.GET.get('q')) | Q(biosamples_id__icontains=request.GET.get('q')) | Q(alternative_names__icontains=request.GET.get('q')) | Q(batches__biosamples_id__icontains=request.GET.get('q')) | Q(batches__aliquots__biosamples_id__icontains=request.GET.get('q')) | Q(donor__biosamples_id__icontains=request.GET.get('q')) | Q(donor__provider_donor_ids__icontains=request.GET.get('q'))).distinct()
 
     # Filters
     filters = {
@@ -62,8 +63,8 @@ def dashboard(request):
     }
 
     availability = Cellline.AVAILABILITY_CHOICES
-    depositors = [depositor for depositor in Organization.objects.all() if depositor.generator_of_cell_lines.all()]
-    diseases = sorted([disease.disease for disease in Disease.objects.all() if disease.primary_disease.all()], key=lambda s: s.lower())
+    depositors = Organization.objects.filter(generator_of_cell_lines__isnull=False).distinct()
+    diseases = Disease.objects.filter(primary_disease__isnull=False).distinct().order_by(Lower('disease'))
 
     if filters['availability']:
         cellline_objects = cellline_objects.filter(availability=request.GET.get('availability', None))
@@ -73,6 +74,10 @@ def dashboard(request):
 
     if filters['disease']:
         cellline_objects = cellline_objects.filter(primary_disease__disease=request.GET.get('disease', None))
+
+    # Select related
+    cellline_objects = cellline_objects.select_related('primary_disease', 'generator')
+    cellline_objects = cellline_objects.prefetch_related('batches')
 
     # Sorting
     sort_column = request.GET.get('sc', None)
@@ -87,9 +92,7 @@ def dashboard(request):
         sort_column = COLUMNS[0][0]
 
     # Pagination
-
     paginator = Paginator(cellline_objects, 50)
-
     page = request.GET.get('page')
 
     try:
@@ -114,11 +117,11 @@ def dashboard(request):
         'filters': filters,
         'search_query': search_query,
         'celllines': celllines,
-        'celllines_registered': Cellline.objects.all(),
-        'celllines_validated': Cellline.objects.filter(validated__lt=3),
-        'celllines_at_ecacc': Cellline.objects.filter(availability='at_ecacc'),
-        'celllines_expand_to_order': Cellline.objects.filter(availability='expand_to_order'),
-        'celllines_restricted_distribution': Cellline.objects.filter(availability='restricted_distribution'),
+        'celllines_registered': Cellline.objects.count(),
+        'celllines_validated': Cellline.objects.filter(validated__lt=3).count(),
+        'celllines_at_ecacc': Cellline.objects.filter(availability='at_ecacc').count(),
+        'celllines_expand_to_order': Cellline.objects.filter(availability='expand_to_order').count(),
+        'celllines_restricted_distribution': Cellline.objects.filter(availability='restricted_distribution').count(),
     })
 
 
