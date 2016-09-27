@@ -1,3 +1,45 @@
+// Search and filter
+
+.dashboard-search-filter {
+  margin: 40px 0 10px 0;
+
+  input.search {
+    display: inline-block;
+    width: 200px;
+    font-size: $font-size-small * 1.1;
+    padding: 3px;
+    margin-right: 10px;
+  }
+
+  input[type="submit"], input[type="reset"] {
+    font-size: $font-size-small * 1.1;
+    padding: 4px 20px 5px 20px;
+  }
+
+  input[type="reset"] {
+    background-color: white;
+    color: $color-blue-dark;
+    border-color: $color-blue-dark;
+    font-weight: normal;
+  }
+
+  select {
+    font-size: $font-size-small * 1.1;
+    max-width: 200px;
+    display: inline;
+    padding: 10px;
+    margin-right: 5px;
+    color: $dark-gray;
+    background-color: white;
+    border-color: $medium-gray;
+
+    &.selected, &:focus {
+      color: $color-text;
+      border-color: $dark-gray;
+    }
+  }
+}
+
 // User Guide
 
 .dashboard-user-guide {

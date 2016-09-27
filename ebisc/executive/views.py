@@ -18,9 +18,10 @@ from django.contrib.auth.decorators import permission_required
 from django.forms import ModelForm
 from django.core.validators import RegexValidator
 from django.core.mail import send_mail
+from django.db.models import Q
 
 from ebisc.site.views import render
-from ebisc.celllines.models import Cellline, CelllineBatch, CelllineInformationPack, CelllineAliquot
+from ebisc.celllines.models import Cellline, CelllineBatch, CelllineInformationPack, CelllineAliquot, Disease, Organization
 
 
 class BiosamplesError(Exception):
@@ -34,7 +35,6 @@ def dashboard(request):
 
     COLUMNS = [
         ('cellLineName', 'Cell line Name', 'name'),
-        # ('cellLineAlternativeNames', 'Alternative Names', 'alternative_names'),
         ('disease', 'Disease', 'primary_disease'),
         ('depositor', 'Depositor', 'generator__name'),
         ('validated', 'Validated', 'validated'),
@@ -48,8 +48,33 @@ def dashboard(request):
 
     cellline_objects = Cellline.objects.all()
 
-    # Sorting
+    # Search
+    search_query = request.GET.get('q', None)
 
+    if search_query:
+        cellline_objects = cellline_objects.filter(Q(name__icontains=request.GET.get('q')) | Q(ecacc_id__icontains=request.GET.get('q')) | Q(biosamples_id__icontains=request.GET.get('q')))
+
+    # Filters
+    filters = {
+        'availability': request.GET.get('availability', None),
+        'depositor': request.GET.get('depositor', None),
+        'disease': request.GET.get('disease', None),
+    }
+
+    availability = Cellline.AVAILABILITY_CHOICES
+    depositors = [depositor for depositor in Organization.objects.all() if depositor.generator_of_cell_lines.all()]
+    diseases = sorted([disease.disease for disease in Disease.objects.all() if disease.primary_disease.all()], key=lambda s: s.lower())
+
+    if filters['availability']:
+        cellline_objects = cellline_objects.filter(availability=request.GET.get('availability', None))
+
+    if filters['depositor']:
+        cellline_objects = cellline_objects.filter(generator__name=request.GET.get('depositor', None))
+
+    if filters['disease']:
+        cellline_objects = cellline_objects.filter(primary_disease__disease=request.GET.get('disease', None))
+
+    # Sorting
     sort_column = request.GET.get('sc', None)
     sort_order = request.GET.get('so', 'asc')
 
@@ -83,6 +108,11 @@ def dashboard(request):
         'sort_column': sort_column,
         'sort_order': sort_order,
         'page': int(page),
+        'availability': availability,
+        'depositors': depositors,
+        'diseases': diseases,
+        'filters': filters,
+        'search_query': search_query,
         'celllines': celllines,
         'celllines_registered': Cellline.objects.all(),
         'celllines_validated': Cellline.objects.filter(validated__lt=3),
