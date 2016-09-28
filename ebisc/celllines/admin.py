@@ -35,6 +35,12 @@ class AgeRangeAdmin(admin.ModelAdmin):
 admin.site.register(AgeRange, AgeRangeAdmin)
 
 
+class DiseaseAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Disease, DiseaseAdmin)
+
+
 # -----------------------------------------------------------------------------
 # CellLine
 
