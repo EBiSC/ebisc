@@ -61,14 +61,39 @@ def page(request, path):
         name = path.rstrip('/')
         cellline = Cellline.objects.get(name=name, available_for_sale_at_ecacc=True)
 
-        same_donor_lines = Cellline.objects.filter(donor=cellline.donor, available_for_sale_at_ecacc=True).exclude(name=cellline.name).order_by('name')
+        # Subclones from this line
+        subclones = []
+        if cellline.derived_cell_lines.all():
+            subclones = [subclone for subclone in cellline.derived_cell_lines.all() if subclone.available_for_sale_at_ecacc]
+
+        # All subclones from the line this line was derived from
+        available_subclones_from_parent = []
+        if cellline.derived_from and cellline.derived_from.derived_cell_lines.all():
+            available_subclones_from_parent = [subclone for subclone in cellline.derived_from.derived_cell_lines.all() if subclone.available_for_sale_at_ecacc]
+
+        # Lines from the same donor, subclones excluded
+        same_donor_lines = Cellline.objects.filter(donor=cellline.donor, available_for_sale_at_ecacc=True).exclude(name=cellline.name).exclude(name__regex='(-\d+)$').order_by('name')
 
         if cellline.derived_from:
-            same_donor_lines = Cellline.objects.filter(donor=cellline.donor, available_for_sale_at_ecacc=True).exclude(name=cellline.name).exclude(name=cellline.derived_from.name).exclude(name__regex='(-\d+)$').order_by('name')
+            same_donor_lines = same_donor_lines.exclude(name=cellline.derived_from.name)
+
+        # Line that this line was linked from
+        comparator_cell_line = None
+        if cellline.comparator_cell_line and cellline.comparator_cell_line.available_for_sale_at_ecacc:
+            comparator_cell_line = cellline.comparator_cell_line
+
+        # All lines that were linked from this line
+        available_comparators = []
+        if cellline.comparator_cell_lines.all():
+            available_comparators = [line for line in cellline.comparator_cell_lines.all() if line.available_for_sale_at_ecacc]
 
         return render(request, 'catalog/cellline.html', {
             'cellline': cellline,
             'same_donor_lines': same_donor_lines,
+            'subclones': subclones,
+            'available_subclones_from_parent': available_subclones_from_parent,
+            'comparator_cell_line': comparator_cell_line,
+            'available_comparators': available_comparators,
         })
     except Cellline.DoesNotExist:
         pass

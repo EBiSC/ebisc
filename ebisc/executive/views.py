@@ -160,7 +160,7 @@ def cellline(request, name):
     same_donor_lines = Cellline.objects.filter(donor=cellline.donor).exclude(name=cellline.name).exclude(name__regex='(-\d+)$').order_by('name')
 
     if cellline.derived_from:
-        same_donor_lines = Cellline.objects.filter(donor=cellline.donor).exclude(name=cellline.name).exclude(name=cellline.derived_from.name).exclude(name__regex='(-\d+)$').order_by('name')
+        same_donor_lines = same_donor_lines.exclude(name=cellline.derived_from.name)
 
     return render(request, 'executive/cellline.html', {
         'cellline': cellline,
