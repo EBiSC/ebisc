@@ -206,7 +206,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
     owner = models.ForeignKey('Organization', verbose_name=_(u'Owner'), null=True, blank=True, related_name='owner_of_cell_lines')
     derivation_country = models.ForeignKey('Country', verbose_name=_(u'Derivation country'), null=True, blank=True)
 
-    primary_disease = models.ForeignKey('Disease', verbose_name=_(u'Diagnosed disease'), null=True, blank=True)
+    primary_disease = models.ForeignKey('Disease', verbose_name=_(u'Diagnosed disease'), null=True, blank=True, related_name='primary_disease')
     primary_disease_not_normalised = models.CharField(_(u'Disease name - not normalised'), max_length=500, null=True, blank=True)
     primary_disease_diagnosis = models.CharField(_(u'Disease diagnosis'), max_length=12, null=True, blank=True)
     primary_disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
