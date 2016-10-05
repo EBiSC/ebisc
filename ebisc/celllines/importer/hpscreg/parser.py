@@ -12,6 +12,7 @@ from .utils import format_integrity_error
 from ebisc.celllines.models import  \
     AgeRange,  \
     CellType,  \
+    Cellline,  \
     Country,  \
     Gender,  \
     Molecule,  \
@@ -310,6 +311,34 @@ def parse_donor(valuef, source):
             return None
 
         return donor
+
+
+@inject_valuef
+def parse_derived_from(valuef, source):
+
+    if valuef('same_donor_derived_from_cell_line_id') is not None:
+        try:
+            return Cellline.objects.get(hescreg_id=valuef('same_donor_derived_from_cell_line_id'))
+
+        except Cellline.DoesNotExist:
+            return None
+
+    else:
+        return None
+
+
+@inject_valuef
+def parse_comparator_line(valuef, source):
+
+    if valuef('comparator_cell_line_type') == 'Comparator line' and valuef('comparator_cell_line_id') is not None:
+        try:
+            return Cellline.objects.get(hescreg_id=valuef('comparator_cell_line_id'))
+
+        except Cellline.DoesNotExist:
+            return None
+
+    else:
+        return None
 
 
 @inject_valuef

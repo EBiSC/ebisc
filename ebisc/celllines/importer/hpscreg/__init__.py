@@ -30,7 +30,7 @@ def run():
     # json = request_get('http://test.hescreg.eu/api/export/2')
     # import_cellline(json)
 
-    # for cellline_id in [id for id in cellline_ids if id == 'EDi001-A']:
+    # for cellline_id in [id for id in cellline_ids if id == 'RCi005-A']:
     for cellline_id in [id for id in cellline_ids]:
         if cellline_id == 'BCRTi005-A' or cellline_id == 'BCRTi004-A':
             pass
@@ -97,6 +97,9 @@ def import_cellline(source):
     cell_line.family_history = valuef('family_history')
     cell_line.medical_history = valuef('medical_history')
     cell_line.clinical_information = valuef('clinical_information')
+    cell_line.derived_from = parser.parse_derived_from(source)
+    cell_line.comparator_cell_line = parser.parse_comparator_line(source)
+    cell_line.comparator_cell_line_relation = valuef('comparator_cell_line_donor_relative_type')
 
     dirty = [cell_line.is_dirty(check_relationship=True)]
 
