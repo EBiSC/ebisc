@@ -1,5 +1,59 @@
 <table class="data">
     {% include 'catalog/__cellline_data_general_executive__.html' %}
+
+    {% if cellline.derived_from or cellline.derived_cell_lines.all or cellline.comparator_cell_line or cellline.comparator_cell_lines.all or same_donor_lines %}
+    <tr><th class="sub-title"><h3>Related lines</h3></th><th></th></tr>
+
+    {% if cellline.derived_from %}
+    <tr>
+      <td class="label">Derived from:</td>
+      <td><a href="{% url 'executive:cellline' cellline.derived_from.name %}">{{ cellline.derived_from.name }}</a></td>
+    </tr>
+    {% endif %}
+
+    {% if cellline.derived_from.derived_cell_lines.all %}
+    <tr>
+      <td class="label">All subclones of {{ cellline.derived_from.name }}:</td>
+      <td>
+        {% for line in cellline.derived_from.derived_cell_lines.all %}
+        <a href="{% url 'executive:cellline' line.name %}">{{ line.name }}</a>{% if forloop.last %}{% else %}, {% endif %}
+        {% endfor %}
+      </td>
+    </tr>
+    {% endif %}
+
+    {% if cellline.derived_cell_lines.all %}
+    <tr>
+      <td class="label">Subclones:</td>
+      <td>{% for line in cellline.derived_cell_lines.all %}<a href="{% url 'executive:cellline' line.name %}">{{ line.name }}</a>{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</td>
+    </tr>
+    {% endif %}
+
+    {% if cellline.comparator_cell_line or cellline.comparator_cell_lines.all %}
+    <tr>
+      <td class="label">Comparator lines from relatives:</td>
+      <td>
+        {% if cellline.comparator_cell_line %}
+        <a href="{% url 'executive:cellline' cellline.comparator_cell_line.name %}">{{ cellline.comparator_cell_line.name }}</a><span class="comment"> - disease status: {% if cellline.comparator_cell_line.primary_disease %}{{ cellline.comparator_cell_line.primary_disease }}{% else %}Normal{% endif %}{% if cellline.comparator_cell_line.affected_status %}, {{ cellline.comparator_cell_line.affected_status }}{% endif %}{% if cellline.comparator_cell_line_relation %} ({{ cellline.comparator_cell_line_relation }}){% endif %}</span>
+        {% endif %}
+        {% if cellline.comparator_cell_line and cellline.comparator_cell_lines.all %}<br/>{% endif %}
+        {% if cellline.comparator_cell_lines.all %}
+        {% for line in cellline.comparator_cell_lines.all %}
+        <a href="{% url 'executive:cellline' line.name %}">{{ line.name }}</a> <span class="comment"> - disease status: {% if line.primary_disease %}{{ line.primary_disease }}{% else %}Normal{% endif %}{% if line.affected_status %}, {{ line.affected_status }}{% endif %}</span>{% if forloop.last %}{% else %}<br/>{% endif %}
+        {% endfor %}
+        {% endif %}
+      </td>
+    </tr>
+    {% endif %}
+
+    {% if same_donor_lines %}
+    <tr>
+      <td class="label">From the same donor:</td>
+      <td>{% for line in same_donor_lines %}<a href="{% url 'executive:cellline' line.name %}">{{ line.name }}</a>{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</td>
+    </tr>
+    {% endif %}
+    {% endif %}
+
     {% include 'catalog/__cellline_data_derivation__.html' %}
     {% include 'catalog/__cellline_data_culture_conditions__.html' %}
     {% include 'catalog/__cellline_data_characterization__.html' %}

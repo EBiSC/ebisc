@@ -1,0 +1,62 @@
+{% if cellline.derived_from or subclones or comparator_cell_line or available_comparators or same_donor_lines %}
+<tr><th colspan="2" class="title"><h2>Related lines</h2></th></tr>
+
+{% if cellline.derived_from %}
+<tr>
+  <td class="label">Derived from:</td>
+  <td>
+    {% if cellline.derived_from.available_for_sale_at_ecacc == True %}
+    <a href="{% url 'site:page' cellline.derived_from.name %}">{{ cellline.derived_from.name }}</a>
+    {% else %}
+    {{ cellline.derived_from.name }}
+    {% endif %}
+  </td>
+</tr>
+{% endif %}
+
+{% if available_subclones_from_parent %}
+<tr>
+  <td class="label">All subclones of {{ cellline.derived_from.name }}:</td>
+  <td>
+    {% for line in available_subclones_from_parent %}
+    <a href="{% url 'site:page' line.name %}">{{ line.name }}</a>{% if forloop.last %}{% else %}, {% endif %}
+    {% endfor %}
+  </td>
+</tr>
+{% endif %}
+
+{% if subclones %}
+<tr>
+  <td class="label">Subclones:</td>
+  <td>
+    {% for line in subclones %}
+    <a href="{% url 'executive:cellline' line.name %}">{{ line.name }}</a>{% if forloop.last %}{% else %}, {% endif %}
+    {% endfor %}
+  </td>
+</tr>
+{% endif %}
+
+{% if comparator_cell_line or available_comparators %}
+<tr>
+  <td class="label">Comparator lines from relatives:</td>
+  <td>
+    {% if comparator_cell_line %}
+    <a href="{% url 'site:page' comparator_cell_line.name %}">{{ comparator_cell_line.name }}</a><span class="comment"> - disease status: {% if comparator_cell_line.primary_disease %}{{ comparator_cell_line.primary_disease }}{% else %}Normal{% endif %}{% if comparator_cell_line.affected_status %}, {{ comparator_cell_line.affected_status }}{% endif %}{% if cellline.comparator_cell_line_relation %} ({{ cellline.comparator_cell_line_relation }}){% endif %}</span>
+    {% endif %}
+    {% if comparator_cell_line and available_comparators %}<br/>{% endif %}
+    {% if available_comparators %}
+    {% for line in available_comparators %}
+    <a href="{% url 'site:page' line.name %}">{{ line.name }}</a> <span class="comment"> - disease status: {% if line.primary_disease %}{{ line.primary_disease }}{% else %}Normal{% endif %}{% if line.affected_status %}, {{ line.affected_status }}{% endif %}</span>{% if forloop.last %}{% else %}<br/>{% endif %}
+    {% endfor %}
+    {% endif %}
+  </td>
+</tr>
+{% endif %}
+
+{% if same_donor_lines %}
+<tr>
+  <td class="label">From the same donor:</td>
+  <td>{% for line in same_donor_lines %}<a href="{% url 'site:page' line.name %}">{{ line.name }}</a>{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</td>
+</tr>
+{% endif %}
+{% endif %}
