@@ -408,7 +408,7 @@ class CelllineAliquot(models.Model):
     biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=100, unique=True)
     name = models.CharField(_(u'Name'), max_length=50, null=True, blank=True)
     number = models.CharField(_(u'Number'), max_length=10, null=True, blank=True)
-    derived_from = models.CharField(_(u'Biosamples ID of sample from which the vial was derived'), max_length=12, null=True, blank=True)
+    derived_from = models.CharField(_(u'Biosamples ID of sample from which the vial was derived'), max_length=100, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line aliquot')

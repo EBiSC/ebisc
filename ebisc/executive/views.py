@@ -177,14 +177,14 @@ BATCH_TYPE_CHOICES = (
 
 class NewBatchForm(forms.Form):
     cellline_name = forms.CharField(label='Cell line name', max_length=15, widget=forms.TextInput(attrs={'readonly': True}))
-    cellline_biosample_id = forms.CharField(label='Cell line Biosample ID', max_length=20, widget=forms.TextInput(attrs={'readonly': True}))
+    cellline_biosample_id = forms.CharField(label='Cell line Biosample ID', max_length=100, widget=forms.TextInput(attrs={'readonly': True}))
     batch_id = forms.CharField(
         label='Batch ID', max_length=5, help_text='ex. P001', widget=forms.TextInput(attrs={'class': 'small'}),
         validators=[RegexValidator('^[a-zA-Z]{1}[0-9]{3}$', message='Batch ID is not in the correct format (letter + 3 digits)')]
     )
     batch_type = forms.CharField(label='Batch Type', max_length=50, widget=forms.Select(choices=BATCH_TYPE_CHOICES), help_text=format_html(u'<div class="tooltip-item"><span class="glyphicon glyphicon-question-sign"></span><div class="tooltip"><p><b>Depositor expansion batch:</b> A batch-worth of empty vials are sent to the depositor, with EBiSC labels and EBiSC vial IDs. The depositor fills the vials and ships them back to central facility.</p><p><b>Central facility expansion batch:</b> Central facility expand the batch and then fill EBiSC vials with EBiSC vial labels. The batch is expanded from a small number of unlabeled vials sent by depositor or from vials already banked at CF.</p></div></div>'))
     number_of_vials = forms.IntegerField(label='Number of vials in batch', min_value=1, widget=forms.TextInput(attrs={'class': 'small'}))
-    derived_from = forms.CharField(label='Derived from', max_length=20, help_text='BiosampleID of cell line or vial that the batch was derived from')
+    derived_from = forms.CharField(label='Derived from', max_length=100, help_text='BiosampleID of cell line or vial that the batch was derived from')
 
     def clean(self):
         cleaned_data = super(NewBatchForm, self).clean()
