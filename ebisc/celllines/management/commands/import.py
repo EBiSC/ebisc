@@ -12,6 +12,7 @@ Usage:
     import all
     import hpscreg [--init]
     import lims
+    import batches <filename>
     import toelastic
 '''
 
@@ -39,6 +40,10 @@ class Command(DocOptCommand):
 
         if args.get('toelastic'):
             importer.toelastic.run()
+
+        if args.get('batches'):
+            logger.info('Importing batches from BioSamples')
+            importer.batches.run(args.get('<filename>'))
 
     def init(self):
         logger.info('Initializing database')
