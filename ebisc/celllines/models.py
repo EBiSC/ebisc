@@ -165,12 +165,6 @@ class Unit(models.Model):
 
 class Cellline(DirtyFieldsMixin, models.Model):
 
-    ACCEPTED_CHOICES = (
-        ('pending', _(u'Pending')),
-        ('accepted', _(u'Accepted')),
-        ('rejected', _(u'Rejected')),
-    )
-
     VALIDATION_CHOICES = (
         ('1', _(u'Validated, visible')),
         ('2', _(u'Validated, not visible')),
@@ -185,7 +179,6 @@ class Cellline(DirtyFieldsMixin, models.Model):
         ('restricted_distribution', _(u'Restricted distribution')),
     )
 
-    accepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
     validated = models.CharField(_(u'Cell line data validation'), max_length=50, choices=VALIDATION_CHOICES, default='5')
     available_for_sale = models.NullBooleanField(_(u'Available for sale'))
     available_for_sale_at_ecacc = models.BooleanField(_(u'Available for sale on ECACC'), default=False)

@@ -389,37 +389,6 @@ def cell_line_ids(request):
 
 @permission_required('auth.can_manage_executive_dashboard')
 @require_POST
-def accept(request, name):
-
-    '''
-    Perform one of the following transitions:
-        Pending -> Pending | Accepted | Rejected
-        Rejected -> Accepted
-    '''
-
-    cellline = get_object_or_404(Cellline, name=name)
-
-    action = request.POST.get('action', None)
-    redirect_to = redirect(request.POST.get('next', None) and request.POST.get('next') or 'executive:dashboard')
-
-    if action == 'pending' and cellline.accepted == 'pending':
-        pass
-    elif action == 'accepted':
-        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.biosamples_id, cellline.accepted, action))
-        cellline.accepted = 'accepted'
-    elif action == 'rejected' and cellline.accepted == 'pending':
-        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.biosamples_id, cellline.accepted, action))
-        cellline.accepted = 'rejected'
-    else:
-        return redirect_to
-
-    cellline.save()
-
-    return redirect_to
-
-
-@permission_required('auth.can_manage_executive_dashboard')
-@require_POST
 def availability(request, name):
 
     '''
