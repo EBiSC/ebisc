@@ -70,45 +70,44 @@
 
 // Availability status
 
-.availability-status {
-  display: inline-block;
-
-  .status-label {
-    display: inline-block;
-    min-width: 140px;
-  }
-
-  select {
+table.cell-line-status {
+  td {
+    white-space: nowrap;
     font-size: $font-size-small;
 
-    &.at-ecacc {
-      background-color: $color-green;
-      border: $base-border;
-      color: white;
-      font-weight: bold;
-    }
-
-    &.expand-to-order {
-      background-color: white;
-      color: darken($color-green, 15%);
-      border: solid 1px $color-green;
-    }
-
-    &.restricted-distribution {
-      background-color: white;
-      color: darken($color-green, 15%);
-      border: solid 1px $color-green;
-    }
-
-    &.not-available {
-      background-color: white;
-      border: $base-border;
+    &.status-comment {
+      white-space: normal;
+      font-size: $base-font-size;
     }
   }
 }
 
-table.listing .availability-status .status-label {
+.cell-line-status-edit {
+  margin-top: 3rem;
+
+  h3 {
+    font-size: $font-size-large * 1.2;
+    margin-bottom: 1rem;
+  }
+
+  table {
+    td {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+
+      &.label {
+        white-space: nowrap;
+        width: auto;
+        padding-right: 0.6rem;
+      }
+    }
+  }
+}
+
+.status-label {
   padding: 2px 10px;
+  font-size: $font-size-small;
+  white-space: nowrap;
 
   &.at-ecacc {
     background-color: $color-green;
@@ -119,20 +118,37 @@ table.listing .availability-status .status-label {
   &.expand-to-order {
     background-color: white;
     color: $color-green;
-    color: $base-font-color;
+    color: darken($color-green, 10%);
+    font-weight: bold;
     border: solid 1px $color-green;
   }
 
   &.restricted-distribution {
     background-color: white;
-    color: $color-green;
-    color: $base-font-color;
+    color: darken($color-green, 10%);
+    font-weight: bold;
     border: solid 1px $color-green;
   }
 
+  &.recalled {
+    background-color: white;
+    color: $color-red-dark;
+    border: solid 1px $color-red-dark;
+  }
+
+  &.withdrawn {
+    background-color: white;
+    color: $color-red-dark;
+    border: solid 1px $color-red-dark;
+  }
+
   &.not-available {
+    background-color: white;
+    color: $base-font-color;
+    border: solid 1px $base-border-color;
   }
 }
+
 
 // Batch data on executive dashboard
 

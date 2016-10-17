@@ -19,14 +19,13 @@
                         {{ cellline.get_validated_display }}</p>
 
                     <div><span class="light-gray">Availability:</span></div>
-                        {% if not perms.auth.can_manage_executive_dashboard %}
-                        {% if cellline.availability == 'not_available' %}
+                        {% if cellline.get_current_status.status == 'not_available' or cellline.get_current_status.status == 'withdrawn' or cellline.get_current_status.status == 'recalled' %}
                         <i class="glyphicon glyphicon-minus error"></i>
                         {% else %}
                         <i class="glyphicon glyphicon-ok success"></i>
                         {% endif %}
-                        {% endif %}
-                        {% include 'executive/availability-status.html' %}</p>
+                        {{ cellline.get_current_status.get_status_display }}
+                      </p>
                 </div>
             </div>
         </div>
@@ -73,12 +72,12 @@
             {% include 'executive/__documents__.html' %}
         </div>
     </li>
+    <li class="tab-header-and-content" data-section="status">
+        <a href="#" class="tab-link">Availability status</a>
+        <div class="tab-content">
+            {% include 'executive/__status__.html' %}
+        </div>
+    </li>
 </ul>
 
-{% endblock %}
-
-{% block extra-scripts %}
-{% if perms.auth.can_manage_executive_dashboard %}
-    {% include 'executive/availability-script.html' %}
-{% endif %}
 {% endblock %}

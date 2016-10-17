@@ -22,7 +22,7 @@ from django.db.models import Q
 from django.db.models.functions import Lower
 
 from ebisc.site.views import render
-from ebisc.celllines.models import Cellline, CelllineBatch, CelllineInformationPack, CelllineAliquot, Disease, Organization
+from ebisc.celllines.models import Cellline, CelllineStatus, CelllineBatch, CelllineInformationPack, CelllineAliquot, Disease, Organization
 
 
 class BiosamplesError(Exception):
@@ -42,7 +42,7 @@ def dashboard(request):
         ('batches', 'Batches', None),
         ('quantity', 'QTY', None),
         ('sold', 'Sold', None),
-        ('availability', 'Availability', 'availability'),
+        ('status', 'Status', 'current_status__status'),
     ]
 
     SORT_COLUMNS = dict([(x[0], x[2]) for x in COLUMNS])
@@ -57,17 +57,17 @@ def dashboard(request):
 
     # Filters
     filters = {
-        'availability': request.GET.get('availability', None),
+        'status': request.GET.get('status', None),
         'depositor': request.GET.get('depositor', None),
         'disease': request.GET.get('disease', None),
     }
 
-    availability = Cellline.AVAILABILITY_CHOICES
+    status = CelllineStatus.STATUS_CHOICES
     depositors = Organization.objects.filter(generator_of_cell_lines__isnull=False).distinct()
     diseases = Disease.objects.filter(primary_disease__isnull=False).distinct().order_by(Lower('disease'))
 
-    if filters['availability']:
-        cellline_objects = cellline_objects.filter(availability=request.GET.get('availability', None))
+    if filters['status']:
+        cellline_objects = cellline_objects.filter(current_status__status=request.GET.get('status', None))
 
     if filters['depositor']:
         cellline_objects = cellline_objects.filter(generator__name=request.GET.get('depositor', None))
@@ -111,7 +111,7 @@ def dashboard(request):
         'sort_column': sort_column,
         'sort_order': sort_order,
         'page': int(page),
-        'availability': availability,
+        'status': status,
         'depositors': depositors,
         'diseases': diseases,
         'filters': filters,
@@ -119,9 +119,9 @@ def dashboard(request):
         'celllines': celllines,
         'celllines_registered': Cellline.objects.count(),
         'celllines_validated': Cellline.objects.filter(validated__lt=3).count(),
-        'celllines_at_ecacc': Cellline.objects.filter(availability='at_ecacc').count(),
-        'celllines_expand_to_order': Cellline.objects.filter(availability='expand_to_order').count(),
-        'celllines_restricted_distribution': Cellline.objects.filter(availability='restricted_distribution').count(),
+        'celllines_at_ecacc': Cellline.objects.filter(current_status__status='at_ecacc').count(),
+        'celllines_expand_to_order': Cellline.objects.filter(current_status__status='expand_to_order').count(),
+        'celllines_restricted_distribution': Cellline.objects.filter(current_status__status='restricted_distribution').count(),
     })
 
 

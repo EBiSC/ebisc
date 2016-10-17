@@ -59,7 +59,7 @@
                 <table class="data">
                     {% include 'catalog/__cellline_data_characterization__.html' %}
 
-                    {% if cellline.availability == 'at_ecacc' %}
+                    {% if cellline.current_status.status == 'at_ecacc' %}
                     <tr><th class="sub-title"><h3>Sterility</h3></th></tr>
 
                     <tr>
@@ -79,7 +79,7 @@
                 </table>
             </div>
         </li>
-        {% if cellline.karyotype or cellline.availability == 'at_ecacc' or cellline.str_fingerprinting.all|length or cellline.genome_analysis or cellline.genetic_modification_transgene_expression or cellline.genetic_modification_gene_knock_out or cellline.genetic_modification_gene_knock_in or cellline.genetic_modification_isogenic %}
+        {% if cellline.karyotype or cellline.current_status.status == 'at_ecacc' or cellline.str_fingerprinting.all|length or cellline.genome_analysis or cellline.genetic_modification_transgene_expression or cellline.genetic_modification_gene_knock_out or cellline.genetic_modification_gene_knock_in or cellline.genetic_modification_isogenic %}
         <li class="tab-header-and-content">
             <a href="#" class="tab-link">Genotyping</a>
             <div class="tab-content">
@@ -96,7 +96,7 @@
         <a class="ecacc-link" href="{{ cellline.ecacc_url }}"  target="_blank">
             <button><i class="glyphicon glyphicon-shopping-cart "></i> Purchase cell line</button>
             <div class="comment">At European Collection of Authenticated Cell Cultures (ECACC)</div>
-            {% if cellline.availability == 'at_ecacc' or cellline.availability == 'restricted_distribution' %}
+            {% if cellline.current_status.status == 'at_ecacc' or cellline.current_status.status == 'restricted_distribution' %}
             <div class="availability in-stock">In stock</div>
             {% else %}
             <div class="availability">Restocking</div>

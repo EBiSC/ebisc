@@ -1,0 +1,78 @@
+<h2>Availability status history</h2>
+<table class="bordered cell-line-status">
+    <thead>
+        <tr>
+            <th>Status</th>
+            <th>Comment</th>
+            <th>Updated by</th>
+            <th>Updated at</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for status in cellline.statuses.all %}
+        <tr>
+            <td>
+
+              {% if status.status == 'at_ecacc' %}<div class="status-label at-ecacc">
+              {% elif status.status == 'expand_to_order' %}<div class="status-label expand-to-order">
+              {% elif status.status == 'restricted_distribution' %}<div class="status-label restricted-distribution">
+              {% elif status.status == 'recalled' %}<div class="status-label recalled">
+              {% elif status.status == 'withdrawn' %}<div class="status-label withdrawn">
+              {% else %}<div class="status-label not-available">
+              {% endif %}
+                {{ status.get_status_display }}
+              </div>
+            </td>
+            <td class="status-comment">
+              {% if status.comment %}
+              {{ status.comment }}
+              {% else %}
+              /
+              {% endif %}
+            </td>
+            <td>{{ status.user.first_name }} {{ status.user.last_name }}</td>
+            <td>{{ status.updated }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+{% if perms.auth.can_manage_executive_dashboard %}
+<div class="cell-line-status-edit">
+    <h3>Change cell line status</h3>
+    <table>
+      <tr>
+        <td class="label">Batches:</td>
+        <td>
+          {% if cellline.batches.all %}
+          {% for batch in cellline.batches.all %}
+          {% if not forloop.first %}<br/>{% endif %}{{ batch.batch_id }} ({% if batch.certificate_of_analysis %}<i class="glyphicon glyphicon-ok success"></i>{% else %}<i class="glyphicon glyphicon-minus error"></i>{% endif %} CoA)
+          {% endfor %}
+          {% else %}
+          -
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <td class="label">CLIP uploaded:</td>
+        <td>
+          {% if cellline.clips.all %}
+          <i class="glyphicon glyphicon-ok success"></i>
+          {% else %}
+          <i class="glyphicon glyphicon-minus error"></i>
+          {% endif %}
+        </td>
+      </tr>
+    </table>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table class="form">
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Change status"></td>
+        </tr>
+        </table>
+    </form>
+</div>
+{% endif %}
