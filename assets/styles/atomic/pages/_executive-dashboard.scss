@@ -71,6 +71,10 @@
 // Availability status
 
 table.cell-line-status {
+  th {
+    white-space: nowrap;
+  }
+
   td {
     white-space: nowrap;
     font-size: $font-size-small;
@@ -78,6 +82,11 @@ table.cell-line-status {
     &.status-comment {
       white-space: normal;
       font-size: $base-font-size;
+      min-width: 300px;
+
+      @include breakpoint(map-get($breakpoints, medium)) {
+        min-width: auto;
+      }
     }
   }
 }
@@ -99,6 +108,17 @@ table.cell-line-status {
         white-space: nowrap;
         width: auto;
         padding-right: 0.6rem;
+      }
+    }
+
+    &.form {
+      textarea {
+        width: 600px;
+        height: 100px;
+
+        @include breakpoint(map-get($breakpoints, medium)) {
+          width: 100%;
+        }
       }
     }
   }

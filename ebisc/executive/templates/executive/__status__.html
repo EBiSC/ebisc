@@ -41,36 +41,34 @@
 {% if perms.auth.can_manage_executive_dashboard %}
 <div class="cell-line-status-edit">
     <h3>Change cell line status</h3>
-    <table>
-      <tr>
-        <td class="label">Batches:</td>
-        <td>
-          {% if cellline.batches.all %}
-          {% for batch in cellline.batches.all %}
-          {% if not forloop.first %}<br/>{% endif %}{{ batch.batch_id }} ({% if batch.certificate_of_analysis %}<i class="glyphicon glyphicon-ok success"></i>{% else %}<i class="glyphicon glyphicon-minus error"></i>{% endif %} CoA)
-          {% endfor %}
-          {% else %}
-          -
-          {% endif %}
-        </td>
-      </tr>
-      <tr>
-        <td class="label">CLIP uploaded:</td>
-        <td>
-          {% if cellline.clips.all %}
-          <i class="glyphicon glyphicon-ok success"></i>
-          {% else %}
-          <i class="glyphicon glyphicon-minus error"></i>
-          {% endif %}
-        </td>
-      </tr>
-    </table>
-    <form method="post" enctype="multipart/form-data">
+
+    <form method="post">
         {% csrf_token %}
         <table class="form">
         <tr>
+          <th>Documents:</th>
+          <td>
+            <p>
+            {% if cellline.clips.all %}
+            <i class="glyphicon glyphicon-ok success"></i>
+            {% else %}
+            <i class="glyphicon glyphicon-minus error"></i>
+            {% endif %}
+             CLIP</p>
+            <p>
+              {% if cellline.batches.all %}
+              {% for batch in cellline.batches.all %}
+              {% if not forloop.first %}<br/>{% endif %}{% if batch.certificate_of_analysis %}<i class="glyphicon glyphicon-ok success"></i>{% else %}<i class="glyphicon glyphicon-minus error"></i>{% endif %} CoA ({{ batch.batch_id }})
+              {% endfor %}
+              {% else %}
+              <i class="glyphicon glyphicon-minus error"></i> <i>No batches</i>
+              {% endif %}
+            </p>
+          </td>
+        {{ status_form }}
+        <tr>
             <td></td>
-            <td><input type="submit" value="Change status"></td>
+            <td><input type="submit" name="status" value="Change status"></td>
         </tr>
         </table>
     </form>

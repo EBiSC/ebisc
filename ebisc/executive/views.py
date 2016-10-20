@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.shortcuts import redirect
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.utils.html import format_html
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import permission_required
@@ -172,11 +173,11 @@ def cellline(request, name):
         elif 'status' in request.POST:
             status_form = CelllineStatusForm(request.POST, prefix='status')
             if status_form.is_valid():
-                # clip = clip_form.save(commit=False)
-                # clip.cell_line = cellline
-                # clip.md5 = hashlib.md5(clip.clip_file.read()).hexdigest()
-                # clip.save()
-                # messages.success(request, format_html(u'A new CLIP <code>{0}</code> has been sucessfully added.', clip.version))
+                status = status_form.save(commit=False)
+                status.cell_line = cellline
+                status.user = request.user
+                status.save()
+                messages.success(request, format_html(u'Status for cell line <code>{0}</code> has been sucessfully changed to <code>{1}</code>.', cellline.name, cellline.current_status.status))
                 return redirect('.')
             else:
                 messages.error(request, format_html(u'Invalid status data submitted. Please check below.'))
@@ -184,11 +185,12 @@ def cellline(request, name):
 
     else:
         clip_form = CelllineInformationPackForm(prefix='clip')
-        status_form = CelllineInformationPackForm(prefix='status')
+        status_form = CelllineStatusForm(prefix='status', initial={'status': cellline.current_status})
 
     return render(request, 'executive/cellline.html', {
         'cellline': cellline,
         'clip_form': clip_form,
+        'status_form': status_form,
         'same_donor_lines': same_donor_lines,
     })
 
