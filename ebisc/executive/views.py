@@ -131,6 +131,12 @@ class CelllineInformationPackForm(ModelForm):
         fields = ['version', 'clip_file']
 
 
+class CelllineStatusForm(ModelForm):
+    class Meta:
+        model = CelllineStatus
+        fields = ['status', 'comment']
+
+
 @permission_required('auth.can_view_executive_dashboard')
 def cellline(request, name):
 
@@ -138,29 +144,47 @@ def cellline(request, name):
 
     cellline = get_object_or_404(Cellline, name=name)
 
+    same_donor_lines = Cellline.objects.filter(donor=cellline.donor).exclude(name=cellline.name).exclude(name__regex='(-\d+)$').order_by('name')
+
+    if cellline.derived_from:
+        same_donor_lines = same_donor_lines.exclude(name=cellline.derived_from.name)
+
     if not request.user.has_perm('auth.can_manage_executive_dashboard'):
         return render(request, 'executive/cellline.html', {
             'cellline': cellline,
         })
 
     if request.method == 'POST':
-        clip_form = CelllineInformationPackForm(request.POST, request.FILES)
-        if clip_form.is_valid():
-            clip = clip_form.save(commit=False)
-            clip.cell_line = cellline
-            clip.md5 = hashlib.md5(clip.clip_file.read()).hexdigest()
-            clip.save()
-            messages.success(request, format_html(u'A new CLIP <code>{0}</code> has been sucessfully added.', clip.version))
-            return redirect('.')
-        else:
-            messages.error(request, format_html(u'Invalid CLIP data submitted. Please check below.'))
+
+        if 'clip' in request.POST:
+            clip_form = CelllineInformationPackForm(request.POST, request.FILES, prefix='clip')
+            if clip_form.is_valid():
+                clip = clip_form.save(commit=False)
+                clip.cell_line = cellline
+                clip.md5 = hashlib.md5(clip.clip_file.read()).hexdigest()
+                clip.save()
+                messages.success(request, format_html(u'A new CLIP <code>{0}</code> has been sucessfully added.', clip.version))
+                return redirect('.')
+            else:
+                messages.error(request, format_html(u'Invalid CLIP data submitted. Please check below.'))
+            status_form = CelllineStatusForm(prefix='status')
+
+        elif 'status' in request.POST:
+            status_form = CelllineStatusForm(request.POST, prefix='status')
+            if status_form.is_valid():
+                # clip = clip_form.save(commit=False)
+                # clip.cell_line = cellline
+                # clip.md5 = hashlib.md5(clip.clip_file.read()).hexdigest()
+                # clip.save()
+                # messages.success(request, format_html(u'A new CLIP <code>{0}</code> has been sucessfully added.', clip.version))
+                return redirect('.')
+            else:
+                messages.error(request, format_html(u'Invalid status data submitted. Please check below.'))
+            clip_form = CelllineInformationPackForm(prefix='clip')
+
     else:
-        clip_form = CelllineInformationPackForm()
-
-    same_donor_lines = Cellline.objects.filter(donor=cellline.donor).exclude(name=cellline.name).exclude(name__regex='(-\d+)$').order_by('name')
-
-    if cellline.derived_from:
-        same_donor_lines = same_donor_lines.exclude(name=cellline.derived_from.name)
+        clip_form = CelllineInformationPackForm(prefix='clip')
+        status_form = CelllineInformationPackForm(prefix='status')
 
     return render(request, 'executive/cellline.html', {
         'cellline': cellline,
