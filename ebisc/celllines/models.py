@@ -306,13 +306,6 @@ class Cellline(DirtyFieldsMixin, models.Model):
         else:
             return None
 
-    def get_current_status(self):
-        statuses = self.statuses.all().order_by('-updated')
-        if statuses.count():
-            return statuses[0]
-        else:
-            return None
-
 
 class CelllineStatus(models.Model):
 
@@ -328,7 +321,7 @@ class CelllineStatus(models.Model):
     cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='statuses')
 
     status = models.CharField(_(u'Status'), max_length=50, choices=STATUS_CHOICES, default='not_available')
-    comment = models.TextField(_(u'Comment'), null=True, blank=True)
+    comment = models.TextField(_(u'Comment'), null=True, blank=True, help_text='Optional unless you are recalling or withdrawing a line. In that case you must provide a reason for the recall/withdrawal.')
 
     user = models.ForeignKey(User, null=True, blank=True)
     updated = models.DateTimeField(u'Updated', auto_now=True)
@@ -345,6 +338,12 @@ class CelllineStatus(models.Model):
         super(CelllineStatus, self).save(*args, **kwargs)
         self.cell_line.current_status = self
         self.cell_line.save()
+
+    def delete(self, *args, **kwargs):
+        if self.cell_line.current_status == self:
+            self.cell_line.current_status = None
+            self.cell_line.save()
+        super(CelllineStatus, self).delete(*args, **kwargs)
 
 
 class CelllineInformationPack(models.Model):

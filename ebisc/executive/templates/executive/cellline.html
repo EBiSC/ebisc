@@ -19,12 +19,16 @@
                         {{ cellline.get_validated_display }}</p>
 
                     <div><span class="light-gray">Availability:</span></div>
-                        {% if cellline.get_current_status.status == 'not_available' or cellline.get_current_status.status == 'withdrawn' or cellline.get_current_status.status == 'recalled' %}
+                        {% if cellline.current_status %}
+                        {% if cellline.current_status.status == 'not_available' or cellline.current_status.status == 'withdrawn' or cellline.current_status.status == 'recalled' %}
                         <i class="glyphicon glyphicon-minus error"></i>
                         {% else %}
                         <i class="glyphicon glyphicon-ok success"></i>
                         {% endif %}
-                        {{ cellline.get_current_status.get_status_display }}
+                        {{ cellline.current_status.get_status_display }}
+                        {% else %}
+                        /
+                        {% endif %}
                       </p>
                 </div>
             </div>

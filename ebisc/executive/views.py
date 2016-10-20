@@ -12,7 +12,6 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.shortcuts import redirect
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.utils.html import format_html
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import permission_required
@@ -137,6 +136,16 @@ class CelllineStatusForm(ModelForm):
         model = CelllineStatus
         fields = ['status', 'comment']
 
+    def clean(self):
+        cleaned_data = super(CelllineStatusForm, self).clean()
+        new_status = cleaned_data.get('status')
+
+        if new_status == 'recalled' or new_status == 'withdrawn':
+            if not cleaned_data.get('comment'):
+                raise forms.ValidationError(
+                    'You must provide a reason for withdrawing/recalling a line in the Comment field.'
+                )
+
 
 @permission_required('auth.can_view_executive_dashboard')
 def cellline(request, name):
@@ -173,10 +182,18 @@ def cellline(request, name):
         elif 'status' in request.POST:
             status_form = CelllineStatusForm(request.POST, prefix='status')
             if status_form.is_valid():
+                new_status = status_form.cleaned_data['status']
+                if new_status == 'withdrawn' or new_status == 'not_available':
+                    cellline.available_for_sale = False
+                else:
+                    cellline.available_for_sale = True
+                cellline.save()
+
                 status = status_form.save(commit=False)
                 status.cell_line = cellline
                 status.user = request.user
                 status.save()
+
                 messages.success(request, format_html(u'Status for cell line <code>{0}</code> has been sucessfully changed to <code>{1}</code>.', cellline.name, cellline.current_status.status))
                 return redirect('.')
             else:
