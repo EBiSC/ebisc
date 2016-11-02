@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
+from ..celllines.models import Donor, Disease, Cellline, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
 
 
 # -----------------------------------------------------------------------------
@@ -400,6 +400,19 @@ class CelllineBatchResource(ModelResource):
 
 
 # -----------------------------------------------------------------------------
+# Cell line status log
+
+class CelllineStatusResource(ModelResource):
+
+    status = fields.CharField('get_status_display')
+
+    class Meta:
+        queryset = CelllineStatus.objects.all()
+        include_resource_uri = False
+        fields = ('status', 'comment', 'updated')
+
+
+# -----------------------------------------------------------------------------
 # Cell line information packs (CLIPS)
 
 class CelllineInformationPackResource(ModelResource):
@@ -432,7 +445,10 @@ class CelllineResource(ModelResource):
 
     # Availability
     flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)
-    availability = fields.CharField('get_availability_display')
+    availability = fields.CharField('current_status__get_status_display', null=True)
+
+    # Status
+    status_log = fields.ToManyField(CelllineStatusResource, 'statuses', null=True, full=True)
 
     # Donor and disease
     primary_disease_diagnosed = fields.CharField('primary_disease_diagnosis', null=True)

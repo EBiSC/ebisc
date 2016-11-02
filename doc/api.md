@@ -492,6 +492,13 @@ Additional fields and endpoints may be created for future exchanges.
             "vector_free_types_none"
         ],
         "resource_uri": "/api/v0/cell-lines/SAMEA2590882",
+        "status_log": [
+            {
+                "comment": "",
+                "status": "Stocked by ECACC",
+                "updated": "2016-10-20T11:51:00.016090"
+            }
+        ],
         "validation_status": "Validated, visible",
         "virology_screening": {
             "hepatitis_b": "Negative",
@@ -512,14 +519,22 @@ Fields that end with `_flag` can hold three values:
 
 Examples of these types of fields are: `certificate_of_analysis_flag`, `variant_of_interest_flag`, ...
 
-#### Availability
+#### Availability and Status log
 
-Availability field can hold three possible values:
+Availability field can hold 6 possible values:
 * Not available
 * Stocked by ECACC
 * Expand to order
+* Restricted distribution
+* Recalled
+* Withdrawn
 
-If availability is set to `Not available`, the value of `flag_go_live` is `false`. Otherwise `flag_go_live` is `true`.
+If availability is set to `Not available` or `Withdrawn` the value of `flag_go_live` is `false`. Otherwise `flag_go_live` is `true`.
+
+The history of status changes is logged in the field `status_log`. Each change is documented with:
+* the new status,
+* when the change was made and
+* an accompanying comment by the person who made the change.
 
 #### hPSCreg validation
 
