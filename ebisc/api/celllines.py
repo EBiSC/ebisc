@@ -444,8 +444,10 @@ class CelllineResource(ModelResource):
     validation_status = fields.CharField('get_validated_display')
 
     # Availability
-    flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)
     availability = fields.CharField('current_status__get_status_display', null=True)
+
+    # ECACC flag for importing lines
+    flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)
 
     # Status
     status_log = fields.ToManyField(CelllineStatusResource, 'statuses', null=True, full=True)
@@ -534,6 +536,16 @@ class CelllineResource(ModelResource):
 
     def dehydrate_alternative_names(self, bundle):
         return value_list_of_string(bundle.obj.alternative_names)
+
+    def dehydrate_flag_go_live(self, bundle):
+        if bundle.obj.available_for_sale is not None:
+            # Withdrawn lines also get imported by ECACC
+            if bundle.obj.current_status.status == 'withdrawn':
+                return True
+            else:
+                return bundle.obj.available_for_sale
+        else:
+            return False
 
     def dehydrate_reprogramming_method_vector_free_types(self, bundle):
         if hasattr(bundle.obj, 'vector_free_reprogramming_factors'):

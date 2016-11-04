@@ -529,7 +529,7 @@ Availability field can hold 6 possible values:
 * Recalled
 * Withdrawn
 
-If availability is set to `Not available` or `Withdrawn` the value of `flag_go_live` is `false`. Otherwise `flag_go_live` is `true`.
+If availability is set to `Not available` the value of `flag_go_live` is `false`. Otherwise `flag_go_live` is `true`.
 
 The history of status changes is logged in the field `status_log`. Each change is documented with:
 * the new status,
