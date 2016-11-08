@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
+from ..celllines.models import Donor, Disease, Cellline, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
 
 
 # -----------------------------------------------------------------------------
@@ -400,6 +400,19 @@ class CelllineBatchResource(ModelResource):
 
 
 # -----------------------------------------------------------------------------
+# Cell line status log
+
+class CelllineStatusResource(ModelResource):
+
+    status = fields.CharField('get_status_display')
+
+    class Meta:
+        queryset = CelllineStatus.objects.all()
+        include_resource_uri = False
+        fields = ('status', 'comment', 'updated')
+
+
+# -----------------------------------------------------------------------------
 # Cell line information packs (CLIPS)
 
 class CelllineInformationPackResource(ModelResource):
@@ -431,8 +444,13 @@ class CelllineResource(ModelResource):
     validation_status = fields.CharField('get_validated_display')
 
     # Availability
+    availability = fields.CharField('current_status__get_status_display', null=True)
+
+    # ECACC flag for importing lines
     flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)
-    availability = fields.CharField('get_availability_display')
+
+    # Status
+    status_log = fields.ToManyField(CelllineStatusResource, 'statuses', null=True, full=True)
 
     # Donor and disease
     primary_disease_diagnosed = fields.CharField('primary_disease_diagnosis', null=True)
@@ -518,6 +536,16 @@ class CelllineResource(ModelResource):
 
     def dehydrate_alternative_names(self, bundle):
         return value_list_of_string(bundle.obj.alternative_names)
+
+    def dehydrate_flag_go_live(self, bundle):
+        if bundle.obj.available_for_sale is not None:
+            # Withdrawn lines also get imported by ECACC
+            if bundle.obj.current_status.status == 'withdrawn':
+                return True
+            else:
+                return bundle.obj.available_for_sale
+        else:
+            return False
 
     def dehydrate_reprogramming_method_vector_free_types(self, bundle):
         if hasattr(bundle.obj, 'vector_free_reprogramming_factors'):

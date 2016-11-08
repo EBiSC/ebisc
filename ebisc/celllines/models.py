@@ -5,8 +5,8 @@ from dirtyfields import DirtyFieldsMixin
 
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
-
 
 # -----------------------------------------------------------------------------
 # Utilities
@@ -165,12 +165,6 @@ class Unit(models.Model):
 
 class Cellline(DirtyFieldsMixin, models.Model):
 
-    ACCEPTED_CHOICES = (
-        ('pending', _(u'Pending')),
-        ('accepted', _(u'Accepted')),
-        ('rejected', _(u'Rejected')),
-    )
-
     VALIDATION_CHOICES = (
         ('1', _(u'Validated, visible')),
         ('2', _(u'Validated, not visible')),
@@ -185,12 +179,11 @@ class Cellline(DirtyFieldsMixin, models.Model):
         ('restricted_distribution', _(u'Restricted distribution')),
     )
 
-    accepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
     validated = models.CharField(_(u'Cell line data validation'), max_length=50, choices=VALIDATION_CHOICES, default='5')
     available_for_sale = models.NullBooleanField(_(u'Available for sale'))
     available_for_sale_at_ecacc = models.BooleanField(_(u'Available for sale on ECACC'), default=False)
     availability = models.CharField(_(u'Availability'), max_length=30, choices=AVAILABILITY_CHOICES, default='not_available')
-    status = models.ForeignKey('CelllineStatus', verbose_name=_(u'Cell line status'), null=True, blank=True)
+    current_status = models.ForeignKey('CelllineStatus', null=True, blank=True)
 
     name = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
     alternative_names = models.CharField(_(u'Cell line alternative names'), max_length=500, null=True, blank=True)
@@ -316,15 +309,41 @@ class Cellline(DirtyFieldsMixin, models.Model):
 
 class CelllineStatus(models.Model):
 
-    status = models.CharField(_(u'Cell line status'), max_length=50, unique=True)
+    STATUS_CHOICES = (
+        ('not_available', _(u'Not available')),
+        ('at_ecacc', _(u'Stocked by ECACC')),
+        ('expand_to_order', _(u'Expand to order')),
+        ('restricted_distribution', _(u'Restricted distribution')),
+        ('recalled', _(u'Recalled')),
+        ('withdrawn', _(u'Withdrawn')),
+    )
+
+    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='statuses')
+
+    status = models.CharField(_(u'Status'), max_length=50, choices=STATUS_CHOICES, default='not_available')
+    comment = models.TextField(_(u'Comment'), null=True, blank=True, help_text='Optional unless you are recalling or withdrawing a line. In that case you must provide a reason for the recall/withdrawal.')
+
+    user = models.ForeignKey(User, null=True, blank=True)
+    updated = models.DateTimeField(u'Updated', auto_now=True)
 
     class Meta:
         verbose_name = _(u'Cell line status')
         verbose_name_plural = _(u'Cell line statuses')
-        ordering = ['status']
+        ordering = ['-updated']
 
     def __unicode__(self):
         return self.status
+
+    def save(self, *args, **kwargs):
+        super(CelllineStatus, self).save(*args, **kwargs)
+        self.cell_line.current_status = self
+        self.cell_line.save()
+
+    def delete(self, *args, **kwargs):
+        if self.cell_line.current_status == self:
+            self.cell_line.current_status = None
+            self.cell_line.save()
+        super(CelllineStatus, self).delete(*args, **kwargs)
 
 
 class CelllineInformationPack(models.Model):

@@ -11,7 +11,7 @@ from django.conf import settings
 import logging
 logger = logging.getLogger('management.commands')
 
-from ebisc.celllines.models import Cellline, Country, CelllineNonIntegratingVector, CelllineIntegratingVector
+from ebisc.celllines.models import Cellline, CelllineStatus, Country, CelllineNonIntegratingVector, CelllineIntegratingVector
 
 from . import parser
 
@@ -30,7 +30,7 @@ def run():
     # json = request_get('http://test.hescreg.eu/api/export/2')
     # import_cellline(json)
 
-    # for cellline_id in [id for id in cellline_ids if id == 'RCi005-A']:
+    # for cellline_id in [id for id in cellline_ids if id == 'BIONi010-C-2']:
     for cellline_id in [id for id in cellline_ids]:
         if cellline_id == 'BCRTi005-A' or cellline_id == 'BCRTi004-A':
             pass
@@ -73,8 +73,13 @@ def import_cellline(source):
         ecacc_cat_number = str(int(cell_line.id) + 66540000 - 100)
         if ecacc_cat_number <= '66999999':
             cell_line.ecacc_id = ecacc_cat_number
+            cell_line.save()
         else:
             logger.warn('Ran out of ECACC catalogue numbers for cell line %s' % valuef('name'))
+
+        # Set status to not available for new lines
+        status = CelllineStatus(cell_line=cell_line, status='not_available', comment='Initial value at first import')
+        status.save()
 
         logger.info('Found new cell line %s' % valuef('name'))
 

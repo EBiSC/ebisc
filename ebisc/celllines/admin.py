@@ -76,10 +76,15 @@ class CelllineNonIntegratingVectorInline(OneToOneStackedInline):
     model = CelllineNonIntegratingVector
 
 
+class CelllineStatusInline(TabularInline):
+    model = CelllineStatus
+
+
 class CelllineAdmin(admin.ModelAdmin):
 
-    list_display = ['name', 'biosamples_id', 'alternative_names', 'availability', 'available_for_sale_at_ecacc']
+    list_display = ['name', 'biosamples_id', 'alternative_names', 'current_status', 'available_for_sale_at_ecacc']
     inlines = (
+        CelllineStatusInline,
         CelllineCharacterizationInline,
         CelllineCultureConditionsInline,
         CelllineDerivationInline,
@@ -89,7 +94,7 @@ class CelllineAdmin(admin.ModelAdmin):
         CelllineIntegratingVectorInline,
         CelllineNonIntegratingVectorInline,
     )
-    list_filter = ['availability', 'available_for_sale_at_ecacc']
+    list_filter = ['current_status', 'available_for_sale_at_ecacc']
     search_fields = ['name', 'biosamples_id']
 
 admin.site.register(Cellline, CelllineAdmin)

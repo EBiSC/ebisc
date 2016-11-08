@@ -22,7 +22,7 @@ from django.db.models import Q
 from django.db.models.functions import Lower
 
 from ebisc.site.views import render
-from ebisc.celllines.models import Cellline, CelllineBatch, CelllineInformationPack, CelllineAliquot, Disease, Organization
+from ebisc.celllines.models import Cellline, CelllineStatus, CelllineBatch, CelllineInformationPack, CelllineAliquot, Disease, Organization
 
 
 class BiosamplesError(Exception):
@@ -42,7 +42,7 @@ def dashboard(request):
         ('batches', 'Batches', None),
         ('quantity', 'QTY', None),
         ('sold', 'Sold', None),
-        ('availability', 'Availability', 'availability'),
+        ('status', 'Status', 'current_status__status'),
     ]
 
     SORT_COLUMNS = dict([(x[0], x[2]) for x in COLUMNS])
@@ -57,17 +57,17 @@ def dashboard(request):
 
     # Filters
     filters = {
-        'availability': request.GET.get('availability', None),
+        'status': request.GET.get('status', None),
         'depositor': request.GET.get('depositor', None),
         'disease': request.GET.get('disease', None),
     }
 
-    availability = Cellline.AVAILABILITY_CHOICES
+    status = CelllineStatus.STATUS_CHOICES
     depositors = Organization.objects.filter(generator_of_cell_lines__isnull=False).distinct()
     diseases = Disease.objects.filter(primary_disease__isnull=False).distinct().order_by(Lower('disease'))
 
-    if filters['availability']:
-        cellline_objects = cellline_objects.filter(availability=request.GET.get('availability', None))
+    if filters['status']:
+        cellline_objects = cellline_objects.filter(current_status__status=request.GET.get('status', None))
 
     if filters['depositor']:
         cellline_objects = cellline_objects.filter(generator__name=request.GET.get('depositor', None))
@@ -111,7 +111,7 @@ def dashboard(request):
         'sort_column': sort_column,
         'sort_order': sort_order,
         'page': int(page),
-        'availability': availability,
+        'status': status,
         'depositors': depositors,
         'diseases': diseases,
         'filters': filters,
@@ -119,9 +119,9 @@ def dashboard(request):
         'celllines': celllines,
         'celllines_registered': Cellline.objects.count(),
         'celllines_validated': Cellline.objects.filter(validated__lt=3).count(),
-        'celllines_at_ecacc': Cellline.objects.filter(availability='at_ecacc').count(),
-        'celllines_expand_to_order': Cellline.objects.filter(availability='expand_to_order').count(),
-        'celllines_restricted_distribution': Cellline.objects.filter(availability='restricted_distribution').count(),
+        'celllines_at_ecacc': Cellline.objects.filter(current_status__status='at_ecacc').count(),
+        'celllines_expand_to_order': Cellline.objects.filter(current_status__status='expand_to_order').count(),
+        'celllines_restricted_distribution': Cellline.objects.filter(current_status__status='restricted_distribution').count(),
     })
 
 
@@ -131,6 +131,22 @@ class CelllineInformationPackForm(ModelForm):
         fields = ['version', 'clip_file']
 
 
+class CelllineStatusForm(ModelForm):
+    class Meta:
+        model = CelllineStatus
+        fields = ['status', 'comment']
+
+    def clean(self):
+        cleaned_data = super(CelllineStatusForm, self).clean()
+        new_status = cleaned_data.get('status')
+
+        if new_status == 'recalled' or new_status == 'withdrawn':
+            if not cleaned_data.get('comment'):
+                raise forms.ValidationError(
+                    'You must provide a reason for withdrawing/recalling a line in the Comment field.'
+                )
+
+
 @permission_required('auth.can_view_executive_dashboard')
 def cellline(request, name):
 
@@ -138,33 +154,60 @@ def cellline(request, name):
 
     cellline = get_object_or_404(Cellline, name=name)
 
+    same_donor_lines = Cellline.objects.filter(donor=cellline.donor).exclude(name=cellline.name).exclude(name__regex='(-\d+)$').order_by('name')
+
+    if cellline.derived_from:
+        same_donor_lines = same_donor_lines.exclude(name=cellline.derived_from.name)
+
     if not request.user.has_perm('auth.can_manage_executive_dashboard'):
         return render(request, 'executive/cellline.html', {
             'cellline': cellline,
         })
 
     if request.method == 'POST':
-        clip_form = CelllineInformationPackForm(request.POST, request.FILES)
-        if clip_form.is_valid():
-            clip = clip_form.save(commit=False)
-            clip.cell_line = cellline
-            clip.md5 = hashlib.md5(clip.clip_file.read()).hexdigest()
-            clip.save()
-            messages.success(request, format_html(u'A new CLIP <code>{0}</code> has been sucessfully added.', clip.version))
-            return redirect('.')
-        else:
-            messages.error(request, format_html(u'Invalid CLIP data submitted. Please check below.'))
+
+        if 'clip' in request.POST:
+            clip_form = CelllineInformationPackForm(request.POST, request.FILES, prefix='clip')
+            if clip_form.is_valid():
+                clip = clip_form.save(commit=False)
+                clip.cell_line = cellline
+                clip.md5 = hashlib.md5(clip.clip_file.read()).hexdigest()
+                clip.save()
+                messages.success(request, format_html(u'A new CLIP <code>{0}</code> has been sucessfully added.', clip.version))
+                return redirect('.')
+            else:
+                messages.error(request, format_html(u'Invalid CLIP data submitted. Please check below.'))
+            status_form = CelllineStatusForm(prefix='status')
+
+        elif 'status' in request.POST:
+            status_form = CelllineStatusForm(request.POST, prefix='status')
+            if status_form.is_valid():
+                new_status = status_form.cleaned_data['status']
+                if new_status == 'withdrawn' or new_status == 'not_available':
+                    cellline.available_for_sale = False
+                else:
+                    cellline.available_for_sale = True
+                cellline.save()
+
+                status = status_form.save(commit=False)
+                status.cell_line = cellline
+                status.user = request.user
+                status.save()
+
+                messages.success(request, format_html(u'Status for cell line <code>{0}</code> has been sucessfully changed to <code>{1}</code>.', cellline.name, cellline.current_status.status))
+                return redirect('.')
+            else:
+                messages.error(request, format_html(u'Invalid status data submitted. Please check below.'))
+            clip_form = CelllineInformationPackForm(prefix='clip')
+
     else:
-        clip_form = CelllineInformationPackForm()
-
-    same_donor_lines = Cellline.objects.filter(donor=cellline.donor).exclude(name=cellline.name).exclude(name__regex='(-\d+)$').order_by('name')
-
-    if cellline.derived_from:
-        same_donor_lines = same_donor_lines.exclude(name=cellline.derived_from.name)
+        clip_form = CelllineInformationPackForm(prefix='clip')
+        status_form = CelllineStatusForm(prefix='status', initial={'status': cellline.current_status})
 
     return render(request, 'executive/cellline.html', {
         'cellline': cellline,
         'clip_form': clip_form,
+        'status_form': status_form,
         'same_donor_lines': same_donor_lines,
     })
 
@@ -385,76 +428,3 @@ def cell_line_ids(request):
         writer.writerow([cell_line.name, cell_line.generator, cell_line_alternative_names, cell_line.biosamples_id, cell_line.ecacc_id, donor_depositor_names, donor_biosamples_id])
 
     return response
-
-
-@permission_required('auth.can_manage_executive_dashboard')
-@require_POST
-def accept(request, name):
-
-    '''
-    Perform one of the following transitions:
-        Pending -> Pending | Accepted | Rejected
-        Rejected -> Accepted
-    '''
-
-    cellline = get_object_or_404(Cellline, name=name)
-
-    action = request.POST.get('action', None)
-    redirect_to = redirect(request.POST.get('next', None) and request.POST.get('next') or 'executive:dashboard')
-
-    if action == 'pending' and cellline.accepted == 'pending':
-        pass
-    elif action == 'accepted':
-        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.biosamples_id, cellline.accepted, action))
-        cellline.accepted = 'accepted'
-    elif action == 'rejected' and cellline.accepted == 'pending':
-        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.biosamples_id, cellline.accepted, action))
-        cellline.accepted = 'rejected'
-    else:
-        return redirect_to
-
-    cellline.save()
-
-    return redirect_to
-
-
-@permission_required('auth.can_manage_executive_dashboard')
-@require_POST
-def availability(request, name):
-
-    '''
-    Perform one of the following transitions:
-        Not available -> Not available | Stocked at ECACC | Expand to order
-        Stocked at ECACC -> Not available | Stocked at ECACC | Expand to order
-        Expand to order -> Not available | Stocked at ECACC | Expand to order
-    '''
-
-    cellline = get_object_or_404(Cellline, name=name)
-
-    action = request.POST.get('action', None)
-    redirect_to = redirect(request.POST.get('next', None) and request.POST.get('next') or 'executive:dashboard')
-
-    if action == 'not_available' and cellline.availability == 'not_available':
-        pass
-    elif action == 'at_ecacc':
-        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.name, cellline.availability, action))
-        cellline.availability = 'at_ecacc'
-        cellline.available_for_sale = True
-    elif action == 'expand_to_order':
-        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.name, cellline.availability, action))
-        cellline.availability = 'expand_to_order'
-        cellline.available_for_sale = True
-    elif action == 'restricted_distribution':
-        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.name, cellline.availability, action))
-        cellline.availability = 'restricted_distribution'
-        cellline.available_for_sale = True
-    elif action == 'not_available':
-        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.name, cellline.availability, action))
-        cellline.availability = 'not_available'
-        cellline.available_for_sale = False
-    else:
-        return redirect_to
-
-    cellline.save()
-
-    return redirect_to
