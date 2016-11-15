@@ -169,6 +169,18 @@ table.cell-line-status {
   }
 }
 
+.listing .availability {
+  .status-label {
+    display: inline-block;
+    width: 85%;
+  }
+
+  .status-edit-link {
+    display: inline-block;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}
 
 // Batch data on executive dashboard
 
