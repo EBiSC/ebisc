@@ -35,6 +35,12 @@ class AgeRangeAdmin(admin.ModelAdmin):
 admin.site.register(AgeRange, AgeRangeAdmin)
 
 
+class DiseaseAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Disease, DiseaseAdmin)
+
+
 # -----------------------------------------------------------------------------
 # Disease
 
@@ -83,10 +89,15 @@ class CelllineNonIntegratingVectorInline(OneToOneStackedInline):
     model = CelllineNonIntegratingVector
 
 
+class CelllineStatusInline(TabularInline):
+    model = CelllineStatus
+
+
 class CelllineAdmin(admin.ModelAdmin):
-    list_display = ['name', 'biosamples_id', 'alternative_names', 'availability', 'available_for_sale_at_ecacc']
+    list_display = ['name', 'biosamples_id', 'alternative_names', 'current_status', 'available_for_sale_at_ecacc']
     inlines = (
         CelllineDiseaseInline,
+        CelllineStatusInline,
         CelllineCharacterizationInline,
         CelllineCultureConditionsInline,
         CelllineDerivationInline,
@@ -96,7 +107,7 @@ class CelllineAdmin(admin.ModelAdmin):
         CelllineIntegratingVectorInline,
         CelllineNonIntegratingVectorInline,
     )
-    list_filter = ['availability', 'available_for_sale_at_ecacc']
+    list_filter = ['current_status', 'available_for_sale_at_ecacc']
     search_fields = ['name', 'biosamples_id']
 
 admin.site.register(Cellline, CelllineAdmin)
@@ -111,9 +122,10 @@ class BatchAliquotInline(TabularInline):
 
 class CelllineBatchAdmin(admin.ModelAdmin):
 
-    list_display = ['biosamples_id', 'batch_id', 'cell_line', 'get_cell_line_name']
-    search_fields = ['biosamples_id', 'cell_line__name', 'cell_line__biosamples_id']
+    list_display = ['biosamples_id', 'batch_id', 'batch_type', 'cell_line', 'get_cell_line_name']
+    search_fields = ['biosamples_id', 'cell_line__name', 'cell_line__biosamples_id', 'aliquots__biosamples_id']
     inlines = (BatchAliquotInline,)
+    list_filter = ['batch_type']
 
     def get_cell_line_name(self, obj):
         return obj.cell_line.name

@@ -9,10 +9,17 @@
     <title>{% block full-title %}{% block title %}{% endblock %} | EBiSC{% endblock %}</title>
     <meta name="viewport" content="initial-scale=1">
     <link rel="stylesheet" type="text/css" href="{% static 'styles/main.css' %}">
+
+    <!-- Cookie Consent -->
+    <script type="text/javascript">
+        window.cookieconsent_options = {"message":"This website uses cookies. By continuing to browse this site, you agree to the use of our cookies.","dismiss":"OK","learnMore":"More info","link":null,"theme":"dark-bottom"};
+    </script>
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/1.0.10/cookieconsent.min.js"></script>
+    <!-- Cookie Consent -->
 </head>
 
 <body class="{% block body-class %}{% endblock%}">
-
     <header>
         <div class="logo">
             <img src="{% static 'images/EBiSC-logo.png' %}" alt="EBiSC">
@@ -61,8 +68,9 @@
                 </ul>
             </div>
         </div>
-        <div class="copy">
-            &copy; EBiSC European Bank for induced pluripotent Stem Cells
+        <div class="copy-contact">
+            <div class="copy">&copy; EBiSC European Bank for induced pluripotent Stem Cells</div>
+            <div class="contact"><a href="/contact/">Contact</a></div>
         </div>
     </footer>
 
@@ -71,6 +79,10 @@
     <script src="{% static 'scripts/main.js' %}"></script>
 
     {% block extra-scripts %}{% endblock %}
+
+    {% include '__google_analytics__.html' %}
+    {% block advertizing-tracking-codes %}{% endblock %}
+
 </body>
 
 </html>

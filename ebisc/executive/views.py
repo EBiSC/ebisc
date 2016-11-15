@@ -6,6 +6,7 @@ from datetime import datetime
 
 from django import forms
 
+from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
@@ -16,11 +17,12 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import permission_required
 from django.forms import ModelForm
 from django.core.validators import RegexValidator
-
-from django.conf import settings
+from django.core.mail import send_mail
+from django.db.models import Q
+from django.db.models.functions import Lower
 
 from ebisc.site.views import render
-from ebisc.celllines.models import Cellline, CelllineBatch, CelllineInformationPack, CelllineAliquot
+from ebisc.celllines.models import Cellline, CelllineStatus, CelllineBatch, CelllineInformationPack, CelllineAliquot, Disease, Organization
 
 
 class BiosamplesError(Exception):
@@ -34,22 +36,50 @@ def dashboard(request):
 
     COLUMNS = [
         ('cellLineName', 'Cell line Name', 'name'),
-        # ('cellLineAlternativeNames', 'Alternative Names', 'alternative_names'),
         ('disease', 'Disease', 'primary_disease'),
         ('depositor', 'Depositor', 'generator__name'),
         ('validated', 'Validated', 'validated'),
         ('batches', 'Batches', None),
         ('quantity', 'QTY', None),
         ('sold', 'Sold', None),
-        ('availability', 'Availability', 'availability'),
+        ('status', 'Status', 'current_status__status'),
     ]
 
     SORT_COLUMNS = dict([(x[0], x[2]) for x in COLUMNS])
 
     cellline_objects = Cellline.objects.all()
 
-    # Sorting
+    # Search
+    search_query = request.GET.get('q', None)
 
+    if search_query:
+        cellline_objects = cellline_objects.filter(Q(name__icontains=request.GET.get('q')) | Q(ecacc_id__icontains=request.GET.get('q')) | Q(biosamples_id__icontains=request.GET.get('q')) | Q(alternative_names__icontains=request.GET.get('q')) | Q(batches__biosamples_id__icontains=request.GET.get('q')) | Q(batches__aliquots__biosamples_id__icontains=request.GET.get('q')) | Q(donor__biosamples_id__icontains=request.GET.get('q')) | Q(donor__provider_donor_ids__icontains=request.GET.get('q'))).distinct()
+
+    # Filters
+    filters = {
+        'status': request.GET.get('status', None),
+        'depositor': request.GET.get('depositor', None),
+        'disease': request.GET.get('disease', None),
+    }
+
+    status = CelllineStatus.STATUS_CHOICES
+    depositors = Organization.objects.filter(generator_of_cell_lines__isnull=False).distinct()
+    diseases = Disease.objects.filter(primary_disease__isnull=False).distinct().order_by(Lower('disease'))
+
+    if filters['status']:
+        cellline_objects = cellline_objects.filter(current_status__status=request.GET.get('status', None))
+
+    if filters['depositor']:
+        cellline_objects = cellline_objects.filter(generator__name=request.GET.get('depositor', None))
+
+    if filters['disease']:
+        cellline_objects = cellline_objects.filter(primary_disease__disease=request.GET.get('disease', None))
+
+    # Select related
+    cellline_objects = cellline_objects.select_related('primary_disease', 'generator')
+    cellline_objects = cellline_objects.prefetch_related('batches')
+
+    # Sorting
     sort_column = request.GET.get('sc', None)
     sort_order = request.GET.get('so', 'asc')
 
@@ -62,9 +92,7 @@ def dashboard(request):
         sort_column = COLUMNS[0][0]
 
     # Pagination
-
     paginator = Paginator(cellline_objects, 50)
-
     page = request.GET.get('page')
 
     try:
@@ -83,12 +111,17 @@ def dashboard(request):
         'sort_column': sort_column,
         'sort_order': sort_order,
         'page': int(page),
+        'status': status,
+        'depositors': depositors,
+        'diseases': diseases,
+        'filters': filters,
+        'search_query': search_query,
         'celllines': celllines,
-        'celllines_registered': Cellline.objects.all(),
-        'celllines_validated': Cellline.objects.filter(validated__lt=3),
-        'celllines_at_ecacc': Cellline.objects.filter(availability='at_ecacc'),
-        'celllines_expand_to_order': Cellline.objects.filter(availability='expand_to_order'),
-        'celllines_restricted_distribution': Cellline.objects.filter(availability='restricted_distribution'),
+        'celllines_registered': Cellline.objects.count(),
+        'celllines_validated': Cellline.objects.filter(validated__lt=3).count(),
+        'celllines_at_ecacc': Cellline.objects.filter(current_status__status='at_ecacc').count(),
+        'celllines_expand_to_order': Cellline.objects.filter(current_status__status='expand_to_order').count(),
+        'celllines_restricted_distribution': Cellline.objects.filter(current_status__status='restricted_distribution').count(),
     })
 
 
@@ -98,6 +131,22 @@ class CelllineInformationPackForm(ModelForm):
         fields = ['version', 'clip_file']
 
 
+class CelllineStatusForm(ModelForm):
+    class Meta:
+        model = CelllineStatus
+        fields = ['status', 'comment']
+
+    def clean(self):
+        cleaned_data = super(CelllineStatusForm, self).clean()
+        new_status = cleaned_data.get('status')
+
+        if new_status == 'recalled' or new_status == 'withdrawn':
+            if not cleaned_data.get('comment'):
+                raise forms.ValidationError(
+                    'You must provide a reason for withdrawing/recalling a line in the Comment field.'
+                )
+
+
 @permission_required('auth.can_view_executive_dashboard')
 def cellline(request, name):
 
@@ -105,28 +154,61 @@ def cellline(request, name):
 
     cellline = get_object_or_404(Cellline, name=name)
 
+    same_donor_lines = Cellline.objects.filter(donor=cellline.donor).exclude(name=cellline.name).exclude(name__regex='(-\d+)$').order_by('name')
+
+    if cellline.derived_from:
+        same_donor_lines = same_donor_lines.exclude(name=cellline.derived_from.name)
+
     if not request.user.has_perm('auth.can_manage_executive_dashboard'):
         return render(request, 'executive/cellline.html', {
             'cellline': cellline,
         })
 
     if request.method == 'POST':
-        clip_form = CelllineInformationPackForm(request.POST, request.FILES)
-        if clip_form.is_valid():
-            clip = clip_form.save(commit=False)
-            clip.cell_line = cellline
-            clip.md5 = hashlib.md5(clip.clip_file.read()).hexdigest()
-            clip.save()
-            messages.success(request, format_html(u'A new CLIP <code>{0}</code> has been sucessfully added.', clip.version))
-            return redirect('.')
-        else:
-            messages.error(request, format_html(u'Invalid CLIP data submitted. Please check below.'))
+
+        if 'clip' in request.POST:
+            clip_form = CelllineInformationPackForm(request.POST, request.FILES, prefix='clip')
+            if clip_form.is_valid():
+                clip = clip_form.save(commit=False)
+                clip.cell_line = cellline
+                clip.md5 = hashlib.md5(clip.clip_file.read()).hexdigest()
+                clip.save()
+                messages.success(request, format_html(u'A new CLIP <code>{0}</code> has been sucessfully added.', clip.version))
+                return redirect('.')
+            else:
+                messages.error(request, format_html(u'Invalid CLIP data submitted. Please check below.'))
+            status_form = CelllineStatusForm(prefix='status')
+
+        elif 'status' in request.POST:
+            status_form = CelllineStatusForm(request.POST, prefix='status')
+            if status_form.is_valid():
+                new_status = status_form.cleaned_data['status']
+                if new_status == 'withdrawn' or new_status == 'not_available':
+                    cellline.available_for_sale = False
+                else:
+                    cellline.available_for_sale = True
+                cellline.save()
+
+                status = status_form.save(commit=False)
+                status.cell_line = cellline
+                status.user = request.user
+                status.save()
+
+                messages.success(request, format_html(u'Status for cell line <code>{0}</code> has been sucessfully changed to <code>{1}</code>.', cellline.name, cellline.current_status.status))
+                return redirect('.')
+            else:
+                messages.error(request, format_html(u'Invalid status data submitted. Please check below.'))
+            clip_form = CelllineInformationPackForm(prefix='clip')
+
     else:
-        clip_form = CelllineInformationPackForm()
+        clip_form = CelllineInformationPackForm(prefix='clip')
+        status_form = CelllineStatusForm(prefix='status', initial={'status': cellline.current_status})
 
     return render(request, 'executive/cellline.html', {
         'cellline': cellline,
         'clip_form': clip_form,
+        'status_form': status_form,
+        'same_donor_lines': same_donor_lines,
     })
 
 
@@ -138,14 +220,14 @@ BATCH_TYPE_CHOICES = (
 
 class NewBatchForm(forms.Form):
     cellline_name = forms.CharField(label='Cell line name', max_length=15, widget=forms.TextInput(attrs={'readonly': True}))
-    cellline_biosample_id = forms.CharField(label='Cell line Biosample ID', max_length=20, widget=forms.TextInput(attrs={'readonly': True}))
+    cellline_biosample_id = forms.CharField(label='Cell line Biosample ID', max_length=100, widget=forms.TextInput(attrs={'readonly': True}))
     batch_id = forms.CharField(
         label='Batch ID', max_length=5, help_text='ex. P001', widget=forms.TextInput(attrs={'class': 'small'}),
         validators=[RegexValidator('^[a-zA-Z]{1}[0-9]{3}$', message='Batch ID is not in the correct format (letter + 3 digits)')]
     )
     batch_type = forms.CharField(label='Batch Type', max_length=50, widget=forms.Select(choices=BATCH_TYPE_CHOICES), help_text=format_html(u'<div class="tooltip-item"><span class="glyphicon glyphicon-question-sign"></span><div class="tooltip"><p><b>Depositor expansion batch:</b> A batch-worth of empty vials are sent to the depositor, with EBiSC labels and EBiSC vial IDs. The depositor fills the vials and ships them back to central facility.</p><p><b>Central facility expansion batch:</b> Central facility expand the batch and then fill EBiSC vials with EBiSC vial labels. The batch is expanded from a small number of unlabeled vials sent by depositor or from vials already banked at CF.</p></div></div>'))
     number_of_vials = forms.IntegerField(label='Number of vials in batch', min_value=1, widget=forms.TextInput(attrs={'class': 'small'}))
-    derived_from = forms.CharField(label='Derived from', max_length=20, help_text='BiosampleID of cell line or vial that the batch was derived from')
+    derived_from = forms.CharField(label='Derived from', max_length=100, help_text='BiosampleID of cell line or vial that the batch was derived from')
 
     def clean(self):
         cleaned_data = super(NewBatchForm, self).clean()
@@ -200,7 +282,6 @@ def new_batch(request, name):
             vials = []
 
             try:
-
                 for i in list(range(1, number_of_vials + 1)):
                     vial_number = str(i).zfill(4)
 
@@ -225,7 +306,7 @@ def new_batch(request, name):
                     if r.status_code == 202:
                         vials.append((vial_number, r.text))
                     else:
-                        raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'))
+                        raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'), r.status_code, r.text)
 
                 vial_list = ''.join(['<Id>%s</Id>' % v[1] for v in vials])
 
@@ -247,7 +328,7 @@ def new_batch(request, name):
                 if r.status_code == 202:
                     batch_biosamples_id = r.text
                 else:
-                    raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'))
+                    raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'), r.status_code, r.text)
 
                 # Save batch
                 batch = CelllineBatch(
@@ -271,8 +352,16 @@ def new_batch(request, name):
                 messages.success(request, format_html(u'A new batch <code><strong>{0}</strong></code> for cell line <code><strong>{1}</strong></code> has been sucessfully created.', batch_id, cellline_name))
                 return redirect('executive:cellline', cellline_name)
 
-            except BiosamplesError, e:
-                messages.error(request, e.message)
+            except BiosamplesError, (message, status_code, text):
+                messages.error(request, message)
+                if hasattr(settings, 'BIOSAMPLES_ADMINS'):
+                    send_mail(
+                        'EBiSC Biosamples API error',
+                        'Status code: %s\n\nMessage: %s' % (status_code, text),
+                        settings.SERVER_EMAIL,
+                        ['%s <%s>' % (admin[0], admin[1]) for admin in settings.BIOSAMPLES_ADMINS],
+                        fail_silently=False,
+                    )
 
     return render(request, 'executive/create-batch/new-batch.html', {
         'cellline': cellline,
@@ -301,9 +390,7 @@ def batch_data(request, name, batch_biosample_id):
         else:
             cell_line_name = batch.cell_line.name
 
-        aliquot_number = aliquot.number.zfill(3)
-
-        writer.writerow([cell_line_name, batch.cell_line.name, batch.cell_line.ecacc_id, batch.batch_id, batch.biosamples_id, 'vial %s' % aliquot_number, aliquot.biosamples_id])
+        writer.writerow([cell_line_name, batch.cell_line.name, batch.cell_line.ecacc_id, batch.batch_id, batch.biosamples_id, 'Vial %s' % aliquot.number, aliquot.biosamples_id])
 
     return response
 
@@ -341,76 +428,3 @@ def cell_line_ids(request):
         writer.writerow([cell_line.name, cell_line.generator, cell_line_alternative_names, cell_line.biosamples_id, cell_line.ecacc_id, donor_depositor_names, donor_biosamples_id])
 
     return response
-
-
-@permission_required('auth.can_manage_executive_dashboard')
-@require_POST
-def accept(request, name):
-
-    '''
-    Perform one of the following transitions:
-        Pending -> Pending | Accepted | Rejected
-        Rejected -> Accepted
-    '''
-
-    cellline = get_object_or_404(Cellline, name=name)
-
-    action = request.POST.get('action', None)
-    redirect_to = redirect(request.POST.get('next', None) and request.POST.get('next') or 'executive:dashboard')
-
-    if action == 'pending' and cellline.accepted == 'pending':
-        pass
-    elif action == 'accepted':
-        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.biosamples_id, cellline.accepted, action))
-        cellline.accepted = 'accepted'
-    elif action == 'rejected' and cellline.accepted == 'pending':
-        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.biosamples_id, cellline.accepted, action))
-        cellline.accepted = 'rejected'
-    else:
-        return redirect_to
-
-    cellline.save()
-
-    return redirect_to
-
-
-@permission_required('auth.can_manage_executive_dashboard')
-@require_POST
-def availability(request, name):
-
-    '''
-    Perform one of the following transitions:
-        Not available -> Not available | Stocked at ECACC | Expand to order
-        Stocked at ECACC -> Not available | Stocked at ECACC | Expand to order
-        Expand to order -> Not available | Stocked at ECACC | Expand to order
-    '''
-
-    cellline = get_object_or_404(Cellline, name=name)
-
-    action = request.POST.get('action', None)
-    redirect_to = redirect(request.POST.get('next', None) and request.POST.get('next') or 'executive:dashboard')
-
-    if action == 'not_available' and cellline.availability == 'not_available':
-        pass
-    elif action == 'at_ecacc':
-        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.name, cellline.availability, action))
-        cellline.availability = 'at_ecacc'
-        cellline.available_for_sale = True
-    elif action == 'expand_to_order':
-        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.name, cellline.availability, action))
-        cellline.availability = 'expand_to_order'
-        cellline.available_for_sale = True
-    elif action == 'restricted_distribution':
-        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.name, cellline.availability, action))
-        cellline.availability = 'restricted_distribution'
-        cellline.available_for_sale = True
-    elif action == 'not_available':
-        messages.success(request, format_html(u'Status for cell line <code><strong>{0}</strong></code> changed form <code><strong>{1}</strong></code> to <code><strong>{2}</strong></code>.', cellline.name, cellline.availability, action))
-        cellline.availability = 'not_available'
-        cellline.available_for_sale = False
-    else:
-        return redirect_to
-
-    cellline.save()
-
-    return redirect_to

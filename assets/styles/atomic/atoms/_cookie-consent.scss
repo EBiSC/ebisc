@@ -1,0 +1,12 @@
+.cc_container.cc_banner {
+    font-size: $font-size-small;
+    padding: 10px 30px;
+    background-color: $light-gray;
+    color: darken($color-text, 10%);
+}
+
+.cc_container .cc_btn.cc_btn_accept_all, .cc_container .cc_btn:visited {
+  background-color: $color-green;
+  border-radius: 3px;
+  max-width: 50px;
+}

@@ -1,8 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'executive/executive-base.html' %}
 
 {% block title %}Cell line {{ cellline.name }}{% endblock %}
 
-{% block article %}
+{% block page-content %}
 
 {% if perms.auth.can_manage_executive_dashboard %}
 
@@ -29,7 +29,12 @@
     {{ new_batch_form }}
     <tr>
         <td></td>
-        <td><input type="submit" value="Create batch"></td>
+        <td>
+          <p><input type="submit" value="Create batch"></p>
+          <p><span class="helptext">The accession process will take about a minute.</span></p>
+          <p><span class="helptext">Please be patient and do not resubmit the data.</span></p>
+          <p><span class="helptext">You will receive a message when the process is complete.</span></p>
+        </td>
     </tr>
     </table>
 </form>

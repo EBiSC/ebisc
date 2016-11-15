@@ -5,8 +5,8 @@ from dirtyfields import DirtyFieldsMixin
 
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
-
 
 # -----------------------------------------------------------------------------
 # Utilities
@@ -41,8 +41,8 @@ class AgeRange(models.Model):
 
 class CellType(models.Model):
 
-    name = models.CharField(_(u'Cell type'), max_length=100, unique=True)
-    purl = models.URLField(_(u'Purl'), max_length=300, null=True, blank=True)
+    name = models.CharField(_(u'Cell type'), max_length=300, unique=True)
+    purl = models.URLField(_(u'Purl'), max_length=500, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell type')
@@ -165,12 +165,6 @@ class Unit(models.Model):
 
 class Cellline(DirtyFieldsMixin, models.Model):
 
-    ACCEPTED_CHOICES = (
-        ('pending', _(u'Pending')),
-        ('accepted', _(u'Accepted')),
-        ('rejected', _(u'Rejected')),
-    )
-
     VALIDATION_CHOICES = (
         ('1', _(u'Validated, visible')),
         ('2', _(u'Validated, not visible')),
@@ -178,24 +172,15 @@ class Cellline(DirtyFieldsMixin, models.Model):
         ('5', _(u'Name registered, no data')),
     )
 
-    AVAILABILITY_CHOICES = (
-        ('not_available', _(u'Not available')),
-        ('at_ecacc', _(u'Stocked by ECACC')),
-        ('expand_to_order', _(u'Expand to order')),
-        ('restricted_distribution', _(u'Restricted distribution')),
-    )
-
-    accepted = models.CharField(_(u'Cell line accepted'), max_length=10, choices=ACCEPTED_CHOICES, default='pending')
     validated = models.CharField(_(u'Cell line data validation'), max_length=50, choices=VALIDATION_CHOICES, default='5')
     available_for_sale = models.NullBooleanField(_(u'Available for sale'))
     available_for_sale_at_ecacc = models.BooleanField(_(u'Available for sale on ECACC'), default=False)
-    availability = models.CharField(_(u'Availability'), max_length=30, choices=AVAILABILITY_CHOICES, default='not_available')
-    status = models.ForeignKey('CelllineStatus', verbose_name=_(u'Cell line status'), null=True, blank=True)
+    current_status = models.ForeignKey('CelllineStatus', null=True, blank=True)
 
     name = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
     alternative_names = models.CharField(_(u'Cell line alternative names'), max_length=500, null=True, blank=True)
 
-    biosamples_id = models.CharField(_(u'Biosamples ID'), unique=True, max_length=12)
+    biosamples_id = models.CharField(_(u'Biosamples ID'), unique=True, max_length=100)
     hescreg_id = models.CharField(_(u'hESCreg ID'), unique=True, max_length=10, null=True, blank=True)
     ecacc_id = models.CharField(_(u'ECACC ID'), unique=True, max_length=10, null=True, blank=True)
 
@@ -207,9 +192,14 @@ class Cellline(DirtyFieldsMixin, models.Model):
     derivation_country = models.ForeignKey('Country', verbose_name=_(u'Derivation country'), null=True, blank=True)
 
     disease_associated_phenotypes = ArrayField(models.CharField(max_length=500), verbose_name=_(u'Disease associated phenotypes'), null=True, blank=True)
+    non_disease_associated_phenotypes = ArrayField(models.CharField(max_length=700), verbose_name=_(u'Non-disease associated phenotypes'), null=True, blank=True)
     family_history = models.CharField(_(u'Family history'), max_length=500, null=True, blank=True)
     medical_history = models.CharField(_(u'Medical history'), max_length=500, null=True, blank=True)
     clinical_information = models.CharField(_(u'Clinical information'), max_length=500, null=True, blank=True)
+
+    derived_from = models.ForeignKey('Cellline', verbose_name=_(u'Derived from cell line'), null=True, blank=True, related_name='derived_cell_lines')
+    comparator_cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Comparator cell line'), null=True, blank=True, related_name='comparator_cell_lines')
+    comparator_cell_line_relation = models.CharField(_(u'Comparator cell line relation'), max_length=100, null=True, blank=True)
 
     access_and_use_agreement = models.FileField(_(u'Access and use agreement (AUA)'), upload_to=upload_to, null=True, blank=True)
     access_and_use_agreement_md5 = models.CharField(_(u'Access and use agreement md5'), max_length=100, null=True, blank=True)
@@ -261,6 +251,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'primary_disease_synonyms': [s.strip() for s in self.primary_disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.synonyms else None,
             'primary_disease_stage': self.primary_disease_stage if self.primary_disease_stage else None,
             'disease_associated_phenotypes': self.disease_associated_phenotypes if self.disease_associated_phenotypes else None,
+            'non_disease_associated_phenotypes': self.non_disease_associated_phenotypes if self.non_disease_associated_phenotypes else None,
             'depositor': self.generator.name,
             'primary_cell_type': self.derivation.primary_cell_type.name if self.derivation.primary_cell_type else None,
             'alternative_names': self.alternative_names,
@@ -308,15 +299,41 @@ class Cellline(DirtyFieldsMixin, models.Model):
 
 class CelllineStatus(models.Model):
 
-    status = models.CharField(_(u'Cell line status'), max_length=50, unique=True)
+    STATUS_CHOICES = (
+        ('not_available', _(u'Not available')),
+        ('at_ecacc', _(u'Stocked by ECACC')),
+        ('expand_to_order', _(u'Expand to order')),
+        ('restricted_distribution', _(u'Restricted distribution')),
+        ('recalled', _(u'Recalled')),
+        ('withdrawn', _(u'Withdrawn')),
+    )
+
+    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='statuses')
+
+    status = models.CharField(_(u'Status'), max_length=50, choices=STATUS_CHOICES, default='not_available')
+    comment = models.TextField(_(u'Comment'), null=True, blank=True, help_text='Optional unless you are recalling or withdrawing a line. In that case you must provide a reason for the recall/withdrawal.')
+
+    user = models.ForeignKey(User, null=True, blank=True)
+    updated = models.DateTimeField(u'Updated', auto_now=True)
 
     class Meta:
         verbose_name = _(u'Cell line status')
         verbose_name_plural = _(u'Cell line statuses')
-        ordering = ['status']
+        ordering = ['-updated']
 
     def __unicode__(self):
         return self.status
+
+    def save(self, *args, **kwargs):
+        super(CelllineStatus, self).save(*args, **kwargs)
+        self.cell_line.current_status = self
+        self.cell_line.save()
+
+    def delete(self, *args, **kwargs):
+        if self.cell_line.current_status == self:
+            self.cell_line.current_status = None
+            self.cell_line.save()
+        super(CelllineStatus, self).delete(*args, **kwargs)
 
 
 class CelllineInformationPack(models.Model):
@@ -355,7 +372,7 @@ class CelllineBatch(models.Model):
     )
 
     cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='batches')
-    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=100, unique=True)
 
     batch_id = models.CharField(_(u'Batch ID'), max_length=12)
     batch_type = models.CharField(_(u'Batch type'), max_length=50, choices=BATCH_TYPE_CHOICES, default='unknown')
@@ -397,10 +414,10 @@ class CelllineBatchImages(models.Model):
 class CelllineAliquot(models.Model):
 
     batch = models.ForeignKey('CelllineBatch', verbose_name=_(u'Cell line'), related_name='aliquots')
-    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=100, unique=True)
     name = models.CharField(_(u'Name'), max_length=50, null=True, blank=True)
     number = models.CharField(_(u'Number'), max_length=10, null=True, blank=True)
-    derived_from = models.CharField(_(u'Biosamples ID of sample from which the vial was derived'), max_length=12, null=True, blank=True)
+    derived_from = models.CharField(_(u'Biosamples ID of sample from which the vial was derived'), max_length=100, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line aliquot')
@@ -416,13 +433,12 @@ class CelllineAliquot(models.Model):
 
 class Donor(DirtyFieldsMixin, models.Model):
 
-    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=12, unique=True)
+    biosamples_id = models.CharField(_(u'Biosamples ID'), max_length=100, unique=True)
     gender = models.ForeignKey(Gender, verbose_name=_(u'Gender'), null=True, blank=True)
 
-    provider_donor_ids = ArrayField(models.CharField(max_length=20), verbose_name=_(u'Provider donor ids'), null=True)
+    provider_donor_ids = ArrayField(models.CharField(max_length=200), verbose_name=_(u'Provider donor ids'), null=True)
     country_of_origin = models.ForeignKey('Country', verbose_name=_(u'Country of origin'), null=True, blank=True)
     ethnicity = models.CharField(_(u'Ethnicity'), max_length=100, null=True, blank=True)
-    phenotypes = ArrayField(models.CharField(max_length=500), verbose_name=_(u'Phenotypes'), null=True)
 
     karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
 
@@ -495,7 +511,7 @@ class CelllineCultureConditions(DirtyFieldsMixin, models.Model):
 
     culture_medium = models.CharField(_(u'Culture medium'), max_length=45, null=True, blank=True)
 
-    passage_number_banked = models.CharField(_(u'Passage number banked (pre-EBiSC)'), max_length=10, null=True, blank=True)
+    passage_number_banked = models.CharField(_(u'Passage number banked (pre-EBiSC)'), max_length=100, null=True, blank=True)
     number_of_vials_banked = models.CharField(_(u'No. Vials banked (pre-EBiSC)'), max_length=10, null=True, blank=True)
     passage_history = models.NullBooleanField(_(u'Passage history (back to reprogramming)'), default=None, null=True, blank=True)
     culture_history = models.NullBooleanField(_(u'Culture history (methods used)'), default=None, null=True, blank=True)
@@ -537,8 +553,8 @@ class CultureMediumOther(DirtyFieldsMixin, models.Model):
 
     cell_line_culture_conditions = models.OneToOneField(CelllineCultureConditions, verbose_name=_(u'Cell line culture conditions'), related_name='culture_medium_other')
 
-    base = models.CharField(_(u'Culture medium base'), max_length=45, blank=True)
-    protein_source = models.CharField(_(u'Protein source'), max_length=45, null=True, blank=True)
+    base = models.CharField(_(u'Culture medium base'), max_length=200, blank=True)
+    protein_source = models.CharField(_(u'Protein source'), max_length=200, null=True, blank=True)
     serum_concentration = models.IntegerField(_(u'Serum concentration'), null=True, blank=True)
 
     class Meta:
@@ -554,7 +570,7 @@ class CelllineCultureMediumSupplement(DirtyFieldsMixin, models.Model):
 
     cell_line_culture_conditions = models.ForeignKey(CelllineCultureConditions, verbose_name=_(u'Cell line culture conditions'), related_name='medium_supplements')
 
-    supplement = models.CharField(_(u'Supplement'), max_length=45)
+    supplement = models.CharField(_(u'Supplement'), max_length=200)
     amount = models.CharField(_(u'Amount'), max_length=45, null=True, blank=True)
     unit = models.ForeignKey('Unit', verbose_name=_(u'Unit'), null=True, blank=True)
 
@@ -580,9 +596,9 @@ class CelllineDerivation(DirtyFieldsMixin, models.Model):
     primary_cell_type = models.ForeignKey('CellType', verbose_name=_(u'Primary cell type'), null=True, blank=True)
     primary_cell_type_not_normalised = models.CharField(_(u'Primary cell type name - not normalised'), max_length=100, null=True, blank=True)
     primary_cell_developmental_stage = models.CharField(_(u'Primary cell developmental stage'), max_length=45, null=True, blank=True)
-    tissue_procurement_location = models.CharField(_(u'Location of primary tissue procurement'), max_length=45, null=True, blank=True)
+    tissue_procurement_location = models.CharField(_(u'Location of primary tissue procurement'), max_length=200, null=True, blank=True)
     tissue_collection_date = models.DateField(_(u'Tissue collection date'), null=True, blank=True)
-    reprogramming_passage_number = models.CharField(_(u'Passage number reprogrammed'), max_length=10, null=True, blank=True)
+    reprogramming_passage_number = models.CharField(_(u'Passage number reprogrammed'), max_length=100, null=True, blank=True)
 
     selection_criteria_for_clones = models.TextField(_(u'Selection criteria for clones'), null=True, blank=True)
     xeno_free_conditions = models.NullBooleanField(_(u'Xeno free conditions'), default=None, null=True, blank=True)
@@ -634,7 +650,7 @@ class CelllineNonIntegratingVector(DirtyFieldsMixin, models.Model):
     genes = models.ManyToManyField(Molecule, blank=True)
 
     detectable = models.CharField(u'Is reprogramming vector detectable', max_length=10, choices=EXTENDED_BOOL_CHOICES, default='unknown')
-    methods = ArrayField(models.CharField(max_length=50), verbose_name=_(u'Methods used'), null=True, blank=True)
+    methods = ArrayField(models.CharField(max_length=200), verbose_name=_(u'Methods used'), null=True, blank=True)
     detectable_notes = models.TextField(u'Notes on reprogramming vector detection', null=True, blank=True)
 
     class Meta:
@@ -659,7 +675,7 @@ class CelllineIntegratingVector(DirtyFieldsMixin, models.Model):
     genes = models.ManyToManyField(Molecule, blank=True)
 
     silenced = models.CharField(u'Have the reprogramming vectors been silenced', max_length=10, choices=EXTENDED_BOOL_CHOICES, default='unknown')
-    methods = ArrayField(models.CharField(max_length=50), verbose_name=_(u'Methods used'), null=True, blank=True)
+    methods = ArrayField(models.CharField(max_length=200), verbose_name=_(u'Methods used'), null=True, blank=True)
     silenced_notes = models.TextField(u'Notes on reprogramming vector silencing', null=True, blank=True)
 
     class Meta:
@@ -672,7 +688,7 @@ class CelllineIntegratingVector(DirtyFieldsMixin, models.Model):
 
 class VectorFreeReprogrammingFactor(models.Model):
 
-    name = models.CharField(_(u'Vector free reprogram factor'), max_length=50, unique=True)
+    name = models.CharField(_(u'Vector free reprogram factor'), max_length=200, unique=True)
 
     class Meta:
         verbose_name = _(u'Vector free reprogram factor')
@@ -972,7 +988,7 @@ class CelllineOrganization(models.Model):
 
 class Organization(models.Model):
 
-    name = models.CharField(_(u'Organization name'), max_length=100, unique=True, null=True, blank=True)
+    name = models.CharField(_(u'Organization name'), max_length=500, unique=True, null=True, blank=True)
     short_name = models.CharField(_(u'Organization short name'), unique=True, max_length=6, null=True, blank=True)
     contact = models.ForeignKey('Contact', verbose_name=_(u'Contact'), null=True, blank=True)
     org_type = models.ForeignKey('OrgType', verbose_name=_(u'Organization type'), null=True, blank=True)
@@ -1261,15 +1277,15 @@ class CelllineDiseaseGenotype(DirtyFieldsMixin, models.Model):
     carries_disease_phenotype_associated_variants = models.NullBooleanField(_(u'Cell line carries variants associated with the disease phenotype'))
     variant_of_interest = models.NullBooleanField(_(u'Is the variant of interest, e.g. disease associated'))
 
-    allele_carried = models.CharField(_(u'Allele carried through'), max_length=12, null=True, blank=True)
-    cell_line_form = models.CharField(_(u'Is the cell line homozygote or heterozygot for this variant'), max_length=12, null=True, blank=True)
+    allele_carried = models.CharField(_(u'Allele carried through'), max_length=200, null=True, blank=True)
+    cell_line_form = models.CharField(_(u'Is the cell line homozygote or heterozygot for this variant'), max_length=200, null=True, blank=True)
 
-    assembly = models.CharField(_(u'Assembly'), max_length=45, null=True, blank=True)
-    chormosome = models.CharField(_(u'Chormosome'), max_length=45, null=True, blank=True)
-    coordinate = models.CharField(_(u'Coordinate'), max_length=45, null=True, blank=True)
-    reference_allele = models.CharField(_(u'Reference allele'), max_length=45, null=True, blank=True)
-    alternative_allele = models.CharField(_(u'Alternative allele'), max_length=45, null=True, blank=True)
-    protein_sequence_variants = models.CharField(_(u'Protein sequence variants'), max_length=100, null=True, blank=True)
+    assembly = models.CharField(_(u'Assembly'), max_length=200, null=True, blank=True)
+    chormosome = models.CharField(_(u'Chormosome'), max_length=200, null=True, blank=True)
+    coordinate = models.CharField(_(u'Coordinate'), max_length=200, null=True, blank=True)
+    reference_allele = models.CharField(_(u'Reference allele'), max_length=200, null=True, blank=True)
+    alternative_allele = models.CharField(_(u'Alternative allele'), max_length=200, null=True, blank=True)
+    protein_sequence_variants = models.CharField(_(u'Protein sequence variants'), max_length=300, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line disease associated genotype')
@@ -1284,8 +1300,8 @@ class CelllineGenotypingSNP(DirtyFieldsMixin, models.Model):
 
     disease_genotype = models.ForeignKey('CelllineDiseaseGenotype', verbose_name=_(u'Cell line disease genotype'), related_name='snps', null=True, blank=True)
 
-    gene_name = models.CharField(_(u'SNP gene name'), max_length=45, null=True, blank=True)
-    chromosomal_position = models.CharField(_(u'SNP choromosomal position'), max_length=45, null=True, blank=True)
+    gene_name = models.CharField(_(u'SNP gene name'), max_length=200, null=True, blank=True)
+    chromosomal_position = models.CharField(_(u'SNP choromosomal position'), max_length=200, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line snp')
@@ -1300,7 +1316,7 @@ class CelllineGenotypingRsNumber(DirtyFieldsMixin, models.Model):
 
     disease_genotype = models.ForeignKey('CelllineDiseaseGenotype', verbose_name=_(u'Cell line disease genotype'), related_name='rs_number', null=True, blank=True)
 
-    rs_number = models.CharField(_(u'rs Number'), max_length=12, null=True, blank=True)
+    rs_number = models.CharField(_(u'rs Number'), max_length=200, null=True, blank=True)
     link = models.URLField(u'Link', null=True, blank=True)
 
     class Meta:
@@ -1317,15 +1333,15 @@ class DonorGenotype(models.Model):
 
     donor = models.OneToOneField('Donor', verbose_name=_(u'Donor'), related_name='donor_genotyping')
 
-    allele_carried = models.CharField(_(u'Allele carried through'), max_length=12, null=True, blank=True)
-    homozygous_heterozygous = models.CharField(_(u'Is the donor homozygous or heterozygous for this variant'), max_length=12, null=True, blank=True)
+    allele_carried = models.CharField(_(u'Allele carried through'), max_length=200, null=True, blank=True)
+    homozygous_heterozygous = models.CharField(_(u'Is the donor homozygous or heterozygous for this variant'), max_length=200, null=True, blank=True)
 
-    assembly = models.CharField(_(u'Assembly'), max_length=45, null=True, blank=True)
-    chormosome = models.CharField(_(u'Chormosome'), max_length=45, null=True, blank=True)
-    coordinate = models.CharField(_(u'Coordinate'), max_length=45, null=True, blank=True)
-    reference_allele = models.CharField(_(u'Reference allele'), max_length=45, null=True, blank=True)
-    alternative_allele = models.CharField(_(u'Alternative allele'), max_length=45, null=True, blank=True)
-    protein_sequence_variants = models.CharField(_(u'Protein sequence variants'), max_length=100, null=True, blank=True)
+    assembly = models.CharField(_(u'Assembly'), max_length=200, null=True, blank=True)
+    chormosome = models.CharField(_(u'Chormosome'), max_length=200, null=True, blank=True)
+    coordinate = models.CharField(_(u'Coordinate'), max_length=200, null=True, blank=True)
+    reference_allele = models.CharField(_(u'Reference allele'), max_length=200, null=True, blank=True)
+    alternative_allele = models.CharField(_(u'Alternative allele'), max_length=200, null=True, blank=True)
+    protein_sequence_variants = models.CharField(_(u'Protein sequence variants'), max_length=300, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Donor Genotyping')
@@ -1340,8 +1356,8 @@ class DonorGenotypingSNP(models.Model):
 
     donor_genotype = models.ForeignKey('DonorGenotype', verbose_name=_(u'Donor Genotype'), related_name='donor_snps')
 
-    gene_name = models.CharField(_(u'SNP gene name'), max_length=45)
-    chromosomal_position = models.CharField(_(u'SNP choromosomal position'), max_length=45, null=True, blank=True)
+    gene_name = models.CharField(_(u'SNP gene name'), max_length=200)
+    chromosomal_position = models.CharField(_(u'SNP choromosomal position'), max_length=200, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Donor snp')
@@ -1356,7 +1372,7 @@ class DonorGenotypingRsNumber(models.Model):
 
     donor_genotype = models.ForeignKey('DonorGenotype', verbose_name=_(u'Donor Genotype'), related_name='donor_rs_number')
 
-    rs_number = models.CharField(_(u'rs Number'), max_length=12)
+    rs_number = models.CharField(_(u'rs Number'), max_length=200)
     link = models.URLField(u'Link', null=True, blank=True)
 
     class Meta:
@@ -1373,7 +1389,7 @@ class CelllineGeneticModification(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification')
     genetic_modification_flag = models.NullBooleanField(_(u'Genetic modification flag'))
-    types = ArrayField(models.CharField(max_length=50), verbose_name=_(u'Types of modification'), null=True, blank=True)
+    types = ArrayField(models.CharField(max_length=200), verbose_name=_(u'Types of modification'), null=True, blank=True)
     protocol = models.FileField(_(u'Protocol'), upload_to=upload_to, null=True, blank=True)
 
     class Meta:
@@ -1389,7 +1405,7 @@ class GeneticModificationTransgeneExpression(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_transgene_expression')
     genes = models.ManyToManyField(Molecule, blank=True)
-    delivery_method = models.CharField(_(u'Delivery method'), max_length=45, null=True, blank=True)
+    delivery_method = models.CharField(_(u'Delivery method'), max_length=200, null=True, blank=True)
     virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
     transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
 
@@ -1406,7 +1422,7 @@ class GeneticModificationGeneKnockOut(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_gene_knock_out')
     target_genes = models.ManyToManyField(Molecule, blank=True)
-    delivery_method = models.CharField(_(u'Delivery method'), max_length=45, null=True, blank=True)
+    delivery_method = models.CharField(_(u'Delivery method'), max_length=200, null=True, blank=True)
     virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
     transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
 
@@ -1424,7 +1440,7 @@ class GeneticModificationGeneKnockIn(DirtyFieldsMixin, models.Model):
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_gene_knock_in')
     target_genes = models.ManyToManyField(Molecule, blank=True, related_name='target_genes')
     transgenes = models.ManyToManyField(Molecule, blank=True, related_name='transgenes')
-    delivery_method = models.CharField(_(u'Delivery method'), max_length=45, null=True, blank=True)
+    delivery_method = models.CharField(_(u'Delivery method'), max_length=200, null=True, blank=True)
     virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
     transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
 
@@ -1441,7 +1457,7 @@ class GeneticModificationIsogenic(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_isogenic')
     target_locus = models.ManyToManyField(Molecule, blank=True)
-    change_type = models.CharField(_(u'Type of change'), max_length=45, null=True, blank=True)
+    change_type = models.CharField(_(u'Type of change'), max_length=200, null=True, blank=True)
     modified_sequence = models.CharField(_(u'Modified sequence'), max_length=500, null=True, blank=True)
 
     class Meta:
@@ -1459,7 +1475,7 @@ class GeneticModificationIsogenic(DirtyFieldsMixin, models.Model):
 
 class Germlayer(models.Model):
 
-    germlayer = models.CharField(_(u'Germ layer'), max_length=15, blank=True)
+    germlayer = models.CharField(_(u'Germ layer'), max_length=100, blank=True)
 
     class Meta:
         verbose_name = _(u'Germ layer')
@@ -1472,7 +1488,7 @@ class Germlayer(models.Model):
 
 class Marker(models.Model):
 
-    name = models.CharField(_(u'Marker'), max_length=20, blank=True)
+    name = models.CharField(_(u'Marker'), max_length=200, blank=True)
 
     class Meta:
         verbose_name = _(u'Marker')
@@ -1485,7 +1501,7 @@ class Marker(models.Model):
 
 class Morphologymethod(models.Model):
 
-    morphologymethod = models.CharField(_(u'Morphology method'), max_length=45, blank=True)
+    morphologymethod = models.CharField(_(u'Morphology method'), max_length=200, blank=True)
 
     class Meta:
         verbose_name = _(u'Morphology method')
@@ -1516,7 +1532,7 @@ class CellLineDifferentiationPotency(models.Model):
 
     cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
 
-    passage_number = models.CharField(_(u'Passage number'), max_length=5, blank=True)
+    passage_number = models.CharField(_(u'Passage number'), max_length=10, blank=True)
     germ_layer = models.ForeignKey('Germlayer', verbose_name=_(u'Germ layer'), null=True, blank=True)
 
     class Meta:

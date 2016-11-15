@@ -1,3 +1,58 @@
+// Search and filter
+
+.dashboard-search-filter {
+  margin: 40px 0 10px 0;
+
+  input.search {
+    display: inline-block;
+    width: 200px;
+    font-size: $font-size-small * 1.1;
+    padding: 3px;
+    margin-right: 10px;
+  }
+
+  input[type="submit"] {
+    font-size: $font-size-small * 1.1;
+    padding: 4px 20px 5px 20px;
+  }
+
+  select {
+    font-size: $font-size-small * 1.1;
+    max-width: 200px;
+    display: inline;
+    padding: 10px;
+    margin-right: 5px;
+    color: $dark-gray;
+    background-color: white;
+    border-color: $medium-gray;
+
+    &.selected, &:focus {
+      color: $color-text;
+      border-color: $dark-gray;
+    }
+  }
+
+  .reset {
+    font-size: $font-size-small * 1.1;
+    display: inline-block;
+    margin-left: 3px;
+  }
+}
+
+// User Guide
+
+.dashboard-user-guide {
+  position: fixed;
+  bottom: 70px;
+  right: 0px;
+  background-color: $color-blue-light;
+  padding: 0.3rem 0.5rem;
+
+  a {
+    color: white;
+  }
+}
+
 // Notes
 
 .note {
@@ -15,45 +70,64 @@
 
 // Availability status
 
-.availability-status {
-  display: inline-block;
-
-  .status-label {
-    display: inline-block;
-    min-width: 140px;
+table.cell-line-status {
+  th {
+    white-space: nowrap;
   }
 
-  select {
+  td {
+    white-space: nowrap;
     font-size: $font-size-small;
 
-    &.at-ecacc {
-      background-color: $color-green;
-      border: $base-border;
-      color: white;
-      font-weight: bold;
-    }
+    &.status-comment {
+      white-space: normal;
+      font-size: $base-font-size;
+      min-width: 300px;
 
-    &.expand-to-order {
-      background-color: white;
-      color: darken($color-green, 15%);
-      border: solid 1px $color-green;
-    }
-
-    &.restricted-distribution {
-      background-color: white;
-      color: darken($color-green, 15%);
-      border: solid 1px $color-green;
-    }
-
-    &.not-available {
-      background-color: white;
-      border: $base-border;
+      @include breakpoint(map-get($breakpoints, medium)) {
+        min-width: auto;
+      }
     }
   }
 }
 
-table.listing .availability-status .status-label {
+.cell-line-status-edit {
+  margin-top: 3rem;
+
+  h3 {
+    font-size: $font-size-large * 1.2;
+    margin-bottom: 1rem;
+  }
+
+  table {
+    td {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+
+      &.label {
+        white-space: nowrap;
+        width: auto;
+        padding-right: 0.6rem;
+      }
+    }
+
+    &.form {
+      textarea {
+        width: 600px;
+        height: 100px;
+
+        @include breakpoint(map-get($breakpoints, medium)) {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+.status-label {
   padding: 2px 10px;
+  font-size: $font-size-small;
+  white-space: nowrap;
 
   &.at-ecacc {
     background-color: $color-green;
@@ -64,20 +138,37 @@ table.listing .availability-status .status-label {
   &.expand-to-order {
     background-color: white;
     color: $color-green;
-    color: $base-font-color;
+    color: darken($color-green, 10%);
+    font-weight: bold;
     border: solid 1px $color-green;
   }
 
   &.restricted-distribution {
     background-color: white;
-    color: $color-green;
-    color: $base-font-color;
+    color: darken($color-green, 10%);
+    font-weight: bold;
     border: solid 1px $color-green;
   }
 
+  &.recalled {
+    background-color: white;
+    color: $color-red-dark;
+    border: solid 1px $color-red-dark;
+  }
+
+  &.withdrawn {
+    background-color: white;
+    color: $color-red-dark;
+    border: solid 1px $color-red-dark;
+  }
+
   &.not-available {
+    background-color: white;
+    color: $base-font-color;
+    border: solid 1px $base-border-color;
   }
 }
+
 
 // Batch data on executive dashboard
 
@@ -127,7 +218,7 @@ table.listing .availability-status .status-label {
     .biosample-ids-file {
       @extend .file-link;
       display: inline-block;
-      margin-top: 1rem;
+      margin-top: 0.8rem;
     }
 
     .glyphicon {

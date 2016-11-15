@@ -12,6 +12,7 @@ from .utils import format_integrity_error
 from ebisc.celllines.models import  \
     AgeRange,  \
     CellType,  \
+    Cellline,  \
     Country,  \
     Gender,  \
     Molecule,  \
@@ -336,8 +337,6 @@ def parse_donor(valuef, source):
             donor.country_of_origin = term_list_value_of_json(source, 'donor_country_origin', Country)
         if valuef('ethnicity') is not None:
             donor.ethnicity = valuef('ethnicity')
-        if valuef('donor_phenotypes') is not None:
-            donor.phenotypes = valuef('donor_phenotypes')
         if valuef('donor_karyotype') is not None:
             donor.karyotype = valuef('donor_karyotype')
 
@@ -357,7 +356,6 @@ def parse_donor(valuef, source):
             gender=gender,
             country_of_origin=term_list_value_of_json(source, 'donor_country_origin', Country),
             ethnicity=valuef('ethnicity'),
-            phenotypes=valuef('donor_phenotypes'),
             karyotype=valuef('donor_karyotype'),
         )
 
@@ -368,6 +366,34 @@ def parse_donor(valuef, source):
             return None
 
         return donor
+
+
+@inject_valuef
+def parse_derived_from(valuef, source):
+
+    if valuef('same_donor_derived_from_cell_line_id') is not None:
+        try:
+            return Cellline.objects.get(hescreg_id=valuef('same_donor_derived_from_cell_line_id'))
+
+        except Cellline.DoesNotExist:
+            return None
+
+    else:
+        return None
+
+
+@inject_valuef
+def parse_comparator_line(valuef, source):
+
+    if valuef('comparator_cell_line_type') == 'Comparator line' and valuef('comparator_cell_line_id') is not None:
+        try:
+            return Cellline.objects.get(hescreg_id=valuef('comparator_cell_line_id'))
+
+        except Cellline.DoesNotExist:
+            return None
+
+    else:
+        return None
 
 
 @inject_valuef
@@ -664,9 +690,31 @@ def parse_culture_conditions(valuef, source, cell_line):
     cell_line_culture_conditions.surface_coating = valuef('surface_coating')
     cell_line_culture_conditions.feeder_cell_id = valuef('feeder_cells_ont_id')
     cell_line_culture_conditions.feeder_cell_type = valuef('feeder_cells_name')
-    cell_line_culture_conditions.passage_method = valuef('passage_method')
-    cell_line_culture_conditions.enzymatically = valuef('passage_method_enzymatically')
-    cell_line_culture_conditions.enzyme_free = valuef('passage_method_enzyme_free')
+
+    if valuef('passage_method') == 'other' or valuef('passage_method') == 'Other':
+        if valuef('passage_method_other') is not None:
+            cell_line_culture_conditions.passage_method = valuef('passage_method_other')
+        else:
+            cell_line_culture_conditions.passage_method = u'Other'
+    else:
+        cell_line_culture_conditions.passage_method = valuef('passage_method')
+
+    if valuef('passage_method_enzymatic') == 'other' or valuef('passage_method_enzymatic') == 'Other':
+        if valuef('passage_method_enzymatic_other') is not None:
+            cell_line_culture_conditions.enzymatically = valuef('passage_method_enzymatic_other')
+        else:
+            cell_line_culture_conditions.enzymatically = u'Other'
+    else:
+        cell_line_culture_conditions.enzymatically = valuef('passage_method_enzymatic')
+
+    if valuef('passage_method_enzyme_free') == 'other' or valuef('passage_method_enzyme_free') == 'Other':
+        if valuef('passage_method_enzyme_free_other') is not None:
+            cell_line_culture_conditions.enzyme_free = valuef('passage_method_enzyme_free_other')
+        else:
+            cell_line_culture_conditions.enzyme_free = u'Other'
+    else:
+        cell_line_culture_conditions.enzyme_free = valuef('passage_method_enzyme_free')
+
     cell_line_culture_conditions.o2_concentration = valuef('o2_concentration', 'int')
     cell_line_culture_conditions.co2_concentration = valuef('co2_concentration', 'int')
     cell_line_culture_conditions.passage_number_banked = valuef('passage_number_banked')
@@ -681,7 +729,7 @@ def parse_culture_conditions(valuef, source, cell_line):
     if valuef('rock_inhibitor_used_at_thaw_flag'):
         cell_line_culture_conditions.rock_inhibitor_used_at_thaw = valuef('rock_inhibitor_used_at_thaw_flag', 'extended_bool')
 
-    if not valuef('culture_conditions_medium_culture_medium') == 'other_medium':
+    if not valuef('culture_conditions_medium_culture_medium') == 'other':
         cell_line_culture_conditions.culture_medium = valuef('culture_conditions_medium_culture_medium')
 
     dirty = [cell_line_culture_conditions.is_dirty(check_relationship=True)]
@@ -744,7 +792,7 @@ def parse_culture_conditions(valuef, source, cell_line):
 
             return dirty_supplements
 
-    if not valuef('culture_conditions_medium_culture_medium') == 'other_medium':
+    if not valuef('culture_conditions_medium_culture_medium') == 'other':
 
         # Culture medium supplements
         dirty += parse_supplements(cell_line_culture_conditions, valuef('culture_conditions_medium_culture_medium_supplements'))
@@ -753,7 +801,15 @@ def parse_culture_conditions(valuef, source, cell_line):
         cell_line_culture_medium_other, created = CultureMediumOther.objects.get_or_create(cell_line_culture_conditions=cell_line_culture_conditions)
 
         cell_line_culture_medium_other.base = valuef('culture_conditions_medium_culture_medium_other_base')
-        cell_line_culture_medium_other.protein_source = valuef('culture_conditions_medium_culture_medium_other_protein_source')
+
+        if valuef('culture_conditions_medium_culture_medium_other_protein_source') == 'other':
+            if valuef('culture_conditions_medium_culture_medium_other_protein_source_other') is not None:
+                cell_line_culture_medium_other.protein_source = valuef('culture_conditions_medium_culture_medium_other_protein_source_other')
+            else:
+                cell_line_culture_medium_other.protein_source = u'Other'
+        else:
+            cell_line_culture_medium_other.protein_source = valuef('culture_conditions_medium_culture_medium_other_protein_source')
+
         cell_line_culture_medium_other.serum_concentration = valuef('culture_conditions_medium_culture_medium_other_concentration', 'int')
 
         if created or cell_line_culture_medium_other.is_dirty():
@@ -781,8 +837,8 @@ def parse_karyotyping(valuef, source, cell_line):
 
     if valuef('karyotyping_flag', 'bool'):
 
-        if valuef('karyotyping_method') == 'other':
-            if valuef('karyotyping_method_other'):
+        if valuef('karyotyping_method') == 'Other' or valuef('karyotyping_method') == 'other':
+            if valuef('karyotyping_method_other') is not None:
                 karyotype_method = valuef('karyotyping_method_other')
             else:
                 karyotype_method = u'Other'
@@ -938,7 +994,7 @@ def parse_genome_analysis(valuef, source, cell_line):
         data_type = None
 
         if valuef('genome_wide_genotyping_ega'):
-            if valuef('genome_wide_genotyping_ega') == 'other':
+            if valuef('genome_wide_genotyping_ega') == 'Other':
                 if valuef('genome_wide_genotyping_ega_other') is not None:
                     data_type = valuef('genome_wide_genotyping_ega_other')
                 else:
@@ -996,7 +1052,7 @@ def parse_genetic_modifications(valuef, source, cell_line):
 
                 delivery_method = None
 
-                if valuef(source_field) == 'other':
+                if valuef(source_field) == 'Other':
                     if valuef(source_field_other) is not None:
                         delivery_method = valuef(source_field_other)
                     else:
@@ -1012,8 +1068,22 @@ def parse_genetic_modifications(valuef, source, cell_line):
                     transgene_expression, transgene_expression_created = GeneticModificationTransgeneExpression.objects.get_or_create(cell_line=cell_line)
 
                     transgene_expression.delivery_method = parse_delivery_method(source, 'transgene_delivery_method', 'transgene_delivery_method_other')
-                    transgene_expression.virus = term_list_value_of_json(source, 'transgene_viral_method_spec', Virus)
-                    transgene_expression.transposon = term_list_value_of_json(source, 'transgene_transposon_method_spec', Transposon)
+
+                    if valuef('transgene_viral_method_spec') == 'Other':
+                        if valuef('transgene_viral_method_spec_other') is not None:
+                            transgene_expression.virus = valuef('transgene_viral_method_spec_other')
+                        else:
+                            transgene_expression.virus = u'Other'
+                    else:
+                        transgene_expression.virus = term_list_value_of_json(source, 'transgene_viral_method_spec', Virus)
+
+                    if valuef('transgene_transposon_method_spec') == 'Other':
+                        if valuef('transgene_transposon_method_spec_other') is not None:
+                            transgene_expression.transposon = valuef('transgene_transposon_method_spec_other')
+                        else:
+                            transgene_expression.transposon = u'Other'
+                    else:
+                        transgene_expression.transposon = term_list_value_of_json(source, 'transgene_transposon_method_spec', Transposon)
 
                     for gene in [parse_molecule(g) for g in source.get('genetic_modification_transgene_expression_list', [])]:
                         transgene_expression.genes.add(gene)
@@ -1034,8 +1104,22 @@ def parse_genetic_modifications(valuef, source, cell_line):
                     gene_knock_out, gene_knock_out_created = GeneticModificationGeneKnockOut.objects.get_or_create(cell_line=cell_line)
 
                     gene_knock_out.delivery_method = parse_delivery_method(source, 'knockout_delivery_method', 'knockout_delivery_method_other')
-                    gene_knock_out.virus = term_list_value_of_json(source, 'knockout_viral_method_spec', Virus)
-                    gene_knock_out.transposon = term_list_value_of_json(source, 'knockout_transposon_method_spec', Transposon)
+
+                    if valuef('knockout_viral_method_spec') == 'Other':
+                        if valuef('knockout_viral_method_spec_other') is not None:
+                            gene_knock_out.virus = valuef('knockout_viral_method_spec_other')
+                        else:
+                            gene_knock_out.virus = u'Other'
+                    else:
+                        gene_knock_out.virus = term_list_value_of_json(source, 'knockout_viral_method_spec', Virus)
+
+                    if valuef('knockout_transposon_method_spec') == 'Other':
+                        if valuef('knockout_transposon_method_spec_other') is not None:
+                            gene_knock_out.transposon = valuef('knockout_transposon_method_spec_other')
+                        else:
+                            gene_knock_out.transposon = u'Other'
+                    else:
+                        gene_knock_out.transposon = term_list_value_of_json(source, 'knockout_transposon_method_spec', Transposon)
 
                     for gene in [parse_molecule(g) for g in source.get('genetic_modification_knockout_list', [])]:
                         gene_knock_out.target_genes.add(gene)
@@ -1101,8 +1185,22 @@ def parse_genetic_modifications(valuef, source, cell_line):
                     gene_knock_in, gene_knock_in_created = GeneticModificationGeneKnockIn.objects.get_or_create(cell_line=cell_line)
 
                     gene_knock_in.delivery_method = parse_delivery_method(source, 'knockin_delivery_method', 'knockin_delivery_method_other')
-                    gene_knock_in.virus = term_list_value_of_json(source, 'knockin_viral_method_spec', Virus)
-                    gene_knock_in.transposon = term_list_value_of_json(source, 'knockin_transposon_method_spec', Transposon)
+
+                    if valuef('knockin_viral_method_spec') == 'Other':
+                        if valuef('knockin_viral_method_spec_other') is not None:
+                            gene_knock_in.virus = valuef('knockin_viral_method_spec_other')
+                        else:
+                            gene_knock_in.virus = u'Other'
+                    else:
+                        gene_knock_in.virus = term_list_value_of_json(source, 'knockin_viral_method_spec', Virus)
+
+                    if valuef('knockin_transposon_method_spec') == 'Other':
+                        if valuef('knockin_transposon_method_spec_other') is not None:
+                            gene_knock_in.transposon = valuef('knockin_transposon_method_spec_other')
+                        else:
+                            gene_knock_in.transposon = u'Other'
+                    else:
+                        gene_knock_in.transposon = term_list_value_of_json(source, 'knockin_transposon_method_spec', Transposon)
 
                     for gene in [parse_molecule(g) for g in source.get('genetic_modification_knockin_target_gene_list', [])]:
                         logger.info('Added gene: %s' % gene)

@@ -2,7 +2,7 @@
 
     {% include 'catalog/__cellline_data_karyotyping__.html' %}
 
-    {% if cellline.genome_analysis or cellline.availability == 'at_ecacc' %}
+    {% if cellline.genome_analysis or cellline.current_status.status == 'at_ecacc' %}
     <tr><th class="sub-title"><h3>Genotyping</h3></th><th></th></tr>
 
     {% if cellline.genome_analysis %}
@@ -15,7 +15,7 @@
     </tr>
     {% endif %}
 
-    {% if cellline.availability == 'at_ecacc' %}
+    {% if cellline.current_status.status == 'at_ecacc' %}
     <tr>
         <td class="label">STR/Fingerprinting:</td>
         <td>A 16 allele profile has been recorded and data is available upon request, after cell line purchase.</td>

@@ -1,8 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'executive/executive-base.html' %}
 
 {% block title %}Cell line {{ cellline.name }}{% endblock %}
 
-{% block article %}
+{% block page-content %}
 
 <h1>{{ cellline.name }} <small>{{ cellline.biosamples_id }}</small></h1>
 
@@ -19,14 +19,17 @@
                         {{ cellline.get_validated_display }}</p>
 
                     <div><span class="light-gray">Availability:</span></div>
-                        {% if not perms.auth.can_manage_executive_dashboard %}
-                        {% if cellline.availability == 'not_available' %}
+                        {% if cellline.current_status %}
+                        {% if cellline.current_status.status == 'not_available' or cellline.current_status.status == 'withdrawn' or cellline.current_status.status == 'recalled' %}
                         <i class="glyphicon glyphicon-minus error"></i>
                         {% else %}
                         <i class="glyphicon glyphicon-ok success"></i>
                         {% endif %}
+                        {{ cellline.current_status.get_status_display }}
+                        {% else %}
+                        /
                         {% endif %}
-                        {% include 'executive/availability-status.html' %}</p>
+                      </p>
                 </div>
             </div>
         </div>
@@ -73,12 +76,12 @@
             {% include 'executive/__documents__.html' %}
         </div>
     </li>
+    <li class="tab-header-and-content" data-section="status">
+        <a href="#" class="tab-link">Availability status</a>
+        <div class="tab-content">
+            {% include 'executive/__status__.html' %}
+        </div>
+    </li>
 </ul>
 
-{% endblock %}
-
-{% block extra-scripts %}
-{% if perms.auth.can_manage_executive_dashboard %}
-    {% include 'executive/availability-script.html' %}
-{% endif %}
 {% endblock %}

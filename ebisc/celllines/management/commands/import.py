@@ -12,7 +12,6 @@ Usage:
     import all
     import hpscreg [--init]
     import lims
-    import batches_types <filename>
     import batches <filename>
     import toelastic
 '''
@@ -27,7 +26,6 @@ class Command(DocOptCommand):
 
         if args.get('all'):
             importer.hpscreg.run()
-            importer.batches.run('var/batches.csv')
             importer.lims.run()
             importer.toelastic.run()
 
@@ -40,14 +38,12 @@ class Command(DocOptCommand):
             logger.info('Synchronizing batch data with LIMS')
             importer.lims.run()
 
-        if args.get('batches'):
-            importer.batches.run(args.get('<filename>'))
-
-        if args.get('batches_types'):
-            importer.batches_types.run(args.get('<filename>'))
-
         if args.get('toelastic'):
             importer.toelastic.run()
+
+        if args.get('batches'):
+            logger.info('Importing batches from BioSamples')
+            importer.batches.run(args.get('<filename>'))
 
     def init(self):
         logger.info('Initializing database')

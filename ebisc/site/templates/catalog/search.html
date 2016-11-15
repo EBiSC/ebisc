@@ -32,3 +32,14 @@
 {% endif %}
 <script src="{% static 'scripts/search.js' %}"></script>
 {% endblock %}
+
+{% block advertizing-tracking-codes %}
+<script type='text/javascript'>
+var axel = Math.random()+"";
+var a = axel * 10000000000000;
+document.write('<img src="https://pubads.g.doubleclick.net/activity;xsp=194559;ord=1;num='+a+'?<https://pubads.g.doubleclick.net/activity;xsp=194559;ord=1;num='+ a +'?>" width=1 height=1 border=0/>');
+</script>
+<noscript>
+<img src="https://pubads.g.doubleclick.net/activity;xsp=194559;ord=1;num=1?" width=1 height=1 border=0/>
+</noscript>
+{% endblock %}

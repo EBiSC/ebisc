@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
+from ..celllines.models import Donor, Disease, Cellline, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
 
 
 # -----------------------------------------------------------------------------
@@ -131,7 +131,7 @@ class CelllineKaryotypeResource(ModelResource):
     class Meta:
         queryset = CelllineKaryotype.objects.all()
         include_resource_uri = False
-        fields = ('karyotype', 'passage_number')
+        fields = ('karyotype', 'karyotype_method', 'passage_number')
 
 
 # -----------------------------------------------------------------------------
@@ -281,13 +281,12 @@ class DonorResource(ModelResource):
     biosamples_id = fields.CharField('biosamples_id', null=True)
     gender = fields.CharField('gender', null=True)
     internal_donor_ids = fields.ListField('provider_donor_ids', null=True)
-    phenotypes = fields.ListField('phenotypes', null=True)
     karyotype = fields.CharField('karyotype', null=True)
 
     class Meta:
         queryset = Donor.objects.all()
         include_resource_uri = False
-        fields = ('biosamples_id', 'gender', 'internal_donor_ids', 'phenotypes', 'karyotype')
+        fields = ('biosamples_id', 'gender', 'internal_donor_ids', 'karyotype')
 
 
 # -----------------------------------------------------------------------------
@@ -348,18 +347,6 @@ class CelllineAliquotResource(ModelResource):
         include_resource_uri = False
         fields = ('biosamples_id', 'name')
 
-    # Vial names without batch names for LIMS export
-    def dehydrate_name(self, bundle):
-        fixed_name = bundle.obj.name.split()
-        if len(fixed_name) == 4:
-            fixed_name = " ".join([fixed_name[0], fixed_name[2], fixed_name[3]])
-        else:
-            fixed_name = " ".join([fixed_name[0], fixed_name[1], fixed_name[2]])
-        return fixed_name
-
-    def dehydrate_number(self, bundle):
-        return bundle.obj.number.zfill(4)
-
 
 # -----------------------------------------------------------------------------
 # Batch
@@ -413,6 +400,19 @@ class CelllineBatchResource(ModelResource):
 
 
 # -----------------------------------------------------------------------------
+# Cell line status log
+
+class CelllineStatusResource(ModelResource):
+
+    status = fields.CharField('get_status_display')
+
+    class Meta:
+        queryset = CelllineStatus.objects.all()
+        include_resource_uri = False
+        fields = ('status', 'comment', 'updated')
+
+
+# -----------------------------------------------------------------------------
 # Cell line information packs (CLIPS)
 
 class CelllineInformationPackResource(ModelResource):
@@ -444,13 +444,19 @@ class CelllineResource(ModelResource):
     validation_status = fields.CharField('get_validated_display')
 
     # Availability
+    availability = fields.CharField('current_status__get_status_display', null=True)
+
+    # ECACC flag for importing lines
     flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)
-    availability = fields.CharField('get_availability_display')
+
+    # Status
+    status_log = fields.ToManyField(CelllineStatusResource, 'statuses', null=True, full=True)
 
     # Donor and disease
     primary_disease_diagnosed = fields.CharField('primary_disease_diagnosis', null=True)
     primary_disease = fields.ToOneField(DiseaseResource, 'primary_disease', null=True, full=True)
     disease_associated_phenotypes = fields.ListField('disease_associated_phenotypes', null=True)
+    non_disease_associated_phenotypes = fields.ListField('non_disease_associated_phenotypes', null=True)
 
     donor_age = fields.CharField('donor_age', null=True)
     donor = fields.ToOneField(DonorResource, 'donor', null=True, full=True)
@@ -530,6 +536,16 @@ class CelllineResource(ModelResource):
 
     def dehydrate_alternative_names(self, bundle):
         return value_list_of_string(bundle.obj.alternative_names)
+
+    def dehydrate_flag_go_live(self, bundle):
+        if bundle.obj.available_for_sale is not None:
+            # Withdrawn lines also get imported by ECACC
+            if bundle.obj.current_status.status == 'withdrawn':
+                return True
+            else:
+                return bundle.obj.available_for_sale
+        else:
+            return False
 
     def dehydrate_reprogramming_method_vector_free_types(self, bundle):
         if hasattr(bundle.obj, 'vector_free_reprogramming_factors'):

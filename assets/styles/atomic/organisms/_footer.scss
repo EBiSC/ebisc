@@ -1,5 +1,5 @@
 footer {
-  margin-bottom: 20px;
+  margin-bottom: 60px;
   font-size: $font-size-small;
 
   hr {
@@ -34,7 +34,7 @@ footer {
     .links {
       @include span(last 4);
       text-align: right;
-      
+
       ul {
         @extend %inline-ul;
       }
@@ -51,8 +51,16 @@ footer {
     }
   }
 
-  .copy {
+  .copy-contact {
     @include container();
     padding: $container-padding;
+
+    .copy {
+      float: left;
+    }
+
+    .contact {
+      float: right;
+    }
   }
 }
