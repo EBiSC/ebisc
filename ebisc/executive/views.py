@@ -261,6 +261,11 @@ def new_batch(request, name):
 
     cellline = get_object_or_404(Cellline, name=name)
 
+    if cellline.donor:
+        donor_biosamples_id = cellline.donor.biosamples_id
+    else:
+        donor_biosamples_id = ''
+
     if request.method != 'POST':
         new_batch_form = NewBatchForm(initial={'cellline_name': cellline.name, 'cellline_biosample_id': cellline.biosamples_id})
     else:
@@ -271,6 +276,7 @@ def new_batch(request, name):
             data = new_batch_form.cleaned_data
 
             cellline_name = data['cellline_name']
+            cellline_biosample_id = data['cellline_biosample_id']
             batch_type = data['batch_type']
             batch_id = data['batch_id']
             number_of_vials = data['number_of_vials']
@@ -321,7 +327,17 @@ def new_batch(request, name):
                 <Value>%s batch %s</Value>
             </QualifiedValue>
         </Property>
-    <SampleIds>%s</SampleIds></BioSampleGroup>''' % (cellline_name, batch_id, vial_list)
+        <Property class="origin cell line" characteristic="false" type="STRING" comment="true">
+            <QualifiedValue>
+                <Value>%s</Value>
+            </QualifiedValue>
+        </Property>
+        <Property class="origin donor" characteristic="false" type="STRING" comment="true">
+            <QualifiedValue>
+                <Value>%s</Value>
+            </QualifiedValue>
+        </Property>
+    <SampleIds>%s</SampleIds></BioSampleGroup>''' % (cellline_name, batch_id, cellline_biosample_id, donor_biosamples_id, vial_list)
 
                 r = requests.post(url, data=xml.strip(), headers=headers)
 
