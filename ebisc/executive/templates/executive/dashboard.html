@@ -45,7 +45,7 @@
   <select name="disease" class="{% if filters.disease %}selected{% endif %}">
     <option value selected>Any Disease</option>
     {% for disease in diseases %}
-    <option value="{{ disease }}" {% if filters.disease == disease.disease %}selected{% endif %}>{{ disease }}</option>
+    <option value="{{ disease.name }}" {% if filters.disease == disease.name %}selected{% endif %}>{{ disease.name }}</option>
     {% endfor %}
   </select>
   <select name="depositor" class="{% if filters.depositor %}selected{% endif %}">
@@ -71,7 +71,7 @@
             {% for column in columns %}
             <th{% if sort_column == column.0 %} class="order-by {{ sort_order }}"{% endif %}>
                 {% if column.2 %}
-                <a class="sort" href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if filters.disease %}disease={{ filters.disease }}&{% endif %}{% if filters.depositor %}depositor={{ filters.depositor }}&{% endif %}{% if filters.status %}status={{ filters.status }}&{% endif %}sc={{ column.0 }}{% if sort_column == column.0 %}{% if sort_order == 'asc' %}&so=desc{% endif %}{% endif %}">{{ column.1 }}</a>
+                <a class="sort" href="?{% if search_query %}q={{ search_query }}&amp;{% endif %}{% if filters.disease %}disease={{ filters.disease }}&amp;{% endif %}{% if filters.depositor %}depositor={{ filters.depositor }}&amp;{% endif %}{% if filters.status %}status={{ filters.status }}&amp;{% endif %}sc={{ column.0 }}{% if sort_column == column.0 %}{% if sort_order == 'asc' %}&amp;so=desc{% endif %}{% endif %}">{{ column.1 }}</a>
                 {% else %}
                 {{ column.1 }}
                 {% endif %}
@@ -84,7 +84,21 @@
         {% for cellline in celllines %}
         <tr>
             <td><a href="{% url 'executive:cellline' cellline.name %}">{{ cellline.name }}</a></td>
-            <td>{{ cellline.primary_disease|default_if_none:"normal" }}</td>
+            <td>
+              {% if cellline.donor.diseases.all %}
+              {% for disease in cellline.donor.diseases.all %}
+              {{ disease.disease.name }}{% if forloop.last %}{% else %}<br/>{% endif %}
+              {% endfor %}
+              {% else %}
+              normal
+              {% endif %}
+              {% if cellline.diseases.all %}
+              <br/>
+              {% for disease in cellline.diseases.all %}
+              <i>{{ disease.disease.name }}</i> <span class="comment"> - edited</span>{% if forloop.last %}{% else %}<br/>{% endif %}
+              {% endfor %}
+              {% endif %}
+            </td>
             <td>{{ cellline.generator.name }}</td>
             <td class="validation">
                 {% if cellline.validated == '1' %}
