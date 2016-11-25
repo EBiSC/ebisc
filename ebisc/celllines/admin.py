@@ -35,17 +35,11 @@ class AgeRangeAdmin(admin.ModelAdmin):
 admin.site.register(AgeRange, AgeRangeAdmin)
 
 
-class DiseaseAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Disease, DiseaseAdmin)
-
-
 # -----------------------------------------------------------------------------
 # Disease
 
 class DiseaseAdmin(admin.ModelAdmin):
-    list_display = ['purl', 'name']
+    list_display = ['xpurl', 'name']
 
 admin.site.register(Disease, DiseaseAdmin)
 
@@ -107,7 +101,7 @@ class CelllineAdmin(admin.ModelAdmin):
         CelllineIntegratingVectorInline,
         CelllineNonIntegratingVectorInline,
     )
-    list_filter = ['current_status', 'available_for_sale_at_ecacc']
+    list_filter = ['current_status__status', 'available_for_sale_at_ecacc', 'generator__name']
     search_fields = ['name', 'biosamples_id']
 
 admin.site.register(Cellline, CelllineAdmin)

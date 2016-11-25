@@ -456,17 +456,18 @@ class Donor(DirtyFieldsMixin, models.Model):
 
 class Disease(models.Model):
 
-    purl = models.URLField(_(u'Purl'), unique=True)
+    # purl = models.URLField(_(u'Purl'), unique=True)
+    xpurl = models.URLField(_(u'Purl'))
     name = models.CharField(_(u'Name'), max_length=200, null=True, blank=True)
     synonyms = models.CharField(_(u'Synonyms'), max_length=2000, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Disease')
         verbose_name_plural = _(u'Diseases')
-        ordering = ['purl']
+        ordering = ['xpurl']
 
     def __unicode__(self):
-        return u'%s' % self.purl
+        return u'%s' % self.xpurl
 
 
 class CelllineDisease(models.Model):

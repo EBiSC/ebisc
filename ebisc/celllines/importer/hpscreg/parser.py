@@ -238,7 +238,7 @@ def parse_disease(valuef, source, cell_line):
         synonyms = valuef('synonyms')
 
     disease, created = Disease.objects.update_or_create(
-        purl=valuef('purl'),
+        xpurl=valuef('purl'),
         defaults={
             'name': valuef('purl_name'),
             'synonyms': ', '.join(synonyms),

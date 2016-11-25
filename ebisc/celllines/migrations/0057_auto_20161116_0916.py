@@ -2,12 +2,13 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+import django.contrib.postgres.fields
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('celllines', '0045_auto_20160708_1518'),
+        ('celllines', '0056_remove_cellline_availability'),
     ]
 
     operations = [
@@ -71,8 +72,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='disease',
             name='xpurl',
-            field=models.URLField(default=1, unique=True, verbose_name='Purl'),
+            field=models.URLField(default='', verbose_name='Purl'),
             preserve_default=False,
+        ),
+        migrations.AlterField(
+            model_name='cellline',
+            name='disease_associated_phenotypes',
+            field=django.contrib.postgres.fields.ArrayField(size=None, base_field=models.CharField(max_length=500), null=True, verbose_name='Disease associated phenotypes', blank=True),
         ),
         migrations.AddField(
             model_name='celllinedisease',
