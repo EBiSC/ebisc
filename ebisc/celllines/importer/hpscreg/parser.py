@@ -188,7 +188,7 @@ def parse_diseases(source, cell_line):
     cell_line_diseases_old = list(cell_line.diseases.all().order_by('id'))
     cell_line_diseases_old_ids = set([d.id for d in cell_line_diseases_old])
 
-    # Parse diseases (and correctly save them)
+    # Parse cell lines diseases (and correctly save them)
 
     for ds in source.get('diseases', []):
         parse_disease(ds, cell_line)
@@ -203,6 +203,11 @@ def parse_diseases(source, cell_line):
     for cell_line_disease in [cd for cd in cell_line_diseases_old if cd.id in to_delete]:
         logger.info('Deleting obsolete cell line disease %s' % cell_line_disease)
         cell_line_disease.delete()
+
+    # Process cell line diseases
+
+    cell_line_diseases_old = list(cell_line.diseases.all().order_by('id'))
+    cell_line_diseases_old_ids = set([d.id for d in cell_line_diseases_old])
 
     # Check for changes (dirty)
 
@@ -324,50 +329,55 @@ def parse_organization(valuef, source):
 @inject_valuef
 def parse_donor(valuef, source):
 
-    gender = term_list_value_of_json(source, 'gender_primary_cell', Gender)
+    donor_data = valuef('donor')
 
-    try:
-        donor = Donor.objects.get(biosamples_id=valuef('biosamples_donor_id'))
+    if donor_data is not None:
 
-        if donor.gender != gender and gender is not None:
-            logger.warn('Changing donor gender from %s to %s' % (donor.gender, gender))
-            donor.gender = gender
-
-        if valuef('internal_donor_ids') is not None:
-            donor.provider_donor_ids = valuef('internal_donor_ids')
-        if valuef('donor_country_origin') is not None:
-            donor.country_of_origin = term_list_value_of_json(source, 'donor_country_origin', Country)
-        if valuef('ethnicity') is not None:
-            donor.ethnicity = valuef('ethnicity')
-        if valuef('donor_karyotype') is not None:
-            donor.karyotype = valuef('donor_karyotype')
-
-        dirty = [donor.is_dirty(check_relationship=True)]
-
-        if True in dirty:
-            logger.info('Updated donor: %s' % donor)
-
-            donor.save()
-
-        return donor
-
-    except Donor.DoesNotExist:
-        donor = Donor(
-            biosamples_id=valuef('biosamples_donor_id'),
-            provider_donor_ids=valuef('internal_donor_ids'),
-            gender=gender,
-            country_of_origin=term_list_value_of_json(source, 'donor_country_origin', Country),
-            ethnicity=valuef('ethnicity'),
-            karyotype=valuef('donor_karyotype'),
-        )
+        gender = term_list_value(donor_data.get('gender'), Gender)
 
         try:
-            donor.save()
-        except IntegrityError, e:
-            logger.warn(format_integrity_error(e))
-            return None
+            donor = Donor.objects.get(biosamples_id=donor_data.get('biosamples_id'))
+
+            if donor.gender != gender and gender is not None:
+                logger.warn('Changing donor gender from %s to %s' % (donor.gender, gender))
+                donor.gender = gender
+
+            if donor_data.get('internal_ids') is not None:
+                donor.provider_donor_ids = donor_data.get('internal_ids')
+            if valuef('donor_country_origin') is not None:
+                donor.country_of_origin = term_list_value_of_json(source, 'donor_country_origin', Country)
+            if donor_data.get('ethnicity') is not None:
+                donor.ethnicity = donor_data.get('ethnicity')
+            if valuef('donor_karyotype') is not None:
+                donor.karyotype = valuef('donor_karyotype')
+
+            dirty = [donor.is_dirty(check_relationship=True)]
+
+            if True in dirty:
+                logger.info('Updated donor: %s' % donor)
+
+                donor.save()
+
+        except Donor.DoesNotExist:
+            donor = Donor(
+                biosamples_id=donor_data.get('biosamples_id'),
+                provider_donor_ids=donor_data.get('internal_ids'),
+                gender=gender,
+                country_of_origin=term_list_value_of_json(source, 'donor_country_origin', Country),
+                ethnicity=donor_data.get('ethnicity'),
+                karyotype=valuef('donor_karyotype'),
+            )
+
+            try:
+                donor.save()
+            except IntegrityError, e:
+                logger.warn(format_integrity_error(e))
+                return None
 
         return donor
+
+    else:
+        return None
 
 
 @inject_valuef
