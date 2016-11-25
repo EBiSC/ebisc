@@ -480,6 +480,7 @@ class CelllineDisease(models.Model):
 
     disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
     affected_status = models.CharField(_(u'Affected status'), max_length=12, null=True, blank=True)
+    carrier = models.CharField(_(u'Carrier'), max_length=12, null=True, blank=True)
 
     notes = models.TextField(_(u'Notes'), null=True, blank=True)
 
@@ -491,6 +492,30 @@ class CelllineDisease(models.Model):
 
     def __unicode__(self):
         return u'%s - %s' % (self.cell_line, self.disease)
+
+
+class DonorDisease(models.Model):
+
+    donor = models.ForeignKey(Donor, verbose_name=_(u'Donor'), related_name='diseases')
+    disease = models.ForeignKey('Disease', verbose_name=_(u'Diagnosed disease'), null=True, blank=True)
+    disease_not_normalised = models.CharField(_(u'Disease name - not normalised'), max_length=500, null=True, blank=True)
+
+    primary_disease = models.BooleanField(_(u'Primary disease'), default=False)
+
+    disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
+    affected_status = models.CharField(_(u'Affected status'), max_length=12, null=True, blank=True)
+    carrier = models.CharField(_(u'Carrier'), max_length=12, null=True, blank=True)
+
+    notes = models.TextField(_(u'Notes'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Donor disease')
+        verbose_name_plural = _(u'Donor diseases')
+        unique_together = [('donor', 'disease', 'disease_not_normalised')]
+        ordering = ['disease']
+
+    def __unicode__(self):
+        return u'%s - %s' % (self.donor, self.disease)
 
 
 # -----------------------------------------------------------------------------

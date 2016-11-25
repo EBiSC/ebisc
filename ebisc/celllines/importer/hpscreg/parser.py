@@ -214,7 +214,8 @@ def parse_diseases(source, cell_line):
                 a.primary_disease == b.primary_disease and
                 a.disease_stage == b.disease_stage and
                 a.affected_status == b.affected_status and
-                a.notes == b.notes
+                a.carrier == b.carrier and
+                a.disease_not_normalised == b.disease_not_normalised
             )
         for (old, new) in zip(cell_line_diseases_old, cell_line_diseases_new):
             if not diseases_equal(old, new):
@@ -258,7 +259,8 @@ def parse_disease(valuef, source, cell_line):
             'primary_disease': valuef('primary', 'bool'),
             'disease_stage': valuef('stage'),
             'affected_status': valuef('affected'),
-            'notes': valuef('free_text'),
+            'carrier': valuef('carrier'),
+            'disease_not_normalised': valuef('free_text'),
         }
     )
 

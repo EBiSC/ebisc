@@ -108,6 +108,22 @@ admin.site.register(Cellline, CelllineAdmin)
 
 
 # -----------------------------------------------------------------------------
+# Donors
+
+class DonorDiseaseInline(StackedInline):
+    model = DonorDisease
+
+
+class DonorAdmin(admin.ModelAdmin):
+    list_display = ['biosamples_id', 'provider_donor_ids', 'gender']
+    search_fields = ['biosamples_id', 'provider_donor_ids']
+    inlines = (DonorDiseaseInline,)
+    list_filter = ['gender', 'country_of_origin', 'ethnicity']
+
+admin.site.register(Donor, DonorAdmin)
+
+
+# -----------------------------------------------------------------------------
 # Batches
 
 class BatchAliquotInline(TabularInline):
