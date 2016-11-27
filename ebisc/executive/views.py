@@ -72,7 +72,7 @@ def dashboard(request):
         cellline_objects = cellline_objects.filter(generator__name=request.GET.get('depositor', None))
 
     if filters['disease']:
-        cellline_objects = cellline_objects.filter(diseases__disease__name=request.GET.get('disease', None))
+        cellline_objects = cellline_objects.filter(Q(diseases__disease__name=request.GET.get('disease', None)) | Q(donor__diseases__disease__name=request.GET.get('disease', None)))
 
     # Select related
     cellline_objects = cellline_objects.select_related('generator', 'donor')
