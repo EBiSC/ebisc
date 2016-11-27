@@ -191,11 +191,12 @@ def parse_cell_line_diseases(source, cell_line):
 
     # Parse cell lines diseases (and correctly save them)
 
-    for ds in source.get('diseases', []):
-        parse_cell_line_disease(ds, cell_line)
+    cell_line_diseases_new = []
 
-    cell_line_diseases_new = list(cell_line.diseases.all().order_by('id'))
-    cell_line_diseases_new_ids = set([d.id for d in cell_line_diseases_new])
+    for ds in source.get('diseases', []):
+        cell_line_diseases_new.append(parse_cell_line_disease(ds, cell_line))
+
+    cell_line_diseases_new_ids = set([d.id for d in cell_line_diseases_new if d is not None])
 
     # Delete existing cell line diseases that are not present in new data
 
@@ -229,45 +230,30 @@ def parse_cell_line_diseases(source, cell_line):
 @inject_valuef
 def parse_cell_line_disease(valuef, source, cell_line):
 
-    if not valuef('purl'):
-        logger.warn('Missing disease purl for cell line %s' % cell_line)
-        return None
+    disease = parse_disease(source)
 
-    # Update or create the disease
+    if disease is not None:
 
-    if valuef('synonyms') is None:
-        synonyms = []
+        cell_line_disease, created = CelllineDisease.objects.update_or_create(
+            cell_line=cell_line,
+            disease=disease,
+            disease_not_normalised=valuef('other'),
+            defaults={
+                'primary_disease': valuef('primary', 'bool'),
+                'disease_stage': valuef('stage'),
+                'affected_status': valuef('affected'),
+                'carrier': valuef('carrier'),
+                'notes': valuef('free_text'),
+            }
+        )
+
+        if created:
+            logger.info('Created new cell line disease: %s' % disease)
+
+        return cell_line_disease
+
     else:
-        synonyms = valuef('synonyms')
-
-    disease, created = Disease.objects.update_or_create(
-        xpurl=valuef('purl'),
-        defaults={
-            'name': valuef('purl_name'),
-            'synonyms': ', '.join(synonyms),
-        }
-    )
-
-    if created:
-        logger.info('Created new disease: %s' % disease)
-
-    # Update or create cell line disease
-
-    cell_line_disease, created = CelllineDisease.objects.update_or_create(
-        cell_line=cell_line,
-        disease=disease,
-        disease_not_normalised=valuef('other'),
-        defaults={
-            'primary_disease': valuef('primary', 'bool'),
-            'disease_stage': valuef('stage'),
-            'affected_status': valuef('affected'),
-            'carrier': valuef('carrier'),
-            'notes': valuef('free_text'),
-        }
-    )
-
-    if created:
-        logger.info('Created new cell line disease: %s' % disease)
+        return None
 
 
 @inject_valuef
@@ -326,11 +312,12 @@ def parse_donor_diseases(source, donor):
     donor_diseases_old = list(donor.diseases.all().order_by('id'))
     donor_diseases_old_ids = set([d.id for d in donor_diseases_old])
 
-    for ds in source.get('diseases', []):
-        parse_donor_disease(ds, donor)
+    donor_diseases_new = []
 
-    donor_diseases_new = list(donor.diseases.all().order_by('id'))
-    donor_diseases_new_ids = set([d.id for d in donor_diseases_new])
+    for ds in source.get('diseases', []):
+        donor_diseases_new.append(parse_donor_disease(ds, donor))
+
+    donor_diseases_new_ids = set([d.id for d in donor_diseases_new if d is not None])
 
     # Delete existing donor diseases that are not present in new data
 
@@ -343,6 +330,35 @@ def parse_donor_diseases(source, donor):
 
 @inject_valuef
 def parse_donor_disease(valuef, source, donor):
+
+    disease = parse_disease(source)
+
+    if disease is not None:
+
+        donor_disease, created = DonorDisease.objects.update_or_create(
+            donor=donor,
+            disease=disease,
+            disease_not_normalised=valuef('other'),
+            defaults={
+                'primary_disease': valuef('primary', 'bool'),
+                'disease_stage': valuef('stage'),
+                'affected_status': valuef('affected'),
+                'carrier': valuef('carrier'),
+                'notes': valuef('free_text'),
+            }
+        )
+
+        if created:
+            logger.info('Created new donor disease: %s' % disease)
+
+        return donor_disease
+
+    else:
+        return None
+
+
+@inject_valuef
+def parse_disease(valuef, source):
 
     if not valuef('purl'):
         logger.warn('Missing disease purl')
@@ -366,23 +382,7 @@ def parse_donor_disease(valuef, source, donor):
     if created:
         logger.info('Created new disease: %s' % disease)
 
-    # Update or create donor disease
-
-    donor_disease, created = DonorDisease.objects.update_or_create(
-        donor=donor,
-        disease=disease,
-        disease_not_normalised=valuef('other'),
-        defaults={
-            'primary_disease': valuef('primary', 'bool'),
-            'disease_stage': valuef('stage'),
-            'affected_status': valuef('affected'),
-            'carrier': valuef('carrier'),
-            'notes': valuef('free_text'),
-        }
-    )
-
-    if created:
-        logger.info('Created new donor disease: %s' % disease)
+    return disease
 
 
 @inject_valuef

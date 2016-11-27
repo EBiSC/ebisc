@@ -30,7 +30,7 @@ def run():
     # json = request_get('http://test.hescreg.eu/api/export/2')
     # import_cellline(json)
 
-    # for cellline_id in [id for id in cellline_ids if id == 'EDi001-A-1']:
+    # for cellline_id in [id for id in cellline_ids if id == 'UKKi024-A' or id == 'EDi002-A' or id == 'EDi001-A-4']:
     for cellline_id in [id for id in cellline_ids]:
         if cellline_id == 'BCRTi005-A' or cellline_id == 'BCRTi004-A':
             pass
