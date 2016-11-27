@@ -54,10 +54,10 @@
     <option value="{{ depositor.name }}" {% if filters.depositor == depositor.name %}selected{% endif %}>{{ depositor.name }}</option>
     {% endfor %}
   </select>
-  <select name="availability" class="{% if filters.availability %}selected{% endif %}">
+  <select name="status" class="{% if filters.status %}selected{% endif %}">
     <option value selected>Any Status</option>
-    {% for status in availability %}
-    <option value="{{ status.0 }}" {% if filters.availability == status.0 %}selected{% endif %}>{{ status.1 }}</option>
+    {% for status in status %}
+    <option value="{{ status.0 }}" {% if filters.status == status.0 %}selected{% endif %}>{{ status.1 }}</option>
     {% endfor %}
   </select>
   <input type="submit" value="Filter">
@@ -71,7 +71,7 @@
             {% for column in columns %}
             <th{% if sort_column == column.0 %} class="order-by {{ sort_order }}"{% endif %}>
                 {% if column.2 %}
-                <a class="sort" href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if filters.disease %}disease={{ filters.disease }}&{% endif %}{% if filters.depositor %}depositor={{ filters.depositor }}&{% endif %}{% if filters.availability %}availability={{ filters.availability }}&{% endif %}sc={{ column.0 }}{% if sort_column == column.0 %}{% if sort_order == 'asc' %}&so=desc{% endif %}{% endif %}">{{ column.1 }}</a>
+                <a class="sort" href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if filters.disease %}disease={{ filters.disease }}&{% endif %}{% if filters.depositor %}depositor={{ filters.depositor }}&{% endif %}{% if filters.status %}status={{ filters.status }}&{% endif %}sc={{ column.0 }}{% if sort_column == column.0 %}{% if sort_order == 'asc' %}&so=desc{% endif %}{% endif %}">{{ column.1 }}</a>
                 {% else %}
                 {{ column.1 }}
                 {% endif %}
@@ -82,7 +82,7 @@
 
     <tbody>
         {% for cellline in celllines %}
-        <tr class="availability-{{ cellline.availability }}">
+        <tr>
             <td><a href="{% url 'executive:cellline' cellline.name %}">{{ cellline.name }}</a></td>
             <td>{{ cellline.primary_disease|default_if_none:"normal" }}</td>
             <td>{{ cellline.generator.name }}</td>
@@ -114,7 +114,23 @@
             <td class="number">{{ cellline.batches.count }}</td>
             <td class="number"><span class="comment">{{ cellline.quantity|default:'n/a' }}</span></td>
             <td class="number"><span class="comment">{{ cellline.sold|default:'n/a' }}</span></td>
-            <td class="availability">{% include 'executive/availability-status.html' %}</td>
+            <td class="availability">
+              {% if cellline.current_status.status == 'at_ecacc' %}
+              <div class="status-label at-ecacc">
+              {% elif cellline.current_status.status == 'not_available' %}
+              <div class="status-label not-available">
+              {% elif cellline.current_status.status == 'expand_to_order' %}
+              <div class="status-label expand-to-order">
+              {% elif cellline.current_status.status == 'restricted_distribution' %}
+              <div class="status-label restricted-distribution">
+              {% elif cellline.current_status.status == 'recalled' %}
+              <div class="status-label recalled">
+              {% elif cellline.current_status.status == 'withdrawn' %}
+              <div class="status-label withdrawn">
+              {% endif %}
+              {{ cellline.current_status.get_status_display }}</div>
+              {% if perms.auth.can_manage_executive_dashboard %}<a href="{% url 'executive:cellline' cellline.name %}#status" class="status-edit-link"><i class="glyphicon glyphicon-pencil"></i></a>{% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>
@@ -127,17 +143,11 @@
         <li>
             <ul>
                 {% for p in celllines.paginator.page_range %}
-                <li><a class="{% if p == page %}active{% endif %}" href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if filters.disease %}disease={{ filters.disease }}&{% endif %}{% if filters.depositor %}depositor={{ filters.depositor }}&{% endif %}{% if filters.availability %}availability={{ filters.availability }}&{% endif %}page={{ p }}{% if sort_column %}&sc={{ sort_column }}&so={{ sort_order }}{% endif %}">{{ p }}</a></li>
+                <li><a class="{% if p == page %}active{% endif %}" href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if filters.disease %}disease={{ filters.disease }}&{% endif %}{% if filters.depositor %}depositor={{ filters.depositor }}&{% endif %}{% if filters.status %}status={{ filters.status }}&{% endif %}page={{ p }}{% if sort_column %}&sc={{ sort_column }}&so={{ sort_order }}{% endif %}">{{ p }}</a></li>
                 {% endfor %}
             </ul>
         </li>
     </ul>
 </div>
 
-{% endblock %}
-
-{% block extra-scripts %}
-{% if perms.auth.can_manage_executive_dashboard %}
-    {% include 'executive/availability-script.html' %}
-{% endif %}
 {% endblock %}
