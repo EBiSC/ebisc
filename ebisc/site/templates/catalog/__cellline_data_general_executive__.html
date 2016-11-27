@@ -24,7 +24,8 @@
 {% endif %}
 
 <tr><th class="sub-title"><h3>Disease status</h3></th><th></th></tr>
-{% include 'catalog/__diseases__.html' %}
+
+{% include 'catalog/__cellline_data_diseases__.html' %}
 
 <tr><th class="sub-title"><h3>Donor information</h3></th><th></th></tr>
 <tr><td class="label">Biosamples ID:</td><td>{{ cellline.donor.biosamples_id|default:"-" }}</td></tr>

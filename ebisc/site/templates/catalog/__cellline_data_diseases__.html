@@ -6,7 +6,7 @@
 
 {% if cellline.donor.diseases.all %}
 {% for disease in cellline.donor.diseases.all %}
-{% include 'catalog/__disease__.html' %}
+{% include 'catalog/__cellline_data_disease__.html' %}
 {% if not forloop.last %}<tr class="separator"><td></td><td><hr></td></tr>{% endif %}
 {% endfor %}
 {% else %}
@@ -42,7 +42,7 @@
   <td colspan=2><b>Disease/phenotype related modifications</b></td>
 </tr>
 {% for disease in cellline.diseases.all %}
-{% include 'catalog/__disease__.html' %}
+{% include 'catalog/__cellline_data_disease__.html' %}
 {% if not forloop.last %}<tr class="separator"><td></td><td><hr></td></tr>{% endif %}
 {% endfor %}
 {% endif %}
