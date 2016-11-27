@@ -30,7 +30,7 @@ def run():
     # json = request_get('http://test.hescreg.eu/api/export/2')
     # import_cellline(json)
 
-    # for cellline_id in [id for id in cellline_ids if id == 'UKKi012-A']:
+    # for cellline_id in [id for id in cellline_ids if id == 'EDi001-A-1']:
     for cellline_id in [id for id in cellline_ids]:
         if cellline_id == 'BCRTi005-A' or cellline_id == 'BCRTi004-A':
             pass
@@ -87,7 +87,7 @@ def import_cellline(source):
     cell_line.hescreg_id = valuef('id')
     cell_line.name = valuef('name')
     cell_line.alternative_names = ', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else ''
-    cell_line.donor = parser.parse_donor(source)
+    cell_line.donor = parser.parse_donor(valuef('donor')) if valuef('donor') is not None else None
     cell_line.donor_age = valuef('donor_age', 'age_range')
     cell_line.generator = generator
     cell_line.owner = owner
@@ -126,7 +126,7 @@ def import_cellline(source):
         dirty.append(parser.parse_non_integrating_vector(source, cell_line))
 
     dirty += [
-        parser.parse_diseases(source, cell_line),
+        parser.parse_cell_line_diseases(source, cell_line),
         parser.parse_ethics(source, cell_line),
         parser.parse_derivation(source, cell_line),
         parser.parse_vector_free_reprogramming_factors(source, cell_line),

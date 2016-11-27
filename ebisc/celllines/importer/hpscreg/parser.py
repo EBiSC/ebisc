@@ -21,6 +21,7 @@ from ebisc.celllines.models import  \
     Transposon,  \
     Unit,  \
     Donor,  \
+    DonorDisease,  \
     Disease,  \
     CelllineDisease,  \
     CelllineCultureConditions,  \
@@ -183,7 +184,7 @@ def inject_valuef(func):
 # -----------------------------------------------------------------------------
 # Specific parsers
 
-def parse_diseases(source, cell_line):
+def parse_cell_line_diseases(source, cell_line):
 
     cell_line_diseases_old = list(cell_line.diseases.all().order_by('id'))
     cell_line_diseases_old_ids = set([d.id for d in cell_line_diseases_old])
@@ -191,7 +192,7 @@ def parse_diseases(source, cell_line):
     # Parse cell lines diseases (and correctly save them)
 
     for ds in source.get('diseases', []):
-        parse_disease(ds, cell_line)
+        parse_cell_line_disease(ds, cell_line)
 
     cell_line_diseases_new = list(cell_line.diseases.all().order_by('id'))
     cell_line_diseases_new_ids = set([d.id for d in cell_line_diseases_new])
@@ -204,11 +205,6 @@ def parse_diseases(source, cell_line):
         logger.info('Deleting obsolete cell line disease %s' % cell_line_disease)
         cell_line_disease.delete()
 
-    # Process cell line diseases
-
-    cell_line_diseases_old = list(cell_line.diseases.all().order_by('id'))
-    cell_line_diseases_old_ids = set([d.id for d in cell_line_diseases_old])
-
     # Check for changes (dirty)
 
     if (cell_line_diseases_old_ids != cell_line_diseases_new_ids):
@@ -220,6 +216,7 @@ def parse_diseases(source, cell_line):
                 a.disease_stage == b.disease_stage and
                 a.affected_status == b.affected_status and
                 a.carrier == b.carrier and
+                a.notes == b.notes and
                 a.disease_not_normalised == b.disease_not_normalised
             )
         for (old, new) in zip(cell_line_diseases_old, cell_line_diseases_new):
@@ -230,7 +227,7 @@ def parse_diseases(source, cell_line):
 
 
 @inject_valuef
-def parse_disease(valuef, source, cell_line):
+def parse_cell_line_disease(valuef, source, cell_line):
 
     if not valuef('purl'):
         logger.warn('Missing disease purl for cell line %s' % cell_line)
@@ -265,14 +262,127 @@ def parse_disease(valuef, source, cell_line):
             'disease_stage': valuef('stage'),
             'affected_status': valuef('affected'),
             'carrier': valuef('carrier'),
-            'disease_not_normalised': valuef('free_text'),
+            'notes': valuef('free_text'),
         }
     )
 
     if created:
         logger.info('Created new cell line disease: %s' % disease)
 
-    return cell_line_disease
+
+@inject_valuef
+def parse_donor(valuef, source):
+
+    gender = term_list_value(valuef('gender'), Gender)
+
+    try:
+        donor = Donor.objects.get(biosamples_id=valuef('biosamples_id'))
+
+        if donor.gender != gender and gender is not None:
+            logger.warn('Changing donor gender from %s to %s' % (donor.gender, gender))
+            donor.gender = gender
+
+        if valuef('internal_ids') is not None:
+            donor.provider_donor_ids = valuef('internal_ids')
+        # if valuef('donor_country_origin') is not None:
+        #     donor.country_of_origin = term_list_value_of_json(source, 'donor_country_origin', Country)
+        if valuef('ethnicity') is not None:
+            donor.ethnicity = valuef('ethnicity')
+        # if valuef('donor_karyotype') is not None:
+        #     donor.karyotype = valuef('donor_karyotype')
+
+        dirty = [donor.is_dirty(check_relationship=True)]
+
+        if True in dirty:
+            logger.info('Updated donor: %s' % donor)
+
+            donor.save()
+
+    except Donor.DoesNotExist:
+        donor = Donor(
+            biosamples_id=valuef('biosamples_id'),
+            provider_donor_ids=valuef('internal_ids'),
+            gender=gender,
+            # country_of_origin=term_list_value_of_json(source, 'donor_country_origin', Country),
+            ethnicity=valuef('ethnicity'),
+            # karyotype=valuef('donor_karyotype'),
+        )
+
+        try:
+            donor.save()
+        except IntegrityError, e:
+            logger.warn(format_integrity_error(e))
+            return None
+
+    parse_donor_diseases(source, donor)
+
+    return donor
+
+
+def parse_donor_diseases(source, donor):
+
+    # Parse donor diseases (and correctly save them)
+
+    donor_diseases_old = list(donor.diseases.all().order_by('id'))
+    donor_diseases_old_ids = set([d.id for d in donor_diseases_old])
+
+    for ds in source.get('diseases', []):
+        parse_donor_disease(ds, donor)
+
+    donor_diseases_new = list(donor.diseases.all().order_by('id'))
+    donor_diseases_new_ids = set([d.id for d in donor_diseases_new])
+
+    # Delete existing donor diseases that are not present in new data
+
+    to_delete = donor_diseases_old_ids - donor_diseases_new_ids
+
+    for donor_disease in [cd for cd in donor_diseases_old if cd.id in to_delete]:
+        logger.info('Deleting obsolete donor disease %s' % donor_disease)
+        donor_disease.delete()
+
+
+@inject_valuef
+def parse_donor_disease(valuef, source, donor):
+
+    if not valuef('purl'):
+        logger.warn('Missing disease purl')
+        return None
+
+    # Update or create the disease
+
+    if valuef('synonyms') is None:
+        synonyms = []
+    else:
+        synonyms = valuef('synonyms')
+
+    disease, created = Disease.objects.update_or_create(
+        xpurl=valuef('purl'),
+        defaults={
+            'name': valuef('purl_name'),
+            'synonyms': ', '.join(synonyms),
+        }
+    )
+
+    if created:
+        logger.info('Created new disease: %s' % disease)
+
+    # Update or create donor disease
+
+    donor_disease, created = DonorDisease.objects.update_or_create(
+        donor=donor,
+        disease=disease,
+        disease_not_normalised=valuef('other'),
+        defaults={
+            'primary_disease': valuef('primary', 'bool'),
+            'disease_stage': valuef('stage'),
+            'affected_status': valuef('affected'),
+            'carrier': valuef('carrier'),
+            'notes': valuef('free_text'),
+        }
+    )
+
+    if created:
+        logger.info('Created new donor disease: %s' % disease)
 
 
 @inject_valuef
@@ -324,60 +434,6 @@ def parse_organization(valuef, source):
             logger.info('Found new organization type: %s' % organization_role)
 
         return (organization, organization_role)
-
-
-@inject_valuef
-def parse_donor(valuef, source):
-
-    donor_data = valuef('donor')
-
-    if donor_data is not None:
-
-        gender = term_list_value(donor_data.get('gender'), Gender)
-
-        try:
-            donor = Donor.objects.get(biosamples_id=donor_data.get('biosamples_id'))
-
-            if donor.gender != gender and gender is not None:
-                logger.warn('Changing donor gender from %s to %s' % (donor.gender, gender))
-                donor.gender = gender
-
-            if donor_data.get('internal_ids') is not None:
-                donor.provider_donor_ids = donor_data.get('internal_ids')
-            if valuef('donor_country_origin') is not None:
-                donor.country_of_origin = term_list_value_of_json(source, 'donor_country_origin', Country)
-            if donor_data.get('ethnicity') is not None:
-                donor.ethnicity = donor_data.get('ethnicity')
-            if valuef('donor_karyotype') is not None:
-                donor.karyotype = valuef('donor_karyotype')
-
-            dirty = [donor.is_dirty(check_relationship=True)]
-
-            if True in dirty:
-                logger.info('Updated donor: %s' % donor)
-
-                donor.save()
-
-        except Donor.DoesNotExist:
-            donor = Donor(
-                biosamples_id=donor_data.get('biosamples_id'),
-                provider_donor_ids=donor_data.get('internal_ids'),
-                gender=gender,
-                country_of_origin=term_list_value_of_json(source, 'donor_country_origin', Country),
-                ethnicity=donor_data.get('ethnicity'),
-                karyotype=valuef('donor_karyotype'),
-            )
-
-            try:
-                donor.save()
-            except IntegrityError, e:
-                logger.warn(format_integrity_error(e))
-                return None
-
-        return donor
-
-    else:
-        return None
 
 
 @inject_valuef

@@ -95,7 +95,7 @@
               {% if cellline.diseases.all %}
               <br/>
               {% for disease in cellline.diseases.all %}
-              <i>{{ disease.disease.name }}</i> <span class="comment"> - edited</span>{% if forloop.last %}{% else %}<br/>{% endif %}
+              <i>{{ disease.disease.name }}</i> <span class="comment"> - gen. modified</span>{% if forloop.last %}{% else %}<br/>{% endif %}
               {% endfor %}
               {% endif %}
             </td>
@@ -127,7 +127,6 @@
             </td>
             <td class="number">{{ cellline.batches.count }}</td>
             <td class="number"><span class="comment">{{ cellline.quantity|default:'n/a' }}</span></td>
-            <td class="number"><span class="comment">{{ cellline.sold|default:'n/a' }}</span></td>
             <td class="availability">
               {% if cellline.current_status.status == 'at_ecacc' %}
               <div class="status-label at-ecacc">
