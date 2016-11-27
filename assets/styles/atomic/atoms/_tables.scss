@@ -57,18 +57,6 @@ td.label {
   }
 }
 
-tr.separator {
-  td {
-    padding-top: 0;
-    padding-bottom: 0;
-
-    hr {
-      width: 100%;
-      max-width: 150px;
-    }
-  }
-}
-
 th.title {
   padding-bottom: 20px;
   text-align: left;
@@ -233,6 +221,22 @@ table.data {
           text-align: right;
         }
       }
+    }
+
+    hr {
+      width: 100%;
+      max-width: 500px;
+      margin: 0.5rem 0;
+    }
+  }
+
+  &.general-info {
+    td, th {
+      text-align: left;
+    }
+
+    th.sub-title h3 {
+      text-align: left;
     }
   }
 }

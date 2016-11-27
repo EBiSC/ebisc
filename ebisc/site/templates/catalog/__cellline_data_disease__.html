@@ -1,4 +1,28 @@
-<tr>
+{% if disease.disease or disease.disease_not_normalised %}
+  {% if disease.disease %}
+  {{ disease.disease.name }}
+  {% elif disease.disease_not_normalised %}
+  {{ disease.disease_not_normalised }}
+  {% endif %}
+  {% if disease.notes %}<br/>{{ disease.notes }}{% endif %}
+{% else %}
+{% if disease.notes %}{{ disease.notes }}{% else %}/{% endif %}
+{% endif %}
+
+{% if disease.affected_status %}
+<br/>{% if disease.affected_status == 'True' %}Affected{% elif disease.affected_status == 'False' %}Not affected{% else %}Affected status not known{% endif %}
+{% endif %}
+
+{% if disease.disease_stage %}
+Disease stage: {{ disease.disease_stage|capfirst }}
+{% endif %}
+
+{% if disease.carrier %}
+Carrier: {{ disease.carrier|capfirst }}
+{% endif %}
+
+
+<!-- <tr>
   <td class="label">Disease:</td>
   <td>
     {% if disease.disease or disease.disease_not_normalised %}
@@ -26,4 +50,4 @@
 
 {% if disease.carrier %}
 <tr><td class="label">Carrier:</td><td>{{ disease.carrier|capfirst }}</td></tr>
-{% endif %}
+{% endif %} -->

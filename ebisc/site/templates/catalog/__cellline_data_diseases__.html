@@ -4,21 +4,24 @@
 </tr>
 {% endif %}
 
-{% if cellline.donor.diseases.all %}
-{% for disease in cellline.donor.diseases.all %}
-{% include 'catalog/__cellline_data_disease__.html' %}
-{% if not forloop.last %}<tr class="separator"><td></td><td><hr></td></tr>{% endif %}
-{% endfor %}
-{% else %}
 <tr>
   <td class="label">Disease:</td>
-  <td>No</td>
+  <td>
+  {% if cellline.donor.diseases.all %}
+    {% for disease in cellline.donor.diseases.all %}
+    {% include 'catalog/__cellline_data_disease__.html' %}
+    {% if not forloop.last %}<hr>{% endif %}
+    {% endfor %}
+  {% else %}
+  No
+  {% endif %}
+  {% if cellline.donor.diseases.all|length >= 2 %}
+  {% if cellline.disease_associated_phenotypes|length or cellline.non_disease_associated_phenotypes|length or cellline.family_history or cellline.medical_history or cellline.clinical_information %}
+  <hr>
+  {% endif %}
+  {% endif %}
+  </td>
 </tr>
-{% endif %}
-
-{% if cellline.disease_associated_phenotypes|length or cellline.non_disease_associated_phenotypes|length or cellline.family_history or cellline.medical_history or cellline.clinical_information %}
-<tr class="separator"><td></td><td><hr></td></tr>
-{% endif %}
 
 {% if cellline.disease_associated_phenotypes|length %}
 <tr><td class="label">Disease associated phenotypes:</td><td>{{ cellline.disease_associated_phenotypes|join:", " }}</td></tr>
@@ -37,12 +40,17 @@
 {% endif %}
 
 {% if cellline.diseases.all %}
-<tr class="separator"><td colspan=2><hr></td></tr>
+<tr class="separator"><td colspan=2>&nbsp;</td></tr>
 <tr>
   <td colspan=2><b>Disease/phenotype related modifications</b></td>
 </tr>
-{% for disease in cellline.diseases.all %}
-{% include 'catalog/__cellline_data_disease__.html' %}
-{% if not forloop.last %}<tr class="separator"><td></td><td><hr></td></tr>{% endif %}
-{% endfor %}
+<tr>
+  <td class="label">Disease:</td>
+  <td>
+  {% for disease in cellline.diseases.all %}
+  {% include 'catalog/__cellline_data_disease__.html' %}
+  {% if not forloop.last %}<hr>{% endif %}
+  {% endfor %}
+  </td>
+</tr>
 {% endif %}
