@@ -1,0 +1,40 @@
+version: '2'
+
+services:
+  postgres:
+    container_name: ims-postgres
+    image: centos/postgresql-95-centos7
+    environment:
+      - POSTGRESQL_USER=ebisc
+      - POSTGRESQL_PASSWORD=ebisc
+      - POSTGRESQL_DATABASE=ebisc
+      - POSTGRESQL_ADMIN_PASSWORD=ebisc
+  nginx:
+    container_name: ims-nginx
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx
+    volumes:
+      - staticvolume:/var/static
+      - mediavolume:/var/media
+    depends_on:
+      - uwsgi
+    ports:
+      - "8080:8080"
+  uwsgi:
+    container_name: ims-uwsgi
+    build:
+      context: .
+      dockerfile: Dockerfile-uwsgi
+    volumes:
+      - staticvolume:/app/var/static
+      - mediavolume:/app/var/media
+    depends_on:
+      - postgres
+    ports:
+      - "9191:9191"
+volumes:
+  staticvolume:
+    driver: local
+  mediavolume:
+    driver: local

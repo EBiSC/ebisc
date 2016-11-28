@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -e
+
+python /app/manage.py collectstatic --noinput
+exec uwsgi /etc/uwsgi.ini

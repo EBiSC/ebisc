@@ -4,12 +4,12 @@ import os
 DEBUG = False
 TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = ['cells.ebisc.org', 'cell.ebisc.org', 'catalog.ebisc.org', 'catalogue.ebisc.org', 'ebisc.douglasconnect.com', '193.62.54.96']
+ALLOWED_HOSTS = ['cells.ebisc.org', 'cell.ebisc.org', 'catalog.ebisc.org', 'catalogue.ebisc.org', 'ebisc.douglasconnect.com', '193.62.54.96', '127.0.0.1']
 
 SERVER_EMAIL = 'EBiSC <www@douglasconnect.com>'
 
 BIOSAMPLES_ADMINS = ADMINS + (
-    ('Biosamples', 'biosamples@ebi.ac.uk'),
+#    ('Biosamples', 'biosamples@ebi.ac.uk'),
 )
 
 # -----------------------------------------------------------------------------

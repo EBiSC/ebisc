@@ -17,8 +17,9 @@ SECRET_KEY = '@!7ju$b1*1c5!dihak)cw3ao1ema&2quw3s*9l#&8^v8ob%gw1'
 # Admins
 
 ADMINS = (
-    ('Joh Dokler', 'joh@douglasconnect.com'),
-    ('Maja Brajnik', 'maja@douglasconnect.com'),
+    ('Ian Streeter', 'streeter@ebi.ac.uk'),
+#    ('Joh Dokler', 'joh@douglasconnect.com'),
+#    ('Maja Brajnik', 'maja@douglasconnect.com'),
 )
 
 # -----------------------------------------------------------------------------

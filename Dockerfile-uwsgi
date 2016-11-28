@@ -1,0 +1,18 @@
+FROM python:2.7
+
+COPY ./requirements.txt /app/requirements.txt
+RUN pip install -r /app/requirements.txt
+
+COPY ./ebisc /app/ebisc
+COPY ./manage.py /app/
+COPY ./etc/run-uwsgi /usr/local/bin/
+ARG ROLE=production
+RUN ln -s /app/ebisc/settings/${ROLE}.py /app/ebisc/settings/__init__.py \
+  && mkdir -p /app/var/media /app/var/static \
+  && chown -R 1001 /app \
+  && chmod 775 /usr/local/bin/run-uwsgi
+
+COPY etc/conf/uwsgi.ini /etc/uwsgi.ini
+EXPOSE 3031 9191
+USER 1001
+CMD ["run-uwsgi"]
