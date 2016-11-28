@@ -264,10 +264,8 @@ class Cellline(DirtyFieldsMixin, models.Model):
         - Biosamples ID
         '''
 
-        if self.primary_disease and self.primary_disease_diagnosis != '0':
-            disease = self.primary_disease.disease
-        elif self.primary_disease_diagnosis == '0':
-            disease = 'normal'
+        if self.primary_disease:
+            disease = self.primary_disease.disease.name
         else:
             disease = None
 
@@ -275,8 +273,8 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'biosamples_id': self.biosamples_id,
             'name': self.name,
             'primary_disease': disease,
-            'primary_disease_synonyms': [s.strip() for s in self.primary_disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.synonyms else None,
-            'primary_disease_stage': self.primary_disease_stage if self.primary_disease_stage else None,
+            'primary_disease_synonyms': [s.strip() for s in self.primary_disease.disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.synonyms else None,
+            'primary_disease_stage': self.primary_disease.stage if self.primary_disease.stage else None,
             'disease_associated_phenotypes': self.disease_associated_phenotypes if self.disease_associated_phenotypes else None,
             'non_disease_associated_phenotypes': self.non_disease_associated_phenotypes if self.non_disease_associated_phenotypes else None,
             'depositor': self.generator.name,
