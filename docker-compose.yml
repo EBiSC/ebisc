@@ -35,6 +35,7 @@ services:
       - DB_USER=ebisc
       - DB_PASS=ebisc
       - DB_HOST=ims-postgres
+      - DB_NAME=ebisc
       - ES_HOST=ims-elasticsearch
     cap_drop:
       - ALL
