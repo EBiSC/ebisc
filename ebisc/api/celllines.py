@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, DonorDisease, Disease, Cellline, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
+from ..celllines.models import Donor, DonorDisease, Disease, Cellline, CelllineDisease, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
 
 
 # -----------------------------------------------------------------------------
@@ -273,6 +273,28 @@ class DiseaseResource(ModelResource):
 
 
 # -----------------------------------------------------------------------------
+# Cell line Disease
+
+class CelllineDiseaseResource(ModelResource):
+
+    disease = fields.ToOneField(DiseaseResource, 'disease', null=True, full=True)
+    free_text_name = fields.CharField('disease_not_normalised', null=True)
+
+    primary_disease = fields.BooleanField('primary_disease', null=True, default=False)
+
+    disease_stage = fields.CharField('disease_stage', null=True)
+    affected_status = fields.CharField('affected_status', null=True)
+    carrier = fields.CharField('carrier', null=True)
+
+    notes = fields.CharField('notes', null=True)
+
+    class Meta:
+        queryset = CelllineDisease.objects.all()
+        include_resource_uri = False
+        fields = ('other', 'free_text', 'primary_disease', 'disease_stage', 'affected_status', 'carrier')
+
+
+# -----------------------------------------------------------------------------
 # Donor Disease
 
 class DonorDiseaseResource(ModelResource):
@@ -483,6 +505,9 @@ class CelllineResource(ModelResource):
     primary_disease = fields.DictField(null=True)
     disease_associated_phenotypes = fields.ListField('disease_associated_phenotypes', null=True)
     non_disease_associated_phenotypes = fields.ListField('non_disease_associated_phenotypes', null=True)
+
+    # Cell line diseases for genetical modified lines
+    diseases = fields.ToManyField(CelllineDiseaseResource, 'diseases', null=True, full=True)
 
     # Donor
     donor_age = fields.CharField('donor_age', null=True)
