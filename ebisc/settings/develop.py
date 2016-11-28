@@ -18,7 +18,7 @@ DATABASES = {
 }
 
 ELASTIC_INDEX = 'ebisc'
-ELASTIC_HOSTS = [{'host': 'localhost', 'port': 9200}]
+ELASTIC_HOSTS = [{'host': os.getenv('ES_HOST', 'localhost'), 'port': 9200}]
 
 # -----------------------------------------------------------------------------
 # Middleware class for API debugging

@@ -8,6 +8,11 @@ ALLOWED_HOSTS = ['cells.ebisc.org', 'cell.ebisc.org', 'catalog.ebisc.org', 'cata
 
 SERVER_EMAIL = 'EBiSC <www@douglasconnect.com>'
 
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_API_KEY')
+
 BIOSAMPLES_ADMINS = ADMINS + (
 #    ('Biosamples', 'biosamples@ebi.ac.uk'),
 )
@@ -20,8 +25,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'ebisc',
         'USER': os.getenv('DB_USER', 'www'),
-        'PASSWORD': os.getenv('DB_PASS', None),
-        'HOST': os.getenv('DB_HOST', None),
+        'PASSWORD': os.getenv('DB_PASS'),
+        'HOST': os.getenv('DB_HOST'),
     }
 }
 

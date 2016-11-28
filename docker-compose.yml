@@ -26,6 +26,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-uwsgi
+      args:
+        - ROLE=develop
     volumes:
       - staticvolume:/app/var/static
       - mediavolume:/app/var/media
@@ -33,6 +35,11 @@ services:
       - postgres
     ports:
       - "9191:9191"
+    environment:
+      - DB_USER=ebisc
+      - DB_PASS=ebisc
+      - DB_HOST=ims-postgres
+      - ES_HOST=ims-elasticsearch
 volumes:
   staticvolume:
     driver: local
