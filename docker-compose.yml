@@ -17,8 +17,8 @@ services:
       context: .
       dockerfile: Dockerfile-nginx
     volumes:
-      - staticvolume:/var/static
-      - mediavolume:/var/media
+      - $PWD/var/static:/var/static
+      - $PWD/var/media:/var/media
     depends_on:
       - uwsgi
     ports:
@@ -39,8 +39,8 @@ services:
     cap_drop:
       - ALL
     volumes:
-      - staticvolume:/app/var/static
-      - mediavolume:/app/var/media
+      - $PWD/var/static:/app/var/static
+      - $PWD/var/media:/app/var/media
   uwsgi:
     extends:
       service: django
@@ -64,8 +64,19 @@ services:
   elasticsearch:
     container_name: ims-elasticsearch
     image: elasticsearch:1.6.2
-volumes:
-  staticvolume:
-    driver: local
-  mediavolume:
-    driver: local
+
+  db_dump:
+    extends: postgres
+    environment:
+      - PGPASSWORD=ebisc
+    volumes:
+      - $PWD:/tmp
+    command: "sh -c 'pg_dump -h ims-postgres -U ebisc -d ebisc | gzip -c > /tmp/db.gz'"
+
+  db_import:
+    extends: postgres
+    environment:
+      - PGPASSWORD=ebisc
+    volumes:
+      - $PWD:/tmp
+    command: "sh -c 'gunzip -c /tmp/db.gz | psql -h ims-postgres -U ebisc -d ebisc -f -'"
