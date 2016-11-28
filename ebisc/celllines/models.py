@@ -191,6 +191,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
     owner = models.ForeignKey('Organization', verbose_name=_(u'Owner'), null=True, blank=True, related_name='owner_of_cell_lines')
     derivation_country = models.ForeignKey('Country', verbose_name=_(u'Derivation country'), null=True, blank=True)
 
+    has_diseases = models.NullBooleanField(_(u'Has diseases'))
     disease_associated_phenotypes = ArrayField(models.CharField(max_length=500), verbose_name=_(u'Disease associated phenotypes'), null=True, blank=True)
     non_disease_associated_phenotypes = ArrayField(models.CharField(max_length=700), verbose_name=_(u'Non-disease associated phenotypes'), null=True, blank=True)
     family_history = models.CharField(_(u'Family history'), max_length=500, null=True, blank=True)
@@ -218,6 +219,32 @@ class Cellline(DirtyFieldsMixin, models.Model):
     @property
     def ecacc_url(self):
         return 'http://www.phe-culturecollections.org.uk/products/celllines/ipsc/detail.jsp?refId=%s&collection=ecacc_ipsc' % self.ecacc_id
+
+    @property
+    def primary_disease(self):
+        diseases = []
+
+        # Check if any donor/cell line diseases are primary
+        for disease in self.donor.diseases.all():
+            if disease.primary_disease is True:
+                return disease
+            else:
+                diseases.append(disease)
+
+        for disease in self.diseases.all():
+            if disease.primary_disease is True:
+                return disease
+            else:
+                diseases.append(disease)
+
+        # If not, return the first one that is not 'normal' on the list
+        if diseases == []:
+            return None
+        else:
+            for ds in diseases:
+                if ds.disease and ds.disease.xpurl != 'http://purl.obolibrary.org/obo/PATO_0000461':
+                    return ds
+            return diseases[0]
 
     def to_elastic(self):
 
@@ -292,9 +319,6 @@ class Cellline(DirtyFieldsMixin, models.Model):
 
         else:
             return None
-
-    def has_diagnosed_diseases(self):
-        return self.diseases.count() > 0
 
 
 class CelllineStatus(models.Model):

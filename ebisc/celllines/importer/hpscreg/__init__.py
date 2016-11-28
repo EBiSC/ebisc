@@ -92,6 +92,7 @@ def import_cellline(source):
     cell_line.generator = generator
     cell_line.owner = owner
     cell_line.derivation_country = parser.term_list_value_of_json(source, 'derivation_country', Country)
+    cell_line.has_diseases = valuef('disease_flag', 'nullbool')
     cell_line.disease_associated_phenotypes = valuef('disease_associated_phenotypes')
     cell_line.non_disease_associated_phenotypes = valuef('donor_phenotypes')
     cell_line.family_history = valuef('family_history')
