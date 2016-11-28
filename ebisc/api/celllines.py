@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
+from ..celllines.models import Donor, DonorDisease, Disease, Cellline, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
 
 
 # -----------------------------------------------------------------------------
@@ -260,7 +260,7 @@ class CelllinePublicationResource(ModelResource):
 class DiseaseResource(ModelResource):
 
     purl = fields.CharField('xpurl', null=True)
-    name = fields.CharField('disease', null=True)
+    name = fields.CharField('name', null=True)
     synonyms = fields.ListField('synonyms', null=True)
 
     class Meta:
@@ -270,6 +270,28 @@ class DiseaseResource(ModelResource):
 
     def dehydrate_synonyms(self, bundle):
         return value_list_of_string(bundle.obj.synonyms)
+
+
+# -----------------------------------------------------------------------------
+# Donor Disease
+
+class DonorDiseaseResource(ModelResource):
+
+    disease = fields.ToOneField(DiseaseResource, 'disease', null=True, full=True)
+    free_text_name = fields.CharField('disease_not_normalised', null=True)
+
+    primary_disease = fields.BooleanField('primary_disease', null=True, default=False)
+
+    disease_stage = fields.CharField('disease_stage', null=True)
+    affected_status = fields.CharField('affected_status', null=True)
+    carrier = fields.CharField('carrier', null=True)
+
+    notes = fields.CharField('notes', null=True)
+
+    class Meta:
+        queryset = DonorDisease.objects.all()
+        include_resource_uri = False
+        fields = ('other', 'free_text', 'primary_disease', 'disease_stage', 'affected_status', 'carrier')
 
 
 # -----------------------------------------------------------------------------
@@ -283,6 +305,9 @@ class DonorResource(ModelResource):
     country_of_origin = fields.CharField('country_of_origin', null=True)
     ethnicity = fields.CharField('ethnicity', null=True)
     karyotype = fields.CharField('karyotype', null=True)
+
+    # Diseases
+    diseases = fields.ToManyField(DonorDiseaseResource, 'diseases', null=True, full=True)
 
     class Meta:
         queryset = Donor.objects.all()
