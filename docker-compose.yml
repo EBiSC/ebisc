@@ -9,6 +9,8 @@ services:
       - POSTGRESQL_PASSWORD=ebisc
       - POSTGRESQL_DATABASE=ebisc
       - POSTGRESQL_ADMIN_PASSWORD=ebisc
+    cap_drop:
+      - ALL
   nginx:
     container_name: ims-nginx
     build:
@@ -21,25 +23,47 @@ services:
       - uwsgi
     ports:
       - "8080:8080"
-  uwsgi:
-    container_name: ims-uwsgi
+    cap_drop:
+      - ALL
+  django:
     build:
       context: .
       dockerfile: Dockerfile-uwsgi
       args:
         - ROLE=develop
-    volumes:
-      - staticvolume:/app/var/static
-      - mediavolume:/app/var/media
-    depends_on:
-      - postgres
-    ports:
-      - "9191:9191"
     environment:
       - DB_USER=ebisc
       - DB_PASS=ebisc
       - DB_HOST=ims-postgres
       - ES_HOST=ims-elasticsearch
+    cap_drop:
+      - ALL
+    volumes:
+      - staticvolume:/app/var/static
+      - mediavolume:/app/var/media
+  uwsgi:
+    extends:
+      service: django
+    container_name: ims-uwsgi
+    ports:
+      - "9191:9191"
+    command: ["run-uwsgi"]
+    read_only: true
+    depends_on:
+      - postgres
+      - elasticsearch
+  deploy:
+    extends:
+      service: django
+    command: ["run-deploy"]
+  update:
+    extends:
+      service: django
+    read_only: true
+    command: ["run-ims-update"]
+  elasticsearch:
+    container_name: ims-elasticsearch
+    image: elasticsearch:1.6.2
 volumes:
   staticvolume:
     driver: local
