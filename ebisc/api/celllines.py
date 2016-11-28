@@ -259,15 +259,14 @@ class CelllinePublicationResource(ModelResource):
 
 class DiseaseResource(ModelResource):
 
-    doid = fields.CharField('icdcode', null=True)
-    purl = fields.CharField('purl', null=True)
+    purl = fields.CharField('xpurl', null=True)
     name = fields.CharField('disease', null=True)
     synonyms = fields.ListField('synonyms', null=True)
 
     class Meta:
         queryset = Disease.objects.all()
         include_resource_uri = False
-        fields = ('doid', 'name', 'synonyms')
+        fields = ('purl', 'name', 'synonyms')
 
     def dehydrate_synonyms(self, bundle):
         return value_list_of_string(bundle.obj.synonyms)
@@ -281,12 +280,14 @@ class DonorResource(ModelResource):
     biosamples_id = fields.CharField('biosamples_id', null=True)
     gender = fields.CharField('gender', null=True)
     internal_donor_ids = fields.ListField('provider_donor_ids', null=True)
+    country_of_origin = fields.CharField('country_of_origin', null=True)
+    ethnicity = fields.CharField('ethnicity', null=True)
     karyotype = fields.CharField('karyotype', null=True)
 
     class Meta:
         queryset = Donor.objects.all()
         include_resource_uri = False
-        fields = ('biosamples_id', 'gender', 'internal_donor_ids', 'karyotype')
+        fields = ('biosamples_id', 'gender', 'internal_donor_ids', 'country_of_origin', 'ethnicity', 'karyotype')
 
 
 # -----------------------------------------------------------------------------
@@ -452,12 +453,13 @@ class CelllineResource(ModelResource):
     # Status
     status_log = fields.ToManyField(CelllineStatusResource, 'statuses', null=True, full=True)
 
-    # Donor and disease
-    primary_disease_diagnosed = fields.CharField('primary_disease_diagnosis', null=True)
-    primary_disease = fields.ToOneField(DiseaseResource, 'primary_disease', null=True, full=True)
+    # Disease
+    primary_disease_diagnosed = fields.CharField('has_diseases', null=True)
+    primary_disease = fields.DictField(null=True)
     disease_associated_phenotypes = fields.ListField('disease_associated_phenotypes', null=True)
     non_disease_associated_phenotypes = fields.ListField('non_disease_associated_phenotypes', null=True)
 
+    # Donor
     donor_age = fields.CharField('donor_age', null=True)
     donor = fields.ToOneField(DonorResource, 'donor', null=True, full=True)
 
@@ -504,12 +506,13 @@ class CelllineResource(ModelResource):
             'karyotype',
             'genotyping_variant',
             'generator',
-            'primary_disease',
             'celllinecultureconditions__culture_medium_other',
             'integrating_vector__virus',
             'vector_free_reprogramming_factors',
 
         ).prefetch_related(
+            'diseases',
+            'donor__diseases',
             'clips',
             'batches__batchcultureconditions',
             'batches__images',
@@ -612,14 +615,31 @@ class CelllineResource(ModelResource):
         else:
             return None
 
-    def dehydrate(self, bundle):
-        if not bundle.obj.primary_disease and bundle.obj.primary_disease_diagnosis == '0':
-            bundle.data['primary_disease'] = {
-                'name': 'Normal'
-            }
-            return bundle
+    def dehydrate_primary_disease(self, bundle):
+        if bundle.obj.primary_disease is not None:
+            if bundle.obj.primary_disease.disease:
+                synonyms = [s.strip() for s in bundle.obj.primary_disease.disease.synonyms.split(',')]
+                if bundle.obj.primary_disease.disease.name == 'normal':
+                    name = 'Normal'
+                else:
+                    name = bundle.obj.primary_disease.disease.name
+                return {
+                    'purl': bundle.obj.primary_disease.disease.xpurl,
+                    'name': name,
+                    'synonyms': synonyms,
+                }
+            elif bundle.obj.primary_disease.disease_not_normalised:
+                return {
+                    'name': bundle.obj.primary_disease.disease_not_normalised,
+                }
+            elif bundle.obj.primary_disease.notes:
+                return {
+                    'name': bundle.obj.primary_disease.notes,
+                }
+            else:
+                return None
         else:
-            return bundle
+            return None
 
 
 # -----------------------------------------------------------------------------
