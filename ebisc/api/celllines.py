@@ -277,21 +277,30 @@ class DiseaseResource(ModelResource):
 
 class CelllineDiseaseResource(ModelResource):
 
-    disease = fields.ToOneField(DiseaseResource, 'disease', null=True, full=True)
-    free_text_name = fields.CharField('disease_not_normalised', null=True)
-
     primary_disease = fields.BooleanField('primary_disease', null=True, default=False)
+
+    free_text_name = fields.CharField('disease_not_normalised', null=True)
+    notes = fields.CharField('notes', null=True)
 
     disease_stage = fields.CharField('disease_stage', null=True)
     affected_status = fields.CharField('affected_status', null=True)
     carrier = fields.CharField('carrier', null=True)
 
-    notes = fields.CharField('notes', null=True)
-
     class Meta:
         queryset = CelllineDisease.objects.all()
         include_resource_uri = False
         fields = ('other', 'free_text', 'primary_disease', 'disease_stage', 'affected_status', 'carrier')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.disease:
+            bundle.data.update({
+                'name': bundle.obj.disease.name,
+                'purl': bundle.obj.disease.xpurl,
+                'synonyms': value_list_of_string(bundle.obj.disease.synonyms)
+            })
+
+        return bundle
 
 
 # -----------------------------------------------------------------------------
@@ -299,21 +308,30 @@ class CelllineDiseaseResource(ModelResource):
 
 class DonorDiseaseResource(ModelResource):
 
-    disease = fields.ToOneField(DiseaseResource, 'disease', null=True, full=True)
-    free_text_name = fields.CharField('disease_not_normalised', null=True)
-
     primary_disease = fields.BooleanField('primary_disease', null=True, default=False)
+
+    free_text_name = fields.CharField('disease_not_normalised', null=True)
+    notes = fields.CharField('notes', null=True)
 
     disease_stage = fields.CharField('disease_stage', null=True)
     affected_status = fields.CharField('affected_status', null=True)
     carrier = fields.CharField('carrier', null=True)
 
-    notes = fields.CharField('notes', null=True)
-
     class Meta:
         queryset = DonorDisease.objects.all()
         include_resource_uri = False
         fields = ('other', 'free_text', 'primary_disease', 'disease_stage', 'affected_status', 'carrier')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.disease:
+            bundle.data.update({
+                'name': bundle.obj.disease.name,
+                'purl': bundle.obj.disease.xpurl,
+                'synonyms': value_list_of_string(bundle.obj.disease.synonyms)
+            })
+
+        return bundle
 
 
 # -----------------------------------------------------------------------------
@@ -332,7 +350,13 @@ class DonorResource(ModelResource):
     diseases = fields.ToManyField(DonorDiseaseResource, 'diseases', null=True, full=True)
 
     class Meta:
-        queryset = Donor.objects.all()
+        queryset = Donor.objects.all().select_related(
+            'gender',
+            'diseases',
+        ).prefetch_related(
+            'diseases__disease',
+        )
+
         include_resource_uri = False
         fields = ('biosamples_id', 'gender', 'internal_donor_ids', 'country_of_origin', 'ethnicity', 'karyotype')
 
@@ -691,6 +715,11 @@ class CelllineResource(ModelResource):
         else:
             return None
 
+    def dehydrate_primary_disease_diagnosed(self, bundle):
+        if bundle.obj.has_diseases is True:
+            return "1"
+        else:
+            return "0"
 
 # -----------------------------------------------------------------------------
 # Helpers
