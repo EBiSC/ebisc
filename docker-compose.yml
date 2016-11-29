@@ -5,7 +5,7 @@ services:
     container_name: ims-postgres
     image: centos/postgresql-95-centos7
     environment:
-      - POSTGRESQL_USER=ebisc
+      - POSTGRESQL_USER=www
       - POSTGRESQL_PASSWORD=ebisc
       - POSTGRESQL_DATABASE=ebisc
       - POSTGRESQL_ADMIN_PASSWORD=ebisc
@@ -32,7 +32,7 @@ services:
       args:
         - ROLE=develop
     environment:
-      - DB_USER=ebisc
+      - DB_USER=www
       - DB_PASS=ebisc
       - DB_HOST=ims-postgres
       - DB_NAME=ebisc
@@ -71,10 +71,10 @@ services:
     environment:
       - PGPASSWORD=ebisc
       - PGHOST=ims-postgres
-      - PGUSER=ebisc
+      - PGUSER=www
     volumes:
       - $PWD:/tmp
-    command: "sh -c 'pg_dump -d ebisc | gzip -c > /tmp/db.gz'"
+    command: "sh -c 'pg_dump -d ebisc | gzip -c > /tmp/ebisc.sql.gz'"
 
   db_import:
     extends: postgres
@@ -84,4 +84,4 @@ services:
       - PGUSER=postgres
     volumes:
       - $PWD:/tmp
-    command: "sh -c 'dropdb ebisc; createdb ebisc && gunzip -c /tmp/db.gz | psql -d ebisc -f -'"
+    command: "sh -c 'dropdb ebisc; createdb ebisc && gunzip -c /tmp/ebisc.sql.gz | psql -d ebisc -f -'"
