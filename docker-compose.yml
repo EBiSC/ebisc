@@ -70,14 +70,18 @@ services:
     extends: postgres
     environment:
       - PGPASSWORD=ebisc
+      - PGHOST=ims-postgres
+      - PGUSER=ebisc
     volumes:
       - $PWD:/tmp
-    command: "sh -c 'pg_dump -h ims-postgres -U ebisc -d ebisc | gzip -c > /tmp/db.gz'"
+    command: "sh -c 'pg_dump -d ebisc | gzip -c > /tmp/db.gz'"
 
   db_import:
     extends: postgres
     environment:
       - PGPASSWORD=ebisc
+      - PGHOST=ims-postgres
+      - PGUSER=postgres
     volumes:
       - $PWD:/tmp
-    command: "sh -c 'gunzip -c /tmp/db.gz | psql -h ims-postgres -U ebisc -d ebisc -f -'"
+    command: "sh -c 'dropdb ebisc; createdb ebisc && gunzip -c /tmp/db.gz | psql -d ebisc -f -'"
