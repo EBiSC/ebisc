@@ -37,6 +37,12 @@ services:
       - DB_HOST=ims-postgres
       - DB_NAME=ebisc
       - ES_HOST=ims-elasticsearch
+      - SECRET_KEY=@!7ju$b1*1c5!dihak)cw3ao1ema&2quw3s*9l#&8^v8ob%gw1
+      - HPSCREG_PASSWORD=cWNJnc6p
+      - HPSCREG_USER=ebiscims
+      - LIMS_PASSWORD=ebisc321
+      - LIMS_USER=ebisc
+      - BIOSAMPLE_KEY=WNTGPBNW0NGC3876
     cap_drop:
       - ALL
     volumes:
