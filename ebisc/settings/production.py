@@ -38,7 +38,7 @@ ELASTIC_HOSTS = [{'host': os.getenv('ES_HOST', 'localhost'), 'port': 9200}]
 
 BIOSAMPLES = {
     'url': 'http://www.ebi.ac.uk/biosamples',
-    'key': SECRET_KEY = os.getenv('BIOSAMPLES_KEY'),
+    'key': os.getenv('BIOSAMPLES_KEY'),
 }
 
 # -----------------------------------------------------------------------------
