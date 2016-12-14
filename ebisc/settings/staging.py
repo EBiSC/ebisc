@@ -4,7 +4,7 @@ import os
 DEBUG = False
 TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = ['cells-stage.ebisc.org']
+ALLOWED_HOSTS = ['cells-stage.ebisc.org', '193.62.54.96']
 
 SERVER_EMAIL = 'EBiSC Staging <www@douglasconnect.com>'
 
