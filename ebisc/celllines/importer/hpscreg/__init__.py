@@ -11,7 +11,7 @@ from django.conf import settings
 import logging
 logger = logging.getLogger('management.commands')
 
-from ebisc.celllines.models import Cellline, CelllineStatus, Country, CelllineNonIntegratingVector, CelllineIntegratingVector
+from ebisc.celllines.models import Cellline, CelllineStatus, Country
 
 from . import parser
 
@@ -19,7 +19,7 @@ from . import parser
 # -----------------------------------------------------------------------------
 #  Run
 
-def run():
+def run(cellline=None):
 
     cellline_ids = request_get(settings.HPSCREG['list_url'])
 
@@ -30,10 +30,11 @@ def run():
     # json = request_get('http://test.hescreg.eu/api/export/2')
     # import_cellline(json)
 
-    # for cellline_id in [id for id in cellline_ids if id == 'BIONi010-C-2']:
     for cellline_id in [id for id in cellline_ids]:
-        if cellline_id == 'BCRTi005-A' or cellline_id == 'BCRTi004-A':
-            pass
+        if cellline is not None and cellline_id != cellline:
+            continue
+        elif cellline_id == 'BCRTi005-A' or cellline_id == 'BCRTi004-A':
+            continue
         else:
             logger.info('Importing data for cell line %s' % cellline_id)
             json = request_get(settings.HPSCREG['cellline_url'] + cellline_id)
@@ -121,31 +122,8 @@ def import_cellline(source):
     #         logger.info('Added organization %s as %s' % (organization, organization_role))
     #
 
-    # Vector
-
-    if valuef('vector_type') == 'Integrating':
-        try:
-            v = CelllineNonIntegratingVector.objects.get(cell_line=cell_line)
-            v.delete()
-            dirty += [True]
-
-        except CelllineNonIntegratingVector.DoesNotExist:
-            pass
-
-        dirty += [parser.parse_integrating_vector(source, cell_line)]
-
-    if valuef('vector_type') == 'Non-integrating':
-        try:
-            v = CelllineIntegratingVector.objects.get(cell_line=cell_line)
-            v.delete()
-            dirty += [True]
-
-        except CelllineIntegratingVector.DoesNotExist:
-            pass
-
-        dirty += [parser.parse_non_integrating_vector(source, cell_line)]
-
     dirty += [
+        parser.parse_reprogramming_vector(source, cell_line),
         parser.parse_ethics(source, cell_line),
         parser.parse_derivation(source, cell_line),
         parser.parse_vector_free_reprogramming_factors(source, cell_line),

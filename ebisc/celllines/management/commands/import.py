@@ -10,7 +10,7 @@ logger = logging.getLogger('management.commands')
 DOCS = '''
 Usage:
     import all
-    import hpscreg [--init]
+    import hpscreg [--cellline=<name>]
     import lims
     import batches <filename>
     import toelastic
@@ -30,9 +30,7 @@ class Command(DocOptCommand):
             importer.toelastic.run()
 
         if args.get('hpscreg'):
-            if args.get('--init'):
-                self.init()
-            importer.hpscreg.run()
+            importer.hpscreg.run(cellline=args.get('--cellline'))
 
         if args.get('lims'):
             logger.info('Synchronizing batch data with LIMS')
@@ -44,8 +42,3 @@ class Command(DocOptCommand):
         if args.get('batches'):
             logger.info('Importing batches from BioSamples')
             importer.batches.run(args.get('<filename>'))
-
-    def init(self):
-        logger.info('Initializing database')
-        for model in [Disease, CellType, CelllineOrgType, Organization, Cellline, Donor, NonIntegratingVector]:
-            model.objects.all().delete()
