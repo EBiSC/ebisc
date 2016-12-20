@@ -6,20 +6,24 @@ config = {
             label: 'Name'
         }
         {
-            name: 'primary_disease'
-            label: 'Disease'
+            name: 'donor_disease'
+            label: 'Donor disease status'
         }
         {
-            name: 'primary_cell_type'
-            label: 'Primary cell type'
+            name: 'genetic_modification_disease'
+            label: 'Genetic modification'
         }
         {
             name: 'donor_sex'
             label: 'Donor sex'
         }
         {
-            name: 'depositor'
-            label: 'Depositor'
+            name: 'donor_age'
+            label: 'Donor age'
+        }
+        {
+            name: 'primary_cell_type'
+            label: 'Primary cell type'
         }
     ]
 
@@ -29,12 +33,14 @@ config = {
         'alternative_names.analyzed'
         'depositor.analyzed'
         'primary_cell_type.analyzed'
-        'primary_disease.analyzed'
+        'donor_disease.analyzed'
+        'genetic_modification_disease.analyzed'
         'primary_disease_synonyms'
         'primary_disease_stage.analyzed'
         'disease_associated_phenotypes.analyzed'
         'non_disease_associated_phenotypes.analyzed'
         'donor_sex.analyzed'
+        'donor_age.analyzed'
     ]
 
     facets: [
@@ -54,8 +60,8 @@ config = {
             selectedTerms: {}
         }
         {
-            name: 'depositor'
-            label: 'Depositor'
+            name: 'donor_age'
+            label: 'Donor age'
             selectedTerms: {}
         }
     ]

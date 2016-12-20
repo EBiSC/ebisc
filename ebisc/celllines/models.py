@@ -246,12 +246,37 @@ class Cellline(DirtyFieldsMixin, models.Model):
                     return ds
             return diseases[0]
 
+    @property
+    def donor_diseases(self):
+
+        donor_diseases = []
+
+        if self.donor.diseases.all():
+            for disease in self.donor.diseases.all():
+                if disease.disease:
+                    donor_diseases.append(disease.disease.name)
+
+        return donor_diseases
+
+    @property
+    def cellline_diseases(self):
+
+        cellline_diseases = []
+
+        if self.diseases.all():
+            for disease in self.diseases.all():
+                if disease.disease:
+                    cellline_diseases.append(disease.disease.name)
+
+        return cellline_diseases
+
     def to_elastic(self):
 
         '''
         Facets
         - Disease
         - Donor sex
+        - Donor age
         - Primary cell type
         - Depositor
 
@@ -264,23 +289,22 @@ class Cellline(DirtyFieldsMixin, models.Model):
         - Biosamples ID
         '''
 
-        if self.primary_disease:
-            disease = self.primary_disease.disease.name
-        else:
-            disease = None
-
         return {
             'biosamples_id': self.biosamples_id,
             'name': self.name,
-            'primary_disease': disease,
-            'primary_disease_synonyms': [s.strip() for s in self.primary_disease.disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.synonyms else None,
-            'primary_disease_stage': self.primary_disease.stage if self.primary_disease.stage else None,
+            'primary_disease': self.primary_disease.disease.name if self.primary_disease.disease else None,
+            'donor_disease': self.donor_diseases if self.donor_diseases else None,
+            'genetic_modification_disease': self.cellline_diseases if self.cellline_diseases else _(u'/'),
+            # 'all_diseases': self.donor_diseases + self.cellline_diseases,
+            'primary_disease_synonyms': [s.strip() for s in self.primary_disease.disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.disease.synonyms else None,
+            'primary_disease_stage': self.primary_disease.disease_stage if self.primary_disease.disease_stage else None,
             'disease_associated_phenotypes': self.disease_associated_phenotypes if self.disease_associated_phenotypes else None,
             'non_disease_associated_phenotypes': self.non_disease_associated_phenotypes if self.non_disease_associated_phenotypes else None,
             'depositor': self.generator.name,
             'primary_cell_type': self.derivation.primary_cell_type.name if self.derivation.primary_cell_type else None,
             'alternative_names': self.alternative_names,
             'donor_sex': self.donor.gender.name if self.donor and self.donor.gender else _(u'Not known'),
+            'donor_age': self.donor_age.name if self.donor_age else None,
         }
 
     def get_latest_batch(self):
