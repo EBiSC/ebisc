@@ -18,8 +18,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 ADMINS = (
     ('Ian Streeter', 'streeter@ebi.ac.uk'),
-#    ('Joh Dokler', 'joh@douglasconnect.com'),
-#    ('Maja Brajnik', 'maja@douglasconnect.com'),
+    ('Joh Dokler', 'joh@douglasconnect.com'),
+    ('Maja Brajnik', 'maja@douglasconnect.com'),
 )
 
 # -----------------------------------------------------------------------------
