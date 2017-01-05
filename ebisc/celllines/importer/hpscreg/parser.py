@@ -1323,7 +1323,7 @@ def parse_disease_associated_genotype(valuef, source, cell_line):
 @inject_valuef
 def parse_publications(valuef, source, cell_line):
 
-    if valuef('registration_reference_publication_pubmed_id', 'int'):
+    if valuef('registration_reference_publication_pubmed_id', 'int') and valuef('registration_reference'):
 
         cell_line_publication, created = CelllinePublication.objects.get_or_create(cell_line=cell_line, reference_id=valuef('registration_reference_publication_pubmed_id'))
 
