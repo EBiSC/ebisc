@@ -1,7 +1,7 @@
 FROM nginx:stable
 COPY ./etc/conf/nginx.conf /etc/nginx/nginx.conf
 
-RUN chmod g+w /var/cache/nginx /run
+RUN chmod g+w /var/cache/nginx /run /var/log/nginx
 
 EXPOSE 8080
 
