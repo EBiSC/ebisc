@@ -240,9 +240,6 @@ def parse_cell_line_disease(valuef, source, cell_line):
             disease_not_normalised=valuef('other'),
             defaults={
                 'primary_disease': valuef('primary', 'bool'),
-                'disease_stage': valuef('stage'),
-                'affected_status': valuef('affected'),
-                'carrier': valuef('carrier'),
                 'notes': valuef('free_text'),
             }
         )
