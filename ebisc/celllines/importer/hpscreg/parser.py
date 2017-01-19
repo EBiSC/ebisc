@@ -541,6 +541,31 @@ def parse_ethics(valuef, source, cell_line):
 
 
 @inject_valuef
+def parse_reprogramming_vector(valuef, source, cell_line):
+
+    if valuef('vector_type') == 'Integrating':
+        try:
+            v = CelllineNonIntegratingVector.objects.get(cell_line=cell_line)
+            v.delete()
+            return True
+        except CelllineNonIntegratingVector.DoesNotExist:
+            pass
+        return parse_integrating_vector(source, cell_line)
+
+    elif valuef('vector_type') == 'Non-integrating':
+        try:
+            v = CelllineIntegratingVector.objects.get(cell_line=cell_line)
+            v.delete()
+            return True
+        except CelllineIntegratingVector.DoesNotExist:
+            pass
+        return parse_non_integrating_vector(source, cell_line)
+
+    else:
+        return False
+
+
+@inject_valuef
 def parse_integrating_vector(valuef, source, cell_line):
 
     if valuef('integrating_vector') == 'Other':
@@ -550,6 +575,10 @@ def parse_integrating_vector(valuef, source, cell_line):
             vector_name = u'Other'
     else:
         vector_name = valuef('integrating_vector')
+
+    if vector_name is None:
+        logger.warn('Missing name for integrating reprogramming vector')
+        return False
 
     vector, vector_created = IntegratingVector.objects.get_or_create(name=vector_name)
 
@@ -582,62 +611,6 @@ def parse_integrating_vector(valuef, source, cell_line):
     return False
 
 
-def parse_molecule(molecule_string):
-
-    (catalog_id, name, catalog, kind) = re.split(r'###', molecule_string)
-
-    return get_or_create_molecule(name, kind, catalog, catalog_id)
-
-
-class InvalidMoleculeDataException(Exception):
-    pass
-
-
-def get_or_create_molecule(name, kind, catalog, catalog_id):
-
-    kind_map = {
-        'id_type_gene': 'gene',
-        'id_type_protein': 'protein'
-    }
-
-    catalog_map = {
-        'entrez_id': 'entrez',
-        'ensembl_id': 'ensembl'
-    }
-
-    name = name.strip()
-    name = name if name else None
-
-    if name is None:
-        logger.warn('Missing molecule name')
-        raise InvalidMoleculeDataException
-
-    try:
-        kind = kind_map[kind]
-    except KeyError:
-        logger.warn('Invalid molecule kind: %s' % kind)
-        raise InvalidMoleculeDataException
-
-    if catalog is not None:
-        try:
-            catalog = catalog_map[catalog]
-        except KeyError:
-            logger.warn('Invalid molecule catalog: %s' % catalog)
-            raise InvalidMoleculeDataException
-
-    molecule, created = Molecule.objects.get_or_create(name=name, kind=kind)
-
-    if created:
-        logger.info('Created new molecule: %s' % molecule)
-
-    if catalog and catalog_id:
-        reference, created = MoleculeReference.objects.get_or_create(molecule=molecule, catalog=catalog, catalog_id=catalog_id)
-        if created:
-            logger.info('Created new molecule reference: %s' % reference)
-
-    return molecule
-
-
 @inject_valuef
 def parse_non_integrating_vector(valuef, source, cell_line):
 
@@ -648,6 +621,10 @@ def parse_non_integrating_vector(valuef, source, cell_line):
             vector_name = u'Other'
     else:
         vector_name = valuef('non_integrating_vector')
+
+    if vector_name is None:
+        logger.warn('Missing name for non integrating reprogramming vector')
+        return False
 
     vector, vector_created = NonIntegratingVector.objects.get_or_create(name=vector_name)
 
@@ -713,6 +690,62 @@ def parse_vector_free_reprogramming_factors(valuef, source, cell_line):
                 return None
 
         return False
+
+
+def parse_molecule(molecule_string):
+
+    (catalog_id, name, catalog, kind) = re.split(r'###', molecule_string)
+
+    return get_or_create_molecule(name, kind, catalog, catalog_id)
+
+
+class InvalidMoleculeDataException(Exception):
+    pass
+
+
+def get_or_create_molecule(name, kind, catalog, catalog_id):
+
+    kind_map = {
+        'id_type_gene': 'gene',
+        'id_type_protein': 'protein'
+    }
+
+    catalog_map = {
+        'entrez_id': 'entrez',
+        'ensembl_id': 'ensembl'
+    }
+
+    name = name.strip()
+    name = name if name else None
+
+    if name is None:
+        logger.warn('Missing molecule name')
+        raise InvalidMoleculeDataException
+
+    try:
+        kind = kind_map[kind]
+    except KeyError:
+        logger.warn('Invalid molecule kind: %s' % kind)
+        raise InvalidMoleculeDataException
+
+    if catalog is not None:
+        try:
+            catalog = catalog_map[catalog]
+        except KeyError:
+            logger.warn('Invalid molecule catalog: %s' % catalog)
+            raise InvalidMoleculeDataException
+
+    molecule, created = Molecule.objects.get_or_create(name=name, kind=kind)
+
+    if created:
+        logger.info('Created new molecule: %s' % molecule)
+
+    if catalog and catalog_id:
+        reference, created = MoleculeReference.objects.get_or_create(molecule=molecule, catalog=catalog, catalog_id=catalog_id)
+        if created:
+            logger.info('Created new molecule reference: %s' % reference)
+
+    return molecule
 
 
 @inject_valuef
@@ -1389,7 +1422,7 @@ def parse_disease_associated_genotype(valuef, source, cell_line):
 @inject_valuef
 def parse_publications(valuef, source, cell_line):
 
-    if valuef('registration_reference_publication_pubmed_id', 'int'):
+    if valuef('registration_reference_publication_pubmed_id', 'int') and valuef('registration_reference'):
 
         cell_line_publication, created = CelllinePublication.objects.get_or_create(cell_line=cell_line, reference_id=valuef('registration_reference_publication_pubmed_id'))
 

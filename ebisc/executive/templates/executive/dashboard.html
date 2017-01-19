@@ -142,6 +142,7 @@
               <div class="status-label withdrawn">
               {% endif %}
               {{ cellline.current_status.get_status_display }}</div>
+              {% if perms.auth.can_manage_executive_dashboard %}<a href="{% url 'executive:cellline' cellline.name %}#status" class="status-edit-link"><i class="glyphicon glyphicon-pencil"></i></a>{% endif %}
             </td>
         </tr>
         {% endfor %}
