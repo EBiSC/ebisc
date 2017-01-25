@@ -21,6 +21,7 @@ from ebisc.celllines.models import  \
     Unit,  \
     Donor,  \
     DonorDisease,  \
+    DonorDiseaseVariant, \
     Disease,  \
     CelllineDisease,  \
     CelllineCultureConditions,  \
@@ -264,114 +265,116 @@ def parse_cell_line_disease(valuef, source, cell_line):
 
 
 @inject_valuef
-def parse_gene(valuef, source):
-
-    name = valuef('name')
-    kind = 'gene'
-    catalog = valuef('database_name')
-    catalog_id = valuef('database_id')
-
-    return get_or_create_molecule(name, kind, catalog, catalog_id)
-
-
-@inject_valuef
 def parse_cell_line_disease_variant(valuef, source, cell_line_disease):
 
-    gene = parse_gene(valuef('gene'))
-    transgene = parse_gene(valuef('transgene'))
+    if valuef('gene') is None:
 
-    virus = None
+        return None
 
-    if valuef('delivery_method_virus') == 'Other' and valuef('delivery_method_virus_other') is not None:
-        virus = valuef('delivery_method_virus_other')
-    elif valuef('delivery_method_virus') is not None:
-        virus = valuef('delivery_method_virus')
+    else:
+        gene = parse_gene(valuef('gene'))
 
-    transposon = None
+        if valuef('transgene') is not None:
+            transgene = parse_gene(valuef('transgene'))
+        else:
+            transgene = None
 
-    if valuef('delivery_method_transposon_type') == 'Other' and valuef('delivery_method_transposon_type_other') is not None:
-        transposon = valuef('delivery_method_transposon_type_other')
-    elif valuef('delivery_method_transposon_type') is not None:
-        transposon = valuef('delivery_method_transposon_type')
+        virus = None
 
-    if valuef('type') == 'Variant':
+        if valuef('delivery_method_virus') == 'Other' and valuef('delivery_method_virus_other') is not None:
+            virus = valuef('delivery_method_virus_other')
+        elif valuef('delivery_method_virus') is not None:
+            virus = valuef('delivery_method_virus')
 
-        cell_line_disease_variant, created = ModificationVariantDisease.objects.update_or_create(
-            cellline_disease=cell_line_disease,
-            defaults={
-                'gene': gene,
-                'chromosome_location': valuef('chromosome_location'),
-                'nucleotide_sequence_hgvs': valuef('nucleotide_sequence_hgvs'),
-                'protein_sequence_hgvs': valuef('protein_sequence_hgvs'),
-                'zygosity_status': valuef('zygosity_status'),
-                'clinvar_id': valuef('clinvar_id'),
-                'dbsnp_id': valuef('dbsnp_id'),
-                'dbvar_id': valuef('dbvar_id'),
-                'publication_pmid': valuef('publication_pmid'),
-                'notes': valuef('free_text'),
-            }
-        )
+        transposon = None
 
-    elif valuef('type') == 'Isogenic modification':
+        if valuef('delivery_method_transposon_type') == 'Other' and valuef('delivery_method_transposon_type_other') is not None:
+            transposon = valuef('delivery_method_transposon_type_other')
+        elif valuef('delivery_method_transposon_type') is not None:
+            transposon = valuef('delivery_method_transposon_type')
 
-        cell_line_disease_variant, created = ModificationIsogenicDisease.objects.update_or_create(
-            cellline_disease=cell_line_disease,
-            defaults={
-                'gene': gene,
-                'chromosome_location': valuef('chromosome_location'),
-                'nucleotide_sequence_hgvs': valuef('nucleotide_sequence_hgvs'),
-                'protein_sequence_hgvs': valuef('protein_sequence_hgvs'),
-                'zygosity_status': valuef('zygosity_status'),
-                'modification_type': valuef('isogenic_change_type'),
-                'notes': valuef('free_text'),
-            }
-        )
+        if valuef('type') == 'Variant':
 
-    elif valuef('type') == 'Transgene expression':
+            cell_line_disease_variant, created = ModificationVariantDisease.objects.update_or_create(
+                cellline_disease=cell_line_disease,
+                gene=gene,
+                defaults={
+                    'chromosome_location': valuef('chromosome_location'),
+                    'nucleotide_sequence_hgvs': valuef('nucleotide_sequence_hgvs'),
+                    'protein_sequence_hgvs': valuef('protein_sequence_hgvs'),
+                    'zygosity_status': valuef('zygosity_status'),
+                    'clinvar_id': valuef('clinvar_id'),
+                    'dbsnp_id': valuef('dbsnp_id'),
+                    'dbvar_id': valuef('dbvar_id'),
+                    'publication_pmid': valuef('publication_pmid'),
+                    'notes': valuef('free_text'),
+                }
+            )
 
-        cell_line_disease_variant, created = ModificationTransgeneExpressionDisease.objects.update_or_create(
-            cellline_disease=cell_line_disease,
-            defaults={
-                'gene': gene,
-                'chromosome_location': valuef('chromosome_location'),
-                'delivery_method': valuef('delivery_method'),
-                'virus': virus,
-                'transposon': transposon,
-                'notes': valuef('free_text'),
-            }
-        )
+        elif valuef('type') == 'Isogenic modification':
 
-    elif valuef('type') == 'Gene knock-out':
+            cell_line_disease_variant, created = ModificationIsogenicDisease.objects.update_or_create(
+                cellline_disease=cell_line_disease,
+                gene=gene,
+                defaults={
+                    'chromosome_location': valuef('chromosome_location'),
+                    'nucleotide_sequence_hgvs': valuef('nucleotide_sequence_hgvs'),
+                    'protein_sequence_hgvs': valuef('protein_sequence_hgvs'),
+                    'zygosity_status': valuef('zygosity_status'),
+                    'modification_type': valuef('isogenic_change_type'),
+                    'notes': valuef('free_text'),
+                }
+            )
 
-        cell_line_disease_variant, created = ModificationGeneKnockOutDisease.objects.update_or_create(
-            cellline_disease=cell_line_disease,
-            defaults={
-                'gene': gene,
-                'chromosome_location': valuef('chromosome_location'),
-                'delivery_method': valuef('delivery_method'),
-                'virus': virus,
-                'transposon': transposon,
-                'notes': valuef('free_text'),
-            }
-        )
+        elif valuef('type') == 'Transgene expression':
 
-    elif valuef('type') == 'Gene knock-in':
+            cell_line_disease_variant, created = ModificationTransgeneExpressionDisease.objects.update_or_create(
+                cellline_disease=cell_line_disease,
+                gene=gene,
+                defaults={
+                    'chromosome_location': valuef('chromosome_location'),
+                    'delivery_method': valuef('delivery_method'),
+                    'virus': virus,
+                    'transposon': transposon,
+                    'notes': valuef('free_text'),
+                }
+            )
 
-        cell_line_disease_variant, created = ModificationGeneKnockInDisease.objects.update_or_create(
-            cellline_disease=cell_line_disease,
-            defaults={
-                'target_gene': gene,
-                'transgene': transgene,
-                'chromosome_location': valuef('chromosome_location'),
-                'chromosome_location_transgene': valuef('transgene_chromosome_location'),
-                'delivery_method': valuef('delivery_method'),
-                'virus': virus,
-                'transposon': transposon,
-                'notes': valuef('free_text'),
-            }
-        )
+        elif valuef('type') == 'Gene knock-out':
 
-    return cell_line_disease_variant
+            cell_line_disease_variant, created = ModificationGeneKnockOutDisease.objects.update_or_create(
+                cellline_disease=cell_line_disease,
+                gene=gene,
+                defaults={
+                    'chromosome_location': valuef('chromosome_location'),
+                    'delivery_method': valuef('delivery_method'),
+                    'virus': virus,
+                    'transposon': transposon,
+                    'notes': valuef('free_text'),
+                }
+            )
+
+        elif valuef('type') == 'Gene knock-in':
+
+            cell_line_disease_variant, created = ModificationGeneKnockInDisease.objects.update_or_create(
+                cellline_disease=cell_line_disease,
+                target_gene=gene,
+                defaults={
+                    'transgene': transgene,
+                    'chromosome_location': valuef('chromosome_location'),
+                    'chromosome_location_transgene': valuef('transgene_chromosome_location'),
+                    'delivery_method': valuef('delivery_method'),
+                    'virus': virus,
+                    'transposon': transposon,
+                    'notes': valuef('free_text'),
+                }
+            )
+
+        else:
+
+            return None
+
+        return cell_line_disease_variant
 
 
 @inject_valuef
@@ -388,8 +391,6 @@ def parse_donor(valuef, source):
 
         if valuef('internal_ids') is not None:
             donor.provider_donor_ids = valuef('internal_ids')
-        # if valuef('donor_country_origin') is not None:
-        #     donor.country_of_origin = term_list_value_of_json(source, 'donor_country_origin', Country)
         if valuef('ethnicity') is not None:
             donor.ethnicity = valuef('ethnicity')
         # if valuef('donor_karyotype') is not None:
@@ -407,7 +408,6 @@ def parse_donor(valuef, source):
             biosamples_id=valuef('biosamples_id'),
             provider_donor_ids=valuef('internal_ids'),
             gender=gender,
-            # country_of_origin=term_list_value_of_json(source, 'donor_country_origin', Country),
             ethnicity=valuef('ethnicity'),
             # karyotype=valuef('donor_karyotype'),
         )
@@ -451,6 +451,8 @@ def parse_donor_disease(valuef, source, donor):
 
     disease = parse_disease(source)
 
+    disease_variants = []
+
     if disease is not None:
 
         donor_disease, created = DonorDisease.objects.update_or_create(
@@ -466,6 +468,9 @@ def parse_donor_disease(valuef, source, donor):
             }
         )
 
+        for variant in source.get('variants', []):
+            disease_variants.append(parse_donor_disease_variant(variant, donor_disease))
+
         if created:
             logger.info('Created new donor disease: %s' % disease)
 
@@ -473,6 +478,47 @@ def parse_donor_disease(valuef, source, donor):
 
     else:
         return None
+
+
+@inject_valuef
+def parse_donor_disease_variant(valuef, source, donor_disease):
+
+    if valuef('gene') is not None:
+
+        donor_disease_variant, created = DonorDiseaseVariant.objects.update_or_create(
+            donor_disease=donor_disease,
+            gene=parse_gene(valuef('gene')),
+            defaults={
+                'chromosome_location': valuef('chromosome_location'),
+                'nucleotide_sequence_hgvs': valuef('nucleotide_sequence_hgvs'),
+                'protein_sequence_hgvs': valuef('protein_sequence_hgvs'),
+                'zygosity_status': valuef('zygosity_status'),
+                'clinvar_id': valuef('clinvar_id'),
+                'dbsnp_id': valuef('dbsnp_id'),
+                'dbvar_id': valuef('dbvar_id'),
+                'publication_pmid': valuef('publication_pmid'),
+                'notes': valuef('free_text'),
+            }
+        )
+
+        if created:
+            logger.info('Created new donor disease variant: %s' % donor_disease_variant)
+
+        return donor_disease_variant
+
+    else:
+        return None
+
+
+@inject_valuef
+def parse_gene(valuef, source):
+
+    name = valuef('name')
+    kind = 'gene'
+    catalog = valuef('database_name')
+    catalog_id = valuef('database_id')
+
+    return get_or_create_molecule(name, kind, catalog, catalog_id)
 
 
 @inject_valuef
