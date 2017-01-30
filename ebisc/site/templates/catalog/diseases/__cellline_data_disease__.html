@@ -1,0 +1,118 @@
+<tr>
+  <td class="label">Disease:</td>
+  <td>
+    {% if disease.disease or disease.disease_not_normalised %}
+      {% if disease.disease %}
+      <span class="large">{{ disease.disease.name }}</span>
+      {% elif disease.disease_not_normalised %}
+      {{ disease.disease_not_normalised }}
+      {% endif %}
+      {% if disease.notes %}<br/>{{ disease.notes }}{% endif %}
+    {% else %}
+    {% if disease.notes %}{{ disease.notes }}{% else %}/{% endif %}
+    {% endif %}
+  </td>
+</tr>
+{% if disease.affected_status %}
+<tr>
+  <td class="label">Affected:</td>
+  <td>{% if disease.affected_status == 'True' %}Yes{% elif disease.affected_status == 'False' %}No{% else %}Unknown{% endif %}</td>
+</tr>
+{% endif %}
+
+{% if disease.carrier %}
+<tr>
+  <td class="label">Carrier:</td>
+  <td>{% if disease.carrier == 'True' %}Yes{% elif disease.carrier == 'False' %}No{% else %}Unknown{% endif %}</td>
+</tr>
+{% endif %}
+
+{% if disease.disease_stage %}
+<tr>
+  <td class="label">Disease stage:</td>
+  <td>{{ disease.disease_stage|capfirst }}</td>
+</tr>
+{% endif %}
+
+<!-- Donor disease variants -->
+
+{% if disease.donor_disease_variants.all %}
+{% for variant in disease.donor_disease_variants.all %}
+<tr>
+  <td class="label">Variant:</td>
+  <td>
+    {% include 'catalog/diseases/__cellline_data_disease_variant__.html' %}
+  </td>
+</tr>
+{% endfor %}
+{% endif %}
+
+<!-- Genetic modifications: Variants -->
+
+{% if disease.genetic_modification_cellline_disease_variants.all %}
+{% for variant in disease.genetic_modification_cellline_disease_variants.all %}
+<tr>
+  <td class="label">Modification:</td>
+  <td>
+    <span class="light-gray small">Type of modification:</span> Variant<br/>
+    {% include 'catalog/diseases/__cellline_data_disease_variant__.html' %}
+  </td>
+</tr>
+{% endfor %}
+{% endif %}
+
+<!-- Genetic modifications: Isogenic -->
+
+{% if disease.genetic_modification_cellline_disease_isogenic.all %}
+{% for variant in disease.genetic_modification_cellline_disease_isogenic.all %}
+<tr>
+  <td class="label">Modification:</td>
+  <td>
+    <span class="light-gray small">Type of modification:</span> Isogenic<br/>
+    {% include 'catalog/diseases/__cellline_data_disease_modification_isogenic__.html' %}
+  </td>
+</tr>
+{% endfor %}
+{% endif %}
+
+<!-- Genetic modifications: Transgene expression -->
+
+{% if disease.genetic_modification_cellline_disease_transgene_expression.all %}
+{% for variant in disease.genetic_modification_cellline_disease_transgene_expression.all %}
+<tr>
+  <td class="label">Modification:</td>
+  <td>
+    <span class="light-gray small">Type of modification:</span> Transgene expression<br/>
+    {% include 'catalog/diseases/__cellline_data_disease_modification_transgene__.html' %}
+  </td>
+</tr>
+{% endfor %}
+{% endif %}
+
+<!-- Genetic modifications: Gene knock-out -->
+
+{% if disease.genetic_modification_cellline_disease_gene_knock_out.all %}
+{% for variant in disease.genetic_modification_cellline_disease_gene_knock_out.all %}
+<tr>
+  <td class="label">Modification:</td>
+  <td>
+    <span class="light-gray small">Type of modification:</span> Gene knock-out<br/>
+    {% include 'catalog/diseases/__cellline_data_disease_modification_gene_knock_out__.html' %}
+  </td>
+</tr>
+{% endfor %}
+{% endif %}
+
+<!-- Genetic modifications: Gene knock-in -->
+
+{% if disease.genetic_modification_cellline_disease_gene_knock_in.all %}
+{% for variant in disease.genetic_modification_cellline_disease_gene_knock_in.all %}
+<tr>
+  <td class="label">Modification:</td>
+  <td>
+    <span class="light-gray small">Type of modification:</span> Gene knock-in<br/>
+    {% include 'catalog/diseases/__cellline_data_disease_modification_gene_knock_in__.html' %}
+  </td>
+</tr>
+{% endfor %}
+{% endif %}

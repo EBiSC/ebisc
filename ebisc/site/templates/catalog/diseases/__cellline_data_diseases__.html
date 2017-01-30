@@ -4,9 +4,11 @@
 </tr>
 {% endif %}
 
+<!-- Donor diseases -->
+
 {% if cellline.donor.diseases.all %}
 {% for disease in cellline.donor.diseases.all %}
-{% include 'catalog/__cellline_data_disease__.html' %}
+{% include 'catalog/diseases/__cellline_data_disease__.html' %}
 {% if not forloop.last %}<tr><td colspan="2"><hr></td></tr>{% endif %}
 {% endfor %}
 {% if cellline.donor.diseases.all|length >= 2 %}
@@ -37,12 +39,15 @@
 <tr><td class="label">Clinical information:</td><td>{{ cellline.clinical_information|capfirst }}</td></tr>
 {% endif %}
 
+<!-- Disease associated genetic modifications -->
+
 {% if cellline.diseases.all %}
 <tr class="separator"><td colspan=2>&nbsp;</td></tr>
 <tr>
   <td colspan=2><b>Disease/phenotype related modifications</b></td>
 </tr>
 {% for disease in cellline.diseases.all %}
-{% include 'catalog/__cellline_data_disease__.html' %}
+{% include 'catalog/diseases/__cellline_data_disease__.html' %}
 {% if not forloop.last %}<tr><td colspan="2"><hr></td></tr>{% endif %}
 {% endfor %}
+{% endif %}

@@ -1,0 +1,24 @@
+{% if variant.gene %}
+<span class="light-gray small">Gene:</span> {{ variant.gene.name }}
+{% endif %}
+
+{% if variant.chromosome_location %}
+<br/><span class="light-gray small">Chromosome location:</span> {{ variant.chromosome_location }}
+{% endif %}
+
+{% if variant.delivery_method %}
+<br/><span class="light-gray small">Delivery method:</span> {{ variant.delivery_method }}
+
+{% if variant.virus %}
+- {{ variant.virus }}
+{% endif %}
+
+{% if variant.transposon %}
+- {{ variant.transposon }}
+{% endif %}
+
+{% endif %}
+
+{% if variant.notes %}
+<p>{{ variant.notes }}</p>
+{% endif %}

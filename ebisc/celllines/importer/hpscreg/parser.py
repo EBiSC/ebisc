@@ -252,6 +252,28 @@ def parse_cell_line_disease(valuef, source, cell_line):
             }
         )
 
+        # # Process disease variants. Create new ones, update existing with new data and delete variants that are no longer in hPSCreg data
+        #
+        # disease_variants_old = list(cell_line_disease.donor_disease_variants.all().order_by('id'))
+        # disease_variants_old_ids = set([v.id for v in disease_variants_old])
+        #
+        # disease_variants_new = []
+        #
+        # for variant in source.get('variants', []):
+        #     disease_variants_new.append(parse_cell_line_disease_variant(variant, cell_line_disease))
+        #
+        # disease_variants_new_ids = set([v.id for v in disease_variants_new if v is not None])
+        #
+        # # Delete existing disease variants that are not present in new data
+        #
+        # to_delete = disease_variants_old_ids - disease_variants_new_ids
+        #
+        # for disease_variant in [vd for vd in disease_variants_old if vd.id in to_delete]:
+        #     logger.info('Deleting obsolete donor disease variant %s' % disease_variant)
+        #     disease_variant.delete()
+        #
+        #
+
         for variant in source.get('variants', []):
             disease_variants.append(parse_cell_line_disease_variant(variant, cell_line_disease))
 
@@ -282,16 +304,16 @@ def parse_cell_line_disease_variant(valuef, source, cell_line_disease):
         virus = None
 
         if valuef('delivery_method_virus') == 'Other' and valuef('delivery_method_virus_other') is not None:
-            virus = valuef('delivery_method_virus_other')
+            virus = term_list_value_of_json(source, 'delivery_method_virus_other', Virus)
         elif valuef('delivery_method_virus') is not None:
-            virus = valuef('delivery_method_virus')
+            virus = term_list_value_of_json(source, 'delivery_method_virus', Virus)
 
         transposon = None
 
         if valuef('delivery_method_transposon_type') == 'Other' and valuef('delivery_method_transposon_type_other') is not None:
-            transposon = valuef('delivery_method_transposon_type_other')
+            transposon = term_list_value_of_json(source, 'delivery_method_transposon_type_other', Transposon)
         elif valuef('delivery_method_transposon_type') is not None:
-            transposon = valuef('delivery_method_transposon_type')
+            transposon = term_list_value_of_json(source, 'delivery_method_transposon_type', Transposon)
 
         if valuef('type') == 'Variant':
 
@@ -393,8 +415,6 @@ def parse_donor(valuef, source):
             donor.provider_donor_ids = valuef('internal_ids')
         if valuef('ethnicity') is not None:
             donor.ethnicity = valuef('ethnicity')
-        # if valuef('donor_karyotype') is not None:
-        #     donor.karyotype = valuef('donor_karyotype')
 
         dirty = [donor.is_dirty(check_relationship=True)]
 
@@ -409,7 +429,6 @@ def parse_donor(valuef, source):
             provider_donor_ids=valuef('internal_ids'),
             gender=gender,
             ethnicity=valuef('ethnicity'),
-            # karyotype=valuef('donor_karyotype'),
         )
 
         try:
@@ -465,6 +484,8 @@ def parse_donor_disease(valuef, source, donor):
                 'notes': valuef('free_text'),
             }
         )
+
+        # Process disease variants. Create new ones, update existing with new data and delete variants that are no longer in hPSCreg data
 
         disease_variants_old = list(donor_disease.donor_disease_variants.all().order_by('id'))
         disease_variants_old_ids = set([v.id for v in disease_variants_old])
@@ -1353,17 +1374,17 @@ def parse_genetic_modifications(valuef, source, cell_line):
 
                     if valuef('transgene_viral_method_spec') == 'Other':
                         if valuef('transgene_viral_method_spec_other') is not None:
-                            transgene_expression.virus = valuef('transgene_viral_method_spec_other')
+                            transgene_expression.virus = term_list_value_of_json(source, 'transgene_viral_method_spec_other', Virus)
                         else:
-                            transgene_expression.virus = u'Other'
+                            transgene_expression.virus = None
                     else:
                         transgene_expression.virus = term_list_value_of_json(source, 'transgene_viral_method_spec', Virus)
 
                     if valuef('transgene_transposon_method_spec') == 'Other':
                         if valuef('transgene_transposon_method_spec_other') is not None:
-                            transgene_expression.transposon = valuef('transgene_transposon_method_spec_other')
+                            transgene_expression.transposon = term_list_value_of_json(source, 'transgene_transposon_method_spec_other', Transposon)
                         else:
-                            transgene_expression.transposon = u'Other'
+                            transgene_expression.transposon = None
                     else:
                         transgene_expression.transposon = term_list_value_of_json(source, 'transgene_transposon_method_spec', Transposon)
 
@@ -1389,15 +1410,15 @@ def parse_genetic_modifications(valuef, source, cell_line):
 
                     if valuef('knockout_viral_method_spec') == 'Other':
                         if valuef('knockout_viral_method_spec_other') is not None:
-                            gene_knock_out.virus = valuef('knockout_viral_method_spec_other')
+                            gene_knock_out.virus = term_list_value_of_json(source, 'knockout_viral_method_spec_other', Virus)
                         else:
-                            gene_knock_out.virus = u'Other'
+                            gene_knock_out.virus = None
                     else:
                         gene_knock_out.virus = term_list_value_of_json(source, 'knockout_viral_method_spec', Virus)
 
                     if valuef('knockout_transposon_method_spec') == 'Other':
                         if valuef('knockout_transposon_method_spec_other') is not None:
-                            gene_knock_out.transposon = valuef('knockout_transposon_method_spec_other')
+                            gene_knock_out.transposon = term_list_value_of_json(source, 'knockout_transposon_method_spec_other', Transposon)
                         else:
                             gene_knock_out.transposon = u'Other'
                     else:
@@ -1417,51 +1438,6 @@ def parse_genetic_modifications(valuef, source, cell_line):
                         gene_knock_out.save()
                         dirty_genetic_modification += [True]
 
-                    # old_genes = set([gene.name for gene in gene_knock_out.target_genes.all()])
-                    #
-                    # dirty_genes = []
-                    #
-                    # if valuef('genetic_modification_knockout_list') is None:
-                    #
-                    #     if not old_genes:
-                    #         return []
-                    #
-                    #     else:
-                    #         for gene_name in old_genes:
-                    #             g = GeneticModificationGeneKnockOut.objects.get(cell_line=cell_line, target_genes__name=gene_name)
-                    #             g.delete()
-                    #             dirty_genes += [True]
-                    #
-                    # else:
-                    #     new_genes = []
-                    #
-                    #     for gene in valuef('genetic_modification_knockout_list'):
-                    #         (catalog_id, gene_name, catalog, kind) = gene.split('###')
-                    #
-                    #         new_genes_list.append((gene_name))
-                    #
-                    #     new_genes = set(new_genes_list)
-                    #
-                    #     # Delete old genes that are not in new genes
-                    #     for gene_name in (old_genes - new_genes):
-                    #         g = GeneticModificationGeneKnockOut.objects.get(cell_line=cell_line, target_genes__name=gene_name)
-                    #         g.delete()
-                    #         dirty_genes += [True]
-                    #
-                    #     for gene in valuef('genetic_modification_knockout_list'):
-                    #         (catalog_id, gene_name, catalog, kind) = gene.split('###')
-                    #
-                    #         # Add new genes
-                    #         if gene_name in (new_genes - old_genes):
-                    #             gene_knock_out.target_genes.add(gene)
-                    #             dirty_genes += [True]
-                    #
-                    #         # Modify existing if data has changed
-                    #         else:
-                    #           TODO
-                    #
-                    #     return dirty_genes
-
                 elif modification_type == 'gen_mod_gene_knock_in':
 
                     gene_knock_in, gene_knock_in_created = GeneticModificationGeneKnockIn.objects.get_or_create(cell_line=cell_line)
@@ -1470,15 +1446,15 @@ def parse_genetic_modifications(valuef, source, cell_line):
 
                     if valuef('knockin_viral_method_spec') == 'Other':
                         if valuef('knockin_viral_method_spec_other') is not None:
-                            gene_knock_in.virus = valuef('knockin_viral_method_spec_other')
+                            gene_knock_in.virus = term_list_value_of_json(source, 'knockin_viral_method_spec_other', Virus)
                         else:
-                            gene_knock_in.virus = u'Other'
+                            gene_knock_in.virus = None
                     else:
                         gene_knock_in.virus = term_list_value_of_json(source, 'knockin_viral_method_spec', Virus)
 
                     if valuef('knockin_transposon_method_spec') == 'Other':
                         if valuef('knockin_transposon_method_spec_other') is not None:
-                            gene_knock_in.transposon = valuef('knockin_transposon_method_spec_other')
+                            gene_knock_in.transposon = term_list_value_of_json(source, 'knockin_transposon_method_spec_other', Transposon)
                         else:
                             gene_knock_in.transposon = u'Other'
                     else:
