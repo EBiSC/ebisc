@@ -23,10 +23,6 @@
 </tr>
 {% endif %}
 
-<tr><th class="sub-title"><h3>Disease status</h3></th><th></th></tr>
-
-{% include 'catalog/__cellline_data_diseases__.html' %}
-
 <tr><th class="sub-title"><h3>Donor information</h3></th><th></th></tr>
 <tr><td class="label">Biosamples ID:</td><td>{{ cellline.donor.biosamples_id|default:"-" }}</td></tr>
 {% if cellline.donor.provider_donor_ids %}
@@ -47,3 +43,7 @@
 {% if cellline.donor.karyotype %}
 <tr><td class="label">Donor karyotype:</td><td>{{ cellline.donor.karyotype|default:"-" }}</td></tr>
 {% endif %}
+
+<tr><th class="sub-title"><h3>Disease status</h3></th><th></th></tr>
+
+{% include 'catalog/__cellline_data_diseases__.html' %}

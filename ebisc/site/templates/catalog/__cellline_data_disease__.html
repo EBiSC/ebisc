@@ -1,33 +1,9 @@
-{% if disease.disease or disease.disease_not_normalised %}
-  {% if disease.disease %}
-  {{ disease.disease.name }}
-  {% elif disease.disease_not_normalised %}
-  {{ disease.disease_not_normalised }}
-  {% endif %}
-  {% if disease.notes %}<br/>{{ disease.notes }}{% endif %}
-{% else %}
-{% if disease.notes %}{{ disease.notes }}{% else %}/{% endif %}
-{% endif %}
-
-{% if disease.affected_status %}
-<br/><span class="light-gray small">Affected:</span> {% if disease.affected_status == 'True' %}Yes{% elif disease.affected_status == 'False' %}No{% else %}Unknown{% endif %}
-{% endif %}
-
-{% if disease.carrier %}
-<br/><span class="light-gray small">Carrier:</span> {% if disease.carrier == 'True' %}Yes{% elif disease.carrier == 'False' %}No{% else %}Unknown{% endif %}
-{% endif %}
-
-{% if disease.disease_stage %}
-<br/><span class="light-gray small">Disease stage:</span> {{ disease.disease_stage|capfirst }}
-{% endif %}
-
-
-<!-- <tr>
+<tr>
   <td class="label">Disease:</td>
   <td>
     {% if disease.disease or disease.disease_not_normalised %}
       {% if disease.disease %}
-      {{ disease.disease.name }}
+      <span class="large">{{ disease.disease.name }}</span>
       {% elif disease.disease_not_normalised %}
       {{ disease.disease_not_normalised }}
       {% endif %}
@@ -39,15 +15,27 @@
 </tr>
 {% if disease.affected_status %}
 <tr>
-  <td class="label">Affected status:</td>
-  <td>{% if disease.affected_status == 'True' %}Affected{% elif disease.affected_status == 'False' %}Not affected{% else %}Unknown{% endif %}</td>
+  <td class="label">Affected:</td>
+  <td>{% if disease.affected_status == 'True' %}Yes{% elif disease.affected_status == 'False' %}No{% else %}Unknown{% endif %}</td>
+</tr>
+{% endif %}
+
+{% if disease.carrier %}
+<tr>
+  <td class="label">Carrier:</td>
+  <td>{% if disease.carrier == 'True' %}Yes{% elif disease.carrier == 'False' %}No{% else %}Unknown{% endif %}</td>
 </tr>
 {% endif %}
 
 {% if disease.disease_stage %}
-<tr><td class="label">Disease stage:</td><td>{{ disease.disease_stage|capfirst }}</td></tr>
+<tr>
+  <td class="label">Disease stage:</td>
+  <td>{{ disease.disease_stage|capfirst }}</td>
+</tr>
 {% endif %}
 
-{% if disease.carrier %}
-<tr><td class="label">Carrier:</td><td>{{ disease.carrier|capfirst }}</td></tr>
-{% endif %} -->
+{% if disease.donor_disease_variants.all %}
+{% for variant in disease.donor_disease_variants.all %}
+{% include 'catalog/__cellline_data_disease_variant__.html' %}
+{% endfor %}
+{% endif %}

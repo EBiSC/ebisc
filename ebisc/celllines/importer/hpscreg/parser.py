@@ -451,8 +451,6 @@ def parse_donor_disease(valuef, source, donor):
 
     disease = parse_disease(source)
 
-    disease_variants = []
-
     if disease is not None:
 
         donor_disease, created = DonorDisease.objects.update_or_create(
@@ -468,8 +466,23 @@ def parse_donor_disease(valuef, source, donor):
             }
         )
 
+        disease_variants_old = list(donor_disease.donor_disease_variants.all().order_by('id'))
+        disease_variants_old_ids = set([v.id for v in disease_variants_old])
+
+        disease_variants_new = []
+
         for variant in source.get('variants', []):
-            disease_variants.append(parse_donor_disease_variant(variant, donor_disease))
+            disease_variants_new.append(parse_donor_disease_variant(variant, donor_disease))
+
+        disease_variants_new_ids = set([v.id for v in disease_variants_new if v is not None])
+
+        # Delete existing disease variants that are not present in new data
+
+        to_delete = disease_variants_old_ids - disease_variants_new_ids
+
+        for disease_variant in [vd for vd in disease_variants_old if vd.id in to_delete]:
+            logger.info('Deleting obsolete donor disease variant %s' % disease_variant)
+            disease_variant.delete()
 
         if created:
             logger.info('Created new donor disease: %s' % disease)

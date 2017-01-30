@@ -1,0 +1,44 @@
+<tr>
+  <td class="label">Variant:</td>
+  <td>
+    {% if variant.gene %}
+    <span class="light-gray small">Gene:</span> {{ variant.gene.name }}
+    {% endif %}
+
+    {% if variant.chromosome_location %}
+    <br/><span class="light-gray small">Chromosome location:</span> {{ variant.chromosome_location }}
+    {% endif %}
+
+    {% if variant.nucleotide_sequence_hgvs %}
+    <br/><span class="light-gray small">Nucleotide sequence HGSV:</span><br/>{{ variant.nucleotide_sequence_hgvs }}
+    {% endif %}
+
+    {% if variant.protein_sequence_hgvs %}
+    <br/><span class="light-gray small">Protein sequence HGSV:</span><br/>{{ variant.protein_sequence_hgvs }}
+    {% endif %}
+
+    {% if variant.zygosity_status %}
+    <br/><span class="light-gray small">Zygosity:</span> {{ variant.zygosity_status }}
+    {% endif %}
+
+    {% if variant.clinvar_id %}
+    <br/><span class="light-gray small">ClinVar ID:</span> {{ variant.clinvar_id }}
+    {% endif %}
+
+    {% if variant.dbsnp_id %}
+    <br/><span class="light-gray small">dbSNP ID:</span> {{ variant.dbsnp_id }}
+    {% endif %}
+
+    {% if variant.dbvar_id %}
+    <br/><span class="light-gray small">dbVar ID:</span> {{ variant.dbvar_id }}
+    {% endif %}
+
+    {% if variant.publication_pmid %}
+    <br/><a href="http://www.ncbi.nlm.nih.gov/pubmed/{{ variant.publication_pmid }}" target="_blank">Publication</a>
+    {% endif %}
+
+    {% if variant.notes %}
+    <p>{{ variant.notes }}</p>
+    {% endif %}
+  </td>
+</tr>
