@@ -1,3 +1,5 @@
+<!-- Donor information -->
+
 <tr><th colspan="2" class="title"><h2>Donor information</h2></th></tr>
 {% if cellline.donor.gender %}
 <tr><td class="label">Gender:</td><td>{{ cellline.donor.gender|capfirst }}</td></tr>
@@ -12,9 +14,13 @@
 <tr><td class="label">Donor karyotype:</td><td>{{ cellline.donor.karyotype }}</td></tr>
 {% endif %}
 
+<!-- Donor and cell line diseases -->
+
 <tr><th colspan="2" class="title"><h2>Disease status</h2></th></tr>
 
 {% include 'catalog/diseases/__cellline_data_diseases__.html' %}
+
+<!-- General info -->
 
 <tr><th colspan="2" class="title"><h2>General information</h2></th></tr>
 

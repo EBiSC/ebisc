@@ -1,27 +1,48 @@
 {% if variant.gene %}
-<span class="light-gray small">Gene:</span> {{ variant.gene.name }}
+<tr>
+  <td class="label">Gene:</td>
+  <td>{{ variant.gene.name }}</td>
+</tr>
 {% endif %}
 
 {% if variant.chromosome_location %}
-<br/><span class="light-gray small">Chromosome location:</span> {{ variant.chromosome_location }}
+<tr>
+  <td class="label">Chromosome location:</td>
+  <td>{{ variant.chromosome_location }}</td>
+</tr>
 {% endif %}
 
 {% if variant.nucleotide_sequence_hgvs %}
-<br/><span class="light-gray small">Nucleotide sequence HGSV:</span><br/>{{ variant.nucleotide_sequence_hgvs }}
+<tr>
+  <td class="label">Nucleotide sequence HGSV:</td>
+  <td>{{ variant.nucleotide_sequence_hgvs }}</td>
+</tr>
 {% endif %}
 
 {% if variant.protein_sequence_hgvs %}
-<br/><span class="light-gray small">Protein sequence HGSV:</span><br/>{{ variant.protein_sequence_hgvs }}
+<tr>
+  <td class="label">Protein sequence HGSV:</td>
+  <td>{{ variant.protein_sequence_hgvs }}</td>
+</tr>
 {% endif %}
 
 {% if variant.zygosity_status %}
-<br/><span class="light-gray small">Zygosity:</span> {{ variant.zygosity_status }}
+<tr>
+  <td class="label">Zygosity:</td>
+  <td>{{ variant.zygosity_status }}</td>
+</tr>
 {% endif %}
 
 {% if variant.modification_type %}
-<br/><span class="light-gray small">Target locus modification:</span> {{ variant.modification_type }}
+<tr>
+  <td class="label">Target locus modification:</td>
+  <td>{{ variant.modification_type }}</td>  
+</tr>
 {% endif %}
 
 {% if variant.notes %}
-<p>{{ variant.notes }}</p>
+<tr>
+  <td class="label">Description:</td>
+  <td>{{ variant.notes }}</td>
+</tr>
 {% endif %}

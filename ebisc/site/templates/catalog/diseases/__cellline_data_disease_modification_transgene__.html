@@ -1,24 +1,33 @@
 {% if variant.gene %}
-<span class="light-gray small">Gene:</span> {{ variant.gene.name }}
+<tr>
+  <td class="label">Gene:</td> <td>{{ variant.gene.name }}</td>
+</tr>
 {% endif %}
 
 {% if variant.chromosome_location %}
-<br/><span class="light-gray small">Chromosome location:</span> {{ variant.chromosome_location }}
+<tr>
+  <td class="label">Chromosome location:</td> <td>{{ variant.chromosome_location }}</td>
+</tr>
 {% endif %}
 
 {% if variant.delivery_method %}
-<br/><span class="light-gray small">Delivery method:</span> {{ variant.delivery_method }}
+<tr>
+  <td class="label">Delivery method:</td> <td>{{ variant.delivery_method }}
 
-{% if variant.virus %}
-- {{ variant.virus }}
-{% endif %}
+  {% if variant.virus %}
+  - {{ variant.virus }}
+  {% endif %}
 
-{% if variant.transposon %}
-- {{ variant.transposon }}
-{% endif %}
-
+  {% if variant.transposon %}
+  - {{ variant.transposon }}
+  {% endif %}
+  </td>
+</tr>
 {% endif %}
 
 {% if variant.notes %}
-<p>{{ variant.notes }}</p>
+<tr>
+  <td class="label">Description:</td>
+  <td>{{ variant.notes }}</td>
+</tr>
 {% endif %}
