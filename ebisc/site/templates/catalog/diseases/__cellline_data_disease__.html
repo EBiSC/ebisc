@@ -52,9 +52,9 @@
 {% if disease.genetic_modification_cellline_disease_variants.all %}
 {% for variant in disease.genetic_modification_cellline_disease_variants.all %}
 <tr>
-  <td class="label">Modification:</td>
+  <td class="label">Type of modification:</td>
   <td>
-    <span class="light-gray small">Type of modification:</span> Variant<br/>
+    Variant<br/>
     {% include 'catalog/diseases/__cellline_data_disease_variant__.html' %}
   </td>
 </tr>
@@ -66,9 +66,9 @@
 {% if disease.genetic_modification_cellline_disease_isogenic.all %}
 {% for variant in disease.genetic_modification_cellline_disease_isogenic.all %}
 <tr>
-  <td class="label">Modification:</td>
+  <td class="label">Type of modification:</td>
   <td>
-    <span class="light-gray small">Type of modification:</span> Isogenic<br/>
+    Isogenic<br/>
     {% include 'catalog/diseases/__cellline_data_disease_modification_isogenic__.html' %}
   </td>
 </tr>
@@ -80,9 +80,9 @@
 {% if disease.genetic_modification_cellline_disease_transgene_expression.all %}
 {% for variant in disease.genetic_modification_cellline_disease_transgene_expression.all %}
 <tr>
-  <td class="label">Modification:</td>
+  <td class="label">Type of modification:</td>
   <td>
-    <span class="light-gray small">Type of modification:</span> Transgene expression<br/>
+    Transgene expression<br/>
     {% include 'catalog/diseases/__cellline_data_disease_modification_transgene__.html' %}
   </td>
 </tr>
@@ -94,9 +94,9 @@
 {% if disease.genetic_modification_cellline_disease_gene_knock_out.all %}
 {% for variant in disease.genetic_modification_cellline_disease_gene_knock_out.all %}
 <tr>
-  <td class="label">Modification:</td>
+  <td class="label">Type of modification:</td>
   <td>
-    <span class="light-gray small">Type of modification:</span> Gene knock-out<br/>
+    Gene knock-out<br/>
     {% include 'catalog/diseases/__cellline_data_disease_modification_gene_knock_out__.html' %}
   </td>
 </tr>
@@ -108,9 +108,9 @@
 {% if disease.genetic_modification_cellline_disease_gene_knock_in.all %}
 {% for variant in disease.genetic_modification_cellline_disease_gene_knock_in.all %}
 <tr>
-  <td class="label">Modification:</td>
+  <td class="label">Type of modification:</td>
   <td>
-    <span class="light-gray small">Type of modification:</span> Gene knock-in<br/>
+    Gene knock-in<br/>
     {% include 'catalog/diseases/__cellline_data_disease_modification_gene_knock_in__.html' %}
   </td>
 </tr>

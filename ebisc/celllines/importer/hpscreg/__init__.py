@@ -27,7 +27,7 @@ def run(cellline=None):
         return
 
     # Tests
-    # json = request_get('http://test.hescreg.eu/api/export/2')
+    # json = request_get('http://test.hescreg.eu/api/export_readable/1940')
     # import_cellline(json)
 
     for cellline_id in [id for id in cellline_ids]:
@@ -107,6 +107,7 @@ def import_cellline(source):
 
     dirty += [
         parser.parse_cell_line_diseases(source, cell_line),
+        parser.parse_genetic_modifications_non_disease(source, cell_line),
         parser.parse_reprogramming_vector(source, cell_line),
         parser.parse_ethics(source, cell_line),
         parser.parse_derivation(source, cell_line),
