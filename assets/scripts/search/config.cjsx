@@ -36,7 +36,6 @@ config = {
         'donor_disease.analyzed'
         'genetic_modification_disease.analyzed'
         'primary_disease_synonyms'
-        'primary_disease_stage.analyzed'
         'disease_associated_phenotypes.analyzed'
         'non_disease_associated_phenotypes.analyzed'
         'donor_sex.analyzed'
