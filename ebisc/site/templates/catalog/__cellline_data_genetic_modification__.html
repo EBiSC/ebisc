@@ -10,7 +10,6 @@
 <tr><th class="sub-title"><h3>Disease/phenotype related modifications</h3></th><th></th></tr>
 {% for disease in cellline.diseases.all %}
 {% include 'catalog/diseases/__cellline_data_disease__.html' %}
-{% if not forloop.last %}<tr><td colspan="2">&nbsp;</td></tr>{% endif %}
 {% endfor %}
 {% endif %}
 

@@ -1,6 +1,6 @@
 {% if cellline.diseases.all %}
 <tr>
-  <td class="right"><b>Donor</b></td><td></td>
+  <td><h3>Donor</h3></td><td></td>
 </tr>
 {% endif %}
 
@@ -18,7 +18,7 @@
 {% endif %}
 {% else %}
 <tr>
-  <td class="label">Disease:</td>
+  <td class="label"><b>Disease:</b></td>
   <td>No</td>
 </tr>
 {% endif %}
@@ -42,12 +42,10 @@
 <!-- Disease associated genetic modifications -->
 
 {% if cellline.diseases.all %}
-<tr class="separator"><td colspan=2>&nbsp;</td></tr>
 <tr>
-  <td colspan=2><b>Disease/phenotype related genetic modifications</b></td>
+  <td colspan=2><h3>Disease/phenotype related genetic modifications</h3></td>
 </tr>
 {% for disease in cellline.diseases.all %}
 {% include 'catalog/diseases/__cellline_data_disease__.html' %}
-{% if not forloop.last %}<tr><td colspan="2">&nbsp;</td></tr>{% endif %}
 {% endfor %}
 {% endif %}

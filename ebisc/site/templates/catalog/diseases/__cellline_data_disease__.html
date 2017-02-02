@@ -1,13 +1,13 @@
 <!-- Disease name -->
 
 <tr>
-  <td class="label">Disease:</td>
+  <td class="label"><b>Disease:</b></td>
   <td>
     {% if disease.disease or disease.disease_not_normalised %}
       {% if disease.disease %}
-      <span class="large">{{ disease.disease.name }}</span>
+      <b>{{ disease.disease.name }}</b>
       {% elif disease.disease_not_normalised %}
-      {{ disease.disease_not_normalised }}
+      <b>{{ disease.disease_not_normalised }}</b>
       {% endif %}
       {% if disease.notes %}<br/>{{ disease.notes }}{% endif %}
     {% else %}
