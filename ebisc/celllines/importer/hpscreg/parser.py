@@ -239,7 +239,16 @@ def parse_cell_line_disease(valuef, source, cell_line):
 
     disease = parse_disease(source)
 
-    disease_variants = []
+    genetic_modification_types = (
+        ('disease_variants_old', 'disease_variants_old_genes', 'disease_variants_new', 'disease_variants_new_genes', 'Variant'),
+        ('disease_isogenic_old', 'disease_isogenic_old_genes', 'disease_isogenic_new', 'disease_isogenic_new_genes', 'Isogenic modification'),
+        ('disease_transgene_old', 'disease_transgene_old_genes', 'disease_transgene_new', 'disease_transgene_new_genes', 'Transgene expression'),
+        ('disease_knockout_old', 'disease_knockout_old_genes', 'disease_knockout_new', 'disease_knockout_new_genes', 'Gene knock-out'),
+        ('disease_knockin_old', 'disease_knockin_old_genes', 'disease_knockin_new', 'disease_knockin_new_genes', 'Gene knock-in'),
+    )
+
+    for (list_old, list_old_genes, list_new, list_new_genes, modification_type) in genetic_modification_types:
+        list_old = []
 
     if disease is not None:
 
@@ -253,30 +262,38 @@ def parse_cell_line_disease(valuef, source, cell_line):
             }
         )
 
-        # # Process disease variants. Create new ones, update existing with new data and delete variants that are no longer in hPSCreg data
-        #
-        # disease_variants_old = list(cell_line_disease.donor_disease_variants.all().order_by('id'))
-        # disease_variants_old_ids = set([v.id for v in disease_variants_old])
-        #
-        # disease_variants_new = []
-        #
-        # for variant in source.get('variants', []):
-        #     disease_variants_new.append(parse_cell_line_disease_variant(variant, cell_line_disease))
-        #
-        # disease_variants_new_ids = set([v.id for v in disease_variants_new if v is not None])
-        #
-        # # Delete existing disease variants that are not present in new data
-        #
-        # to_delete = disease_variants_old_ids - disease_variants_new_ids
-        #
-        # for disease_variant in [vd for vd in disease_variants_old if vd.id in to_delete]:
-        #     logger.info('Deleting obsolete donor disease variant %s' % disease_variant)
-        #     disease_variant.delete()
-        #
-        #
+        for (list_old, list_old_genes, list_new, list_new_genes, modification_type) in genetic_modification_types:
 
-        for variant in source.get('variants', []):
-            disease_variants.append(parse_cell_line_disease_variant(variant, cell_line_disease))
+            # Process disease variants. Create new ones, update existing with new data and delete variants that are no longer in hPSCreg data
+
+            if modification_type == 'Variant':
+                list_old = list(cell_line_disease.genetic_modification_cellline_disease_variants.all().order_by('id'))
+            elif modification_type == 'Isogenic modification':
+                list_old = list(cell_line_disease.genetic_modification_cellline_disease_isogenic.all().order_by('id'))
+            elif modification_type == 'Transgene expression':
+                list_old = list(cell_line_disease.genetic_modification_cellline_disease_transgene_expression.all().order_by('id'))
+            elif modification_type == 'Gene knock-out':
+                list_old = list(cell_line_disease.genetic_modification_cellline_disease_gene_knock_out .all().order_by('id'))
+            elif modification_type == 'Gene knock-in':
+                list_old = list(cell_line_disease.genetic_modification_cellline_disease_gene_knock_in.all().order_by('id'))
+
+            list_old_genes = set([v.gene.name for v in list_old])
+
+            list_new = []
+
+            for variant in source.get('variants', []):
+                if variant["type"] == modification_type:
+                    list_new.append(parse_cell_line_disease_variant(variant, cell_line_disease))
+
+            list_new_genes = set([v.gene.name for v in list_new if v is not None])
+
+            # Delete existing disease variants that are not present in new data
+
+            to_delete = list_old_genes - list_new_genes
+
+            for disease_variant in [vd for vd in list_old if vd.gene.name in to_delete]:
+                logger.info('Deleting obsolete disease variant %s' % disease_variant)
+                disease_variant.delete()
 
         if created:
             logger.info('Created new cell line disease: %s' % disease)
@@ -334,6 +351,9 @@ def parse_cell_line_disease_variant(valuef, source, cell_line_disease):
                 }
             )
 
+            if created:
+                logger.info('Added new cell line disease variant: %s , gene: %s' % (cell_line_disease_variant, gene))
+
         elif valuef('type') == 'Isogenic modification':
 
             cell_line_disease_variant, created = ModificationIsogenicDisease.objects.update_or_create(
@@ -349,6 +369,9 @@ def parse_cell_line_disease_variant(valuef, source, cell_line_disease):
                 }
             )
 
+            if created:
+                logger.info('Added new cell line disease variant: %s , gene: %s' % (cell_line_disease_variant, gene))
+
         elif valuef('type') == 'Transgene expression':
 
             cell_line_disease_variant, created = ModificationTransgeneExpressionDisease.objects.update_or_create(
@@ -363,6 +386,9 @@ def parse_cell_line_disease_variant(valuef, source, cell_line_disease):
                 }
             )
 
+            if created:
+                logger.info('Added new cell line disease variant: %s , gene: %s' % (cell_line_disease_variant, gene))
+
         elif valuef('type') == 'Gene knock-out':
 
             cell_line_disease_variant, created = ModificationGeneKnockOutDisease.objects.update_or_create(
@@ -376,6 +402,9 @@ def parse_cell_line_disease_variant(valuef, source, cell_line_disease):
                     'notes': valuef('free_text'),
                 }
             )
+
+            if created:
+                logger.info('Added new cell line disease variant: %s , gene: %s' % (cell_line_disease_variant, gene))
 
         elif valuef('type') == 'Gene knock-in':
 
@@ -392,6 +421,9 @@ def parse_cell_line_disease_variant(valuef, source, cell_line_disease):
                     'notes': valuef('free_text'),
                 }
             )
+
+            if created:
+                logger.info('Added new cell line disease variant: %s , gene: %s' % (cell_line_disease_variant, gene))
 
         else:
 
@@ -537,7 +569,7 @@ def parse_donor_disease_variant(valuef, source, donor_disease):
         )
 
         if created:
-            logger.info('Created new donor disease variant: %s' % donor_disease_variant)
+            logger.info('Created new donor disease variant: %s, gene: %s' % (donor_disease_variant, donor_disease_variant.gene))
 
         return donor_disease_variant
 
@@ -587,12 +619,68 @@ def parse_disease(valuef, source):
 @inject_valuef
 def parse_genetic_modifications_non_disease(valuef, source, cell_line):
 
-    # modifications_new = []
+    if valuef('genetic_modifications_non_disease') is not None:
 
-    for modification in source.get('genetic_modifications_non_disease', []):
-        parse_genetic_modification(modification, cell_line)
+        genetic_modification_types = (
+            ('variants_old', 'variants_old_genes', 'variants_new', 'variants_new_genes', 'Variant'),
+            ('isogenic_old', 'isogenic_old_genes', 'isogenic_new', 'isogenic_new_genes', 'Isogenic modification'),
+            ('transgene_old', 'transgene_old_genes', 'transgene_new', 'transgene_new_genes', 'Transgene expression'),
+            ('knockout_old', 'knockout_old_genes', 'knockout_new', 'knockout_new_genes', 'Gene knock-out'),
+            ('knockin_old', 'knockin_old_genes', 'knockin_new', 'knockin_new_genes', 'Gene knock-in'),
+        )
 
-        pass
+        for (list_old, list_old_genes, list_new, list_new_genes, modification_type) in genetic_modification_types:
+            list_old = []
+
+            # Process disease variants. Create new ones, update existing with new data and delete variants that are no longer in hPSCreg data
+
+            if modification_type == 'Variant':
+                list_old = list(cell_line.genetic_modification_cellline_variants.all().order_by('id'))
+                list_old_genes = set([v.gene.name for v in list_old])
+            elif modification_type == 'Isogenic modification':
+                list_old = list(cell_line.genetic_modification_cellline_isogenic.all().order_by('id'))
+                list_old_genes = set([v.gene.name for v in list_old])
+            elif modification_type == 'Transgene expression':
+                list_old = list(cell_line.genetic_modification_cellline_transgene_expression.all().order_by('id'))
+                list_old_genes = set([v.gene.name for v in list_old])
+            elif modification_type == 'Gene knock-out':
+                list_old = list(cell_line.genetic_modification_cellline_gene_knock_out .all().order_by('id'))
+                list_old_genes = set([v.gene.name for v in list_old])
+            elif modification_type == 'Gene knock-in':
+                list_old = list(cell_line.genetic_modification_cellline_gene_knock_in.all().order_by('id'))
+                list_old_genes = set([v.target_gene.name for v in list_old])
+
+            list_new = []
+
+            for modification in source.get('genetic_modifications_non_disease', []):
+                if modification["type"] == modification_type:
+                    list_new.append(parse_genetic_modification(modification, cell_line))
+
+            # Delete existing disease variants that are not present in new data
+
+            if modification_type == 'Gene knock-in':
+                list_new_genes = set([v.target_gene.name for v in list_new if v is not None])
+                to_delete = list_old_genes - list_new_genes
+
+                for genetic_modification in [vd for vd in list_old if vd.target_gene.name in to_delete]:
+                    logger.info('Deleting obsolete genetic modification %s' % genetic_modification)
+                    genetic_modification.delete()
+
+            else:
+                list_new_genes = set([v.gene.name for v in list_new if v is not None])
+                to_delete = list_old_genes - list_new_genes
+
+                for genetic_modification in [vd for vd in list_old if vd.gene.name in to_delete]:
+                    logger.info('Deleting obsolete genetic modification %s' % genetic_modification)
+                    genetic_modification.delete()
+
+        if (list_new != list_old):
+            return True
+        else:
+            return False
+
+    else:
+        return False
 
 
 @inject_valuef
@@ -642,6 +730,9 @@ def parse_genetic_modification(valuef, source, cell_line):
                 }
             )
 
+            if created:
+                logger.info('Added new genetic modification: %s , gene: %s' % (cell_line_genetic_modification, gene))
+
         elif valuef('type') == 'Isogenic modification':
 
             cell_line_genetic_modification, created = ModificationIsogenicNonDisease.objects.update_or_create(
@@ -657,6 +748,9 @@ def parse_genetic_modification(valuef, source, cell_line):
                 }
             )
 
+            if created:
+                logger.info('Added new genetic modification: %s , gene: %s' % (cell_line_genetic_modification, gene))
+
         elif valuef('type') == 'Transgene expression':
 
             cell_line_genetic_modification, created = ModificationTransgeneExpressionNonDisease.objects.update_or_create(
@@ -671,6 +765,9 @@ def parse_genetic_modification(valuef, source, cell_line):
                 }
             )
 
+            if created:
+                logger.info('Added new genetic modification: %s , gene: %s' % (cell_line_genetic_modification, gene))
+
         elif valuef('type') == 'Gene knock-out':
 
             cell_line_genetic_modification, created = ModificationGeneKnockOutNonDisease.objects.update_or_create(
@@ -684,6 +781,9 @@ def parse_genetic_modification(valuef, source, cell_line):
                     'notes': valuef('free_text'),
                 }
             )
+
+            if created:
+                logger.info('Added new genetic modification: %s , gene: %s' % (cell_line_genetic_modification, gene))
 
         elif valuef('type') == 'Gene knock-in':
 
@@ -700,6 +800,9 @@ def parse_genetic_modification(valuef, source, cell_line):
                     'notes': valuef('free_text'),
                 }
             )
+
+            if created:
+                logger.info('Added new genetic modification: %s , gene: %s' % (cell_line_genetic_modification, gene))
 
         else:
 

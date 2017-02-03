@@ -89,16 +89,38 @@
 <tr><td colspan="2">&nbsp;</td></tr>
 {% endif %}
 
-<!-- / New fields -->
-
 {% endif %}
 
-{% else %}
+<!-- / New fields -->
 
 <!-- Old fields -->
 
+{% else %}
+
+{% if cellline.diseases.all %}
+<tr><th class="sub-title"><h3>Disease/phenotype related modifications</h3></th><th></th></tr>
+{% for disease in cellline.diseases.all %}
+<tr>
+  <td class="label"><b>Disease:</b></td>
+  <td>
+    {% if disease.disease or disease.disease_not_normalised %}
+      {% if disease.disease %}
+      <b>{{ disease.disease.name }}</b>
+      {% elif disease.disease_not_normalised %}
+      <b>{{ disease.disease_not_normalised }}</b>
+      {% endif %}
+      {% if disease.notes %}<br/>{{ disease.notes }}{% endif %}
+    {% else %}
+    {% if disease.notes %}{{ disease.notes }}{% else %}/{% endif %}
+    {% endif %}
+  </td>
+</tr>
+{% endfor %}
+{% endif %}
+
+
 {% if cellline.genetic_modification_transgene_expression or cellline.genetic_modification_gene_knock_out or cellline.genetic_modification_gene_knock_in or cellline.genetic_modification_isogenic %}
-<tr><th class="sub-title"><h3>Modifications not associated with diseases</h3></th><th></th></tr>
+<!-- <tr><th class="sub-title"><h3>Modifications not associated with diseases</h3></th><th></th></tr> -->
     {% if cellline.genetic_modification_transgene_expression %}
         <tr>
             <td class="label">Type of modification:</td>
