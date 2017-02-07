@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, DonorDisease, Disease, Cellline, CelllineDisease, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
+from ..celllines.models import Donor, DonorDisease, DonorDiseaseVariant, Disease, Cellline, CelllineDisease, ModificationVariantDisease, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
 
 
 # -----------------------------------------------------------------------------
@@ -273,6 +273,37 @@ class DiseaseResource(ModelResource):
 
 
 # -----------------------------------------------------------------------------
+# Donor Disease Variant resource
+
+class ModificationVariantDiseaseResource(ModelResource):
+
+    chromosome_location = fields.CharField('chromosome_location', null=True)
+    nucleotide_sequence_hgvs = fields.CharField('nucleotide_sequence_hgvs', null=True)
+    protein_sequence_hgvs = fields.CharField('protein_sequence_hgvs', null=True)
+    zygosity_status = fields.CharField('zygosity_status', null=True)
+    clinvar_id = fields.CharField('clinvar_id', null=True)
+    dbsnp_id = fields.CharField('dbsnp_id', null=True)
+    dbvar_id = fields.CharField('dbvar_id', null=True)
+    publication_pmid = fields.CharField('publication_pmid', null=True)
+    notes = fields.CharField('notes', null=True)
+
+    class Meta:
+        queryset = ModificationVariantDisease.objects.all()
+        include_resource_uri = False
+        fields = ('chromosome_location', 'nucleotide_sequence_hgvs', 'protein_sequence_hgvs', 'zygosity_status', 'clinvar_id', 'dbsnp_id', 'dbvar_id', 'publication_pmid', 'notes')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.gene:
+            bundle.data.update({
+                'gene': bundle.obj.gene.name,
+                'type': 'Variant'
+            })
+
+        return bundle
+
+
+# -----------------------------------------------------------------------------
 # Cell line Disease
 
 class CelllineDiseaseResource(ModelResource):
@@ -285,6 +316,9 @@ class CelllineDiseaseResource(ModelResource):
     disease_stage = fields.CharField('disease_stage', null=True)
     affected_status = fields.CharField('affected_status', null=True)
     carrier = fields.CharField('carrier', null=True)
+
+    # Variants
+    variants = fields.ToManyField(ModificationVariantDiseaseResource, 'genetic_modification_cellline_disease_variants', null=True, full=True)
 
     class Meta:
         queryset = CelllineDisease.objects.all()
@@ -304,6 +338,36 @@ class CelllineDiseaseResource(ModelResource):
 
 
 # -----------------------------------------------------------------------------
+# Donor Disease Variant resource
+
+class DonorDiseaseVariantResource(ModelResource):
+
+    chromosome_location = fields.CharField('chromosome_location', null=True)
+    nucleotide_sequence_hgvs = fields.CharField('nucleotide_sequence_hgvs', null=True)
+    protein_sequence_hgvs = fields.CharField('protein_sequence_hgvs', null=True)
+    zygosity_status = fields.CharField('zygosity_status', null=True)
+    clinvar_id = fields.CharField('clinvar_id', null=True)
+    dbsnp_id = fields.CharField('dbsnp_id', null=True)
+    dbvar_id = fields.CharField('dbvar_id', null=True)
+    publication_pmid = fields.CharField('publication_pmid', null=True)
+    notes = fields.CharField('notes', null=True)
+
+    class Meta:
+        queryset = DonorDiseaseVariant.objects.all()
+        include_resource_uri = False
+        fields = ('chromosome_location', 'nucleotide_sequence_hgvs', 'protein_sequence_hgvs', 'zygosity_status', 'clinvar_id', 'dbsnp_id', 'dbvar_id', 'publication_pmid', 'notes')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.gene:
+            bundle.data.update({
+                'gene': bundle.obj.gene.name,
+            })
+
+        return bundle
+
+
+# -----------------------------------------------------------------------------
 # Donor Disease
 
 class DonorDiseaseResource(ModelResource):
@@ -317,8 +381,15 @@ class DonorDiseaseResource(ModelResource):
     affected_status = fields.CharField('affected_status', null=True)
     carrier = fields.CharField('carrier', null=True)
 
+    # Variants
+    variants = fields.ToManyField(DonorDiseaseVariantResource, 'donor_disease_variants', null=True, full=True)
+
     class Meta:
-        queryset = DonorDisease.objects.all()
+        queryset = DonorDisease.objects.all().select_related(
+            'donor_disease_variants',
+        ).prefetch_related(
+            'donor_disease_variants__gene',
+        )
         include_resource_uri = False
         fields = ('other', 'free_text', 'primary_disease', 'disease_stage', 'affected_status', 'carrier')
 
