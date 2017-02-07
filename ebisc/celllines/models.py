@@ -270,6 +270,11 @@ class Cellline(DirtyFieldsMixin, models.Model):
 
         return cellline_diseases
 
+    @property
+    def all_diseases(self):
+
+        return (self.donor_diseases + self.cellline_diseases)
+
     def to_elastic(self):
 
         '''
@@ -295,7 +300,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'primary_disease': self.primary_disease.disease.name if self.primary_disease.disease else None,
             'donor_disease': self.donor_diseases if self.donor_diseases else None,
             'genetic_modification_disease': self.cellline_diseases if self.cellline_diseases else _(u'/'),
-            # 'all_diseases': self.donor_diseases + self.cellline_diseases,
+            'all_diseases': self.all_diseases if self.all_diseases else None,
             'primary_disease_synonyms': [s.strip() for s in self.primary_disease.disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.disease.synonyms else None,
             'disease_associated_phenotypes': self.disease_associated_phenotypes if self.disease_associated_phenotypes else None,
             'non_disease_associated_phenotypes': self.non_disease_associated_phenotypes if self.non_disease_associated_phenotypes else None,

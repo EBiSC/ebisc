@@ -44,7 +44,7 @@ config = {
 
     facets: [
         {
-            name: 'primary_disease'
+            name: 'all_diseases'
             label: 'Disease'
             selectedTerms: {}
         }
