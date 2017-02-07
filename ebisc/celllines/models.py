@@ -273,7 +273,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
     @property
     def all_diseases(self):
 
-        return (self.donor_diseases + self.cellline_diseases)
+        return list(set(self.donor_diseases + self.cellline_diseases))
 
     def to_elastic(self):
 

@@ -527,6 +527,7 @@ class CelllineResource(ModelResource):
     # Disease
     primary_disease_diagnosed = fields.CharField('has_diseases', null=True)
     primary_disease = fields.DictField(null=True)
+    disease_names = fields.ListField('all_diseases', null=True)
     disease_associated_phenotypes = fields.ListField('disease_associated_phenotypes', null=True)
     non_disease_associated_phenotypes = fields.ListField('non_disease_associated_phenotypes', null=True)
 
