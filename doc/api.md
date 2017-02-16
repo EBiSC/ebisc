@@ -612,11 +612,185 @@ Disease information is provided in two places:
 * In the `donor` field under `diseases`
 * On the top level field under `diseases`
 
-In both cases the field `diseases` holds a list of diseases. The diseases under top level field `diseases` hold data for genetically modified lines if the modifications are associated to a disease.
+In both cases the field `diseases` holds a list of diseases. The diseases under top level field `diseases` hold data for genetically modified lines if the modifications are associated to a disease. Each disease has information about variants/modifications. There are five different types of Variants/modifications, for each specific fields are exported (see examples below).
 
-To insure backward compatibility for ECACC two disease related fields will still remain until needed:
+To insure backward compatibility two disease related fields will still remain in the export until needed:
 * `primary_disease_diagnosed` can have values `0`, `1`. If the value is `0`, there is no disease diagnosed and this disease status should be displayed as `normal`. If the value is `1` the disease has been diagnosed.
 * `primary_disease` field: holds data on primary disease if one is specified. If not, the first disease is taken from a combined (donor and cell line) list of diseases.
+
+##### Donor disease test sample
+
+"donor": {
+  "biosamples_id": "SAMEA3105780",
+  "diseases": [
+    {
+      "affected_status": null,
+      "carrier": null,
+      "disease_stage": null,
+      "free_text_name": null,
+      "name": "normal",
+      "notes": null,
+      "primary_disease": false,
+      "purl": "http://purl.obolibrary.org/obo/PATO_0000461",
+      "synonyms": [
+        "Normalities",
+        "Health",
+        "Normalcy",
+        "Normality"
+      ],
+      "variants": [
+        {
+          "chromosome_location": "cytoband location: 3p21",
+          "clinvar_id": "3455634563456",
+          "dbsnp_id": "3456354737",
+          "dbvar_id": "35675673567",
+          "gene": "psd",
+          "notes": "Detailed free text explanation ...",
+          "nucleotide_sequence_hgvs": "NM_005228.3:c.2312_2314delinsGCGTGGACAACG",
+          "protein_sequence_hgvs": "NP_005219.2:p.(Val689_Glu690delinsGlyValAspAsn)",
+          "publication_pmid": "26132555",
+          "zygosity_status": "Homozygous"
+        }
+      ]
+      }
+  ],
+},
+
+##### Cell line disease test sample (with all five types of possible modifications listed in the field `variants`):
+
+"diseases": [
+  {
+    "affected_status": null,
+    "carrier": null,
+    "disease_stage": null,
+    "free_text_name": null,
+    "name": "Alzheimers disease",
+    "notes": null,
+    "primary_disease": false,
+    "purl": "http://www.ebi.ac.uk/efo/EFO_0000249",
+    "synonyms": [
+      "Disease",
+      "Alzheimer",
+      "Alzheimer Senile Dementia",
+      "Dementia in Alzheimer's disease",
+      "unspecified (disorder)",
+      "Presenile Alzheimer Dementia"
+    ],
+    "variants": [
+      {
+        "chromosome_location": "19q13.32",
+        "clinvar_id": null,
+        "dbsnp_id": null,
+        "dbvar_id": null,
+        "gene": "ApoE",
+        "notes": "ApoE3/E3 isogenic mutant of BIONi010-C (ApoE3/E4)",
+        "nucleotide_sequence_hgvs": "NM_001302691: rs429358 (C/C), rs7412 (T/T)",
+        "protein_sequence_hgvs": "NP_001289620.1 (ApoE3/E3)",
+        "publication_pmid": null,
+        "type": "Variant",
+        "zygosity_status": "Heterozygous"
+      },
+      {
+        "chromosome_location": null,
+        "delivery_method": null,
+        "gene": "psd",
+        "notes": "Supporting evidence",
+        "transposon": null,
+        "type": "Transgene expression",
+        "virus": null
+      },
+      {
+        "chromosome_location": null,
+        "delivery_method": "Viral",
+        "gene": "plm",
+        "notes": null,
+        "transposon": null,
+        "type": "Gene knock-out",
+        "virus": "Retrovirus"
+      },
+      {
+        "chromosome_location": null,
+        "gene": "plm",
+        "modification_type": null,
+        "notes": null,
+        "nucleotide_sequence_hgvs": null,
+        "protein_sequence_hgvs": null,
+        "type": "Isogenic modification",
+        "zygosity_status": null
+      },
+      {
+        "chromosome_location": null,
+        "chromosome_location_transgene": "ddd",
+        "delivery_method": "TALEN",
+        "notes": "Supporting evidence ...",
+        "target_gene": "plm",
+        "transgene": "psd",
+        "transposon": null,
+        "type": "Gene knock-in",
+        "virus": null
+      }
+    ]
+  }
+]
+
+##### Genetic modifications not related to diseases test sample (with all five types of possible modifications listed):
+
+Data for genetic modifications that are not related to a disease are exported in the field `genetic_modifications_non_disease` as a list. There are five different types of modifications, for each specific fields are exported (same as for cell line diseases).
+
+"genetic_modifications_non_disease": [
+  {
+    "chromosome_location": "19q13.32",
+    "clinvar_id": null,
+    "dbsnp_id": null,
+    "dbvar_id": null,
+    "gene": "ApoE",
+    "notes": "ApoE3/E3 isogenic mutant of BIONi010-C (ApoE3/E4)",
+    "nucleotide_sequence_hgvs": "NM_001302691: rs429358 (C/C), rs7412 (T/T)",
+    "protein_sequence_hgvs": "NP_001289620.1 (ApoE3/E3)",
+    "publication_pmid": null,
+    "type": "Variant",
+    "zygosity_status": "Heterozygous"
+  },
+  {
+    "chromosome_location": null,
+    "delivery_method": null,
+    "gene": "psd",
+    "notes": "Supporting evidence",
+    "transposon": null,
+    "type": "Transgene expression",
+    "virus": null
+  },
+  {
+    "chromosome_location": null,
+    "delivery_method": "Viral",
+    "gene": "plm",
+    "notes": null,
+    "transposon": null,
+    "type": "Gene knock-out",
+    "virus": "Retrovirus"
+  },
+  {
+    "chromosome_location": null,
+    "gene": "plm",
+    "modification_type": null,
+    "notes": null,
+    "nucleotide_sequence_hgvs": null,
+    "protein_sequence_hgvs": null,
+    "type": "Isogenic modification",
+    "zygosity_status": null
+  },
+  {
+    "chromosome_location": null,
+    "chromosome_location_transgene": "ddd",
+    "delivery_method": "TALEN",
+    "notes": "Supporting evidence ...",
+    "target_gene": "plm",
+    "transgene": "psd",
+    "transposon": null,
+    "type": "Gene knock-in",
+    "virus": null
+  }
+]
 
 #### Reprogramming method
 
@@ -679,7 +853,7 @@ The reprogramming method has a different structure depending on the `type`. Poss
             "vector": "Episomal"
         }
 
-#### Genetic modification
+#### Genetic modification (Old fields, will be removed)
 
 Data for genetic modification is stored in 5 fields. The field `genetic_modification` holds the information if the line has been modified and what types of modification were used.
 The four fields described below contain the details of the modification.
