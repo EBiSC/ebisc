@@ -570,11 +570,13 @@ class DonorDisease(models.Model):
 
 class DonorDiseaseVariant(DirtyFieldsMixin, Variant):
 
+    variant_id = models.IntegerField(_(u'Variant ID'), null=True, blank=True)
     donor_disease = models.ForeignKey(DonorDisease, verbose_name=_(u'Donor disease'), related_name="donor_disease_variants")
 
     class Meta:
         verbose_name = _(u'Donor disease variant')
         verbose_name_plural = _(u'Donor disease variants')
+        unique_together = [('donor_disease', 'variant_id')]
         ordering = ['donor_disease']
 
     def __unicode__(self):
@@ -602,11 +604,13 @@ class CelllineDisease(models.Model):
 
 class ModificationVariantDisease(DirtyFieldsMixin, Variant):
 
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
     cellline_disease = models.ForeignKey(CelllineDisease, verbose_name=_(u'Cell line disease'), related_name="genetic_modification_cellline_disease_variants")
 
     class Meta:
         verbose_name = _(u'Genetic modification - Disease associated variant')
         verbose_name_plural = _(u'Genetic modifications - Disease associated variants')
+        unique_together = [('cellline_disease', 'modification_id')]
         ordering = ['id']
 
     def __unicode__(self):
@@ -615,11 +619,13 @@ class ModificationVariantDisease(DirtyFieldsMixin, Variant):
 
 class ModificationVariantNonDisease(DirtyFieldsMixin, Variant):
 
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
     cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name="genetic_modification_cellline_variants")
 
     class Meta:
         verbose_name = _(u'Genetic modification - Variant non disease')
         verbose_name_plural = _(u'Genetic modifications - Variant non disease')
+        unique_together = [('cell_line', 'modification_id')]
         ordering = ['id']
 
     def __unicode__(self):
@@ -648,11 +654,13 @@ class ModificationIsogenic(models.Model):
 
 class ModificationIsogenicDisease(DirtyFieldsMixin, ModificationIsogenic):
 
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
     cellline_disease = models.ForeignKey(CelllineDisease, verbose_name=_(u'Cell line disease'), related_name="genetic_modification_cellline_disease_isogenic")
 
     class Meta:
         verbose_name = _(u'Genetic modification - Isogenic modification disease related')
         verbose_name_plural = _(u'Genetic modifications - Isogenic modification disease related')
+        unique_together = [('cellline_disease', 'modification_id')]
         ordering = ['id']
 
     def __unicode__(self):
@@ -661,11 +669,13 @@ class ModificationIsogenicDisease(DirtyFieldsMixin, ModificationIsogenic):
 
 class ModificationIsogenicNonDisease(DirtyFieldsMixin, ModificationIsogenic):
 
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
     cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='genetic_modification_cellline_isogenic')
 
     class Meta:
         verbose_name = _(u'Genetic modification - Isogenic modification non disease')
         verbose_name_plural = _(u'Genetic modifications - Isogenic modification non disease')
+        unique_together = [('cell_line', 'modification_id')]
         ordering = ['id']
 
     def __unicode__(self):
@@ -693,11 +703,13 @@ class ModificationTransgeneExpression(models.Model):
 
 class ModificationTransgeneExpressionDisease(DirtyFieldsMixin, ModificationTransgeneExpression):
 
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
     cellline_disease = models.ForeignKey(CelllineDisease, verbose_name=_(u'Cell line disease'), related_name="genetic_modification_cellline_disease_transgene_expression")
 
     class Meta:
         verbose_name = _(u'Genetic modification - Transgene expression disease related')
         verbose_name_plural = _(u'Genetic modifications - Transgene expression disease related')
+        unique_together = [('cellline_disease', 'modification_id')]
         ordering = ['id']
 
     def __unicode__(self):
@@ -706,11 +718,13 @@ class ModificationTransgeneExpressionDisease(DirtyFieldsMixin, ModificationTrans
 
 class ModificationTransgeneExpressionNonDisease(DirtyFieldsMixin, ModificationTransgeneExpression):
 
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
     cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='genetic_modification_cellline_transgene_expression')
 
     class Meta:
         verbose_name = _(u'Genetic modification - Transgene expression non disease')
         verbose_name_plural = _(u'Genetic modifications - Transgene expression non disease')
+        unique_together = [('cell_line', 'modification_id')]
         ordering = ['gene']
 
     def __unicode__(self):
@@ -738,11 +752,13 @@ class ModificationGeneKnockOut(models.Model):
 
 class ModificationGeneKnockOutDisease(DirtyFieldsMixin, ModificationGeneKnockOut):
 
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
     cellline_disease = models.ForeignKey(CelllineDisease, verbose_name=_(u'Cell line disease'), related_name="genetic_modification_cellline_disease_gene_knock_out")
 
     class Meta:
         verbose_name = _(u'Genetic modification - Gene knock-out disease related')
         verbose_name_plural = _(u'Genetic modifications - Gene knock-out disease related')
+        unique_together = [('cellline_disease', 'modification_id')]
         ordering = ['id']
 
     def __unicode__(self):
@@ -751,11 +767,13 @@ class ModificationGeneKnockOutDisease(DirtyFieldsMixin, ModificationGeneKnockOut
 
 class ModificationGeneKnockOutNonDisease(DirtyFieldsMixin, ModificationGeneKnockOut):
 
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
     cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='genetic_modification_cellline_gene_knock_out')
 
     class Meta:
         verbose_name = _(u'Genetic modification - Gene knock-out non disease')
         verbose_name_plural = _(u'Genetic modifications - Gene knock-out non disease')
+        unique_together = [('cell_line', 'modification_id')]
         ordering = ['id']
 
     def __unicode__(self):
@@ -786,11 +804,13 @@ class ModificationGeneKnockIn(models.Model):
 
 class ModificationGeneKnockInDisease(DirtyFieldsMixin, ModificationGeneKnockIn):
 
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
     cellline_disease = models.ForeignKey(CelllineDisease, verbose_name=_(u'Cell line disease'), related_name="genetic_modification_cellline_disease_gene_knock_in")
 
     class Meta:
         verbose_name = _(u'Genetic modification - Gene knock-in disease related')
         verbose_name_plural = _(u'Genetic modifications - Gene knock-in disease related')
+        unique_together = [('cellline_disease', 'modification_id')]
         ordering = ['id']
 
     def __unicode__(self):
@@ -799,11 +819,13 @@ class ModificationGeneKnockInDisease(DirtyFieldsMixin, ModificationGeneKnockIn):
 
 class ModificationGeneKnockInNonDisease(DirtyFieldsMixin, ModificationGeneKnockIn):
 
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
     cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='genetic_modification_cellline_gene_knock_in')
 
     class Meta:
         verbose_name = _(u'Genetic modification - Gene knock-in non disease')
         verbose_name_plural = _(u'Genetic modifications - Gene knock-in non disease')
+        unique_together = [('cell_line', 'modification_id')]
         ordering = ['id']
 
     def __unicode__(self):

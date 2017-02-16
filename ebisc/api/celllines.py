@@ -294,14 +294,15 @@ class ModificationVariantDiseaseResource(ModelResource):
 
     def dehydrate(self, bundle):
 
-        bundle.data.update({
-            'type': 'Variant'
-        })
-
         if bundle.obj.gene:
-            bundle.data.update({
-                'gene': bundle.obj.gene.name,
-            })
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
+
+        bundle.data.update({
+            'type': 'Variant',
+            'gene': gene
+        })
 
         return bundle
 
@@ -323,12 +324,13 @@ class ModificationIsogenicDiseaseResource(ModelResource):
     def dehydrate(self, bundle):
 
         if bundle.obj.gene:
-            bundle.data.update({
-                'gene': bundle.obj.gene.name,
-            })
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
 
         bundle.data.update({
-            'type': 'Isogenic modification'
+            'type': 'Isogenic modification',
+            'gene': gene
         })
 
         return bundle
@@ -348,9 +350,9 @@ class ModificationTransgeneExpressionDiseaseResource(ModelResource):
     def dehydrate(self, bundle):
 
         if bundle.obj.gene:
-            bundle.data.update({
-                'gene': bundle.obj.gene.name,
-            })
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
 
         if bundle.obj.virus:
             virus = bundle.obj.virus.name
@@ -364,6 +366,7 @@ class ModificationTransgeneExpressionDiseaseResource(ModelResource):
 
         bundle.data.update({
             'type': 'Transgene expression',
+            'gene': gene,
             'virus': virus,
             'transposon': transposon,
         })
@@ -385,9 +388,9 @@ class ModificationGeneKnockOutDiseaseResource(ModelResource):
     def dehydrate(self, bundle):
 
         if bundle.obj.gene:
-            bundle.data.update({
-                'gene': bundle.obj.gene.name,
-            })
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
 
         if bundle.obj.virus:
             virus = bundle.obj.virus.name
@@ -401,6 +404,7 @@ class ModificationGeneKnockOutDiseaseResource(ModelResource):
 
         bundle.data.update({
             'type': 'Gene knock-out',
+            'gene': gene,
             'virus': virus,
             'transposon': transposon,
         })
@@ -423,14 +427,14 @@ class ModificationGeneKnockInDiseaseResource(ModelResource):
     def dehydrate(self, bundle):
 
         if bundle.obj.target_gene:
-            bundle.data.update({
-                'target_gene': bundle.obj.target_gene.name,
-            })
+            target_gene = bundle.obj.target_gene.name
+        else:
+            target_gene = None
 
         if bundle.obj.transgene:
-            bundle.data.update({
-                'transgene': bundle.obj.transgene.name,
-            })
+            transgene = bundle.obj.transgene.name
+        else:
+            transgene = None
 
         if bundle.obj.virus:
             virus = bundle.obj.virus.name
@@ -444,6 +448,8 @@ class ModificationGeneKnockInDiseaseResource(ModelResource):
 
         bundle.data.update({
             'type': 'Gene knock-in',
+            'target_gene': target_gene,
+            'transgene': transgene,
             'virus': virus,
             'transposon': transposon,
         })
@@ -544,9 +550,13 @@ class DonorDiseaseVariantResource(ModelResource):
     def dehydrate(self, bundle):
 
         if bundle.obj.gene:
-            bundle.data.update({
-                'gene': bundle.obj.gene.name,
-            })
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
+
+        bundle.data.update({
+            'gene': gene,
+        })
 
         return bundle
 
@@ -638,14 +648,15 @@ class ModificationVariantNonDiseaseResource(ModelResource):
 
     def dehydrate(self, bundle):
 
-        bundle.data.update({
-            'type': 'Variant'
-        })
-
         if bundle.obj.gene:
-            bundle.data.update({
-                'gene': bundle.obj.gene.name,
-            })
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
+
+        bundle.data.update({
+            'type': 'Variant',
+            'gene': gene
+        })
 
         return bundle
 
@@ -667,12 +678,13 @@ class ModificationIsogenicNonDiseaseResource(ModelResource):
     def dehydrate(self, bundle):
 
         if bundle.obj.gene:
-            bundle.data.update({
-                'gene': bundle.obj.gene.name,
-            })
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
 
         bundle.data.update({
-            'type': 'Isogenic modification'
+            'type': 'Isogenic modification',
+            'gene': gene
         })
 
         return bundle
@@ -692,9 +704,9 @@ class ModificationTransgeneExpressionNonDiseaseResource(ModelResource):
     def dehydrate(self, bundle):
 
         if bundle.obj.gene:
-            bundle.data.update({
-                'gene': bundle.obj.gene.name,
-            })
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
 
         if bundle.obj.virus:
             virus = bundle.obj.virus.name
@@ -708,6 +720,7 @@ class ModificationTransgeneExpressionNonDiseaseResource(ModelResource):
 
         bundle.data.update({
             'type': 'Transgene expression',
+            'gene': gene,
             'virus': virus,
             'transposon': transposon,
         })
@@ -729,9 +742,9 @@ class ModificationGeneKnockOutNonDiseaseResource(ModelResource):
     def dehydrate(self, bundle):
 
         if bundle.obj.gene:
-            bundle.data.update({
-                'gene': bundle.obj.gene.name,
-            })
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
 
         if bundle.obj.virus:
             virus = bundle.obj.virus.name
@@ -745,6 +758,7 @@ class ModificationGeneKnockOutNonDiseaseResource(ModelResource):
 
         bundle.data.update({
             'type': 'Gene knock-out',
+            'gene': gene,
             'virus': virus,
             'transposon': transposon,
         })
@@ -767,14 +781,14 @@ class ModificationGeneKnockInNonDiseaseResource(ModelResource):
     def dehydrate(self, bundle):
 
         if bundle.obj.target_gene:
-            bundle.data.update({
-                'target_gene': bundle.obj.target_gene.name,
-            })
+            target_gene = bundle.obj.target_gene.name
+        else:
+            target_gene = None
 
         if bundle.obj.transgene:
-            bundle.data.update({
-                'transgene': bundle.obj.transgene.name,
-            })
+            transgene = bundle.obj.transgene.name
+        else:
+            transgene = None
 
         if bundle.obj.virus:
             virus = bundle.obj.virus.name
@@ -788,6 +802,8 @@ class ModificationGeneKnockInNonDiseaseResource(ModelResource):
 
         bundle.data.update({
             'type': 'Gene knock-in',
+            'target_gene': target_gene,
+            'transgene': transgene,
             'virus': virus,
             'transposon': transposon,
         })
