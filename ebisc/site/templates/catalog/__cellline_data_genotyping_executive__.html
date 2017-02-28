@@ -3,7 +3,6 @@
     {% include 'catalog/__cellline_data_karyotyping__.html' %}
 
     {% if cellline.str_fingerprinting.all|length or cellline.genome_analysis %}
-    <tr><th class="sub-title"><h3>Genotyping</h3></th><th></th></tr>
 
     {% if cellline.str_fingerprinting.all|length %}
     <tr>

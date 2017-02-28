@@ -41,12 +41,31 @@
   <td class="label">Comparator lines from relatives:</td>
   <td>
     {% if comparator_cell_line %}
-    <a href="{% url 'site:page' comparator_cell_line.name %}">{{ comparator_cell_line.name }}</a><span class="comment"> - disease status: {% if comparator_cell_line.primary_disease %}{{ comparator_cell_line.primary_disease }}{% else %}Normal{% endif %}{% if comparator_cell_line.affected_status %}, {{ comparator_cell_line.affected_status }}{% endif %}{% if cellline.comparator_cell_line_relation %} ({{ cellline.comparator_cell_line_relation }}){% endif %}</span>
+    <a href="{% url 'site:page' comparator_cell_line.name %}">{{ comparator_cell_line.name }}</a>
+    <span class="comment"> - disease status:
+      {% if comparator_cell_line.donor.diseases.all %}
+      {% for disease in comparator_cell_line.donor.diseases.all %}
+      {% include 'catalog/__cellline_data_related_lines_disease__.html' %}
+      {% if not forloop.last %}; {% endif %}
+      {% endfor %}
+      {% else %}
+      /
+      {% endif %}
+      {% if cellline.comparator_cell_line_relation %} ({{ cellline.comparator_cell_line_relation }}){% endif %}
+    </span>
     {% endif %}
     {% if comparator_cell_line and available_comparators %}<br/>{% endif %}
     {% if available_comparators %}
     {% for line in available_comparators %}
-    <a href="{% url 'site:page' line.name %}">{{ line.name }}</a> <span class="comment"> - disease status: {% if line.primary_disease %}{{ line.primary_disease }}{% else %}Normal{% endif %}{% if line.affected_status %}, {{ line.affected_status }}{% endif %}</span>{% if forloop.last %}{% else %}<br/>{% endif %}
+    <a href="{% url 'site:page' line.name %}">{{ line.name }}</a>
+    <span class="comment"> - disease status:
+      {% if line.donor.diseases.all %}
+      {% for disease in line.donor.diseases.all %}
+      {% include 'catalog/__cellline_data_related_lines_disease__.html' %}
+      {% if not forloop.last %}; {% endif %}
+      {% endfor %}
+      {% endif %}
+    </span>{% if forloop.last %}{% else %}<br/>{% endif %}
     {% endfor %}
     {% endif %}
   </td>
