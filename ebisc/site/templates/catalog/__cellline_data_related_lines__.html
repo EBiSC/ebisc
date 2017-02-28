@@ -30,7 +30,7 @@
   <td class="label">Subclones:</td>
   <td>
     {% for line in subclones %}
-    <a href="{% url 'executive:cellline' line.name %}">{{ line.name }}</a>{% if forloop.last %}{% else %}, {% endif %}
+    <a href="{% url 'site:page' line.name %}">{{ line.name }}</a>{% if forloop.last %}{% else %}, {% endif %}
     {% endfor %}
   </td>
 </tr>
