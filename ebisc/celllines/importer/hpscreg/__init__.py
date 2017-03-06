@@ -181,10 +181,15 @@ def check_availability_on_ecacc(cell_line):
     # Highly suspect!!!
     available = r.status_code == requests.codes.ok and re.search(cell_line.name, r.text) is not None
 
-    if available == cell_line.available_for_sale_at_ecacc:
+    # Change ECACC availability status only if line is available (temporary fix to prevent the Catalogue from being empty in case of ECACC unavailability)
+
+    if available is False:
         return False
     else:
-        cell_line.available_for_sale_at_ecacc = available
-        return True
+        if available == cell_line.available_for_sale_at_ecacc:
+            return False
+        else:
+            cell_line.available_for_sale_at_ecacc = available
+            return True
 
 # -----------------------------------------------------------------------------
