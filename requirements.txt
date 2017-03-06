@@ -14,3 +14,4 @@ sorl-thumbnail==12.3
 Pillow==3.0.0
 django-debug-toolbar==1.5
 django-markdown-deux==1.0.5
+sqlparse==0.1.19

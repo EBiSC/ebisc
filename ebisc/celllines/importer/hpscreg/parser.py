@@ -13,7 +13,6 @@ from ebisc.celllines.models import  \
     AgeRange,  \
     CellType,  \
     Cellline,  \
-    Country,  \
     Gender,  \
     Molecule,  \
     MoleculeReference,  \
@@ -21,7 +20,10 @@ from ebisc.celllines.models import  \
     Transposon,  \
     Unit,  \
     Donor,  \
+    DonorDisease,  \
+    DonorDiseaseVariant, \
     Disease,  \
+    CelllineDisease,  \
     CelllineCultureConditions,  \
     CultureMediumOther,  \
     CelllineCultureMediumSupplement,  \
@@ -54,6 +56,16 @@ from ebisc.celllines.models import  \
     CelllineHlaTyping, \
     CelllineStrFingerprinting, \
     CelllineGenomeAnalysis, \
+    ModificationVariantDisease, \
+    ModificationVariantNonDisease, \
+    ModificationIsogenicDisease, \
+    ModificationIsogenicNonDisease, \
+    ModificationTransgeneExpressionDisease, \
+    ModificationTransgeneExpressionNonDisease, \
+    ModificationGeneKnockOutDisease, \
+    ModificationGeneKnockOutNonDisease, \
+    ModificationGeneKnockInDisease, \
+    ModificationGeneKnockInNonDisease, \
     CelllineGeneticModification, \
     GeneticModificationTransgeneExpression, \
     GeneticModificationGeneKnockOut, \
@@ -172,9 +184,6 @@ def term_list_value(value, model, model_field='name'):
     return value
 
 
-# -----------------------------------------------------------------------------
-# Specific parsers
-
 def inject_valuef(func):
     def wrapper(source, *args):
         args = [functools.partial(value_of_json, source), source] + list(args)
@@ -182,35 +191,650 @@ def inject_valuef(func):
     return wrapper
 
 
-@inject_valuef
-def parse_disease(valuef, source):
+# -----------------------------------------------------------------------------
+# Specific parsers
 
-    if valuef('disease_flag') == '0':
-        return None
+def parse_cell_line_diseases(source, cell_line):
+
+    cell_line_diseases_old = list(cell_line.diseases.all().order_by('id'))
+    cell_line_diseases_old_ids = set([d.id for d in cell_line_diseases_old])
+
+    # Parse cell lines diseases (and correctly save them)
+
+    cell_line_diseases_new = []
+
+    for ds in source.get('diseases', []):
+        cell_line_diseases_new.append(parse_cell_line_disease(ds, cell_line))
+
+    cell_line_diseases_new_ids = set([d.id for d in cell_line_diseases_new if d is not None])
+
+    # Delete existing cell line diseases that are not present in new data
+
+    to_delete = cell_line_diseases_old_ids - cell_line_diseases_new_ids
+
+    for cell_line_disease in [cd for cd in cell_line_diseases_old if cd.id in to_delete]:
+        logger.info('Deleting obsolete cell line disease %s' % cell_line_disease)
+        cell_line_disease.delete()
+
+    # Check for changes (dirty)
+
+    if (cell_line_diseases_old_ids != cell_line_diseases_new_ids):
+        return True
+    else:
+        def diseases_equal(a, b):
+            return (
+                a.primary_disease == b.primary_disease and
+                a.notes == b.notes and
+                a.disease_not_normalised == b.disease_not_normalised
+            )
+        for (old, new) in zip(cell_line_diseases_old, cell_line_diseases_new):
+            if not diseases_equal(old, new):
+                return True
+
+    return False
+
+
+@inject_valuef
+def parse_cell_line_disease(valuef, source, cell_line):
+
+    disease = parse_disease(source)
+
+    genetic_modification_types = (
+        ('disease_variants_old', 'disease_variants_old_ids', 'disease_variants_new', 'disease_variants_new_ids', 'Variant'),
+        ('disease_isogenic_old', 'disease_isogenic_old_ids', 'disease_isogenic_new', 'disease_isogenic_new_ids', 'Isogenic modification'),
+        ('disease_transgene_old', 'disease_transgene_old_ids', 'disease_transgene_new', 'disease_transgene_new_ids', 'Transgene expression'),
+        ('disease_knockout_old', 'disease_knockout_old_ids', 'disease_knockout_new', 'disease_knockout_new_ids', 'Gene knock-out'),
+        ('disease_knockin_old', 'disease_knockin_old_ids', 'disease_knockin_new', 'disease_knockin_new_ids', 'Gene knock-in'),
+    )
+
+    for (list_old, list_old_ids, list_new, list_new_ids, modification_type) in genetic_modification_types:
+        list_old = []
+
+    if disease is not None:
+
+        cell_line_disease, created = CelllineDisease.objects.update_or_create(
+            cell_line=cell_line,
+            disease=disease,
+            disease_not_normalised=valuef('other'),
+            defaults={
+                'primary_disease': valuef('primary', 'bool'),
+                'notes': valuef('free_text'),
+            }
+        )
+
+        for (list_old, list_old_genes, list_new, list_new_genes, modification_type) in genetic_modification_types:
+
+            # Process disease variants. Create new ones, update existing with new data and delete variants that are no longer in hPSCreg data
+
+            if modification_type == 'Variant':
+                list_old = list(cell_line_disease.genetic_modification_cellline_disease_variants.all().order_by('id'))
+            elif modification_type == 'Isogenic modification':
+                list_old = list(cell_line_disease.genetic_modification_cellline_disease_isogenic.all().order_by('id'))
+            elif modification_type == 'Transgene expression':
+                list_old = list(cell_line_disease.genetic_modification_cellline_disease_transgene_expression.all().order_by('id'))
+            elif modification_type == 'Gene knock-out':
+                list_old = list(cell_line_disease.genetic_modification_cellline_disease_gene_knock_out .all().order_by('id'))
+            elif modification_type == 'Gene knock-in':
+                list_old = list(cell_line_disease.genetic_modification_cellline_disease_gene_knock_in.all().order_by('id'))
+
+            list_old_ids = set([v.modification_id for v in list_old])
+
+            list_new = []
+
+            for variant in source.get('variants', []):
+                if variant["type"] == modification_type:
+                    list_new.append(parse_cell_line_disease_variant(variant, cell_line_disease))
+
+            list_new_ids = set([v.modification_id for v in list_new if v is not None])
+
+            # Delete existing disease variants that are not present in new data
+
+            to_delete = list_old_ids - list_new_ids
+
+            for disease_variant in [vd for vd in list_old if vd.modification_id in to_delete]:
+                logger.info('Deleting obsolete disease variant %s' % disease_variant)
+                disease_variant.delete()
+
+        if created:
+            logger.info('Created new cell line disease: %s' % disease)
+
+        return cell_line_disease
 
     else:
-        if valuef('disease_doid_synonyms') is None:
-            synonyms = None
-        else:
-            synonyms = ', '.join([s.split('EXACT')[0].strip() for s in valuef('disease_doid_synonyms').split(',')])
+        return None
+
+
+@inject_valuef
+def parse_cell_line_disease_variant(valuef, source, cell_line_disease):
+
+    if valuef('gene') is not None:
+        gene = parse_gene(valuef('gene'))
+    else:
+        gene = None
+
+    if valuef('transgene') is not None:
+        transgene = parse_gene(valuef('transgene'))
+    else:
+        transgene = None
+
+    virus = None
+
+    if valuef('delivery_method_virus') == 'Other' and valuef('delivery_method_virus_other') is not None:
+        virus = term_list_value_of_json(source, 'delivery_method_virus_other', Virus)
+    elif valuef('delivery_method_virus') is not None:
+        virus = term_list_value_of_json(source, 'delivery_method_virus', Virus)
+
+    transposon = None
+
+    if valuef('delivery_method_transposon_type') == 'Other' and valuef('delivery_method_transposon_type_other') is not None:
+        transposon = term_list_value_of_json(source, 'delivery_method_transposon_type_other', Transposon)
+    elif valuef('delivery_method_transposon_type') is not None:
+        transposon = term_list_value_of_json(source, 'delivery_method_transposon_type', Transposon)
+
+    delivery_method = None
+
+    if valuef('delivery_method') == 'Other' and valuef('delivery_method_other') is not None:
+        delivery_method = valuef('delivery_method_other')
+    elif valuef('delivery_method') is not None:
+        delivery_method = valuef('delivery_method')
+
+    isogenic_modificaton_type = None
+
+    if valuef('isogenic_change_type') == 'Other' and valuef('isogenic_change_type_other') is not None:
+        isogenic_modificaton_type = valuef('isogenic_change_type_other')
+    elif valuef('isogenic_change_type') is not None:
+        isogenic_modificaton_type = valuef('isogenic_change_type')
+
+    if valuef('type') == 'Variant':
+
+        cell_line_disease_variant, created = ModificationVariantDisease.objects.update_or_create(
+            cellline_disease=cell_line_disease,
+            modification_id=valuef('id'),
+            defaults={
+                'gene': gene,
+                'chromosome_location': valuef('chromosome_location'),
+                'nucleotide_sequence_hgvs': valuef('nucleotide_sequence_hgvs'),
+                'protein_sequence_hgvs': valuef('protein_sequence_hgvs'),
+                'zygosity_status': valuef('zygosity_status'),
+                'clinvar_id': valuef('clinvar_id'),
+                'dbsnp_id': valuef('dbsnp_id'),
+                'dbvar_id': valuef('dbvar_id'),
+                'publication_pmid': valuef('publication_pmid'),
+                'notes': valuef('free_text'),
+            }
+        )
+
+        if created:
+            logger.info('Added new cell line disease variant: %s , gene: %s' % (cell_line_disease_variant, gene))
+
+    elif valuef('type') == 'Isogenic modification':
+
+        cell_line_disease_variant, created = ModificationIsogenicDisease.objects.update_or_create(
+            cellline_disease=cell_line_disease,
+            modification_id=valuef('id'),
+            defaults={
+                'gene': gene,
+                'chromosome_location': valuef('chromosome_location'),
+                'nucleotide_sequence_hgvs': valuef('nucleotide_sequence_hgvs'),
+                'protein_sequence_hgvs': valuef('protein_sequence_hgvs'),
+                'zygosity_status': valuef('zygosity_status'),
+                'modification_type': isogenic_modificaton_type,
+                'notes': valuef('free_text'),
+            }
+        )
+
+        if created:
+            logger.info('Added new cell line disease variant: %s , gene: %s' % (cell_line_disease_variant, gene))
+
+    elif valuef('type') == 'Transgene expression':
+
+        cell_line_disease_variant, created = ModificationTransgeneExpressionDisease.objects.update_or_create(
+            cellline_disease=cell_line_disease,
+            modification_id=valuef('id'),
+            defaults={
+                'gene': gene,
+                'chromosome_location': valuef('chromosome_location'),
+                'delivery_method': delivery_method,
+                'virus': virus,
+                'transposon': transposon,
+                'notes': valuef('free_text'),
+            }
+        )
+
+        if created:
+            logger.info('Added new cell line disease variant: %s , gene: %s' % (cell_line_disease_variant, gene))
+
+    elif valuef('type') == 'Gene knock-out':
+
+        cell_line_disease_variant, created = ModificationGeneKnockOutDisease.objects.update_or_create(
+            cellline_disease=cell_line_disease,
+            modification_id=valuef('id'),
+            defaults={
+                'gene': gene,
+                'chromosome_location': valuef('chromosome_location'),
+                'delivery_method': delivery_method,
+                'virus': virus,
+                'transposon': transposon,
+                'notes': valuef('free_text'),
+            }
+        )
+
+        if created:
+            logger.info('Added new cell line disease variant: %s , gene: %s' % (cell_line_disease_variant, gene))
+
+    elif valuef('type') == 'Gene knock-in':
+
+        cell_line_disease_variant, created = ModificationGeneKnockInDisease.objects.update_or_create(
+            cellline_disease=cell_line_disease,
+            modification_id=valuef('id'),
+            defaults={
+                'target_gene': gene,
+                'transgene': transgene,
+                'chromosome_location': valuef('chromosome_location'),
+                'chromosome_location_transgene': valuef('transgene_chromosome_location'),
+                'delivery_method': delivery_method,
+                'virus': virus,
+                'transposon': transposon,
+                'notes': valuef('free_text'),
+            }
+        )
+
+        if created:
+            logger.info('Added new cell line disease variant: %s , gene: %s' % (cell_line_disease_variant, gene))
+
+    else:
+
+        return None
+
+    return cell_line_disease_variant
+
+
+@inject_valuef
+def parse_donor(valuef, source):
+
+    gender = term_list_value(valuef('gender'), Gender)
+
+    try:
+        donor = Donor.objects.get(biosamples_id=valuef('biosamples_id'))
+
+        if donor.gender != gender and gender is not None:
+            logger.warn('Changing donor gender from %s to %s' % (donor.gender, gender))
+            donor.gender = gender
+
+        if valuef('internal_ids') is not None:
+            donor.provider_donor_ids = valuef('internal_ids')
+        if valuef('ethnicity') is not None:
+            donor.ethnicity = valuef('ethnicity')
+
+        dirty = [donor.is_dirty(check_relationship=True)]
+
+        if True in dirty:
+            logger.info('Updated donor: %s' % donor)
+
+            donor.save()
+
+    except Donor.DoesNotExist:
+        donor = Donor(
+            biosamples_id=valuef('biosamples_id'),
+            provider_donor_ids=valuef('internal_ids'),
+            gender=gender,
+            ethnicity=valuef('ethnicity'),
+        )
 
         try:
-            disease, created = Disease.objects.update_or_create(
-                icdcode=valuef('disease_doid'),
-                disease=valuef('disease_doid_name'),
-                defaults={
-                    'synonyms': synonyms,
-                    'purl': valuef('disease_purl'),
-                }
-            )
+            donor.save()
         except IntegrityError, e:
             logger.warn(format_integrity_error(e))
             return None
 
-        if created:
-            logger.info('Found new disease: %s' % disease)
+    parse_donor_diseases(source, donor)
 
-        return disease
+    return donor
+
+
+def parse_donor_diseases(source, donor):
+
+    # Parse donor diseases (and correctly save them)
+
+    donor_diseases_old = list(donor.diseases.all().order_by('id'))
+    donor_diseases_old_ids = set([d.id for d in donor_diseases_old])
+
+    donor_diseases_new = []
+
+    for ds in source.get('diseases', []):
+        donor_diseases_new.append(parse_donor_disease(ds, donor))
+
+    donor_diseases_new_ids = set([d.id for d in donor_diseases_new if d is not None])
+
+    # Delete existing donor diseases that are not present in new data
+
+    to_delete = donor_diseases_old_ids - donor_diseases_new_ids
+
+    for donor_disease in [cd for cd in donor_diseases_old if cd.id in to_delete]:
+        logger.info('Deleting obsolete donor disease %s' % donor_disease)
+        donor_disease.delete()
+
+
+@inject_valuef
+def parse_donor_disease(valuef, source, donor):
+
+    disease = parse_disease(source)
+
+    if disease is not None:
+
+        donor_disease, created = DonorDisease.objects.update_or_create(
+            donor=donor,
+            disease=disease,
+            disease_not_normalised=valuef('other'),
+            defaults={
+                'primary_disease': valuef('primary', 'bool'),
+                'disease_stage': valuef('stage'),
+                'affected_status': valuef('affected'),
+                'carrier': valuef('carrier'),
+                'notes': valuef('free_text'),
+            }
+        )
+
+        # Process disease variants. Create new ones, update existing with new data and delete variants that are no longer in hPSCreg data
+
+        disease_variants_old = list(donor_disease.donor_disease_variants.all().order_by('id'))
+        disease_variants_old_ids = set([v.variant_id for v in disease_variants_old])
+
+        disease_variants_new = []
+
+        for variant in source.get('variants', []):
+            disease_variants_new.append(parse_donor_disease_variant(variant, donor_disease))
+
+        disease_variants_new_ids = set([v.variant_id for v in disease_variants_new if v is not None])
+
+        # Delete existing disease variants that are not present in new data
+
+        to_delete = disease_variants_old_ids - disease_variants_new_ids
+
+        for disease_variant in [vd for vd in disease_variants_old if vd.variant_id in to_delete]:
+            logger.info('Deleting obsolete donor disease variant %s' % disease_variant)
+            disease_variant.delete()
+
+        if created:
+            logger.info('Created new donor disease: %s' % disease)
+
+        return donor_disease
+
+    else:
+        return None
+
+
+@inject_valuef
+def parse_donor_disease_variant(valuef, source, donor_disease):
+
+    if valuef('gene') is not None:
+        gene = parse_gene(valuef('gene'))
+    else:
+        gene = None
+
+    donor_disease_variant, created = DonorDiseaseVariant.objects.update_or_create(
+        donor_disease=donor_disease,
+        variant_id=valuef('id'),
+        defaults={
+            'gene': gene,
+            'chromosome_location': valuef('chromosome_location'),
+            'nucleotide_sequence_hgvs': valuef('nucleotide_sequence_hgvs'),
+            'protein_sequence_hgvs': valuef('protein_sequence_hgvs'),
+            'zygosity_status': valuef('zygosity_status'),
+            'clinvar_id': valuef('clinvar_id'),
+            'dbsnp_id': valuef('dbsnp_id'),
+            'dbvar_id': valuef('dbvar_id'),
+            'publication_pmid': valuef('publication_pmid'),
+            'notes': valuef('free_text'),
+        }
+    )
+
+    if created:
+        logger.info('Created new donor disease variant: %s, gene: %s' % (donor_disease_variant, donor_disease_variant.gene))
+
+    return donor_disease_variant
+
+
+@inject_valuef
+def parse_gene(valuef, source):
+
+    name = valuef('name')
+    kind = 'gene'
+    catalog = valuef('database_name')
+    catalog_id = valuef('database_id')
+
+    return get_or_create_molecule(name, kind, catalog, catalog_id)
+
+
+@inject_valuef
+def parse_disease(valuef, source):
+
+    if not valuef('purl'):
+        logger.warn('Missing disease purl')
+        return None
+
+    # Update or create the disease
+
+    if valuef('synonyms') is None:
+        synonyms = []
+    else:
+        synonyms = valuef('synonyms')
+
+    disease, created = Disease.objects.update_or_create(
+        xpurl=valuef('purl'),
+        defaults={
+            'name': valuef('purl_name'),
+            'synonyms': ', '.join(synonyms),
+        }
+    )
+
+    if created:
+        logger.info('Created new disease: %s' % disease)
+
+    return disease
+
+
+@inject_valuef
+def parse_genetic_modifications_non_disease(valuef, source, cell_line):
+
+    if valuef('genetic_modifications_non_disease') is not None:
+
+        genetic_modification_types = (
+            ('variants_old', 'variants_old_ids', 'variants_new', 'variants_new_ids', 'Variant'),
+            ('isogenic_old', 'isogenic_old_ids', 'isogenic_new', 'isogenic_new_ids', 'Isogenic modification'),
+            ('transgene_old', 'transgene_old_ids', 'transgene_new', 'transgene_new_ids', 'Transgene expression'),
+            ('knockout_old', 'knockout_old_ids', 'knockout_new', 'knockout_new_ids', 'Gene knock-out'),
+            ('knockin_old', 'knockin_old_ids', 'knockin_new', 'knockin_new_ids', 'Gene knock-in'),
+        )
+
+        for (list_old, list_old_ids, list_new, list_new_ids, modification_type) in genetic_modification_types:
+            list_old = []
+
+            # Process disease variants. Create new ones, update existing with new data and delete variants that are no longer in hPSCreg data
+
+            if modification_type == 'Variant':
+                list_old = list(cell_line.genetic_modification_cellline_variants.all().order_by('id'))
+                list_old_ids = set([v.modification_id for v in list_old])
+            elif modification_type == 'Isogenic modification':
+                list_old = list(cell_line.genetic_modification_cellline_isogenic.all().order_by('id'))
+                list_old_ids = set([v.modification_id for v in list_old])
+            elif modification_type == 'Transgene expression':
+                list_old = list(cell_line.genetic_modification_cellline_transgene_expression.all().order_by('id'))
+                list_old_ids = set([v.modification_id for v in list_old])
+            elif modification_type == 'Gene knock-out':
+                list_old = list(cell_line.genetic_modification_cellline_gene_knock_out .all().order_by('id'))
+                list_old_ids = set([v.modification_id for v in list_old])
+            elif modification_type == 'Gene knock-in':
+                list_old = list(cell_line.genetic_modification_cellline_gene_knock_in.all().order_by('id'))
+                list_old_ids = set([v.modification_id for v in list_old])
+
+            list_new = []
+
+            for modification in source.get('genetic_modifications_non_disease', []):
+                if modification["type"] == modification_type:
+                    list_new.append(parse_genetic_modification(modification, cell_line))
+
+            # Delete existing disease variants that are not present in new data
+
+            list_new_ids = set([v.modification_id for v in list_new if v is not None])
+            to_delete = list_old_ids - list_new_ids
+
+            for genetic_modification in [vd for vd in list_old if vd.modification_id in to_delete]:
+                logger.info('Deleting obsolete genetic modification %s' % genetic_modification)
+                genetic_modification.delete()
+
+        if (list_new != list_old):
+            return True
+        else:
+            return False
+
+    else:
+        return False
+
+
+@inject_valuef
+def parse_genetic_modification(valuef, source, cell_line):
+
+    if valuef('gene') is not None:
+        gene = parse_gene(valuef('gene'))
+    else:
+        gene = None
+
+    if valuef('transgene') is not None:
+        transgene = parse_gene(valuef('transgene'))
+    else:
+        transgene = None
+
+    virus = None
+
+    if valuef('delivery_method_virus') == 'Other' and valuef('delivery_method_virus_other') is not None:
+        virus = term_list_value_of_json(source, 'delivery_method_virus_other', Virus)
+    elif valuef('delivery_method_virus') is not None:
+        virus = term_list_value_of_json(source, 'delivery_method_virus', Virus)
+
+    transposon = None
+
+    if valuef('delivery_method_transposon_type') == 'Other' and valuef('delivery_method_transposon_type_other') is not None:
+        transposon = term_list_value_of_json(source, 'delivery_method_transposon_type_other', Transposon)
+    elif valuef('delivery_method_transposon_type') is not None:
+        transposon = term_list_value_of_json(source, 'delivery_method_transposon_type', Transposon)
+
+    delivery_method = None
+
+    if valuef('delivery_method') == 'Other' and valuef('delivery_method_other') is not None:
+        delivery_method = valuef('delivery_method_other')
+    elif valuef('delivery_method') is not None:
+        delivery_method = valuef('delivery_method')
+
+    isogenic_modificaton_type = None
+
+    if valuef('isogenic_change_type') == 'Other' and valuef('isogenic_change_type_other') is not None:
+        isogenic_modificaton_type = valuef('isogenic_change_type_other')
+    elif valuef('isogenic_change_type') is not None:
+        isogenic_modificaton_type = valuef('isogenic_change_type')
+
+    if valuef('type') == 'Variant':
+
+        cell_line_genetic_modification, created = ModificationVariantNonDisease.objects.update_or_create(
+            cell_line=cell_line,
+            modification_id=valuef('id'),
+            defaults={
+                'gene': gene,
+                'chromosome_location': valuef('chromosome_location'),
+                'nucleotide_sequence_hgvs': valuef('nucleotide_sequence_hgvs'),
+                'protein_sequence_hgvs': valuef('protein_sequence_hgvs'),
+                'zygosity_status': valuef('zygosity_status'),
+                'clinvar_id': valuef('clinvar_id'),
+                'dbsnp_id': valuef('dbsnp_id'),
+                'dbvar_id': valuef('dbvar_id'),
+                'publication_pmid': valuef('publication_pmid'),
+                'notes': valuef('free_text'),
+            }
+        )
+
+        if created:
+            logger.info('Added new genetic modification: %s , gene: %s' % (cell_line_genetic_modification, gene))
+
+    elif valuef('type') == 'Isogenic modification':
+
+        cell_line_genetic_modification, created = ModificationIsogenicNonDisease.objects.update_or_create(
+            cell_line=cell_line,
+            modification_id=valuef('id'),
+            defaults={
+                'gene': gene,
+                'chromosome_location': valuef('chromosome_location'),
+                'nucleotide_sequence_hgvs': valuef('nucleotide_sequence_hgvs'),
+                'protein_sequence_hgvs': valuef('protein_sequence_hgvs'),
+                'zygosity_status': valuef('zygosity_status'),
+                'modification_type': isogenic_modificaton_type,
+                'notes': valuef('free_text'),
+            }
+        )
+
+        if created:
+            logger.info('Added new genetic modification: %s , gene: %s' % (cell_line_genetic_modification, gene))
+
+    elif valuef('type') == 'Transgene expression':
+
+        cell_line_genetic_modification, created = ModificationTransgeneExpressionNonDisease.objects.update_or_create(
+            cell_line=cell_line,
+            modification_id=valuef('id'),
+            defaults={
+                'gene': gene,
+                'chromosome_location': valuef('chromosome_location'),
+                'delivery_method': delivery_method,
+                'virus': virus,
+                'transposon': transposon,
+                'notes': valuef('free_text'),
+            }
+        )
+
+        if created:
+            logger.info('Added new genetic modification: %s , gene: %s' % (cell_line_genetic_modification, gene))
+
+    elif valuef('type') == 'Gene knock-out':
+
+        cell_line_genetic_modification, created = ModificationGeneKnockOutNonDisease.objects.update_or_create(
+            cell_line=cell_line,
+            modification_id=valuef('id'),
+            defaults={
+                'gene': gene,
+                'chromosome_location': valuef('chromosome_location'),
+                'delivery_method': delivery_method,
+                'virus': virus,
+                'transposon': transposon,
+                'notes': valuef('free_text'),
+            }
+        )
+
+        if created:
+            logger.info('Added new genetic modification: %s , gene: %s' % (cell_line_genetic_modification, gene))
+
+    elif valuef('type') == 'Gene knock-in':
+
+        cell_line_genetic_modification, created = ModificationGeneKnockInNonDisease.objects.update_or_create(
+            cell_line=cell_line,
+            modification_id=valuef('id'),
+            defaults={
+                'target_gene': gene,
+                'transgene': transgene,
+                'chromosome_location': valuef('chromosome_location'),
+                'chromosome_location_transgene': valuef('transgene_chromosome_location'),
+                'delivery_method': delivery_method,
+                'virus': virus,
+                'transposon': transposon,
+                'notes': valuef('free_text'),
+            }
+        )
+
+        if created:
+            logger.info('Added new genetic modification: %s , gene: %s' % (cell_line_genetic_modification, gene))
+
+    else:
+
+        return None
+
+    return cell_line_genetic_modification
 
 
 @inject_valuef
@@ -262,55 +886,6 @@ def parse_organization(valuef, source):
             logger.info('Found new organization type: %s' % organization_role)
 
         return (organization, organization_role)
-
-
-@inject_valuef
-def parse_donor(valuef, source):
-
-    gender = term_list_value_of_json(source, 'gender_primary_cell', Gender)
-
-    try:
-        donor = Donor.objects.get(biosamples_id=valuef('biosamples_donor_id'))
-
-        if donor.gender != gender and gender is not None:
-            logger.warn('Changing donor gender from %s to %s' % (donor.gender, gender))
-            donor.gender = gender
-
-        if valuef('internal_donor_ids') is not None:
-            donor.provider_donor_ids = valuef('internal_donor_ids')
-        if valuef('donor_country_origin') is not None:
-            donor.country_of_origin = term_list_value_of_json(source, 'donor_country_origin', Country)
-        if valuef('ethnicity') is not None:
-            donor.ethnicity = valuef('ethnicity')
-        if valuef('donor_karyotype') is not None:
-            donor.karyotype = valuef('donor_karyotype')
-
-        dirty = [donor.is_dirty(check_relationship=True)]
-
-        if True in dirty:
-            logger.info('Updated donor: %s' % donor)
-
-            donor.save()
-
-        return donor
-
-    except Donor.DoesNotExist:
-        donor = Donor(
-            biosamples_id=valuef('biosamples_donor_id'),
-            provider_donor_ids=valuef('internal_donor_ids'),
-            gender=gender,
-            country_of_origin=term_list_value_of_json(source, 'donor_country_origin', Country),
-            ethnicity=valuef('ethnicity'),
-            karyotype=valuef('donor_karyotype'),
-        )
-
-        try:
-            donor.save()
-        except IntegrityError, e:
-            logger.warn(format_integrity_error(e))
-            return None
-
-        return donor
 
 
 @inject_valuef
@@ -584,12 +1159,16 @@ def get_or_create_molecule(name, kind, catalog, catalog_id):
 
     kind_map = {
         'id_type_gene': 'gene',
-        'id_type_protein': 'protein'
+        'gene': 'gene',
+        'id_type_protein': 'protein',
+        'protein': 'protein'
     }
 
     catalog_map = {
         'entrez_id': 'entrez',
-        'ensembl_id': 'ensembl'
+        'entrez': 'entrez',
+        'ensembl_id': 'ensembl',
+        'ensembl': 'ensembl'
     }
 
     name = name.strip()
@@ -852,107 +1431,83 @@ def parse_hla_typing(valuef, source, cell_line):
         dirty = []
 
         if valuef('hla_i_a_all1') or valuef('hla_i_a_all2'):
-
             hla_typing, hla_typing_created = CelllineHlaTyping.objects.get_or_create(cell_line=cell_line, hla='A')
-
             hla_typing.hla_class = 'I'
             hla_typing.hla_allele_1 = valuef('hla_i_a_all1')
             hla_typing.hla_allele_2 = valuef('hla_i_a_all2')
 
             if hla_typing_created or hla_typing.is_dirty():
                 hla_typing.save()
-
                 dirty += [True]
 
         if valuef('hla_i_b_all1') or valuef('hla_i_b_all2'):
-
             hla_typing, hla_typing_created = CelllineHlaTyping.objects.get_or_create(cell_line=cell_line, hla='B')
-
             hla_typing.hla_class = 'I'
             hla_typing.hla_allele_1 = valuef('hla_i_b_all1')
             hla_typing.hla_allele_2 = valuef('hla_i_b_all2')
 
             if hla_typing_created or hla_typing.is_dirty():
                 hla_typing.save()
-
                 dirty += [True]
 
         if valuef('hla_i_c_all1') or valuef('hla_i_c_all2'):
-
             hla_typing, hla_typing_created = CelllineHlaTyping.objects.get_or_create(cell_line=cell_line, hla='C')
-
             hla_typing.hla_class = 'I'
             hla_typing.hla_allele_1 = valuef('hla_i_c_all1')
             hla_typing.hla_allele_2 = valuef('hla_i_c_all2')
 
             if hla_typing_created or hla_typing.is_dirty():
                 hla_typing.save()
-
                 dirty += [True]
 
         if valuef('hla_ii_dp_all1') or valuef('hla_ii_dp_all2'):
-
             hla_typing, hla_typing_created = CelllineHlaTyping.objects.get_or_create(cell_line=cell_line, hla='DP')
-
             hla_typing.hla_class = 'II'
             hla_typing.hla_allele_1 = valuef('hla_ii_dp_all1')
             hla_typing.hla_allele_2 = valuef('hla_ii_dp_all2')
 
             if hla_typing_created or hla_typing.is_dirty():
                 hla_typing.save()
-
                 dirty += [True]
 
         if valuef('hla_ii_dm_all1') or valuef('hla_ii_dm_all2'):
-
             hla_typing, hla_typing_created = CelllineHlaTyping.objects.get_or_create(cell_line=cell_line, hla='DM')
-
             hla_typing.hla_class = 'II'
             hla_typing.hla_allele_1 = valuef('hla_ii_dm_all1')
             hla_typing.hla_allele_2 = valuef('hla_ii_dm_all2')
 
             if hla_typing_created or hla_typing.is_dirty():
                 hla_typing.save()
-
                 dirty += [True]
 
         if valuef('hla_ii_doa_all1') or valuef('hla_ii_doa_all2'):
-
             hla_typing, hla_typing_created = CelllineHlaTyping.objects.get_or_create(cell_line=cell_line, hla='DOA')
-
             hla_typing.hla_class = 'II'
             hla_typing.hla_allele_1 = valuef('hla_ii_doa_all1')
             hla_typing.hla_allele_2 = valuef('hla_ii_doa_all2')
 
             if hla_typing_created or hla_typing.is_dirty():
                 hla_typing.save()
-
                 dirty += [True]
 
         if valuef('hla_ii_dq_all1') or valuef('hla_ii_dq_all2'):
-
             hla_typing, hla_typing_created = CelllineHlaTyping.objects.get_or_create(cell_line=cell_line, hla='DQ')
-
             hla_typing.hla_class = 'II'
             hla_typing.hla_allele_1 = valuef('hla_ii_dq_all1')
             hla_typing.hla_allele_2 = valuef('hla_ii_dq_all2')
 
             if hla_typing_created or hla_typing.is_dirty():
                 hla_typing.save()
-
                 dirty += [True]
 
         if valuef('hla_ii_dr_all1') or valuef('hla_ii_dr_all2'):
-
             hla_typing, hla_typing_created = CelllineHlaTyping.objects.get_or_create(cell_line=cell_line, hla='DR')
-
             hla_typing.hla_class = 'II'
             hla_typing.hla_allele_1 = valuef('hla_ii_dr_all1')
             hla_typing.hla_allele_2 = valuef('hla_ii_dr_all2')
 
             if hla_typing_created or hla_typing.is_dirty():
                 hla_typing.save()
-
                 dirty += [True]
 
 
@@ -1073,17 +1628,17 @@ def parse_genetic_modifications(valuef, source, cell_line):
 
                     if valuef('transgene_viral_method_spec') == 'Other':
                         if valuef('transgene_viral_method_spec_other') is not None:
-                            transgene_expression.virus = valuef('transgene_viral_method_spec_other')
+                            transgene_expression.virus = term_list_value_of_json(source, 'transgene_viral_method_spec_other', Virus)
                         else:
-                            transgene_expression.virus = u'Other'
+                            transgene_expression.virus = None
                     else:
                         transgene_expression.virus = term_list_value_of_json(source, 'transgene_viral_method_spec', Virus)
 
                     if valuef('transgene_transposon_method_spec') == 'Other':
                         if valuef('transgene_transposon_method_spec_other') is not None:
-                            transgene_expression.transposon = valuef('transgene_transposon_method_spec_other')
+                            transgene_expression.transposon = term_list_value_of_json(source, 'transgene_transposon_method_spec_other', Transposon)
                         else:
-                            transgene_expression.transposon = u'Other'
+                            transgene_expression.transposon = None
                     else:
                         transgene_expression.transposon = term_list_value_of_json(source, 'transgene_transposon_method_spec', Transposon)
 
@@ -1109,15 +1664,15 @@ def parse_genetic_modifications(valuef, source, cell_line):
 
                     if valuef('knockout_viral_method_spec') == 'Other':
                         if valuef('knockout_viral_method_spec_other') is not None:
-                            gene_knock_out.virus = valuef('knockout_viral_method_spec_other')
+                            gene_knock_out.virus = term_list_value_of_json(source, 'knockout_viral_method_spec_other', Virus)
                         else:
-                            gene_knock_out.virus = u'Other'
+                            gene_knock_out.virus = None
                     else:
                         gene_knock_out.virus = term_list_value_of_json(source, 'knockout_viral_method_spec', Virus)
 
                     if valuef('knockout_transposon_method_spec') == 'Other':
                         if valuef('knockout_transposon_method_spec_other') is not None:
-                            gene_knock_out.transposon = valuef('knockout_transposon_method_spec_other')
+                            gene_knock_out.transposon = term_list_value_of_json(source, 'knockout_transposon_method_spec_other', Transposon)
                         else:
                             gene_knock_out.transposon = u'Other'
                     else:
@@ -1137,51 +1692,6 @@ def parse_genetic_modifications(valuef, source, cell_line):
                         gene_knock_out.save()
                         dirty_genetic_modification += [True]
 
-                    # old_genes = set([gene.name for gene in gene_knock_out.target_genes.all()])
-                    #
-                    # dirty_genes = []
-                    #
-                    # if valuef('genetic_modification_knockout_list') is None:
-                    #
-                    #     if not old_genes:
-                    #         return []
-                    #
-                    #     else:
-                    #         for gene_name in old_genes:
-                    #             g = GeneticModificationGeneKnockOut.objects.get(cell_line=cell_line, target_genes__name=gene_name)
-                    #             g.delete()
-                    #             dirty_genes += [True]
-                    #
-                    # else:
-                    #     new_genes = []
-                    #
-                    #     for gene in valuef('genetic_modification_knockout_list'):
-                    #         (catalog_id, gene_name, catalog, kind) = gene.split('###')
-                    #
-                    #         new_genes_list.append((gene_name))
-                    #
-                    #     new_genes = set(new_genes_list)
-                    #
-                    #     # Delete old genes that are not in new genes
-                    #     for gene_name in (old_genes - new_genes):
-                    #         g = GeneticModificationGeneKnockOut.objects.get(cell_line=cell_line, target_genes__name=gene_name)
-                    #         g.delete()
-                    #         dirty_genes += [True]
-                    #
-                    #     for gene in valuef('genetic_modification_knockout_list'):
-                    #         (catalog_id, gene_name, catalog, kind) = gene.split('###')
-                    #
-                    #         # Add new genes
-                    #         if gene_name in (new_genes - old_genes):
-                    #             gene_knock_out.target_genes.add(gene)
-                    #             dirty_genes += [True]
-                    #
-                    #         # Modify existing if data has changed
-                    #         else:
-                    #           TODO
-                    #
-                    #     return dirty_genes
-
                 elif modification_type == 'gen_mod_gene_knock_in':
 
                     gene_knock_in, gene_knock_in_created = GeneticModificationGeneKnockIn.objects.get_or_create(cell_line=cell_line)
@@ -1190,15 +1700,15 @@ def parse_genetic_modifications(valuef, source, cell_line):
 
                     if valuef('knockin_viral_method_spec') == 'Other':
                         if valuef('knockin_viral_method_spec_other') is not None:
-                            gene_knock_in.virus = valuef('knockin_viral_method_spec_other')
+                            gene_knock_in.virus = term_list_value_of_json(source, 'knockin_viral_method_spec_other', Virus)
                         else:
-                            gene_knock_in.virus = u'Other'
+                            gene_knock_in.virus = None
                     else:
                         gene_knock_in.virus = term_list_value_of_json(source, 'knockin_viral_method_spec', Virus)
 
                     if valuef('knockin_transposon_method_spec') == 'Other':
                         if valuef('knockin_transposon_method_spec_other') is not None:
-                            gene_knock_in.transposon = valuef('knockin_transposon_method_spec_other')
+                            gene_knock_in.transposon = term_list_value_of_json(source, 'knockin_transposon_method_spec_other', Transposon)
                         else:
                             gene_knock_in.transposon = u'Other'
                     else:
