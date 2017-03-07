@@ -87,253 +87,253 @@ Additional fields and endpoints may be created for future exchanges.
                 "vials": [
                     {
                         "biosamples_id": "SAMEA2590959",
-                        "name": "LB-34-1 vial 01",
-                        "number": "01"
+                        "name": "LB-34-1 P001 vial 0001",
+                        "number": "0001"
                     },
                     {
                         "biosamples_id": "SAMEA2590987",
-                        "name": "LB-34-1 vial 02",
-                        "number": "02"
+                        "name": "LB-34-1 P001 vial 0002",
+                        "number": "0002"
                     },
                     {
                         "biosamples_id": "SAMEA2591011",
-                        "name": "LB-34-1 vial 03",
-                        "number": "03"
+                        "name": "LB-34-1 P001 vial 0003",
+                        "number": "0003"
                     },
                     {
                         "biosamples_id": "SAMEA2591030",
-                        "name": "LB-34-1 vial 04",
-                        "number": "04"
+                        "name": "LB-34-1 P001 vial 0004",
+                        "number": "0004"
                     },
                     {
                         "biosamples_id": "SAMEA2590894",
-                        "name": "LB-34-1 vial 05",
-                        "number": "05"
+                        "name": "LB-34-1 P001 vial 0005",
+                        "number": "0005"
                     },
                     {
                         "biosamples_id": "SAMEA2590889",
-                        "name": "LB-34-1 vial 06",
-                        "number": "06"
+                        "name": "LB-34-1 P001 vial 0006",
+                        "number": "0006"
                     },
                     {
                         "biosamples_id": "SAMEA2590910",
-                        "name": "LB-34-1 vial 07",
-                        "number": "07"
+                        "name": "LB-34-1 P001 vial 0007",
+                        "number": "0007"
                     },
                     {
                         "biosamples_id": "SAMEA2590923",
-                        "name": "LB-34-1 vial 08",
-                        "number": "08"
+                        "name": "LB-34-1 P001 vial 0008",
+                        "number": "0008"
                     },
                     {
                         "biosamples_id": "SAMEA2590940",
-                        "name": "LB-34-1 vial 09",
-                        "number": "09"
+                        "name": "LB-34-1 P001 vial 0009",
+                        "number": "0009"
                     },
                     {
                         "biosamples_id": "SAMEA2590878",
-                        "name": "LB-34-1 vial 10",
-                        "number": "10"
+                        "name": "LB-34-1 P001 vial 0010",
+                        "number": "0010"
                     },
                     {
                         "biosamples_id": "SAMEA2590906",
-                        "name": "LB-34-1 vial 11",
-                        "number": "11"
+                        "name": "LB-34-1 P001 vial 0011",
+                        "number": "0011"
                     },
                     {
                         "biosamples_id": "SAMEA2590915",
-                        "name": "LB-34-1 vial 12",
-                        "number": "12"
+                        "name": "LB-34-1 P001 vial 0012",
+                        "number": "0012"
                     },
                     {
                         "biosamples_id": "SAMEA2591017",
-                        "name": "LB-34-1 vial 13",
-                        "number": "13"
+                        "name": "LB-34-1 P001 vial 0013",
+                        "number": "0013"
                     },
                     {
                         "biosamples_id": "SAMEA2591031",
-                        "name": "LB-34-1 vial 14",
-                        "number": "14"
+                        "name": "LB-34-1 P001 vial 0014",
+                        "number": "0014"
                     },
                     {
                         "biosamples_id": "SAMEA2590960",
-                        "name": "LB-34-1 vial 15",
-                        "number": "15"
+                        "name": "LB-34-1 P001 vial 0015",
+                        "number": "0015"
                     },
                     {
                         "biosamples_id": "SAMEA2590986",
-                        "name": "LB-34-1 vial 16",
-                        "number": "16"
+                        "name": "LB-34-1 P001 vial 0016",
+                        "number": "0016"
                     },
                     {
                         "biosamples_id": "SAMEA2590953",
-                        "name": "LB-34-1 vial 17",
-                        "number": "17"
+                        "name": "LB-34-1 P001 vial 0017",
+                        "number": "0017"
                     },
                     {
                         "biosamples_id": "SAMEA2590942",
-                        "name": "LB-34-1 vial 18",
-                        "number": "18"
+                        "name": "LB-34-1 P001 vial 0018",
+                        "number": "0018"
                     },
                     {
                         "biosamples_id": "SAMEA2590928",
-                        "name": "LB-34-1 vial 19",
-                        "number": "19"
+                        "name": "LB-34-1 P001 vial 0019",
+                        "number": "0019"
                     },
                     {
                         "biosamples_id": "SAMEA2590979",
-                        "name": "LB-34-1 vial 20",
-                        "number": "20"
+                        "name": "LB-34-1 P001 vial 0020",
+                        "number": "0020"
                     },
                     {
                         "biosamples_id": "SAMEA2590992",
-                        "name": "LB-34-1 vial 21",
-                        "number": "21"
+                        "name": "LB-34-1 P001 vial 0021",
+                        "number": "0021"
                     },
                     {
                         "biosamples_id": "SAMEA2591012",
-                        "name": "LB-34-1 vial 22",
-                        "number": "22"
+                        "name": "LB-34-1 P001 vial 0022",
+                        "number": "0022"
                     },
                     {
                         "biosamples_id": "SAMEA2591003",
-                        "name": "LB-34-1 vial 23",
-                        "number": "23"
+                        "name": "LB-34-1 P001 vial 0023",
+                        "number": "0023"
                     },
                     {
                         "biosamples_id": "SAMEA2591018",
-                        "name": "LB-34-1 vial 24",
-                        "number": "24"
+                        "name": "LB-34-1 P001 vial 0024",
+                        "number": "0024"
                     },
                     {
                         "biosamples_id": "SAMEA2590897",
-                        "name": "LB-34-1 vial 25",
-                        "number": "25"
+                        "name": "LB-34-1 P001 vial 0025",
+                        "number": "0025"
                     },
                     {
                         "biosamples_id": "SAMEA2590907",
-                        "name": "LB-34-1 vial 26",
-                        "number": "26"
+                        "name": "LB-34-1 P001 vial 0026",
+                        "number": "0026"
                     },
                     {
                         "biosamples_id": "SAMEA2590924",
-                        "name": "LB-34-1 vial 27",
-                        "number": "27"
+                        "name": "LB-34-1 P001 vial 0027",
+                        "number": "0027"
                     },
                     {
                         "biosamples_id": "SAMEA2590947",
-                        "name": "LB-34-1 vial 28",
-                        "number": "28"
+                        "name": "LB-34-1 P001 vial 0028",
+                        "number": "0028"
                     },
                     {
                         "biosamples_id": "SAMEA2590951",
-                        "name": "LB-34-1 vial 29",
-                        "number": "29"
+                        "name": "LB-34-1 P001 vial 0029",
+                        "number": "0029"
                     },
                     {
                         "biosamples_id": "SAMEA2591028",
-                        "name": "LB-34-1 vial 30",
-                        "number": "30"
+                        "name": "LB-34-1 P001 vial 0030",
+                        "number": "0030"
                     },
                     {
                         "biosamples_id": "SAMEA2591004",
-                        "name": "LB-34-1 vial 31",
-                        "number": "31"
+                        "name": "LB-34-1 P001 vial 0031",
+                        "number": "0031"
                     },
                     {
                         "biosamples_id": "SAMEA2590901",
-                        "name": "LB-34-1 vial 32",
-                        "number": "32"
+                        "name": "LB-34-1 P001 vial 0032",
+                        "number": "0032"
                     },
                     {
                         "biosamples_id": "SAMEA2590881",
-                        "name": "LB-34-1 vial 33",
-                        "number": "33"
+                        "name": "LB-34-1 P001 vial 0033",
+                        "number": "0033"
                     },
                     {
                         "biosamples_id": "SAMEA2590898",
-                        "name": "LB-34-1 vial 34",
-                        "number": "34"
+                        "name": "LB-34-1 P001 vial 0034",
+                        "number": "0034"
                     },
                     {
                         "biosamples_id": "SAMEA2590952",
-                        "name": "LB-34-1 vial 35",
-                        "number": "35"
+                        "name": "LB-34-1 P001 vial 0035",
+                        "number": "0035"
                     },
                     {
                         "biosamples_id": "SAMEA2590931",
-                        "name": "LB-34-1 vial 36",
-                        "number": "36"
+                        "name": "LB-34-1 P001 vial 0036",
+                        "number": "0036"
                     },
                     {
                         "biosamples_id": "SAMEA2590984",
-                        "name": "LB-34-1 vial 37",
-                        "number": "37"
+                        "name": "LB-34-1 P001 vial 0037",
+                        "number": "0037"
                     },
                     {
                         "biosamples_id": "SAMEA2590963",
-                        "name": "LB-34-1 vial 38",
-                        "number": "38"
+                        "name": "LB-34-1 P001 vial 0038",
+                        "number": "0038"
                     },
                     {
                         "biosamples_id": "SAMEA2591024",
-                        "name": "LB-34-1 vial 39",
-                        "number": "39"
+                        "name": "LB-34-1 P001 vial 0039",
+                        "number": "0039"
                     },
                     {
                         "biosamples_id": "SAMEA2590880",
-                        "name": "LB-34-1 vial 40",
-                        "number": "40"
+                        "name": "LB-34-1 P001 vial 0040",
+                        "number": "0040"
                     },
                     {
                         "biosamples_id": "SAMEA2590905",
-                        "name": "LB-34-1 vial 41",
-                        "number": "41"
+                        "name": "LB-34-1 P001 vial 0041",
+                        "number": "0041"
                     },
                     {
                         "biosamples_id": "SAMEA2590935",
-                        "name": "LB-34-1 vial 42",
-                        "number": "42"
+                        "name": "LB-34-1 P001 vial 0042",
+                        "number": "0042"
                     },
                     {
                         "biosamples_id": "SAMEA2590948",
-                        "name": "LB-34-1 vial 43",
-                        "number": "43"
+                        "name": "LB-34-1 P001 vial 0043",
+                        "number": "0043"
                     },
                     {
                         "biosamples_id": "SAMEA2590977",
-                        "name": "LB-34-1 vial 44",
-                        "number": "44"
+                        "name": "LB-34-1 P001 vial 0044",
+                        "number": "0044"
                     },
                     {
                         "biosamples_id": "SAMEA2590962",
-                        "name": "LB-34-1 vial 45",
-                        "number": "45"
+                        "name": "LB-34-1 P001 vial 0045",
+                        "number": "0045"
                     },
                     {
                         "biosamples_id": "SAMEA2590989",
-                        "name": "LB-34-1 vial 46",
-                        "number": "46"
+                        "name": "LB-34-1 P001 vial 0046",
+                        "number": "0046"
                     },
                     {
                         "biosamples_id": "SAMEA2591007",
-                        "name": "LB-34-1 vial 47",
-                        "number": "47"
+                        "name": "LB-34-1 P001 vial 0047",
+                        "number": "0047"
                     },
                     {
                         "biosamples_id": "SAMEA2591027",
-                        "name": "LB-34-1 vial 48",
-                        "number": "48"
+                        "name": "LB-34-1 P001 vial 0048",
+                        "number": "0048"
                     },
                     {
                         "biosamples_id": "SAMEA2590939",
-                        "name": "LB-34-1 vial 49",
-                        "number": "49"
+                        "name": "LB-34-1 P001 vial 0049",
+                        "number": "0049"
                     },
                     {
                         "biosamples_id": "SAMEA2590893",
-                        "name": "LB-34-1 vial 50",
-                        "number": "50"
+                        "name": "LB-34-1 P001 vial 0050",
+                        "number": "0050"
                     }
                 ],
                 "vials_at_roslin": 0,
@@ -420,12 +420,75 @@ Additional fields and endpoints may be created for future exchanges.
         ],
         "non_disease_associated_phenotypes": [
             "Cardiac arrhythmia at exercise; normal ECG at rest"
-        ]
+        ],
+        "diseases": [
+        {
+            "affected_status": "True",
+            "carrier": null,
+            "disease_stage": null,
+            "free_text_name": null,
+            "name": "Parkinson's disease",
+            "notes": null,
+            "primary_disease": false,
+            "purl": "http://www.ebi.ac.uk/efo/EFO_0002508",
+            "synonyms": [
+                "Parkinson's syndrome",
+                "Parkinsons",
+                "Primary Parkinsonism",
+                "Parkinsons disease",
+                "Parkinson disease",
+                "Parkinson's disease (disorder)",
+                "Parkinson's disease NOS",
+                "Parkinson Disease"
+            ]
+        }
+        ],
         "donor": {
             "biosamples_id": "SAMEA2590985",
+            "country_of_origin": null,
+            "diseases": [
+                  {
+                  "affected_status": null,
+                  "carrier": null,
+                  "disease_stage": null,
+                  "free_text_name": null,
+                  "name": "unipolar depression",
+                  "notes": null,
+                  "primary_disease": false,
+                  "purl": "http://www.ebi.ac.uk/efo/EFO_0003761",
+                  "synonyms": [
+                      "Melancholia",
+                      "Neuroses",
+                      "Depressive",
+                      "Emotional Depression",
+                      "Depressive Disorders",
+                      "Major",
+                      "MAJOR DEPRESSIVE DIS",
+                      "Neurosis",
+                      "Depressive"
+                  ]
+                  },
+                  {
+                  "affected_status": null,
+                  "carrier": null,
+                  "disease_stage": null,
+                  "free_text_name": null,
+                  "name": "anti-social behavior",
+                  "notes": null,
+                  "primary_disease": false,
+                  "purl": "http://www.ebi.ac.uk/efo/EFO_0004890",
+                  "synonyms": [
+                  ""
+                  ]
+            }
+            ],
+            "ethnicity": null,
             "gender": "male",
             "internal_donor_ids": [
-                "NP0014/YO90096"
+                "G1882",
+                "RCFB53",
+                "G1870",
+                "RCFB44"
             ],
             "karyotype": null
         },
@@ -452,7 +515,6 @@ Additional fields and endpoints may be created for future exchanges.
             "name": "fibroblast of dermis"
         },
         "primary_disease": {
-            "doid": "DOID:1440",
             "name": "Machado-Joseph disease",
             "purl": "http://purl.obolibrary.org/obo/DOID_1440",
             "synonyms": [
@@ -544,15 +606,191 @@ The history of status changes is logged in the field `status_log`. Each change i
 * Unvalidated
 * Name registered, no data
 
-#### Primary disease
+#### Diseases
 
-Primary disease data is provided in two fields:
-* `primary_disease_diagnosed` can have values `0`, `1` or `carrier`. If the value is `0`, there is no disease diagnosed and this disease status should be displayed as `normal`. If the value is `1` or `carrier` the disease has been diagnosed or the donor is a carrier.
-* `primary_disease` fields cover two different cases:
-  * If the value of `primary_disease_diagnosed` is `1` or `carrier`, the `primary_disease` fields hold information about the diagnosed disease.
-  * If the value of `primary_disease_diagnosed` is `0`, the `primary_disease` field `name` holds the value `Normal`.
+Disease information is provided in two places:
+* In the `donor` field under `diseases`
+* On the top level field under `diseases`
 
-Note: Some fields in `primary_disease` will change with the implementation of ontologies.
+In both cases the field `diseases` holds a list of diseases. The diseases under top level field `diseases` hold data for genetically modified lines if the modifications are associated to a disease. Each disease has information about variants/modifications. There are five different types of Variants/modifications, for each specific fields are exported (see examples below).
+
+To insure backward compatibility two disease related fields will still remain in the export until needed:
+* `primary_disease_diagnosed` can have values `0`, `1`. If the value is `0`, there is no disease diagnosed and this disease status should be displayed as `normal`. If the value is `1` the disease has been diagnosed.
+* `primary_disease` field: holds data on primary disease if one is specified. If not, the first disease is taken from a combined (donor and cell line) list of diseases.
+
+##### Donor disease test sample
+
+"donor": {
+  "biosamples_id": "SAMEA3105780",
+  "diseases": [
+    {
+      "affected_status": null,
+      "carrier": null,
+      "disease_stage": null,
+      "free_text_name": null,
+      "name": "normal",
+      "notes": null,
+      "primary_disease": false,
+      "purl": "http://purl.obolibrary.org/obo/PATO_0000461",
+      "synonyms": [
+        "Normalities",
+        "Health",
+        "Normalcy",
+        "Normality"
+      ],
+      "variants": [
+        {
+          "chromosome_location": "cytoband location: 3p21",
+          "clinvar_id": "3455634563456",
+          "dbsnp_id": "3456354737",
+          "dbvar_id": "35675673567",
+          "gene": "psd",
+          "notes": "Detailed free text explanation ...",
+          "nucleotide_sequence_hgvs": "NM_005228.3:c.2312_2314delinsGCGTGGACAACG",
+          "protein_sequence_hgvs": "NP_005219.2:p.(Val689_Glu690delinsGlyValAspAsn)",
+          "publication_pmid": "26132555",
+          "zygosity_status": "Homozygous"
+        }
+      ]
+      }
+  ],
+},
+
+##### Cell line disease test sample (with all five types of possible modifications listed in the field `variants`):
+
+"diseases": [
+  {
+    "affected_status": null,
+    "carrier": null,
+    "disease_stage": null,
+    "free_text_name": null,
+    "name": "Alzheimers disease",
+    "notes": null,
+    "primary_disease": false,
+    "purl": "http://www.ebi.ac.uk/efo/EFO_0000249",
+    "synonyms": [
+      "Disease",
+      "Alzheimer",
+      "Alzheimer Senile Dementia",
+      "Dementia in Alzheimer's disease",
+      "unspecified (disorder)",
+      "Presenile Alzheimer Dementia"
+    ],
+    "variants": [
+      {
+        "chromosome_location": "19q13.32",
+        "clinvar_id": null,
+        "dbsnp_id": null,
+        "dbvar_id": null,
+        "gene": "ApoE",
+        "notes": "ApoE3/E3 isogenic mutant of BIONi010-C (ApoE3/E4)",
+        "nucleotide_sequence_hgvs": "NM_001302691: rs429358 (C/C), rs7412 (T/T)",
+        "protein_sequence_hgvs": "NP_001289620.1 (ApoE3/E3)",
+        "publication_pmid": null,
+        "type": "Variant",
+        "zygosity_status": "Heterozygous"
+      },
+      {
+        "chromosome_location": null,
+        "delivery_method": null,
+        "gene": "psd",
+        "notes": "Supporting evidence",
+        "transposon": null,
+        "type": "Transgene expression",
+        "virus": null
+      },
+      {
+        "chromosome_location": null,
+        "delivery_method": "Viral",
+        "gene": "plm",
+        "notes": null,
+        "transposon": null,
+        "type": "Gene knock-out",
+        "virus": "Retrovirus"
+      },
+      {
+        "chromosome_location": null,
+        "gene": "plm",
+        "modification_type": null,
+        "notes": null,
+        "nucleotide_sequence_hgvs": null,
+        "protein_sequence_hgvs": null,
+        "type": "Isogenic modification",
+        "zygosity_status": null
+      },
+      {
+        "chromosome_location": null,
+        "chromosome_location_transgene": "ddd",
+        "delivery_method": "TALEN",
+        "notes": "Supporting evidence ...",
+        "target_gene": "plm",
+        "transgene": "psd",
+        "transposon": null,
+        "type": "Gene knock-in",
+        "virus": null
+      }
+    ]
+  }
+]
+
+##### Genetic modifications not related to diseases test sample (with all five types of possible modifications listed):
+
+Data for genetic modifications that are not related to a disease are exported in the field `genetic_modifications_non_disease` as a list. There are five different types of modifications, for each specific fields are exported (same as for cell line diseases).
+
+"genetic_modifications_non_disease": [
+  {
+    "chromosome_location": "19q13.32",
+    "clinvar_id": null,
+    "dbsnp_id": null,
+    "dbvar_id": null,
+    "gene": "ApoE",
+    "notes": "ApoE3/E3 isogenic mutant of BIONi010-C (ApoE3/E4)",
+    "nucleotide_sequence_hgvs": "NM_001302691: rs429358 (C/C), rs7412 (T/T)",
+    "protein_sequence_hgvs": "NP_001289620.1 (ApoE3/E3)",
+    "publication_pmid": null,
+    "type": "Variant",
+    "zygosity_status": "Heterozygous"
+  },
+  {
+    "chromosome_location": null,
+    "delivery_method": null,
+    "gene": "psd",
+    "notes": "Supporting evidence",
+    "transposon": null,
+    "type": "Transgene expression",
+    "virus": null
+  },
+  {
+    "chromosome_location": null,
+    "delivery_method": "Viral",
+    "gene": "plm",
+    "notes": null,
+    "transposon": null,
+    "type": "Gene knock-out",
+    "virus": "Retrovirus"
+  },
+  {
+    "chromosome_location": null,
+    "gene": "plm",
+    "modification_type": null,
+    "notes": null,
+    "nucleotide_sequence_hgvs": null,
+    "protein_sequence_hgvs": null,
+    "type": "Isogenic modification",
+    "zygosity_status": null
+  },
+  {
+    "chromosome_location": null,
+    "chromosome_location_transgene": "ddd",
+    "delivery_method": "TALEN",
+    "notes": "Supporting evidence ...",
+    "target_gene": "plm",
+    "transgene": "psd",
+    "transposon": null,
+    "type": "Gene knock-in",
+    "virus": null
+  }
+]
 
 #### Reprogramming method
 
@@ -615,7 +853,7 @@ The reprogramming method has a different structure depending on the `type`. Poss
             "vector": "Episomal"
         }
 
-#### Genetic modification
+#### Genetic modification (Old fields, will be removed)
 
 Data for genetic modification is stored in 5 fields. The field `genetic_modification` holds the information if the line has been modified and what types of modification were used.
 The four fields described below contain the details of the modification.
@@ -701,253 +939,253 @@ The four fields described below contain the details of the modification.
             "vials": [
                 {
                     "biosamples_id": "SAMEA2590959",
-                    "name": "LB-34-1 vial 01",
-                    "number": "01"
+                    "name": "LB-34-1 P001 vial 0001",
+                    "number": "0001"
                 },
                 {
                     "biosamples_id": "SAMEA2590987",
-                    "name": "LB-34-1 vial 02",
-                    "number": "02"
+                    "name": "LB-34-1 P001 vial 0002",
+                    "number": "0002"
                 },
                 {
                     "biosamples_id": "SAMEA2591011",
-                    "name": "LB-34-1 vial 03",
-                    "number": "03"
+                    "name": "LB-34-1 P001 vial 0003",
+                    "number": "0003"
                 },
                 {
                     "biosamples_id": "SAMEA2591030",
-                    "name": "LB-34-1 vial 04",
-                    "number": "04"
+                    "name": "LB-34-1 P001 vial 0004",
+                    "number": "0004"
                 },
                 {
                     "biosamples_id": "SAMEA2590894",
-                    "name": "LB-34-1 vial 05",
-                    "number": "05"
+                    "name": "LB-34-1 P001 vial 0005",
+                    "number": "0005"
                 },
                 {
                     "biosamples_id": "SAMEA2590889",
-                    "name": "LB-34-1 vial 06",
-                    "number": "06"
+                    "name": "LB-34-1 P001 vial 0006",
+                    "number": "0006"
                 },
                 {
                     "biosamples_id": "SAMEA2590910",
-                    "name": "LB-34-1 vial 07",
-                    "number": "07"
+                    "name": "LB-34-1 P001 vial 0007",
+                    "number": "0007"
                 },
                 {
                     "biosamples_id": "SAMEA2590923",
-                    "name": "LB-34-1 vial 08",
-                    "number": "08"
+                    "name": "LB-34-1 P001 vial 0008",
+                    "number": "0008"
                 },
                 {
                     "biosamples_id": "SAMEA2590940",
-                    "name": "LB-34-1 vial 09",
-                    "number": "09"
+                    "name": "LB-34-1 P001 vial 0009",
+                    "number": "0009"
                 },
                 {
                     "biosamples_id": "SAMEA2590878",
-                    "name": "LB-34-1 vial 10",
-                    "number": "10"
+                    "name": "LB-34-1 P001 vial 0010",
+                    "number": "0010"
                 },
                 {
                     "biosamples_id": "SAMEA2590906",
-                    "name": "LB-34-1 vial 11",
-                    "number": "11"
+                    "name": "LB-34-1 P001 vial 0011",
+                    "number": "0011"
                 },
                 {
                     "biosamples_id": "SAMEA2590915",
-                    "name": "LB-34-1 vial 12",
-                    "number": "12"
+                    "name": "LB-34-1 P001 vial 0012",
+                    "number": "0012"
                 },
                 {
                     "biosamples_id": "SAMEA2591017",
-                    "name": "LB-34-1 vial 13",
-                    "number": "13"
+                    "name": "LB-34-1 P001 vial 0013",
+                    "number": "0013"
                 },
                 {
                     "biosamples_id": "SAMEA2591031",
-                    "name": "LB-34-1 vial 14",
-                    "number": "14"
+                    "name": "LB-34-1 P001 vial 0014",
+                    "number": "0014"
                 },
                 {
                     "biosamples_id": "SAMEA2590960",
-                    "name": "LB-34-1 vial 15",
-                    "number": "15"
+                    "name": "LB-34-1 P001 vial 0015",
+                    "number": "0015"
                 },
                 {
                     "biosamples_id": "SAMEA2590986",
-                    "name": "LB-34-1 vial 16",
-                    "number": "16"
+                    "name": "LB-34-1 P001 vial 0016",
+                    "number": "0016"
                 },
                 {
                     "biosamples_id": "SAMEA2590953",
-                    "name": "LB-34-1 vial 17",
-                    "number": "17"
+                    "name": "LB-34-1 P001 vial 0017",
+                    "number": "0017"
                 },
                 {
                     "biosamples_id": "SAMEA2590942",
-                    "name": "LB-34-1 vial 18",
-                    "number": "18"
+                    "name": "LB-34-1 P001 vial 0018",
+                    "number": "0018"
                 },
                 {
                     "biosamples_id": "SAMEA2590928",
-                    "name": "LB-34-1 vial 19",
-                    "number": "19"
+                    "name": "LB-34-1 P001 vial 0019",
+                    "number": "0019"
                 },
                 {
                     "biosamples_id": "SAMEA2590979",
-                    "name": "LB-34-1 vial 20",
-                    "number": "20"
+                    "name": "LB-34-1 P001 vial 0020",
+                    "number": "0020"
                 },
                 {
                     "biosamples_id": "SAMEA2590992",
-                    "name": "LB-34-1 vial 21",
-                    "number": "21"
+                    "name": "LB-34-1 P001 vial 0021",
+                    "number": "0021"
                 },
                 {
                     "biosamples_id": "SAMEA2591012",
-                    "name": "LB-34-1 vial 22",
-                    "number": "22"
+                    "name": "LB-34-1 P001 vial 0022",
+                    "number": "0022"
                 },
                 {
                     "biosamples_id": "SAMEA2591003",
-                    "name": "LB-34-1 vial 23",
-                    "number": "23"
+                    "name": "LB-34-1 P001 vial 0023",
+                    "number": "0023"
                 },
                 {
                     "biosamples_id": "SAMEA2591018",
-                    "name": "LB-34-1 vial 24",
-                    "number": "24"
+                    "name": "LB-34-1 P001 vial 0024",
+                    "number": "0024"
                 },
                 {
                     "biosamples_id": "SAMEA2590897",
-                    "name": "LB-34-1 vial 25",
-                    "number": "25"
+                    "name": "LB-34-1 P001 vial 0025",
+                    "number": "0025"
                 },
                 {
                     "biosamples_id": "SAMEA2590907",
-                    "name": "LB-34-1 vial 26",
-                    "number": "26"
+                    "name": "LB-34-1 P001 vial 0026",
+                    "number": "0026"
                 },
                 {
                     "biosamples_id": "SAMEA2590924",
-                    "name": "LB-34-1 vial 27",
-                    "number": "27"
+                    "name": "LB-34-1 P001 vial 0027",
+                    "number": "0027"
                 },
                 {
                     "biosamples_id": "SAMEA2590947",
-                    "name": "LB-34-1 vial 28",
-                    "number": "28"
+                    "name": "LB-34-1 P001 vial 0028",
+                    "number": "0028"
                 },
                 {
                     "biosamples_id": "SAMEA2590951",
-                    "name": "LB-34-1 vial 29",
-                    "number": "29"
+                    "name": "LB-34-1 P001 vial 0029",
+                    "number": "0029"
                 },
                 {
                     "biosamples_id": "SAMEA2591028",
-                    "name": "LB-34-1 vial 30",
-                    "number": "30"
+                    "name": "LB-34-1 P001 vial 0030",
+                    "number": "0030"
                 },
                 {
                     "biosamples_id": "SAMEA2591004",
-                    "name": "LB-34-1 vial 31",
-                    "number": "31"
+                    "name": "LB-34-1 P001 vial 0031",
+                    "number": "0031"
                 },
                 {
                     "biosamples_id": "SAMEA2590901",
-                    "name": "LB-34-1 vial 32",
-                    "number": "32"
+                    "name": "LB-34-1 P001 vial 0032",
+                    "number": "0032"
                 },
                 {
                     "biosamples_id": "SAMEA2590881",
-                    "name": "LB-34-1 vial 33",
-                    "number": "33"
+                    "name": "LB-34-1 P001 vial 0033",
+                    "number": "0033"
                 },
                 {
                     "biosamples_id": "SAMEA2590898",
-                    "name": "LB-34-1 vial 34",
-                    "number": "34"
+                    "name": "LB-34-1 P001 vial 0034",
+                    "number": "0034"
                 },
                 {
                     "biosamples_id": "SAMEA2590952",
-                    "name": "LB-34-1 vial 35",
-                    "number": "35"
+                    "name": "LB-34-1 P001 vial 0035",
+                    "number": "0035"
                 },
                 {
                     "biosamples_id": "SAMEA2590931",
-                    "name": "LB-34-1 vial 36",
-                    "number": "36"
+                    "name": "LB-34-1 P001 vial 0036",
+                    "number": "0036"
                 },
                 {
                     "biosamples_id": "SAMEA2590984",
-                    "name": "LB-34-1 vial 37",
-                    "number": "37"
+                    "name": "LB-34-1 P001 vial 0037",
+                    "number": "0037"
                 },
                 {
                     "biosamples_id": "SAMEA2590963",
-                    "name": "LB-34-1 vial 38",
-                    "number": "38"
+                    "name": "LB-34-1 P001 vial 0038",
+                    "number": "0038"
                 },
                 {
                     "biosamples_id": "SAMEA2591024",
-                    "name": "LB-34-1 vial 39",
-                    "number": "39"
+                    "name": "LB-34-1 P001 vial 0039",
+                    "number": "0039"
                 },
                 {
                     "biosamples_id": "SAMEA2590880",
-                    "name": "LB-34-1 vial 40",
-                    "number": "40"
+                    "name": "LB-34-1 P001 vial 0040",
+                    "number": "0040"
                 },
                 {
                     "biosamples_id": "SAMEA2590905",
-                    "name": "LB-34-1 vial 41",
-                    "number": "41"
+                    "name": "LB-34-1 P001 vial 0041",
+                    "number": "0041"
                 },
                 {
                     "biosamples_id": "SAMEA2590935",
-                    "name": "LB-34-1 vial 42",
-                    "number": "42"
+                    "name": "LB-34-1 P001 vial 0042",
+                    "number": "0042"
                 },
                 {
                     "biosamples_id": "SAMEA2590948",
-                    "name": "LB-34-1 vial 43",
-                    "number": "43"
+                    "name": "LB-34-1 P001 vial 0043",
+                    "number": "0043"
                 },
                 {
                     "biosamples_id": "SAMEA2590977",
-                    "name": "LB-34-1 vial 44",
-                    "number": "44"
+                    "name": "LB-34-1 P001 vial 0044",
+                    "number": "0044"
                 },
                 {
                     "biosamples_id": "SAMEA2590962",
-                    "name": "LB-34-1 vial 45",
-                    "number": "45"
+                    "name": "LB-34-1 P001 vial 0045",
+                    "number": "0045"
                 },
                 {
                     "biosamples_id": "SAMEA2590989",
-                    "name": "LB-34-1 vial 46",
-                    "number": "46"
+                    "name": "LB-34-1 P001 vial 0046",
+                    "number": "0046"
                 },
                 {
                     "biosamples_id": "SAMEA2591007",
-                    "name": "LB-34-1 vial 47",
-                    "number": "47"
+                    "name": "LB-34-1 P001 vial 0047",
+                    "number": "0047"
                 },
                 {
                     "biosamples_id": "SAMEA2591027",
-                    "name": "LB-34-1 vial 48",
-                    "number": "48"
+                    "name": "LB-34-1 P001 vial 0048",
+                    "number": "0048"
                 },
                 {
                     "biosamples_id": "SAMEA2590939",
-                    "name": "LB-34-1 vial 49",
-                    "number": "49"
+                    "name": "LB-34-1 P001 vial 0049",
+                    "number": "0049"
                 },
                 {
                     "biosamples_id": "SAMEA2590893",
-                    "name": "LB-34-1 vial 50",
-                    "number": "50"
+                    "name": "LB-34-1 P001 vial 0050",
+                    "number": "0050"
                 }
             ],
             "vials_at_roslin": 0,

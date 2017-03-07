@@ -1,0 +1,69 @@
+{% if variant.gene %}
+<tr>
+  <td class="label">Gene:</td>
+  <td>{{ variant.gene.name }}</td>
+</tr>
+{% endif %}
+
+{% if variant.chromosome_location %}
+<tr>
+  <td class="label">Chromosome location:</td>
+  <td>{{ variant.chromosome_location }}</td>
+</tr>
+{% endif %}
+
+{% if variant.nucleotide_sequence_hgvs %}
+<tr>
+  <td class="label">Nucleotide sequence HGSV:</td>
+  <td>{{ variant.nucleotide_sequence_hgvs }}</td>
+</tr>
+{% endif %}
+
+{% if variant.protein_sequence_hgvs %}
+<tr>
+  <td class="label">Protein sequence HGSV:</td>
+  <td>{{ variant.protein_sequence_hgvs }}</td>
+</tr>
+{% endif %}
+
+{% if variant.zygosity_status %}
+<tr>
+  <td class="label">Zygosity:</td>
+  <td>{{ variant.zygosity_status }}</td>
+</tr>
+{% endif %}
+
+{% if variant.clinvar_id %}
+<tr>
+  <td class="label">ClinVar ID:</td>
+  <td>{{ variant.clinvar_id }}</td>
+</tr>
+{% endif %}
+
+{% if variant.dbsnp_id %}
+<tr>
+  <td class="label">dbSNP ID:</td>
+  <td>{{ variant.dbsnp_id }}</td>
+</tr>
+{% endif %}
+
+{% if variant.dbvar_id %}
+<tr>
+  <td class="label">dbVar ID:</td>
+  <td>{{ variant.dbvar_id }}</td>
+</tr>
+{% endif %}
+
+{% if variant.publication_pmid %}
+<tr>
+  <td class="label">Publication:</td>
+  <td><a href="http://www.ncbi.nlm.nih.gov/pubmed/{{ variant.publication_pmid }}" target="_blank">http://www.ncbi.nlm.nih.gov/pubmed/{{ variant.publication_pmid }}</a></td>
+</tr>
+{% endif %}
+
+{% if variant.notes %}
+<tr>
+  <td class="label">Description:</td>
+  <td>{{ variant.notes }}</td>
+</tr>
+{% endif %}

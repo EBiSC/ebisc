@@ -21,7 +21,7 @@ class OneToOneStackedInline(admin.StackedInline):
 
 
 # -----------------------------------------------------------------------------
-# Directories
+# Dictionaries
 
 class GenderAdmin(admin.ModelAdmin):
     pass
@@ -35,14 +35,21 @@ class AgeRangeAdmin(admin.ModelAdmin):
 admin.site.register(AgeRange, AgeRangeAdmin)
 
 
+# -----------------------------------------------------------------------------
+# Disease
+
 class DiseaseAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['xpurl', 'name']
 
 admin.site.register(Disease, DiseaseAdmin)
 
 
 # -----------------------------------------------------------------------------
 # CellLine
+
+class CelllineDiseaseInline(StackedInline):
+    model = CelllineDisease
+
 
 class CelllineCharacterizationInline(OneToOneStackedInline):
     model = CelllineCharacterization
@@ -81,9 +88,9 @@ class CelllineStatusInline(TabularInline):
 
 
 class CelllineAdmin(admin.ModelAdmin):
-
     list_display = ['name', 'biosamples_id', 'alternative_names', 'current_status', 'available_for_sale_at_ecacc']
     inlines = (
+        CelllineDiseaseInline,
         CelllineStatusInline,
         CelllineCharacterizationInline,
         CelllineCultureConditionsInline,
@@ -94,10 +101,26 @@ class CelllineAdmin(admin.ModelAdmin):
         CelllineIntegratingVectorInline,
         CelllineNonIntegratingVectorInline,
     )
-    list_filter = ['current_status', 'available_for_sale_at_ecacc']
+    list_filter = ['current_status__status', 'available_for_sale_at_ecacc', 'generator__name']
     search_fields = ['name', 'biosamples_id']
 
 admin.site.register(Cellline, CelllineAdmin)
+
+
+# -----------------------------------------------------------------------------
+# Donors
+
+class DonorDiseaseInline(StackedInline):
+    model = DonorDisease
+
+
+class DonorAdmin(admin.ModelAdmin):
+    list_display = ['biosamples_id', 'provider_donor_ids', 'gender']
+    search_fields = ['biosamples_id', 'provider_donor_ids']
+    inlines = (DonorDiseaseInline,)
+    list_filter = ['gender', 'country_of_origin', 'ethnicity']
+
+admin.site.register(Donor, DonorAdmin)
 
 
 # -----------------------------------------------------------------------------
