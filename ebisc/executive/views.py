@@ -36,12 +36,11 @@ def dashboard(request):
 
     COLUMNS = [
         ('cellLineName', 'Cell line Name', 'name'),
-        ('disease', 'Disease', 'primary_disease'),
+        ('disease', 'Disease', 'diseases'),
         ('depositor', 'Depositor', 'generator__name'),
         ('validated', 'Validated', 'validated'),
         ('batches', 'Batches', None),
         ('quantity', 'QTY', None),
-        ('sold', 'Sold', None),
         ('status', 'Status', 'current_status__status'),
     ]
 
@@ -64,7 +63,7 @@ def dashboard(request):
 
     status = CelllineStatus.STATUS_CHOICES
     depositors = Organization.objects.filter(generator_of_cell_lines__isnull=False).distinct()
-    diseases = Disease.objects.filter(primary_disease__isnull=False).distinct().order_by(Lower('disease'))
+    diseases = Disease.objects.filter(name__isnull=False).order_by(Lower('name'))
 
     if filters['status']:
         cellline_objects = cellline_objects.filter(current_status__status=request.GET.get('status', None))
@@ -73,11 +72,11 @@ def dashboard(request):
         cellline_objects = cellline_objects.filter(generator__name=request.GET.get('depositor', None))
 
     if filters['disease']:
-        cellline_objects = cellline_objects.filter(primary_disease__disease=request.GET.get('disease', None))
+        cellline_objects = cellline_objects.filter(Q(diseases__disease__name=request.GET.get('disease', None)) | Q(donor__diseases__disease__name=request.GET.get('disease', None)))
 
     # Select related
-    cellline_objects = cellline_objects.select_related('primary_disease', 'generator')
-    cellline_objects = cellline_objects.prefetch_related('batches')
+    cellline_objects = cellline_objects.select_related('generator', 'donor')
+    cellline_objects = cellline_objects.prefetch_related('batches', 'diseases', 'diseases__disease', 'donor__diseases', 'donor__diseases__disease')
 
     # Sorting
     sort_column = request.GET.get('sc', None)

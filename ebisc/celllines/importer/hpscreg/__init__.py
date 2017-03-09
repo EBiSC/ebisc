@@ -27,7 +27,7 @@ def run(cellline=None):
         return
 
     # Tests
-    # json = request_get('http://test.hescreg.eu/api/export/2')
+    # json = request_get('http://test.hescreg.eu/api/export_readable/1940')
     # import_cellline(json)
 
     for cellline_id in [id for id in cellline_ids]:
@@ -88,18 +88,14 @@ def import_cellline(source):
     cell_line.hescreg_id = valuef('id')
     cell_line.name = valuef('name')
     cell_line.alternative_names = ', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else ''
-    cell_line.donor = parser.parse_donor(source)
+    cell_line.donor = parser.parse_donor(valuef('donor')) if valuef('donor') is not None else None
     cell_line.donor_age = valuef('donor_age', 'age_range')
     cell_line.generator = generator
     cell_line.owner = owner
     cell_line.derivation_country = parser.term_list_value_of_json(source, 'derivation_country', Country)
-    cell_line.primary_disease_diagnosis = valuef('disease_flag')
-    cell_line.primary_disease = parser.parse_disease(source)
-    cell_line.primary_disease_not_normalised = valuef('disease_other')
-    cell_line.primary_disease_stage = valuef('disease_stage')
+    cell_line.has_diseases = valuef('disease_flag', 'nullbool')
     cell_line.disease_associated_phenotypes = valuef('disease_associated_phenotypes')
     cell_line.non_disease_associated_phenotypes = valuef('donor_phenotypes')
-    cell_line.affected_status = valuef('disease_affected_flag')
     cell_line.family_history = valuef('family_history')
     cell_line.medical_history = valuef('medical_history')
     cell_line.clinical_information = valuef('clinical_information')
@@ -109,20 +105,9 @@ def import_cellline(source):
 
     dirty = [cell_line.is_dirty(check_relationship=True)]
 
-    # # Organizations
-    #
-    # for organization, organization_role in organizations:
-    #
-    #     cell_line_organization, created = CelllineOrganization.objects.get_or_create(
-    #         cell_line=cell_line,
-    #         organization=organization,
-    #         cell_line_org_type=organization_role,
-    #     )
-    #     if created:
-    #         logger.info('Added organization %s as %s' % (organization, organization_role))
-    #
-
     dirty += [
+        parser.parse_cell_line_diseases(source, cell_line),
+        parser.parse_genetic_modifications_non_disease(source, cell_line),
         parser.parse_reprogramming_vector(source, cell_line),
         parser.parse_ethics(source, cell_line),
         parser.parse_derivation(source, cell_line),
@@ -196,10 +181,15 @@ def check_availability_on_ecacc(cell_line):
     # Highly suspect!!!
     available = r.status_code == requests.codes.ok and re.search(cell_line.name, r.text) is not None
 
-    if available == cell_line.available_for_sale_at_ecacc:
+    # Change ECACC availability status only if line is available (temporary fix to prevent the Catalogue from being empty in case of ECACC unavailability)
+
+    if available is False:
         return False
     else:
-        cell_line.available_for_sale_at_ecacc = available
-        return True
+        if available == cell_line.available_for_sale_at_ecacc:
+            return False
+        else:
+            cell_line.available_for_sale_at_ecacc = available
+            return True
 
 # -----------------------------------------------------------------------------

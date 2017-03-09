@@ -191,13 +191,9 @@ class Cellline(DirtyFieldsMixin, models.Model):
     owner = models.ForeignKey('Organization', verbose_name=_(u'Owner'), null=True, blank=True, related_name='owner_of_cell_lines')
     derivation_country = models.ForeignKey('Country', verbose_name=_(u'Derivation country'), null=True, blank=True)
 
-    primary_disease = models.ForeignKey('Disease', verbose_name=_(u'Diagnosed disease'), null=True, blank=True, related_name='primary_disease')
-    primary_disease_not_normalised = models.CharField(_(u'Disease name - not normalised'), max_length=500, null=True, blank=True)
-    primary_disease_diagnosis = models.CharField(_(u'Disease diagnosis'), max_length=12, null=True, blank=True)
-    primary_disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
-    disease_associated_phenotypes = ArrayField(models.CharField(max_length=700), verbose_name=_(u'Disease associated phenotypes'), null=True, blank=True)
+    has_diseases = models.NullBooleanField(_(u'Has diseases'))
+    disease_associated_phenotypes = ArrayField(models.CharField(max_length=500), verbose_name=_(u'Disease associated phenotypes'), null=True, blank=True)
     non_disease_associated_phenotypes = ArrayField(models.CharField(max_length=700), verbose_name=_(u'Non-disease associated phenotypes'), null=True, blank=True)
-    affected_status = models.CharField(_(u'Affected status'), max_length=12, null=True, blank=True)
     family_history = models.CharField(_(u'Family history'), max_length=500, null=True, blank=True)
     medical_history = models.CharField(_(u'Medical history'), max_length=500, null=True, blank=True)
     clinical_information = models.CharField(_(u'Clinical information'), max_length=500, null=True, blank=True)
@@ -224,12 +220,68 @@ class Cellline(DirtyFieldsMixin, models.Model):
     def ecacc_url(self):
         return 'http://www.phe-culturecollections.org.uk/products/celllines/ipsc/detail.jsp?refId=%s&collection=ecacc_ipsc' % self.ecacc_id
 
+    @property
+    def primary_disease(self):
+        diseases = []
+
+        # Check if any donor/cell line diseases are primary
+        for disease in self.donor.diseases.all():
+            if disease.primary_disease is True:
+                return disease
+            else:
+                diseases.append(disease)
+
+        for disease in self.diseases.all():
+            if disease.primary_disease is True:
+                return disease
+            else:
+                diseases.append(disease)
+
+        # If not, return the first one that is not 'normal' on the list
+        if diseases == []:
+            return None
+        else:
+            for ds in diseases:
+                if ds.disease and ds.disease.xpurl != 'http://purl.obolibrary.org/obo/PATO_0000461':
+                    return ds
+            return diseases[0]
+
+    @property
+    def donor_diseases(self):
+
+        donor_diseases = []
+
+        if self.donor.diseases.all():
+            for disease in self.donor.diseases.all():
+                if disease.disease:
+                    donor_diseases.append(disease.disease.name)
+
+        return donor_diseases
+
+    @property
+    def cellline_diseases(self):
+
+        cellline_diseases = []
+
+        if self.diseases.all():
+            for disease in self.diseases.all():
+                if disease.disease:
+                    cellline_diseases.append(disease.disease.name)
+
+        return cellline_diseases
+
+    @property
+    def all_diseases(self):
+
+        return list(set(self.donor_diseases + self.cellline_diseases))
+
     def to_elastic(self):
 
         '''
         Facets
         - Disease
         - Donor sex
+        - Donor age
         - Primary cell type
         - Depositor
 
@@ -242,25 +294,21 @@ class Cellline(DirtyFieldsMixin, models.Model):
         - Biosamples ID
         '''
 
-        if self.primary_disease and self.primary_disease_diagnosis != '0':
-            disease = self.primary_disease.disease
-        elif self.primary_disease_diagnosis == '0':
-            disease = 'normal'
-        else:
-            disease = None
-
         return {
             'biosamples_id': self.biosamples_id,
             'name': self.name,
-            'primary_disease': disease,
-            'primary_disease_synonyms': [s.strip() for s in self.primary_disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.synonyms else None,
-            'primary_disease_stage': self.primary_disease_stage if self.primary_disease_stage else None,
+            'primary_disease': self.primary_disease.disease.name if self.primary_disease.disease else None,
+            'donor_disease': self.donor_diseases if self.donor_diseases else None,
+            'genetic_modification_disease': self.cellline_diseases if self.cellline_diseases else _(u'/'),
+            'all_diseases': self.all_diseases if self.all_diseases else None,
+            'primary_disease_synonyms': [s.strip() for s in self.primary_disease.disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.disease.synonyms else None,
             'disease_associated_phenotypes': self.disease_associated_phenotypes if self.disease_associated_phenotypes else None,
             'non_disease_associated_phenotypes': self.non_disease_associated_phenotypes if self.non_disease_associated_phenotypes else None,
             'depositor': self.generator.name,
             'primary_cell_type': self.derivation.primary_cell_type.name if self.derivation.primary_cell_type else None,
             'alternative_names': self.alternative_names,
             'donor_sex': self.donor.gender.name if self.donor and self.donor.gender else _(u'Not known'),
+            'donor_age': self.donor_age.name if self.donor_age else None,
         }
 
     def get_latest_batch(self):
@@ -458,19 +506,417 @@ class Donor(DirtyFieldsMixin, models.Model):
 
 class Disease(models.Model):
 
-    icdcode = models.CharField(_(u'DOID'), max_length=300, unique=True, null=True, blank=True)
-    purl = models.URLField(_(u'Purl'), max_length=300, null=True, blank=True)
-    disease = models.CharField(_(u'Disease'), max_length=200, blank=True)
+    # purl = models.URLField(_(u'Purl'), unique=True)
+    xpurl = models.URLField(_(u'Purl'))
+    name = models.CharField(_(u'Name'), max_length=200, null=True, blank=True)
     synonyms = models.CharField(_(u'Synonyms'), max_length=2000, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Disease')
         verbose_name_plural = _(u'Diseases')
+        ordering = ['xpurl']
+
+    def __unicode__(self):
+        return u'%s' % self.xpurl
+
+
+class Variant(models.Model):
+
+    gene = models.ForeignKey(Molecule, verbose_name=_(u'Gene'), related_name='variant_gene', null=True, blank=True)
+
+    chromosome_location = models.CharField(_(u'Chromosome location'), max_length=500, null=True, blank=True)
+    nucleotide_sequence_hgvs = models.CharField(_(u'Nucleotide sequence HGSV'), max_length=1000, null=True, blank=True)
+    protein_sequence_hgvs = models.CharField(_(u'Protein sequence HGSV'), max_length=1000, null=True, blank=True)
+    zygosity_status = models.CharField(_(u'Zygosity status'), max_length=200, null=True, blank=True)
+    clinvar_id = models.CharField(_(u'ClinVar ID'), max_length=200, null=True, blank=True)
+    dbsnp_id = models.CharField(_(u'dbSNP ID'), max_length=200, null=True, blank=True)
+    dbvar_id = models.CharField(_(u'dbVar ID'), max_length=200, null=True, blank=True)
+    publication_pmid = models.CharField(_(u'PubMed ID'), max_length=200, null=True, blank=True)
+    notes = models.CharField(_(u'Brief explanation'), max_length=1000, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Variant')
+        verbose_name_plural = _(u'Variants')
+        ordering = ['id']
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+# Donor diseases and disease variants
+class DonorDisease(models.Model):
+
+    donor = models.ForeignKey(Donor, verbose_name=_(u'Donor'), related_name='diseases')
+    disease = models.ForeignKey('Disease', verbose_name=_(u'Diagnosed disease'), null=True, blank=True)
+    disease_not_normalised = models.CharField(_(u'Disease name - not normalised'), max_length=500, null=True, blank=True)
+
+    primary_disease = models.BooleanField(_(u'Primary disease'), default=False)
+
+    disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
+    affected_status = models.CharField(_(u'Affected status'), max_length=12, null=True, blank=True)
+    carrier = models.CharField(_(u'Carrier'), max_length=12, null=True, blank=True)
+
+    notes = models.TextField(_(u'Notes'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Donor disease')
+        verbose_name_plural = _(u'Donor diseases')
+        unique_together = [('donor', 'disease', 'disease_not_normalised')]
         ordering = ['disease']
 
     def __unicode__(self):
-        return u'%s' % (self.disease,)
+        return u'%s - %s' % (self.donor, self.disease)
 
+
+class DonorDiseaseVariant(DirtyFieldsMixin, Variant):
+
+    variant_id = models.IntegerField(_(u'Variant ID'), null=True, blank=True)
+    donor_disease = models.ForeignKey(DonorDisease, verbose_name=_(u'Donor disease'), related_name="donor_disease_variants")
+
+    class Meta:
+        verbose_name = _(u'Donor disease variant')
+        verbose_name_plural = _(u'Donor disease variants')
+        unique_together = [('donor_disease', 'variant_id')]
+        ordering = ['donor_disease']
+
+    def __unicode__(self):
+        return u'%s' % (self.donor_disease,)
+
+
+# Genetic modifications (associated and not associated to diseases)
+class CelllineDisease(models.Model):
+
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='diseases')
+    disease = models.ForeignKey('Disease', verbose_name=_(u'Diagnosed disease'), null=True, blank=True)
+    disease_not_normalised = models.CharField(_(u'Disease name - not normalised'), max_length=500, null=True, blank=True)
+    primary_disease = models.BooleanField(_(u'Primary disease'), default=False)
+    notes = models.TextField(_(u'Notes'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line disease')
+        verbose_name_plural = _(u'Cell line diseases')
+        unique_together = [('cell_line', 'disease', 'disease_not_normalised')]
+        ordering = ['disease']
+
+    def __unicode__(self):
+        return u'%s - %s' % (self.cell_line, self.disease)
+
+
+class ModificationVariantDisease(DirtyFieldsMixin, Variant):
+
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
+    cellline_disease = models.ForeignKey(CelllineDisease, verbose_name=_(u'Cell line disease'), related_name="genetic_modification_cellline_disease_variants")
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Disease associated variant')
+        verbose_name_plural = _(u'Genetic modifications - Disease associated variants')
+        unique_together = [('cellline_disease', 'modification_id')]
+        ordering = ['id']
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class ModificationVariantNonDisease(DirtyFieldsMixin, Variant):
+
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name="genetic_modification_cellline_variants")
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Variant non disease')
+        verbose_name_plural = _(u'Genetic modifications - Variant non disease')
+        unique_together = [('cell_line', 'modification_id')]
+        ordering = ['id']
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class ModificationIsogenic(models.Model):
+
+    gene = models.ForeignKey(Molecule, verbose_name=_(u'Gene'), related_name='modification_isogenic_gene', null=True, blank=True)
+
+    chromosome_location = models.CharField(_(u'Chromosome location'), max_length=500, null=True, blank=True)
+    nucleotide_sequence_hgvs = models.CharField(_(u'Nucleotide sequence HGSV'), max_length=1000, null=True, blank=True)
+    protein_sequence_hgvs = models.CharField(_(u'Protein sequence HGSV'), max_length=1000, null=True, blank=True)
+    zygosity_status = models.CharField(_(u'Zygosity status'), max_length=200, null=True, blank=True)
+    modification_type = models.CharField(_(u'Target locus modification type'), max_length=1000, null=True, blank=True)
+    notes = models.CharField(_(u'Brief explanation'), max_length=1000, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Isogenic modification')
+        verbose_name_plural = _(u'Genetic modifications - Isogenic modification')
+        ordering = ['id']
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class ModificationIsogenicDisease(DirtyFieldsMixin, ModificationIsogenic):
+
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
+    cellline_disease = models.ForeignKey(CelllineDisease, verbose_name=_(u'Cell line disease'), related_name="genetic_modification_cellline_disease_isogenic")
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Isogenic modification disease related')
+        verbose_name_plural = _(u'Genetic modifications - Isogenic modification disease related')
+        unique_together = [('cellline_disease', 'modification_id')]
+        ordering = ['id']
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class ModificationIsogenicNonDisease(DirtyFieldsMixin, ModificationIsogenic):
+
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='genetic_modification_cellline_isogenic')
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Isogenic modification non disease')
+        verbose_name_plural = _(u'Genetic modifications - Isogenic modification non disease')
+        unique_together = [('cell_line', 'modification_id')]
+        ordering = ['id']
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class ModificationTransgeneExpression(models.Model):
+
+    gene = models.ForeignKey(Molecule, verbose_name=_(u'Gene'), related_name='modification_transgene_expression_gene', null=True, blank=True)
+
+    chromosome_location = models.CharField(_(u'Chromosome location'), max_length=500, null=True, blank=True)
+    delivery_method = models.CharField(_(u'Delivery method'), max_length=1000, null=True, blank=True)
+    virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
+    transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
+    notes = models.CharField(_(u'Brief explanation'), max_length=1000, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Transgene expression')
+        verbose_name_plural = _(u'Genetic modifications - Transgene expression')
+        ordering = ['id']
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class ModificationTransgeneExpressionDisease(DirtyFieldsMixin, ModificationTransgeneExpression):
+
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
+    cellline_disease = models.ForeignKey(CelllineDisease, verbose_name=_(u'Cell line disease'), related_name="genetic_modification_cellline_disease_transgene_expression")
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Transgene expression disease related')
+        verbose_name_plural = _(u'Genetic modifications - Transgene expression disease related')
+        unique_together = [('cellline_disease', 'modification_id')]
+        ordering = ['id']
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class ModificationTransgeneExpressionNonDisease(DirtyFieldsMixin, ModificationTransgeneExpression):
+
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='genetic_modification_cellline_transgene_expression')
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Transgene expression non disease')
+        verbose_name_plural = _(u'Genetic modifications - Transgene expression non disease')
+        unique_together = [('cell_line', 'modification_id')]
+        ordering = ['gene']
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class ModificationGeneKnockOut(models.Model):
+
+    gene = models.ForeignKey(Molecule, verbose_name=_(u'Gene'), related_name='modification_gene_knock_out_gene', null=True, blank=True)
+
+    chromosome_location = models.CharField(_(u'Chromosome location'), max_length=500, null=True, blank=True)
+    delivery_method = models.CharField(_(u'Delivery method'), max_length=200, null=True, blank=True)
+    virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
+    transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
+    notes = models.CharField(_(u'Brief explanation'), max_length=1000, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Gene knock-out')
+        verbose_name_plural = _(u'Genetic modifications - Gene knock-out')
+        ordering = ['id']
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class ModificationGeneKnockOutDisease(DirtyFieldsMixin, ModificationGeneKnockOut):
+
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
+    cellline_disease = models.ForeignKey(CelllineDisease, verbose_name=_(u'Cell line disease'), related_name="genetic_modification_cellline_disease_gene_knock_out")
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Gene knock-out disease related')
+        verbose_name_plural = _(u'Genetic modifications - Gene knock-out disease related')
+        unique_together = [('cellline_disease', 'modification_id')]
+        ordering = ['id']
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class ModificationGeneKnockOutNonDisease(DirtyFieldsMixin, ModificationGeneKnockOut):
+
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='genetic_modification_cellline_gene_knock_out')
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Gene knock-out non disease')
+        verbose_name_plural = _(u'Genetic modifications - Gene knock-out non disease')
+        unique_together = [('cell_line', 'modification_id')]
+        ordering = ['id']
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class ModificationGeneKnockIn(models.Model):
+
+    target_gene = models.ForeignKey(Molecule, verbose_name=_(u'Target gene'), related_name='modification_gene_knock_in_target_gene', null=True, blank=True)
+    chromosome_location = models.CharField(_(u'Chromosome location - target gene'), max_length=500, null=True, blank=True)
+
+    transgene = models.ForeignKey(Molecule, verbose_name=_(u'Transgene'), related_name='modification_gene_knock_in_transgene', null=True, blank=True)
+    chromosome_location_transgene = models.CharField(_(u'Chromosome location - transgene'), max_length=500, null=True, blank=True)
+
+    delivery_method = models.CharField(_(u'Delivery method'), max_length=200, null=True, blank=True)
+    virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
+    transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
+    notes = models.CharField(_(u'Brief explanation'), max_length=1000, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Gene knock-in')
+        verbose_name_plural = _(u'Genetic modifications - Gene knock-in')
+        ordering = ['id']
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class ModificationGeneKnockInDisease(DirtyFieldsMixin, ModificationGeneKnockIn):
+
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
+    cellline_disease = models.ForeignKey(CelllineDisease, verbose_name=_(u'Cell line disease'), related_name="genetic_modification_cellline_disease_gene_knock_in")
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Gene knock-in disease related')
+        verbose_name_plural = _(u'Genetic modifications - Gene knock-in disease related')
+        unique_together = [('cellline_disease', 'modification_id')]
+        ordering = ['id']
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class ModificationGeneKnockInNonDisease(DirtyFieldsMixin, ModificationGeneKnockIn):
+
+    modification_id = models.IntegerField(_(u'Modification ID'), null=True, blank=True)
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='genetic_modification_cellline_gene_knock_in')
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Gene knock-in non disease')
+        verbose_name_plural = _(u'Genetic modifications - Gene knock-in non disease')
+        unique_together = [('cell_line', 'modification_id')]
+        ordering = ['id']
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+# -----------------------------------------------------------------------------
+# Genetic modification OLD - DELETE after switching
+
+class CelllineGeneticModification(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification')
+    genetic_modification_flag = models.NullBooleanField(_(u'Genetic modification flag'))
+    types = ArrayField(models.CharField(max_length=200), verbose_name=_(u'Types of modification'), null=True, blank=True)
+    protocol = models.FileField(_(u'Protocol'), upload_to=upload_to, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line genetic modification')
+        verbose_name_plural = _(u'Cell line genetic modifications')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class GeneticModificationTransgeneExpression(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_transgene_expression')
+    genes = models.ManyToManyField(Molecule, blank=True)
+    delivery_method = models.CharField(_(u'Delivery method'), max_length=200, null=True, blank=True)
+    virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
+    transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Transgene Expression')
+        verbose_name_plural = _(u'Genetic modifications - Transgene Expression')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class GeneticModificationGeneKnockOut(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_gene_knock_out')
+    target_genes = models.ManyToManyField(Molecule, blank=True)
+    delivery_method = models.CharField(_(u'Delivery method'), max_length=200, null=True, blank=True)
+    virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
+    transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Gene knock-out')
+        verbose_name_plural = _(u'Genetic modifications - Gene knock-out')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class GeneticModificationGeneKnockIn(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_gene_knock_in')
+    target_genes = models.ManyToManyField(Molecule, blank=True, related_name='target_genes')
+    transgenes = models.ManyToManyField(Molecule, blank=True, related_name='transgenes')
+    delivery_method = models.CharField(_(u'Delivery method'), max_length=200, null=True, blank=True)
+    virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
+    transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Gene knock-in')
+        verbose_name_plural = _(u'Genetic modifications - Gene knock-in')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class GeneticModificationIsogenic(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_isogenic')
+    target_locus = models.ManyToManyField(Molecule, blank=True)
+    change_type = models.CharField(_(u'Type of change'), max_length=200, null=True, blank=True)
+    modified_sequence = models.CharField(_(u'Modified sequence'), max_length=500, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Genetic modification - Isogenic modification')
+        verbose_name_plural = _(u'Genetic modifications - Isogenic modification')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
 
 # -----------------------------------------------------------------------------
 # Cell line and batch culture conditions
@@ -1364,91 +1810,6 @@ class DonorGenotypingRsNumber(models.Model):
         return u'%s' % (self.id,)
 
 
-# Genetic modification
-class CelllineGeneticModification(DirtyFieldsMixin, models.Model):
-
-    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification')
-    genetic_modification_flag = models.NullBooleanField(_(u'Genetic modification flag'))
-    types = ArrayField(models.CharField(max_length=200), verbose_name=_(u'Types of modification'), null=True, blank=True)
-    protocol = models.FileField(_(u'Protocol'), upload_to=upload_to, null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line genetic modification')
-        verbose_name_plural = _(u'Cell line genetic modifications')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class GeneticModificationTransgeneExpression(DirtyFieldsMixin, models.Model):
-
-    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_transgene_expression')
-    genes = models.ManyToManyField(Molecule, blank=True)
-    delivery_method = models.CharField(_(u'Delivery method'), max_length=200, null=True, blank=True)
-    virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
-    transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Genetic modification - Transgene Expression')
-        verbose_name_plural = _(u'Genetic modifications - Transgene Expression')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class GeneticModificationGeneKnockOut(DirtyFieldsMixin, models.Model):
-
-    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_gene_knock_out')
-    target_genes = models.ManyToManyField(Molecule, blank=True)
-    delivery_method = models.CharField(_(u'Delivery method'), max_length=200, null=True, blank=True)
-    virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
-    transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Genetic modification - Gene knock-out')
-        verbose_name_plural = _(u'Genetic modifications - Gene knock-out')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class GeneticModificationGeneKnockIn(DirtyFieldsMixin, models.Model):
-
-    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_gene_knock_in')
-    target_genes = models.ManyToManyField(Molecule, blank=True, related_name='target_genes')
-    transgenes = models.ManyToManyField(Molecule, blank=True, related_name='transgenes')
-    delivery_method = models.CharField(_(u'Delivery method'), max_length=200, null=True, blank=True)
-    virus = models.ForeignKey(Virus, verbose_name=_(u'Virus'), null=True, blank=True)
-    transposon = models.ForeignKey(Transposon, verbose_name=_(u'Transposon'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Genetic modification - Gene knock-in')
-        verbose_name_plural = _(u'Genetic modifications - Gene knock-in')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class GeneticModificationIsogenic(DirtyFieldsMixin, models.Model):
-
-    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genetic_modification_isogenic')
-    target_locus = models.ManyToManyField(Molecule, blank=True)
-    change_type = models.CharField(_(u'Type of change'), max_length=200, null=True, blank=True)
-    modified_sequence = models.CharField(_(u'Modified sequence'), max_length=500, null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Genetic modification - Isogenic modification')
-        verbose_name_plural = _(u'Genetic modifications - Isogenic modification')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-# -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 # TODO Cell line differentation 2
 
