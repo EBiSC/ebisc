@@ -93,6 +93,10 @@ hr {
   color: darken($color-text, 10%);
 }
 
+.small {
+  font-size: $font-size-small;
+}
+
 .comment {
   font-style: italic;
   color: lighten($color-text, 30%);

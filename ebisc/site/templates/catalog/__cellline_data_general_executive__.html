@@ -23,40 +23,6 @@
 </tr>
 {% endif %}
 
-<tr><th class="sub-title"><h3>Disease status</h3></th><th></th></tr>
-{% if cellline.primary_disease_diagnosis == '1' %}
-<tr><td class="label">Diagnosed disease:</td><td>{{ cellline.primary_disease|default:"-" }}</td></tr>
-{% elif cellline.primary_disease_diagnosis == 'carrier' %}
-<tr><td class="label">Diagnosed disease:</td><td>{{ cellline.primary_disease|default:"-" }}</td></tr>
-<tr><td class="label">Carrier:</td><td>Yes</td></tr>
-{% else %}
-<tr><td class="label">Diagnosed disease:</td><td>No</td></tr>
-{% endif %}
-{% if cellline.primary_disease_not_normalised %}
-<tr><td class="label">Disease (depositor's term):</td><td>{{ cellline.primary_disease_not_normalised }}</td></tr>
-{% endif %}
-{% if cellline.primary_disease_stage %}
-<tr><td class="label">Disease stage:</td><td>{{ cellline.primary_disease_stage|capfirst }}</td></tr>
-{% endif %}
-{% if cellline.disease_associated_phenotypes|length %}
-<tr><td class="label">Disease associated phenotypes:</td><td>{{ cellline.disease_associated_phenotypes|join:", " }}</td></tr>
-{% endif %}
-{% if cellline.non_disease_associated_phenotypes|length %}
-<tr><td class="label">Non-disease associated phenotypes:</td><td>{{ cellline.non_disease_associated_phenotypes|join:", " }}</td></tr>
-{% endif %}
-{% if cellline.family_history %}
-<tr><td class="label">Family history:</td><td>{{ cellline.family_history }}</td></tr>
-{% endif %}
-{% if cellline.medical_history %}
-<tr><td class="label">Medical history:</td><td>{{ cellline.medical_history }}</td></tr>
-{% endif %}
-{% if cellline.clinical_information %}
-<tr><td class="label">Clinical information:</td><td>{{ cellline.clinical_information }}</td></tr>
-{% endif %}
-{% if cellline.affected_status %}
-<tr><td class="label">Affected status:</td><td>{{ cellline.affected_status|capfirst }}</td></tr>
-{% endif %}
-
 <tr><th class="sub-title"><h3>Donor information</h3></th><th></th></tr>
 <tr><td class="label">Biosamples ID:</td><td>{{ cellline.donor.biosamples_id|default:"-" }}</td></tr>
 {% if cellline.donor.provider_donor_ids %}
@@ -77,3 +43,7 @@
 {% if cellline.donor.karyotype %}
 <tr><td class="label">Donor karyotype:</td><td>{{ cellline.donor.karyotype|default:"-" }}</td></tr>
 {% endif %}
+
+<tr><th class="sub-title"><h3>Disease status</h3></th><th></th></tr>
+
+{% include 'catalog/diseases/__cellline_data_diseases__.html' %}
