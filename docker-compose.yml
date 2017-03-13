@@ -1,0 +1,94 @@
+version: '2'
+
+services:
+  postgres:
+    container_name: ims-postgres
+    image: centos/postgresql-95-centos7
+    environment:
+      - POSTGRESQL_USER=www
+      - POSTGRESQL_PASSWORD=ebisc
+      - POSTGRESQL_DATABASE=ebisc
+      - POSTGRESQL_ADMIN_PASSWORD=ebisc
+    cap_drop:
+      - ALL
+  nginx:
+    container_name: ims-nginx
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx
+    volumes:
+      - $PWD/var/static:/var/static
+      - $PWD/var/media:/var/media
+    depends_on:
+      - uwsgi
+    ports:
+      - "8080:8080"
+    cap_drop:
+      - ALL
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile-uwsgi
+      args:
+        - ROLE=develop
+    environment:
+      - DB_USER=www
+      - DB_PASS=ebisc
+      - DB_HOST=ims-postgres
+      - DB_NAME=ebisc
+      - ES_HOST=ims-elasticsearch
+      # The secret is "@!7ju$b1*1c5!dihak)cw3ao1ema&2quw3s*9l#&8^v8ob%gw1". On the following line the dollar $ is escaped:
+      - SECRET_KEY=@!7ju$$b1*1c5!dihak)cw3ao1ema&2quw3s*9l#&8^v8ob%gw1
+      - HPSCREG_PASSWORD=cWNJnc6p
+      - HPSCREG_USER=ebiscims
+      - LIMS_PASSWORD=ebisc321
+      - LIMS_USER=ebisc
+      - BIOSAMPLE_KEY=WNTGPBNW0NGC3876
+    cap_drop:
+      - ALL
+    volumes:
+      - $PWD/var/static:/app/var/static
+      - $PWD/var/media:/app/var/media
+  uwsgi:
+    extends:
+      service: django
+    container_name: ims-uwsgi
+    ports:
+      - "9191:9191"
+    command: ["run-uwsgi"]
+    read_only: true
+    depends_on:
+      - postgres
+      - elasticsearch
+  deploy:
+    extends:
+      service: django
+    command: ["run-deploy"]
+  update:
+    extends:
+      service: django
+    read_only: true
+    command: ["run-ims-update"]
+  elasticsearch:
+    container_name: ims-elasticsearch
+    image: elasticsearch:1.6.2
+
+  db_dump:
+    extends: postgres
+    environment:
+      - PGPASSWORD=ebisc
+      - PGHOST=ims-postgres
+      - PGUSER=www
+    volumes:
+      - $PWD:/tmp
+    command: "sh -c 'pg_dump -d ebisc | gzip -c > /tmp/ebisc.sql.gz'"
+
+  db_import:
+    extends: postgres
+    environment:
+      - PGPASSWORD=ebisc
+      - PGHOST=ims-postgres
+      - PGUSER=postgres
+    volumes:
+      - $PWD:/tmp
+    command: "sh -c 'dropdb ebisc; createdb ebisc && gunzip -c /tmp/ebisc.sql.gz | psql -d ebisc -f -'"
