@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, Disease, Cellline, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
+from ..celllines.models import Donor, DonorDisease, DonorDiseaseVariant, Disease, Cellline, CelllineDisease, ModificationVariantDisease, ModificationVariantNonDisease, ModificationIsogenicDisease, ModificationIsogenicNonDisease, ModificationTransgeneExpressionDisease, ModificationTransgeneExpressionNonDisease, ModificationGeneKnockOutDisease, ModificationGeneKnockOutNonDisease, ModificationGeneKnockInDisease, ModificationGeneKnockInNonDisease, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
 
 
 # -----------------------------------------------------------------------------
@@ -259,18 +259,344 @@ class CelllinePublicationResource(ModelResource):
 
 class DiseaseResource(ModelResource):
 
-    doid = fields.CharField('icdcode', null=True)
-    purl = fields.CharField('purl', null=True)
-    name = fields.CharField('disease', null=True)
+    purl = fields.CharField('xpurl', null=True)
+    name = fields.CharField('name', null=True)
     synonyms = fields.ListField('synonyms', null=True)
 
     class Meta:
         queryset = Disease.objects.all()
         include_resource_uri = False
-        fields = ('doid', 'name', 'synonyms')
+        fields = ('purl', 'name', 'synonyms')
 
     def dehydrate_synonyms(self, bundle):
         return value_list_of_string(bundle.obj.synonyms)
+
+
+# -----------------------------------------------------------------------------
+# Disease variant/modification resources
+
+class ModificationVariantDiseaseResource(ModelResource):
+
+    chromosome_location = fields.CharField('chromosome_location', null=True)
+    nucleotide_sequence_hgvs = fields.CharField('nucleotide_sequence_hgvs', null=True)
+    protein_sequence_hgvs = fields.CharField('protein_sequence_hgvs', null=True)
+    zygosity_status = fields.CharField('zygosity_status', null=True)
+    clinvar_id = fields.CharField('clinvar_id', null=True)
+    dbsnp_id = fields.CharField('dbsnp_id', null=True)
+    dbvar_id = fields.CharField('dbvar_id', null=True)
+    publication_pmid = fields.CharField('publication_pmid', null=True)
+    notes = fields.CharField('notes', null=True)
+
+    class Meta:
+        queryset = ModificationVariantDisease.objects.all()
+        include_resource_uri = False
+        fields = ('chromosome_location', 'nucleotide_sequence_hgvs', 'protein_sequence_hgvs', 'zygosity_status', 'clinvar_id', 'dbsnp_id', 'dbvar_id', 'publication_pmid', 'notes')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.gene:
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
+
+        bundle.data.update({
+            'type': 'Variant',
+            'gene': gene
+        })
+
+        return bundle
+
+
+class ModificationIsogenicDiseaseResource(ModelResource):
+
+    chromosome_location = fields.CharField('chromosome_location', null=True)
+    nucleotide_sequence_hgvs = fields.CharField('nucleotide_sequence_hgvs', null=True)
+    protein_sequence_hgvs = fields.CharField('protein_sequence_hgvs', null=True)
+    zygosity_status = fields.CharField('zygosity_status', null=True)
+    modification_type = fields.CharField('modification_type', null=True)
+    notes = fields.CharField('notes', null=True)
+
+    class Meta:
+        queryset = ModificationIsogenicDisease.objects.all()
+        include_resource_uri = False
+        fields = ('chromosome_location', 'nucleotide_sequence_hgvs', 'protein_sequence_hgvs', 'zygosity_status', 'modification_type', 'notes')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.gene:
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
+
+        bundle.data.update({
+            'type': 'Isogenic modification',
+            'gene': gene
+        })
+
+        return bundle
+
+
+class ModificationTransgeneExpressionDiseaseResource(ModelResource):
+
+    chromosome_location = fields.CharField('chromosome_location', null=True)
+    delivery_method = fields.CharField('delivery_method', null=True)
+    notes = fields.CharField('notes', null=True)
+
+    class Meta:
+        queryset = ModificationTransgeneExpressionDisease.objects.all()
+        include_resource_uri = False
+        fields = ('chromosome_location', 'delivery_method', 'notes')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.gene:
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
+
+        if bundle.obj.virus:
+            virus = bundle.obj.virus.name
+        else:
+            virus = None
+
+        if bundle.obj.transposon:
+            transposon = bundle.obj.transposon.name
+        else:
+            transposon = None
+
+        bundle.data.update({
+            'type': 'Transgene expression',
+            'gene': gene,
+            'virus': virus,
+            'transposon': transposon,
+        })
+
+        return bundle
+
+
+class ModificationGeneKnockOutDiseaseResource(ModelResource):
+
+    chromosome_location = fields.CharField('chromosome_location', null=True)
+    delivery_method = fields.CharField('delivery_method', null=True)
+    notes = fields.CharField('notes', null=True)
+
+    class Meta:
+        queryset = ModificationGeneKnockOutDisease.objects.all()
+        include_resource_uri = False
+        fields = ('chromosome_location', 'delivery_method', 'notes')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.gene:
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
+
+        if bundle.obj.virus:
+            virus = bundle.obj.virus.name
+        else:
+            virus = None
+
+        if bundle.obj.transposon:
+            transposon = bundle.obj.transposon.name
+        else:
+            transposon = None
+
+        bundle.data.update({
+            'type': 'Gene knock-out',
+            'gene': gene,
+            'virus': virus,
+            'transposon': transposon,
+        })
+
+        return bundle
+
+
+class ModificationGeneKnockInDiseaseResource(ModelResource):
+
+    chromosome_location = fields.CharField('chromosome_location', null=True)
+    chromosome_location_transgene = fields.CharField('chromosome_location_transgene', null=True)
+    delivery_method = fields.CharField('delivery_method', null=True)
+    notes = fields.CharField('notes', null=True)
+
+    class Meta:
+        queryset = ModificationGeneKnockInDisease.objects.all()
+        include_resource_uri = False
+        fields = ('chromosome_location', 'chromosome_location_transgene', 'delivery_method', 'notes')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.target_gene:
+            target_gene = bundle.obj.target_gene.name
+        else:
+            target_gene = None
+
+        if bundle.obj.transgene:
+            transgene = bundle.obj.transgene.name
+        else:
+            transgene = None
+
+        if bundle.obj.virus:
+            virus = bundle.obj.virus.name
+        else:
+            virus = None
+
+        if bundle.obj.transposon:
+            transposon = bundle.obj.transposon.name
+        else:
+            transposon = None
+
+        bundle.data.update({
+            'type': 'Gene knock-in',
+            'target_gene': target_gene,
+            'transgene': transgene,
+            'virus': virus,
+            'transposon': transposon,
+        })
+
+        return bundle
+
+
+# -----------------------------------------------------------------------------
+# Cell line Disease
+
+class CelllineDiseaseResource(ModelResource):
+
+    primary_disease = fields.BooleanField('primary_disease', null=True, default=False)
+
+    free_text_name = fields.CharField('disease_not_normalised', null=True)
+    notes = fields.CharField('notes', null=True)
+
+    disease_stage = fields.CharField('disease_stage', null=True)
+    affected_status = fields.CharField('affected_status', null=True)
+    carrier = fields.CharField('carrier', null=True)
+
+    # Variants
+    modification_variants = fields.ToManyField(ModificationVariantDiseaseResource, 'genetic_modification_cellline_disease_variants', null=True, full=True)
+
+    # Transgene
+    transgene_expression = fields.ToManyField(ModificationTransgeneExpressionDiseaseResource, 'genetic_modification_cellline_disease_transgene_expression', null=True, full=True)
+
+    # Isogenic
+    isogenic_modifications = fields.ToManyField(ModificationVariantDiseaseResource, 'genetic_modification_cellline_disease_isogenic', null=True, full=True)
+
+    # Gene knock-out
+    gene_knock_out = fields.ToManyField(ModificationGeneKnockOutDiseaseResource, 'genetic_modification_cellline_disease_gene_knock_out', null=True, full=True)
+
+    # Gene knock-in
+    gene_knock_in = fields.ToManyField(ModificationGeneKnockInDiseaseResource, 'genetic_modification_cellline_disease_gene_knock_in', null=True, full=True)
+
+    class Meta:
+        queryset = CelllineDisease.objects.all()
+        include_resource_uri = False
+        fields = ('other', 'free_text', 'primary_disease', 'disease_stage', 'affected_status', 'carrier')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.disease:
+            bundle.data.update({
+                'name': bundle.obj.disease.name,
+                'purl': bundle.obj.disease.xpurl,
+                'synonyms': value_list_of_string(bundle.obj.disease.synonyms),
+            })
+
+        # Combine all disease variants in one field 'variants'
+        variants = []
+
+        if hasattr(bundle.obj, 'genetic_modification_cellline_disease_variants'):
+            variants.extend(bundle.data['modification_variants'])
+        if hasattr(bundle.obj, 'genetic_modification_cellline_disease_transgene_expression'):
+            variants.extend(bundle.data['transgene_expression'])
+        if hasattr(bundle.obj, 'genetic_modification_cellline_disease_isogenic'):
+            variants.extend(bundle.data['isogenic_modifications'])
+        if hasattr(bundle.obj, 'genetic_modification_cellline_disease_gene_knock_out'):
+            variants.extend(bundle.data['gene_knock_out'])
+        if hasattr(bundle.obj, 'genetic_modification_cellline_disease_gene_knock_in'):
+            variants.extend(bundle.data['gene_knock_in'])
+
+        bundle.data.update({
+            'variants': variants,
+        })
+
+        # Delete all disease variants fields that are combined in one field 'variants'
+        delete_fields = ['modification_variants', 'transgene_expression', 'isogenic_modifications', 'gene_knock_out', 'gene_knock_in']
+
+        for field in delete_fields:
+            del bundle.data[field]
+
+        return bundle
+
+
+# -----------------------------------------------------------------------------
+# Donor Disease Variant resource
+
+class DonorDiseaseVariantResource(ModelResource):
+
+    chromosome_location = fields.CharField('chromosome_location', null=True)
+    nucleotide_sequence_hgvs = fields.CharField('nucleotide_sequence_hgvs', null=True)
+    protein_sequence_hgvs = fields.CharField('protein_sequence_hgvs', null=True)
+    zygosity_status = fields.CharField('zygosity_status', null=True)
+    clinvar_id = fields.CharField('clinvar_id', null=True)
+    dbsnp_id = fields.CharField('dbsnp_id', null=True)
+    dbvar_id = fields.CharField('dbvar_id', null=True)
+    publication_pmid = fields.CharField('publication_pmid', null=True)
+    notes = fields.CharField('notes', null=True)
+
+    class Meta:
+        queryset = DonorDiseaseVariant.objects.all()
+        include_resource_uri = False
+        fields = ('chromosome_location', 'nucleotide_sequence_hgvs', 'protein_sequence_hgvs', 'zygosity_status', 'clinvar_id', 'dbsnp_id', 'dbvar_id', 'publication_pmid', 'notes')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.gene:
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
+
+        bundle.data.update({
+            'gene': gene,
+        })
+
+        return bundle
+
+
+# -----------------------------------------------------------------------------
+# Donor Disease
+
+class DonorDiseaseResource(ModelResource):
+
+    primary_disease = fields.BooleanField('primary_disease', null=True, default=False)
+
+    free_text_name = fields.CharField('disease_not_normalised', null=True)
+    notes = fields.CharField('notes', null=True)
+
+    disease_stage = fields.CharField('disease_stage', null=True)
+    affected_status = fields.CharField('affected_status', null=True)
+    carrier = fields.CharField('carrier', null=True)
+
+    # Variants
+    variants = fields.ToManyField(DonorDiseaseVariantResource, 'donor_disease_variants', null=True, full=True)
+
+    class Meta:
+        queryset = DonorDisease.objects.all().select_related(
+            'donor_disease_variants',
+        ).prefetch_related(
+            'donor_disease_variants__gene',
+        )
+        include_resource_uri = False
+        fields = ('other', 'free_text', 'primary_disease', 'disease_stage', 'affected_status', 'carrier')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.disease:
+            bundle.data.update({
+                'name': bundle.obj.disease.name,
+                'purl': bundle.obj.disease.xpurl,
+                'synonyms': value_list_of_string(bundle.obj.disease.synonyms)
+            })
+
+        return bundle
 
 
 # -----------------------------------------------------------------------------
@@ -281,12 +607,208 @@ class DonorResource(ModelResource):
     biosamples_id = fields.CharField('biosamples_id', null=True)
     gender = fields.CharField('gender', null=True)
     internal_donor_ids = fields.ListField('provider_donor_ids', null=True)
+    country_of_origin = fields.CharField('country_of_origin', null=True)
+    ethnicity = fields.CharField('ethnicity', null=True)
     karyotype = fields.CharField('karyotype', null=True)
 
+    # Diseases
+    diseases = fields.ToManyField(DonorDiseaseResource, 'diseases', null=True, full=True)
+
     class Meta:
-        queryset = Donor.objects.all()
+        queryset = Donor.objects.all().select_related(
+            'gender',
+            'diseases',
+        ).prefetch_related(
+            'diseases__disease',
+        )
+
         include_resource_uri = False
-        fields = ('biosamples_id', 'gender', 'internal_donor_ids', 'karyotype')
+        fields = ('biosamples_id', 'gender', 'internal_donor_ids', 'country_of_origin', 'ethnicity', 'karyotype')
+
+
+# -----------------------------------------------------------------------------
+# Genetic modification Non-Disease resources
+
+class ModificationVariantNonDiseaseResource(ModelResource):
+
+    chromosome_location = fields.CharField('chromosome_location', null=True)
+    nucleotide_sequence_hgvs = fields.CharField('nucleotide_sequence_hgvs', null=True)
+    protein_sequence_hgvs = fields.CharField('protein_sequence_hgvs', null=True)
+    zygosity_status = fields.CharField('zygosity_status', null=True)
+    clinvar_id = fields.CharField('clinvar_id', null=True)
+    dbsnp_id = fields.CharField('dbsnp_id', null=True)
+    dbvar_id = fields.CharField('dbvar_id', null=True)
+    publication_pmid = fields.CharField('publication_pmid', null=True)
+    notes = fields.CharField('notes', null=True)
+
+    class Meta:
+        queryset = ModificationVariantNonDisease.objects.all()
+        include_resource_uri = False
+        fields = ('chromosome_location', 'nucleotide_sequence_hgvs', 'protein_sequence_hgvs', 'zygosity_status', 'clinvar_id', 'dbsnp_id', 'dbvar_id', 'publication_pmid', 'notes')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.gene:
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
+
+        bundle.data.update({
+            'type': 'Variant',
+            'gene': gene
+        })
+
+        return bundle
+
+
+class ModificationIsogenicNonDiseaseResource(ModelResource):
+
+    chromosome_location = fields.CharField('chromosome_location', null=True)
+    nucleotide_sequence_hgvs = fields.CharField('nucleotide_sequence_hgvs', null=True)
+    protein_sequence_hgvs = fields.CharField('protein_sequence_hgvs', null=True)
+    zygosity_status = fields.CharField('zygosity_status', null=True)
+    modification_type = fields.CharField('modification_type', null=True)
+    notes = fields.CharField('notes', null=True)
+
+    class Meta:
+        queryset = ModificationIsogenicNonDisease.objects.all()
+        include_resource_uri = False
+        fields = ('chromosome_location', 'nucleotide_sequence_hgvs', 'protein_sequence_hgvs', 'zygosity_status', 'modification_type', 'notes')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.gene:
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
+
+        bundle.data.update({
+            'type': 'Isogenic modification',
+            'gene': gene
+        })
+
+        return bundle
+
+
+class ModificationTransgeneExpressionNonDiseaseResource(ModelResource):
+
+    chromosome_location = fields.CharField('chromosome_location', null=True)
+    delivery_method = fields.CharField('delivery_method', null=True)
+    notes = fields.CharField('notes', null=True)
+
+    class Meta:
+        queryset = ModificationTransgeneExpressionNonDisease.objects.all()
+        include_resource_uri = False
+        fields = ('chromosome_location', 'delivery_method', 'notes')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.gene:
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
+
+        if bundle.obj.virus:
+            virus = bundle.obj.virus.name
+        else:
+            virus = None
+
+        if bundle.obj.transposon:
+            transposon = bundle.obj.transposon.name
+        else:
+            transposon = None
+
+        bundle.data.update({
+            'type': 'Transgene expression',
+            'gene': gene,
+            'virus': virus,
+            'transposon': transposon,
+        })
+
+        return bundle
+
+
+class ModificationGeneKnockOutNonDiseaseResource(ModelResource):
+
+    chromosome_location = fields.CharField('chromosome_location', null=True)
+    delivery_method = fields.CharField('delivery_method', null=True)
+    notes = fields.CharField('notes', null=True)
+
+    class Meta:
+        queryset = ModificationGeneKnockOutNonDisease.objects.all()
+        include_resource_uri = False
+        fields = ('chromosome_location', 'delivery_method', 'notes')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.gene:
+            gene = bundle.obj.gene.name
+        else:
+            gene = None
+
+        if bundle.obj.virus:
+            virus = bundle.obj.virus.name
+        else:
+            virus = None
+
+        if bundle.obj.transposon:
+            transposon = bundle.obj.transposon.name
+        else:
+            transposon = None
+
+        bundle.data.update({
+            'type': 'Gene knock-out',
+            'gene': gene,
+            'virus': virus,
+            'transposon': transposon,
+        })
+
+        return bundle
+
+
+class ModificationGeneKnockInNonDiseaseResource(ModelResource):
+
+    chromosome_location = fields.CharField('chromosome_location', null=True)
+    chromosome_location_transgene = fields.CharField('chromosome_location_transgene', null=True)
+    delivery_method = fields.CharField('delivery_method', null=True)
+    notes = fields.CharField('notes', null=True)
+
+    class Meta:
+        queryset = ModificationGeneKnockInNonDisease.objects.all()
+        include_resource_uri = False
+        fields = ('chromosome_location', 'chromosome_location_transgene', 'delivery_method', 'notes')
+
+    def dehydrate(self, bundle):
+
+        if bundle.obj.target_gene:
+            target_gene = bundle.obj.target_gene.name
+        else:
+            target_gene = None
+
+        if bundle.obj.transgene:
+            transgene = bundle.obj.transgene.name
+        else:
+            transgene = None
+
+        if bundle.obj.virus:
+            virus = bundle.obj.virus.name
+        else:
+            virus = None
+
+        if bundle.obj.transposon:
+            transposon = bundle.obj.transposon.name
+        else:
+            transposon = None
+
+        bundle.data.update({
+            'type': 'Gene knock-in',
+            'target_gene': target_gene,
+            'transgene': transgene,
+            'virus': virus,
+            'transposon': transposon,
+        })
+
+        return bundle
 
 
 # -----------------------------------------------------------------------------
@@ -452,12 +974,17 @@ class CelllineResource(ModelResource):
     # Status
     status_log = fields.ToManyField(CelllineStatusResource, 'statuses', null=True, full=True)
 
-    # Donor and disease
-    primary_disease_diagnosed = fields.CharField('primary_disease_diagnosis', null=True)
-    primary_disease = fields.ToOneField(DiseaseResource, 'primary_disease', null=True, full=True)
+    # Disease
+    primary_disease_diagnosed = fields.CharField('has_diseases', null=True)
+    primary_disease = fields.DictField(null=True)
+    disease_names = fields.ListField('all_diseases', null=True)
     disease_associated_phenotypes = fields.ListField('disease_associated_phenotypes', null=True)
     non_disease_associated_phenotypes = fields.ListField('non_disease_associated_phenotypes', null=True)
 
+    # Cell line diseases for genetical modified lines
+    diseases = fields.ToManyField(CelllineDiseaseResource, 'diseases', null=True, full=True)
+
+    # Donor
     donor_age = fields.CharField('donor_age', null=True)
     donor = fields.ToOneField(DonorResource, 'donor', null=True, full=True)
 
@@ -480,11 +1007,24 @@ class CelllineResource(ModelResource):
     # Genotyping
     cellline_karyotype = fields.ToOneField(CelllineKaryotypeResource, 'karyotype', null=True, full=True)
     cellline_disease_associated_genotype = fields.ToOneField(CelllineDiseaseGenotypeResource, 'genotyping_variant', null=True, full=True)
+
+    # Genetic modifications (Old fields)
     genetic_modification = fields.ToOneField(GeneticModificationResource, 'genetic_modification', null=True, full=True)
     genetic_modification_gene_knock_out = fields.ToOneField(GeneticModificationGeneKnockOutResource, 'genetic_modification_gene_knock_out', null=True, full=True)
     genetic_modification_gene_knock_in = fields.ToOneField(GeneticModificationGeneKnockInResource, 'genetic_modification_gene_knock_in', null=True, full=True)
     genetic_modification_transgene_expression = fields.ToOneField(GeneticModificationTransgeneExpressionResource, 'genetic_modification_transgene_expression', null=True, full=True)
     genetic_modification_isogenic = fields.ToOneField(GeneticModificationIsogenicResource, 'genetic_modification_isogenic', null=True, full=True)
+
+    # Genetic modifications (New fields)
+    gen_mod_modification_variants = fields.ToManyField(ModificationVariantNonDiseaseResource, 'genetic_modification_cellline_variants', null=True, full=True)
+
+    gen_mod_transgene_expression = fields.ToManyField(ModificationTransgeneExpressionNonDiseaseResource, 'genetic_modification_cellline_transgene_expression', null=True, full=True)
+
+    gen_mod_isogenic_modifications = fields.ToManyField(ModificationIsogenicNonDiseaseResource, 'genetic_modification_cellline_isogenic', null=True, full=True)
+
+    gen_mod_gene_knock_out = fields.ToManyField(ModificationGeneKnockOutNonDiseaseResource, 'genetic_modification_cellline_gene_knock_out', null=True, full=True)
+
+    gen_mod_gene_knock_in = fields.ToManyField(ModificationGeneKnockInNonDiseaseResource, 'genetic_modification_cellline_gene_knock_in', null=True, full=True)
 
     # Documents
     cell_line_information_packs = fields.ToManyField(CelllineInformationPackResource, 'clips', null=True, full=True)
@@ -504,17 +1044,23 @@ class CelllineResource(ModelResource):
             'karyotype',
             'genotyping_variant',
             'generator',
-            'primary_disease',
             'celllinecultureconditions__culture_medium_other',
             'integrating_vector__virus',
             'vector_free_reprogramming_factors',
 
         ).prefetch_related(
+            'diseases',
+            'donor__diseases',
             'clips',
             'batches__batchcultureconditions',
             'batches__images',
             'publications',
             'celllinecultureconditions__medium_supplements__unit',
+            'genetic_modification_cellline_variants',
+            'genetic_modification_cellline_transgene_expression',
+            'genetic_modification_cellline_isogenic',
+            'genetic_modification_cellline_gene_knock_out',
+            'genetic_modification_cellline_gene_knock_in',
         )
 
         resource_name = 'cell-lines'
@@ -612,14 +1158,74 @@ class CelllineResource(ModelResource):
         else:
             return None
 
-    def dehydrate(self, bundle):
-        if not bundle.obj.primary_disease and bundle.obj.primary_disease_diagnosis == '0':
-            bundle.data['primary_disease'] = {
-                'name': 'Normal'
-            }
-            return bundle
+    def dehydrate_primary_disease(self, bundle):
+        if bundle.obj.primary_disease is not None:
+            if bundle.obj.primary_disease.disease:
+                synonyms = [s.strip() for s in bundle.obj.primary_disease.disease.synonyms.split(',')]
+                if bundle.obj.primary_disease.disease.name == 'normal':
+                    name = 'Normal'
+                else:
+                    name = bundle.obj.primary_disease.disease.name
+                return {
+                    'purl': bundle.obj.primary_disease.disease.xpurl,
+                    'name': name,
+                    'synonyms': synonyms,
+                }
+            elif bundle.obj.primary_disease.disease_not_normalised:
+                return {
+                    'name': bundle.obj.primary_disease.disease_not_normalised,
+                }
+            elif bundle.obj.primary_disease.notes:
+                return {
+                    'name': bundle.obj.primary_disease.notes,
+                }
+            else:
+                return None
         else:
-            return bundle
+            return None
+
+    def dehydrate_primary_disease_diagnosed(self, bundle):
+        if bundle.obj.has_diseases is True:
+            return "1"
+        else:
+            return "0"
+
+    def dehydrate(self, bundle):
+
+        # Combine all non-disease related modifications in one field: 'genetic_modifications_non_disease'
+        modifications = []
+
+        if hasattr(bundle.obj, 'genetic_modification_cellline_variants'):
+            if bundle.obj.genetic_modification_cellline_variants.all():
+                modifications.extend(bundle.data['gen_mod_modification_variants'])
+
+        if hasattr(bundle.obj, 'genetic_modification_cellline_transgene_expression'):
+            if bundle.obj.genetic_modification_cellline_transgene_expression.all():
+                modifications.extend(bundle.data['gen_mod_transgene_expression'])
+
+        if hasattr(bundle.obj, 'genetic_modification_cellline_isogenic'):
+            if bundle.obj.genetic_modification_cellline_isogenic.all():
+                modifications.extend(bundle.data['gen_mod_isogenic_modifications'])
+
+        if hasattr(bundle.obj, 'genetic_modification_cellline_gene_knock_out'):
+            if bundle.obj.genetic_modification_cellline_gene_knock_out.all():
+                modifications.extend(bundle.data['gen_mod_gene_knock_out'])
+
+        if hasattr(bundle.obj, 'genetic_modification_cellline_gene_knock_in'):
+            if bundle.obj.genetic_modification_cellline_gene_knock_in.all():
+                modifications.extend(bundle.data['gen_mod_gene_knock_in'])
+
+        bundle.data.update({
+            'genetic_modifications_non_disease': modifications,
+        })
+
+        # Delete extra fields that are now combined in 'genetic_modifications_non_disease'
+        delete_fields = ['gen_mod_modification_variants', 'gen_mod_transgene_expression', 'gen_mod_isogenic_modifications', 'gen_mod_gene_knock_out', 'gen_mod_gene_knock_in']
+
+        for field in delete_fields:
+            del bundle.data[field]
+
+        return bundle
 
 
 # -----------------------------------------------------------------------------

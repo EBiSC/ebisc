@@ -1,0 +1,5 @@
+{% if disease.disease %}
+{{ disease.disease.name }}{% elif disease.disease_not_normalised %}
+{{ disease.disease_not_normalised }}{% else %}
+/
+{% endif %}{% if disease.affected_status %}, {% if disease.affected_status == 'True' %}Affected{% elif disease.affected_status == 'False' %}Not affected{% else %}Unknown{% endif %}{% endif %}

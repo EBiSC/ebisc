@@ -222,6 +222,22 @@ table.data {
         }
       }
     }
+
+    hr {
+      width: 100%;
+      max-width: 500px;
+      margin: 0.5rem 0;
+    }
+  }
+
+  &.general-info {
+    td, th {
+      text-align: left;
+    }
+
+    th.sub-title h3 {
+      text-align: left;
+    }
   }
 }
 

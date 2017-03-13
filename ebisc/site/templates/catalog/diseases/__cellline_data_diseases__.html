@@ -1,0 +1,51 @@
+{% if cellline.diseases.all %}
+<tr>
+  <td><h3>Donor</h3></td><td></td>
+</tr>
+{% endif %}
+
+<!-- Donor diseases -->
+
+{% if cellline.donor.diseases.all %}
+{% for disease in cellline.donor.diseases.all %}
+{% include 'catalog/diseases/__cellline_data_disease__.html' %}
+{% if not forloop.last %}<tr><td colspan="2"><hr></td></tr>{% endif %}
+{% endfor %}
+{% if cellline.donor.diseases.all|length >= 2 %}
+{% if cellline.disease_associated_phenotypes|length or cellline.non_disease_associated_phenotypes|length or cellline.family_history or cellline.medical_history or cellline.clinical_information %}
+<tr><td colspan="2"><hr></td></tr>
+{% endif %}
+{% endif %}
+{% else %}
+<tr>
+  <td class="label"><b>Disease:</b></td>
+  <td>No</td>
+</tr>
+{% endif %}
+
+{% if cellline.disease_associated_phenotypes|length %}
+<tr><td class="label">Disease associated phenotypes:</td><td>{{ cellline.disease_associated_phenotypes|join:", " }}</td></tr>
+{% endif %}
+{% if cellline.non_disease_associated_phenotypes|length %}
+<tr><td class="label">Non-disease associated phenotypes:</td><td>{{ cellline.non_disease_associated_phenotypes|join:", " }}</td></tr>
+{% endif %}
+{% if cellline.family_history %}
+<tr><td class="label">Family history:</td><td>{{ cellline.family_history|capfirst }}</td></tr>
+{% endif %}
+{% if cellline.medical_history %}
+<tr><td class="label">Medical history:</td><td>{{ cellline.medical_history|capfirst }}</td></tr>
+{% endif %}
+{% if cellline.clinical_information %}
+<tr><td class="label">Clinical information:</td><td>{{ cellline.clinical_information|capfirst }}</td></tr>
+{% endif %}
+
+<!-- Disease associated genetic modifications -->
+
+{% if cellline.diseases.all %}
+<tr>
+  <td colspan=2><h3>Disease/phenotype related genetic modifications</h3></td>
+</tr>
+{% for disease in cellline.diseases.all %}
+{% include 'catalog/diseases/__cellline_data_disease__.html' %}
+{% endfor %}
+{% endif %}

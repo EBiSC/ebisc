@@ -1,5 +1,126 @@
+<tr><th colspan="2" class="title" id="genetic-modification"><h2>Genetic modification</h2></th></tr>
+
+<!-- New fields -->
+
+{% if cellline.diseases.all or cellline.genetic_modification_cellline_variants.all or cellline.genetic_modification_cellline_isogenic.all or cellline.genetic_modification_cellline_transgene_expression.all or cellline.genetic_modification_cellline_gene_knock_out.all or cellline.genetic_modification_cellline_disease_gene_knock_in.all%}
+
+<!-- Genetic modifications related to diseases -->
+
+{% if cellline.diseases.all %}
+<tr><th class="sub-title"><h3>Disease/phenotype related modifications</h3></th><th></th></tr>
+{% for disease in cellline.diseases.all %}
+{% include 'catalog/diseases/__cellline_data_disease__.html' %}
+{% endfor %}
+{% endif %}
+
+<!-- Genetic modifications not related to diseases -->
+
+{% if cellline.genetic_modification_cellline_variants.all or cellline.genetic_modification_cellline_isogenic.all or cellline.genetic_modification_cellline_transgene_expression.all or cellline.genetic_modification_cellline_gene_knock_out.all or cellline.genetic_modification_cellline_disease_gene_knock_in.all %}
+
+<tr><th class="sub-title"><h3>Modifications not associated with diseases</h3></th><th></th></tr>
+
+<!-- Genetic modifications: Variant -->
+
+{% if cellline.genetic_modification_cellline_variants.all %}
+<tr>
+    <td class="label">Type of modification:</td>
+    <td><b>Variant</b></td>
+</tr>
+{% for variant in cellline.genetic_modification_cellline_variants.all %}
+{% include 'catalog/diseases/__cellline_data_disease_variant__.html' %}
+{% if not forloop.last %}<tr><td></td><td><hr></td></tr>{% endif %}
+{% endfor %}
+<tr><td colspan="2">&nbsp;</td></tr>
+{% endif %}
+
+<!-- Genetic modifications: Transgene expression -->
+
+{% if cellline.genetic_modification_cellline_transgene_expression.all %}
+<tr>
+    <td class="label">Type of modification:</td>
+    <td><b>Transgene expression</b></td>
+</tr>
+{% for variant in cellline.genetic_modification_cellline_transgene_expression.all %}
+{% include 'catalog/diseases/__cellline_data_disease_modification_transgene__.html' %}
+{% if not forloop.last %}<tr><td></td><td><hr></td></tr>{% endif %}
+{% endfor %}
+<tr><td colspan="2">&nbsp;</td></tr>
+{% endif %}
+
+<!-- Genetic modifications: Isogenic -->
+
+{% if cellline.genetic_modification_cellline_isogenic.all %}
+<tr>
+    <td class="label">Type of modification:</td>
+    <td><b>Isogenic</b></td>
+</tr>
+{% for variant in cellline.genetic_modification_cellline_isogenic.all %}
+{% include 'catalog/diseases/__cellline_data_disease_modification_isogenic__.html' %}
+{% if not forloop.last %}<tr><td></td><td><hr></td></tr>{% endif %}
+{% endfor %}
+<tr><td colspan="2">&nbsp;</td></tr>
+{% endif %}
+
+<!-- Genetic modifications: Gene knock-out -->
+
+{% if cellline.genetic_modification_cellline_gene_knock_out.all %}
+<tr>
+    <td class="label">Type of modification:</td>
+    <td><b>Gene knock-out</b></td>
+</tr>
+{% for variant in cellline.genetic_modification_cellline_gene_knock_out.all %}
+{% include 'catalog/diseases/__cellline_data_disease_modification_gene_knock_out__.html' %}
+{% if not forloop.last %}<tr><td></td><td><hr></td></tr>{% endif %}
+{% endfor %}
+<tr><td colspan="2">&nbsp;</td></tr>
+{% endif %}
+
+<!-- Genetic modifications: Gene knock-in -->
+
+{% if cellline.genetic_modification_cellline_gene_knock_in.all %}
+<tr>
+    <td class="label">Type of modification:</td>
+    <td><b>Gene knock-in</b></td>
+</tr>
+{% for variant in cellline.genetic_modification_cellline_gene_knock_in.all %}
+{% include 'catalog/diseases/__cellline_data_disease_modification_gene_knock_in__.html' %}
+{% if not forloop.last %}<tr><td></td><td><hr></td></tr>{% endif %}
+{% endfor %}
+<tr><td colspan="2">&nbsp;</td></tr>
+{% endif %}
+
+{% endif %}
+
+<!-- / New fields -->
+
+<!-- Old fields -->
+
+{% else %}
+
+{% if cellline.diseases.all %}
+<tr><th class="sub-title"><h3>Disease/phenotype related modifications</h3></th><th></th></tr>
+{% for disease in cellline.diseases.all %}
+<tr>
+  <td class="label"><b>Disease:</b></td>
+  <td>
+    {% if disease.disease or disease.disease_not_normalised %}
+      {% if disease.disease %}
+      <b>{{ disease.disease.name }}</b>
+      {% elif disease.disease_not_normalised %}
+      <b>{{ disease.disease_not_normalised }}</b>
+      {% endif %}
+      {% if disease.notes %}<br/>{{ disease.notes }}{% endif %}
+    {% else %}
+    {% if disease.notes %}{{ disease.notes }}{% else %}/{% endif %}
+    {% endif %}
+  </td>
+</tr>
+{% endfor %}
+{% endif %}
+
+
 {% if cellline.genetic_modification_transgene_expression or cellline.genetic_modification_gene_knock_out or cellline.genetic_modification_gene_knock_in or cellline.genetic_modification_isogenic %}
-<tr><th class="sub-title"><h3>Genetic modification</h3></th><th></th></tr>
+<!-- <tr><th class="sub-title"><h3>Modifications not associated with diseases</h3></th><th></th></tr> -->
     {% if cellline.genetic_modification_transgene_expression %}
         <tr>
             <td class="label">Type of modification:</td>
@@ -139,5 +260,9 @@
         </tr>
         {% endif %}
     {% endif %}
+
+{% endif %}
+
+<!-- / Old fields -->
 
 {% endif %}
