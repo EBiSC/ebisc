@@ -478,7 +478,7 @@ class CelllineDiseaseResource(ModelResource):
     transgene_expression = fields.ToManyField(ModificationTransgeneExpressionDiseaseResource, 'genetic_modification_cellline_disease_transgene_expression', null=True, full=True)
 
     # Isogenic
-    isogenic_modifications = fields.ToManyField(ModificationVariantDiseaseResource, 'genetic_modification_cellline_disease_isogenic', null=True, full=True)
+    isogenic_modifications = fields.ToManyField(ModificationIsogenicDiseaseResource, 'genetic_modification_cellline_disease_isogenic', null=True, full=True)
 
     # Gene knock-out
     gene_knock_out = fields.ToManyField(ModificationGeneKnockOutDiseaseResource, 'genetic_modification_cellline_disease_gene_knock_out', null=True, full=True)
