@@ -1016,6 +1016,7 @@ class CelllineResource(ModelResource):
     genetic_modification_isogenic = fields.ToOneField(GeneticModificationIsogenicResource, 'genetic_modification_isogenic', null=True, full=True)
 
     # Genetic modifications (New fields)
+    genetic_modification_flag = fields.BooleanField('has_genetic_modification', null=True)
     gen_mod_modification_variants = fields.ToManyField(ModificationVariantNonDiseaseResource, 'genetic_modification_cellline_variants', null=True, full=True)
 
     gen_mod_transgene_expression = fields.ToManyField(ModificationTransgeneExpressionNonDiseaseResource, 'genetic_modification_cellline_transgene_expression', null=True, full=True)
