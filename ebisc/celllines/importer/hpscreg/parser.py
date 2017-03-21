@@ -45,7 +45,6 @@ from ebisc.celllines.models import  \
     UndifferentiatedMorphologyMarkerMorphology,  \
     UndifferentiatedMorphologyMarkerExpressionProfile,  \
     UndifferentiatedMorphologyMarkerExpressionProfileMolecule,  \
-    CelllineEthics,  \
     Organization,  \
     CelllineOrgType,  \
     CelllinePublication,  \
@@ -914,82 +913,6 @@ def parse_comparator_line(valuef, source):
 
     else:
         return None
-
-
-@inject_valuef
-def parse_ethics(valuef, source, cell_line):
-
-    cell_line_ethics, created = CelllineEthics.objects.get_or_create(cell_line=cell_line)
-
-    cell_line_ethics.donor_consent = valuef('hips_consent_obtained_from_donor_of_tissue_flag', 'nullbool')
-    cell_line_ethics.no_pressure_statement = valuef('hips_no_pressure_stat_flag', 'nullbool')
-    cell_line_ethics.no_inducement_statement = valuef('hips_no_inducement_stat_flag', 'nullbool')
-    cell_line_ethics.donor_consent_form = valuef('hips_informed_consent_flag', 'nullbool')
-    cell_line_ethics.known_location_of_consent_form = valuef('hips_holding_original_donor_consent_flag', 'nullbool')
-    cell_line_ethics.copy_of_consent_form_obtainable = valuef('hips_holding_original_donor_consent_copy_of_existing_flag', 'nullbool')
-    cell_line_ethics.obtain_new_consent_form = valuef('hips_arrange_obtain_new_consent_form_flag', 'nullbool')
-    cell_line_ethics.donor_recontact_agreement = valuef('hips_donor_recontact_agreement_flag', 'nullbool')
-    cell_line_ethics.consent_anticipates_donor_notification_research_results = valuef('hips_consent_anticipates_donor_notification_research_results_flag', 'nullbool')
-    cell_line_ethics.donor_expects_notification_health_implications = valuef('hips_donor_expects_notification_health_implications_flag', 'nullbool')
-    cell_line_ethics.copy_of_donor_consent_information_english_obtainable = valuef('hips_provide_copy_of_donor_consent_information_english_flag', 'nullbool')
-    cell_line_ethics.copy_of_donor_consent_form_english_obtainable = valuef('hips_provide_copy_of_donor_consent_english_flag', 'nullbool')
-
-    cell_line_ethics.consent_permits_ips_derivation = valuef('hips_consent_permits_ips_derivation_flag', 'nullbool')
-    cell_line_ethics.consent_pertains_specific_research_project = valuef('hips_consent_pertains_specific_research_project_flag', 'nullbool')
-    cell_line_ethics.consent_permits_future_research = valuef('hips_consent_permits_future_research_flag', 'nullbool')
-    cell_line_ethics.future_research_permitted_specified_areas = valuef('hips_future_research_permitted_specified_areas_flag', 'nullbool')
-    cell_line_ethics.future_research_permitted_areas = valuef('hips_future_research_permitted_areas')
-    cell_line_ethics.consent_permits_clinical_treatment = valuef('hips_consent_permits_clinical_treatment_flag', 'nullbool')
-    cell_line_ethics.formal_permission_for_distribution = valuef('hips_formal_permission_for_distribution_flag', 'nullbool')
-    cell_line_ethics.consent_permits_research_by_academic_institution = valuef('hips_consent_permits_research_by_academic_institution_flag', 'nullbool')
-    cell_line_ethics.consent_permits_research_by_org = valuef('hips_consent_permits_research_by_org_flag', 'nullbool')
-    cell_line_ethics.consent_permits_research_by_non_profit_company = valuef('hips_consent_permits_research_by_non_profit_company_flag', 'nullbool')
-    cell_line_ethics.consent_permits_research_by_for_profit_company = valuef('hips_consent_permits_research_by_for_profit_company_flag', 'nullbool')
-    cell_line_ethics.consent_permits_development_of_commercial_products = valuef('hips_consent_permits_development_of_commercial_products_flag', 'nullbool')
-    cell_line_ethics.consent_expressly_prevents_commercial_development = valuef('hips_consent_expressly_prevents_commercial_development_flag', 'nullbool')
-    cell_line_ethics.consent_expressly_prevents_financial_gain = valuef('hips_consent_expressly_prevents_financial_gain_flag', 'nullbool')
-    cell_line_ethics.further_constraints_on_use = valuef('hips_further_constraints_on_use_flag', 'nullbool')
-    cell_line_ethics.further_constraints_on_use_desc = valuef('hips_further_constraints_on_use')
-
-    cell_line_ethics.consent_expressly_permits_indefinite_storage = valuef('hips_consent_expressly_permits_indefinite_storage_flag', 'nullbool')
-    cell_line_ethics.consent_prevents_availiability_to_worldwide_research = valuef('hips_consent_prevents_availiability_to_worldwide_research_flag', 'nullbool')
-
-    cell_line_ethics.consent_permits_genetic_testing = valuef('hips_consent_permits_genetic_testing_flag', 'nullbool')
-    cell_line_ethics.consent_permits_testing_microbiological_agents_pathogens = valuef('hips_consent_permits_testing_microbiological_agents_pathogens_flag', 'nullbool')
-    cell_line_ethics.derived_information_influence_personal_future_treatment = valuef('hips_derived_information_influence_personal_future_treatment_flag', 'nullbool')
-
-    cell_line_ethics.donor_data_protection_informed = valuef('hips_donor_data_protection_informed_flag', 'nullbool')
-    cell_line_ethics.donated_material_code = valuef('hips_donated_material_code_flag', 'nullbool')
-    cell_line_ethics.donated_material_rendered_unidentifiable = valuef('hips_donated_material_rendered_unidentifiable_flag', 'nullbool')
-    cell_line_ethics.genetic_information_exists = valuef('genetic_information_associated_flag', 'nullbool')
-    cell_line_ethics.genetic_information_access_policy = valuef('hips_genetic_information_access_policy')
-    cell_line_ethics.genetic_information_available = valuef('genetic_information_available_flag', 'nullbool')
-
-    cell_line_ethics.consent_permits_access_medical_records = valuef('hips_consent_permits_access_medical_records_flag', 'nullbool')
-    cell_line_ethics.consent_permits_access_other_clinical_source = valuef('hips_consent_permits_access_other_clinical_source_flag', 'nullbool')
-    cell_line_ethics.medical_records_access_consented = valuef('hips_medical_records_access_consented_flag', 'nullbool')
-    cell_line_ethics.medical_records_access_consented_organisation_name = valuef('hips_medical_records_access_consented_organisation_name')
-
-    cell_line_ethics.consent_permits_stop_of_derived_material_use = valuef('hips_consent_permits_stop_of_derived_material_use_flag', 'nullbool')
-    cell_line_ethics.consent_permits_stop_of_delivery_of_information_and_data = valuef('hips_consent_permits_delivery_of_information_and_data_flag', 'nullbool')
-
-    cell_line_ethics.authority_approval = valuef('hips_approval_flag', 'nullbool')
-    cell_line_ethics.approval_authority_name = valuef('hips_approval_auth_name')
-    cell_line_ethics.approval_number = valuef('hips_approval_number')
-    cell_line_ethics.ethics_review_panel_opinion_relation_consent_form = valuef('hips_ethics_review_panel_opinion_relation_consent_form_flag', 'nullbool')
-    cell_line_ethics.ethics_review_panel_opinion_project_proposed_use = valuef('hips_ethics_review_panel_opinion_project_proposed_use_flag', 'nullbool')
-
-    cell_line_ethics.recombined_dna_vectors_supplier = valuef('hips_recombined_dna_vectors_supplier')
-    cell_line_ethics.use_or_distribution_constraints = valuef('hips_use_or_distribution_constraints_flag', 'nullbool')
-    cell_line_ethics.use_or_distribution_constraints_desc = valuef('hips_use_or_distribution_constraints')
-    cell_line_ethics.third_party_obligations = valuef('hips_third_party_obligations_flag', 'nullbool')
-    cell_line_ethics.third_party_obligations_desc = valuef('hips_third_party_obligations')
-
-    if created or cell_line_ethics.is_dirty():
-        cell_line_ethics.save()
-        return True
-
-    return False
 
 
 @inject_valuef
