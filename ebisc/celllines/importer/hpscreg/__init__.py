@@ -99,6 +99,7 @@ def import_cellline(source):
     cell_line.family_history = valuef('family_history')
     cell_line.medical_history = valuef('medical_history')
     cell_line.clinical_information = valuef('clinical_information')
+    cell_line.has_genetic_modification = valuef('genetic_modification_flag', 'nullbool')
     cell_line.derived_from = parser.parse_derived_from(source)
     cell_line.comparator_cell_line = parser.parse_comparator_line(source)
     cell_line.comparator_cell_line_relation = valuef('comparator_cell_line_donor_relative_type')
@@ -109,7 +110,6 @@ def import_cellline(source):
         parser.parse_cell_line_diseases(source, cell_line),
         parser.parse_genetic_modifications_non_disease(source, cell_line),
         parser.parse_reprogramming_vector(source, cell_line),
-        parser.parse_ethics(source, cell_line),
         parser.parse_derivation(source, cell_line),
         parser.parse_vector_free_reprogramming_factors(source, cell_line),
         parser.parse_culture_conditions(source, cell_line),
