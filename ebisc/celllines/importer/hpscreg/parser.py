@@ -1469,37 +1469,62 @@ def parse_str_fingerprinting(valuef, source, cell_line):
 @inject_valuef
 def parse_genome_analysis(valuef, source, cell_line):
 
-    if valuef('genome_wide_genotyping_flag', 'bool'):
+    if valuef('genome_wide_analysis_flag'):
 
-        data_type = None
+        cell_line_genome_analysis_old = list(cell_line.genome_analysis.all().order_by('id'))
+        cell_line_genome_analysis_old_ids = set([d.id for d in cell_line_genome_analysis_old])
 
-        if valuef('genome_wide_genotyping_ega'):
-            if valuef('genome_wide_genotyping_ega') == 'Other':
-                if valuef('genome_wide_genotyping_ega_other') is not None:
-                    data_type = valuef('genome_wide_genotyping_ega_other')
-                else:
-                    data_type = u'Other'
+        # Parse new ones and save them
+
+        cell_line_genome_analysis_new = []
+
+        for analysis in source.get('genome_wide_analysis', []):
+            cell_line_genome_analysis_new.append(parse_genome_analysis_item(analysis, cell_line))
+
+        cell_line_genome_analysis_new_ids = set([a.id for a in cell_line_genome_analysis_new if a is not None])
+
+        # Delete ones that are no longer in the export
+        to_delete = cell_line_genome_analysis_old_ids - cell_line_genome_analysis_new_ids
+
+        for genome_analysis in [ga for ga in cell_line_genome_analysis_old if ga.id in to_delete]:
+            logger.info('Deleting obsolete genome analysis %s' % genome_analysis)
+            genome_analysis.delete()
+
+
+@inject_valuef
+def parse_genome_analysis_item(valuef, source, cell_line):
+
+    analysis_method = None
+
+    if valuef('analysis_method'):
+        if valuef('analysis_method') == 'Other':
+            if valuef('analysis_method_other') is not None:
+                analysis_method = valuef('analysis_method_other')
             else:
-                data_type = valuef('genome_wide_genotyping_ega')
+                analysis_method = u'Other'
+        else:
+            analysis_method = valuef('analysis_method')
 
-        if data_type or valuef('genome_wide_genotyping_ega_url'):
+        cell_line_genome_analysis, created = CelllineGenomeAnalysis.objects.update_or_create(
+            cell_line=cell_line,
+            analysis_method=analysis_method,
+            defaults={
+                'link': valuef('public_data_link'),
+            }
+        )
 
-            cell_line_genome_analysis, cell_line_genome_analysis_created = CelllineGenomeAnalysis.objects.get_or_create(cell_line=cell_line)
+        if created or cell_line_genome_analysis.is_dirty():
+            if created:
+                logger.info('Added cell line genome analysis')
+            else:
+                logger.info('Updated cell line genome analysis')
 
-            cell_line_genome_analysis.data = data_type
-            cell_line_genome_analysis.link = valuef('genome_wide_genotyping_ega_url')
+            cell_line_genome_analysis.save()
 
-            if cell_line_genome_analysis_created or cell_line_genome_analysis.is_dirty():
-                if cell_line_genome_analysis_created:
-                    logger.info('Added cell line genome analysis')
-                else:
-                    logger.info('Updated cell line genome analysis')
+        return cell_line_genome_analysis
 
-                cell_line_genome_analysis.save()
-
-                return True
-
-            return False
+    else:
+        return None
 
 
 @inject_valuef

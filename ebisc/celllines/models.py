@@ -1544,11 +1544,10 @@ class CelllineValue(models.Model):
 class CelllineKaryotype(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='karyotype')
-
     karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
     karyotype_method = models.CharField(_(u'Karyotype method'), max_length=100, null=True, blank=True)
-
     passage_number = models.CharField(_(u'Passage number'), max_length=10, null=True, blank=True)
+    karyotype_file = models.FileField(_(u'File'), upload_to=upload_to, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line karyotype')
@@ -1595,13 +1594,27 @@ class CelllineStrFingerprinting(DirtyFieldsMixin, models.Model):
 
 class CelllineGenomeAnalysis(DirtyFieldsMixin, models.Model):
 
-    cell_line = models.OneToOneField('Cellline', verbose_name=_(u'Cell line'), related_name='genome_analysis')
-    data = models.CharField(_(u'Data'), max_length=100, null=True, blank=True)
+    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='genome_analysis')
+    analysis_method = models.CharField(_(u'Analysis method'), max_length=300, null=True, blank=True)
     link = models.URLField(u'Link', null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line genome analysis')
         verbose_name_plural = _(u'Cell line genome analysis')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class CelllineGenomeAnalysisFile(models.Model):
+
+    genome_analysis = models.ForeignKey('CelllineGenomeAnalysis', verbose_name=_(u'Cell line genome analysis'), related_name='genome_analysis_files')
+    vcf_file = models.FileField(_(u'VCF File'), upload_to=upload_to, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line genome analysis file')
+        verbose_name_plural = _(u'Cell line genome analysis files')
         ordering = []
 
     def __unicode__(self):

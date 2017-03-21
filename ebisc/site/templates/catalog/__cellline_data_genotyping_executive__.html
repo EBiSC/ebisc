@@ -26,13 +26,15 @@
     </tr>
     {% endif %}
 
-    {% if cellline.genome_analysis %}
+    {% if cellline.genome_analysis.all %}
     <tr>
         <td class="label">Genome-wide analysis:</td>
         <td>
-            {% if cellline.genome_analysis.data %}{{ cellline.genome_analysis.data }}{% endif %}
-            {% if cellline.genome_analysis.data and cellline.genome_analysis.link %}<br/>{% endif %}
-            {% if cellline.genome_analysis.link %}<a href="{{ cellline.genome_analysis.link }}">{{ cellline.genome_analysis.link }}</a>{% endif %}</td>
+            {% for analysis in cellline.genome_analysis.all %}
+              <p>{{ analysis.analysis_method }}
+              {% if analysis.link %}<br/><a href="{{ analysis.link }}" target="_blank">{{ analysis.link }}</a>{% endif %}</p>
+            {% endfor %}
+        </td>
     </tr>
     {% endif %}
 
