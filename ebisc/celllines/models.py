@@ -177,7 +177,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
     available_for_sale_at_ecacc = models.BooleanField(_(u'Available for sale on ECACC'), default=False)
     current_status = models.ForeignKey('CelllineStatus', null=True, blank=True)
 
-    name = models.CharField(_(u'Cell line name'), unique=True, max_length=15)
+    name = models.CharField(_(u'Cell line name'), unique=True, max_length=16)
     alternative_names = models.CharField(_(u'Cell line alternative names'), max_length=500, null=True, blank=True)
 
     biosamples_id = models.CharField(_(u'Biosamples ID'), unique=True, max_length=100)
@@ -197,6 +197,8 @@ class Cellline(DirtyFieldsMixin, models.Model):
     family_history = models.CharField(_(u'Family history'), max_length=500, null=True, blank=True)
     medical_history = models.CharField(_(u'Medical history'), max_length=500, null=True, blank=True)
     clinical_information = models.CharField(_(u'Clinical information'), max_length=500, null=True, blank=True)
+
+    has_genetic_modification = models.NullBooleanField(_(u'Genetic modification flag'))
 
     derived_from = models.ForeignKey('Cellline', verbose_name=_(u'Derived from cell line'), null=True, blank=True, related_name='derived_cell_lines')
     comparator_cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Comparator cell line'), null=True, blank=True, related_name='comparator_cell_lines')
@@ -1302,95 +1304,6 @@ class UndifferentiatedMorphologyMarkerExpressionProfile(DirtyFieldsMixin, models
 class UndifferentiatedMorphologyMarkerExpressionProfileMolecule(DirtyFieldsMixin, MarkerMoleculeBase):
 
     marker = models.ForeignKey(UndifferentiatedMorphologyMarkerExpressionProfile, verbose_name=u'Marker', related_name='molecules')
-
-
-# -----------------------------------------------------------------------------
-# Cell line Ethics
-
-class CelllineEthics(DirtyFieldsMixin, models.Model):
-
-    ACCESS_POLICY_CHOICES = (
-        ('open_access', 'Open access'),
-        ('controlled_access', 'Controlled access'),
-        ('no_information', 'No information'),
-    )
-
-    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
-
-    donor_consent = models.NullBooleanField(_(u'Donor consent'))
-    no_pressure_statement = models.NullBooleanField(_(u'No pressure statement'))
-    no_inducement_statement = models.NullBooleanField(_(u'No inducement statement'))
-    donor_consent_form = models.NullBooleanField(_(u'Copy of consent form'))
-    donor_consent_form_url = models.URLField(u'URL of donor consent form', null=True, blank=True)
-    known_location_of_consent_form = models.NullBooleanField(_(u'Do you know who holds the consent form'))
-    copy_of_consent_form_obtainable = models.NullBooleanField(_(u'Is copy of consent form obtainable'))
-    obtain_new_consent_form = models.NullBooleanField(_(u'Is new form obtainable'))
-    donor_recontact_agreement = models.NullBooleanField(_(u'Has the donor agreed to be recontacted'))
-    consent_anticipates_donor_notification_research_results = models.NullBooleanField(_(u'Consent anticipates the donor will be notified of results of research involving the donated samples or derived cells'))
-    donor_expects_notification_health_implications = models.NullBooleanField(_(u'Donor expects to be informed if, during use of donated material, something with significant health implications for the donor is discovered'))
-    copy_of_donor_consent_information_english_obtainable = models.NullBooleanField(_(u'Is copy of consent information obtainable in English'))
-    copy_of_donor_consent_information_english_url = models.URLField(u'URL of donor consent information in English', null=True, blank=True)
-    copy_of_donor_consent_form_english_obtainable = models.NullBooleanField(_(u'Is copy of consent form obtainable in English'))
-    copy_of_donor_consent_form_english_url = models.URLField(u'URL of donor consent form in English', null=True, blank=True)
-
-    consent_permits_ips_derivation = models.NullBooleanField(_(u'Consent expressly permits derivation of iPS cells'))
-    consent_pertains_specific_research_project = models.NullBooleanField(_(u'Consent pertains to one specific research project'))
-    consent_permits_future_research = models.NullBooleanField(_(u'Consent permits unforeseen future research'))
-    future_research_permitted_specified_areas = models.NullBooleanField(_(u'Future research is permitted only in relation to specified areas or types of research'))
-    future_research_permitted_areas = models.TextField(_(u'Future research permitted areas or types'), null=True, blank=True)
-    consent_permits_clinical_treatment = models.NullBooleanField(_(u'Consent permits uses for clinical treatment or human applications'))
-    formal_permission_for_distribution = models.NullBooleanField(_(u'Formal permission from the owner for distribution'))
-    consent_permits_research_by_academic_institution = models.NullBooleanField(_(u'Consent permits research by academic institution'))
-    consent_permits_research_by_org = models.NullBooleanField(_(u'Consent permits research by public organization'))
-    consent_permits_research_by_non_profit_company = models.NullBooleanField(_(u'Consent permits research by non-profit company'))
-    consent_permits_research_by_for_profit_company = models.NullBooleanField(_(u'Consent permits research by for-profit company'))
-    consent_permits_development_of_commercial_products = models.NullBooleanField(_(u'Consent permits development of commercial products'))
-    consent_expressly_prevents_commercial_development = models.NullBooleanField(_(u'Consent expressly prevents commercial development'))
-    consent_expressly_prevents_financial_gain = models.NullBooleanField(_(u'Consent expressly prevents financial gain'))
-    further_constraints_on_use = models.NullBooleanField(_(u'Any further constraints on use'))
-    further_constraints_on_use_desc = models.TextField(_(u'Further constraints on use'), null=True, blank=True)
-
-    consent_expressly_permits_indefinite_storage = models.NullBooleanField(_(u'Consent expressly permits indefinite storage'))
-    consent_prevents_availiability_to_worldwide_research = models.NullBooleanField(_(u'Consent prevents availability to worldwide research'))
-
-    consent_permits_genetic_testing = models.NullBooleanField(_(u'Consent permits genetic testing'))
-    consent_permits_testing_microbiological_agents_pathogens = models.NullBooleanField(_(u'Consent permits testing for microbiological agents pathogens'))
-    derived_information_influence_personal_future_treatment = models.NullBooleanField(_(u'Derived information may influence personal future treatment'))
-
-    donor_data_protection_informed = models.NullBooleanField(_(u'Donor informed about data protection'))
-    donated_material_code = models.NullBooleanField(_(u'Donated material is coded'))
-    donated_material_rendered_unidentifiable = models.NullBooleanField(_(u'Donated material has been rendered unidentifiable'))
-    donor_identity_protected_rare_disease = models.CharField(u'Donor identity protected', max_length=10, null=True, blank=True, choices=EXTENDED_BOOL_CHOICES)
-    genetic_information_exists = models.NullBooleanField(_(u'Is there genetic information associated with the cell line'))
-    genetic_information_access_policy = models.CharField(u'Access policy for genetic information derived from the cell line', max_length=50, null=True, blank=True, choices=ACCESS_POLICY_CHOICES)
-    genetic_information_available = models.NullBooleanField(_(u'Is genetic information associated with the cell line available'))
-
-    consent_permits_access_medical_records = models.NullBooleanField(_(u'Consent permits access to medical records'))
-    consent_permits_access_other_clinical_source = models.NullBooleanField(_(u'Consent permits access to other clinical sources'))
-    medical_records_access_consented = models.NullBooleanField(_(u'Access to ongoing medical records has been consented'))
-    medical_records_access_consented_organisation_name = models.TextField(_(u'Organisation holding medical records'), null=True, blank=True)
-
-    consent_permits_stop_of_derived_material_use = models.NullBooleanField(_(u'Consent permits stopping the use of derived material'))
-    consent_permits_stop_of_delivery_of_information_and_data = models.NullBooleanField(_(u'Consent permits stopping delivery or use of information and data about donor'))
-
-    authority_approval = models.NullBooleanField(_(u'Institutional review board/competent authority approval'))
-    approval_authority_name = models.TextField(_(u'Name of accrediting authority'), null=True, blank=True)
-    approval_number = models.CharField(_(u'Approval number'), max_length=100, null=True, blank=True)
-    ethics_review_panel_opinion_relation_consent_form = models.NullBooleanField(_(u'Ethics review panel provided a favourable opinion in relation of the form of consent'))
-    ethics_review_panel_opinion_project_proposed_use = models.NullBooleanField(_(u'Ethics review panel provided a favourable opinion in relation to the project'))
-
-    recombined_dna_vectors_supplier = models.TextField(_(u'Recombined DNA vectors supplier'), null=True, blank=True)
-    use_or_distribution_constraints = models.NullBooleanField(_(u'Any use or distribution constraints'))
-    use_or_distribution_constraints_desc = models.TextField(_(u'Use or distribution constraints'), null=True, blank=True)
-    third_party_obligations = models.NullBooleanField(_(u'Any third party obligations'))
-    third_party_obligations_desc = models.TextField(_(u'Third party obligations'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line ethics')
-        verbose_name_plural = _(u'Cell line ethics')
-
-    def __unicode__(self):
-        return unicode(self.cell_line)
 
 
 # -----------------------------------------------------------------------------

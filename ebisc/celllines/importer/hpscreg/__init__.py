@@ -109,7 +109,6 @@ def import_cellline(source):
         parser.parse_cell_line_diseases(source, cell_line),
         parser.parse_genetic_modifications_non_disease(source, cell_line),
         parser.parse_reprogramming_vector(source, cell_line),
-        parser.parse_ethics(source, cell_line),
         parser.parse_derivation(source, cell_line),
         parser.parse_vector_free_reprogramming_factors(source, cell_line),
         parser.parse_culture_conditions(source, cell_line),

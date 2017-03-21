@@ -11,7 +11,6 @@ CelllineGenomeAnalysis
 Celllinegenotypingother
 Celllinehlatyping
 CelllineKaryotype
-CelllineEthics
 CelllineOrganization
 CelllineOrgType
 CelllinePublication
