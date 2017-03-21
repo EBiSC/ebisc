@@ -225,11 +225,12 @@ class Cellline(DirtyFieldsMixin, models.Model):
         diseases = []
 
         # Check if any donor/cell line diseases are primary
-        for disease in self.donor.diseases.all():
-            if disease.primary_disease is True:
-                return disease
-            else:
-                diseases.append(disease)
+        if self.donor:
+            for disease in self.donor.diseases.all():
+                if disease.primary_disease is True:
+                    return disease
+                else:
+                    diseases.append(disease)
 
         for disease in self.diseases.all():
             if disease.primary_disease is True:
@@ -251,7 +252,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
 
         donor_diseases = []
 
-        if self.donor.diseases.all():
+        if self.donor:
             for disease in self.donor.diseases.all():
                 if disease.disease:
                     donor_diseases.append(disease.disease.name)
@@ -263,10 +264,9 @@ class Cellline(DirtyFieldsMixin, models.Model):
 
         cellline_diseases = []
 
-        if self.diseases.all():
-            for disease in self.diseases.all():
-                if disease.disease:
-                    cellline_diseases.append(disease.disease.name)
+        for disease in self.diseases.all():
+            if disease.disease:
+                cellline_diseases.append(disease.disease.name)
 
         return cellline_diseases
 
