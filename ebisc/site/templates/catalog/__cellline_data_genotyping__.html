@@ -7,11 +7,18 @@
 
     {% if cellline.genome_analysis.all %}
     <tr>
-        <td class="label">Genome-wide analysis:</td>
+        <td class="label">Genome-wide genotyping or functional data:</td>
         <td>
             {% for analysis in cellline.genome_analysis.all %}
               <p>{{ analysis.analysis_method }}
-              {% if analysis.link %}<br/><a href="{{ analysis.link }}" target="_blank">{{ analysis.link }}</a>{% endif %}</p>
+              {% if analysis.link %}<br/><a href="{{ analysis.link }}" target="_blank">{{ analysis.link }}</a>{% endif %}
+
+              {% if analysis.genome_analysis_files.all %}
+              {% for file in analysis.genome_analysis_files.all %}
+                <br><a href="{{ file.vcf_file.url }}" target="_blank">Data file</a>{% if file.vcf_file_description %} - {{ file.vcf_file_description }}{% endif %}
+              {% endfor %}
+              {% endif %}
+              </p>
             {% endfor %}
         </td>
     </tr>

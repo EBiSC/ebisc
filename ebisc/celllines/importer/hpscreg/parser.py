@@ -1,13 +1,18 @@
 import re
+import os
+import requests
 import functools
 
 import logging
 logger = logging.getLogger('management.commands')
 
+from django.conf import settings
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
+
 from django.db import IntegrityError
 
 from .utils import format_integrity_error
-
 
 from ebisc.celllines.models import  \
     AgeRange,  \
@@ -55,6 +60,7 @@ from ebisc.celllines.models import  \
     CelllineHlaTyping, \
     CelllineStrFingerprinting, \
     CelllineGenomeAnalysis, \
+    CelllineGenomeAnalysisFile, \
     ModificationVariantDisease, \
     ModificationVariantNonDisease, \
     ModificationIsogenicDisease, \
@@ -188,6 +194,46 @@ def inject_valuef(func):
         args = [functools.partial(value_of_json, source), source] + list(args)
         return func(*args)
     return wrapper
+
+
+# -----------------------------------------------------------------------------
+# Parse and save files
+
+def value_of_file(source_file_link, source_file_name, file_field, current_enc=None):
+
+    # Save file for file_field and return its enc_hash
+
+    if source_file_link == '':
+        file_field.delete()
+        return None
+
+    if source_file_name is None:
+        source_filename = os.path.basename(source_file_link)
+    else:
+        source_filename = source_file_name
+
+    if file_field:
+        current_filename = os.path.basename(file_field.name)
+
+    source_enc = os.path.splitext(os.path.basename(source_file_link))[0]
+
+    if source_enc is not None and current_enc is not None and source_enc == current_enc and source_filename == current_filename:
+        return current_enc
+
+    logger.info('Fetching data file from %s' % source_file_link)
+
+    response = requests.get(source_file_link, stream=True, auth=(settings.HPSCREG.get('username'), settings.HPSCREG.get('password')))
+
+    with NamedTemporaryFile(delete=True) as f:
+        for chunk in response.iter_content(10240):
+            f.write(chunk)
+
+        f.seek(0)
+        file_field.save(source_filename, File(f), save=False)
+        file_field.instance.save()
+
+        f.seek(0)
+        return source_enc
 
 
 # -----------------------------------------------------------------------------
@@ -1316,7 +1362,6 @@ def parse_culture_conditions(valuef, source, cell_line):
 def parse_karyotyping(valuef, source, cell_line):
 
     if valuef('karyotyping_flag', 'bool'):
-
         if valuef('karyotyping_method') == 'Other' or valuef('karyotyping_method') == 'other':
             if valuef('karyotyping_method_other') is not None:
                 karyotype_method = valuef('karyotyping_method_other')
@@ -1325,13 +1370,21 @@ def parse_karyotyping(valuef, source, cell_line):
         else:
             karyotype_method = valuef('karyotyping_method')
 
-        if valuef('karyotyping_karyotype') or valuef('karyotyping_method') or valuef('karyotyping_number_passages'):
+        if valuef('karyotyping_karyotype') or valuef('karyotyping_method') or valuef('karyotyping_number_passages') or valuef('karyotyping_image_upload_file_enc'):
 
             cell_line_karyotype, cell_line_karyotype_created = CelllineKaryotype.objects.get_or_create(cell_line=cell_line)
 
             cell_line_karyotype.karyotype = valuef('karyotyping_karyotype')
             cell_line_karyotype.karyotype_method = karyotype_method
             cell_line_karyotype.passage_number = valuef('karyotyping_number_passages')
+
+            if cell_line_karyotype.karyotype_file_enc:
+                karyotype_file_current_enc = cell_line_karyotype.karyotype_file_enc
+            else:
+                karyotype_file_current_enc = None
+
+            if valuef('karyotyping_image_upload_file_enc'):
+                cell_line_karyotype.karyotype_file_enc = value_of_file(valuef('karyotyping_image_upload_file_enc'), valuef('karyotyping_image_upload_file'), cell_line_karyotype.karyotype_file, karyotype_file_current_enc)
 
             if cell_line_karyotype_created or cell_line_karyotype.is_dirty():
                 if cell_line_karyotype_created:
@@ -1513,6 +1566,27 @@ def parse_genome_analysis_item(valuef, source, cell_line):
             }
         )
 
+        genome_analysis_files_old = list(cell_line_genome_analysis.genome_analysis_files.all().order_by('id'))
+        genome_analysis_files_old_encs = set([f.vcf_file_enc for f in genome_analysis_files_old])
+
+        # Parse files and save them
+
+        genome_analysis_files_new = []
+
+        for f in source.get('uploads', []):
+            genome_analysis_files_new.append(parse_genome_analysis_file(f, cell_line_genome_analysis))
+
+        genome_analysis_files_new_encs = set(genome_analysis_files_new)
+
+        # Delete existing files that are not present in new data
+
+        to_delete = genome_analysis_files_old_encs - genome_analysis_files_new_encs
+
+        for genome_analysis_file in [f for f in genome_analysis_files_old if f.vcf_file_enc in to_delete]:
+            logger.info('Deleting obsolete genome analysis file %s' % genome_analysis_file)
+            genome_analysis_file.vcf_file.delete()
+            genome_analysis_file.delete()
+
         if created or cell_line_genome_analysis.is_dirty():
             if created:
                 logger.info('Added cell line genome analysis')
@@ -1525,6 +1599,22 @@ def parse_genome_analysis_item(valuef, source, cell_line):
 
     else:
         return None
+
+
+@inject_valuef
+def parse_genome_analysis_file(valuef, source, genome_analysis):
+
+    genome_analysis_file, created = CelllineGenomeAnalysisFile.objects.get_or_create(
+        genome_analysis=genome_analysis,
+        vcf_file_enc=valuef('filename_enc').split('.')[0]
+    )
+
+    genome_analysis_file.vcf_file_enc = value_of_file(valuef('url'), valuef('filename'), genome_analysis_file.vcf_file, genome_analysis_file.vcf_file_enc)
+
+    genome_analysis_file.vcf_file_description = valuef('description')
+    genome_analysis_file.save()
+
+    return genome_analysis_file.vcf_file_enc
 
 
 @inject_valuef
@@ -1842,11 +1932,6 @@ def parse_characterization(valuef, source, cell_line):
         return True
 
     return False
-
-
-# @inject_valuef
-# def parse_doc(valuef, source):
-#     print valuef('filename_enc')
 
 
 @inject_valuef

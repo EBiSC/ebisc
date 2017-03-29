@@ -503,6 +503,37 @@ class Donor(DirtyFieldsMixin, models.Model):
         return u'%s' % (self.biosamples_id,)
 
 
+class DonorGenomeAnalysis(DirtyFieldsMixin, models.Model):
+
+    donor = models.ForeignKey('Donor', verbose_name=_(u'Donor'), related_name='donor_genome_analysis')
+    analysis_method = models.CharField(_(u'Analysis method'), max_length=300, null=True, blank=True)
+    link = models.URLField(u'Link', null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Donor genome analysis')
+        verbose_name_plural = _(u'Donor genome analysis')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class DonorGenomeAnalysisFile(models.Model):
+
+    genome_analysis = models.ForeignKey('DonorGenomeAnalysis', verbose_name=_(u'Donor genome analysis'), related_name='donor_genome_analysis_files')
+    vcf_file = models.FileField(_(u'VCF File'), upload_to=upload_to)
+    vcf_file_enc = models.CharField(_(u'VCF File enc'), max_length=300)
+    vcf_file_description = models.CharField(_(u'VCF File description'), max_length=500, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Donor genome analysis file')
+        verbose_name_plural = _(u'Donor genome analysis files')
+        ordering = []
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
 # -----------------------------------------------------------------------------
 # Disease
 
@@ -919,6 +950,7 @@ class GeneticModificationIsogenic(DirtyFieldsMixin, models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.id,)
+
 
 # -----------------------------------------------------------------------------
 # Cell line and batch culture conditions
@@ -1548,6 +1580,7 @@ class CelllineKaryotype(DirtyFieldsMixin, models.Model):
     karyotype_method = models.CharField(_(u'Karyotype method'), max_length=100, null=True, blank=True)
     passage_number = models.CharField(_(u'Passage number'), max_length=10, null=True, blank=True)
     karyotype_file = models.FileField(_(u'File'), upload_to=upload_to, null=True, blank=True)
+    karyotype_file_enc = models.CharField(_(u'File enc'), max_length=300, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line karyotype')
@@ -1610,7 +1643,9 @@ class CelllineGenomeAnalysis(DirtyFieldsMixin, models.Model):
 class CelllineGenomeAnalysisFile(models.Model):
 
     genome_analysis = models.ForeignKey('CelllineGenomeAnalysis', verbose_name=_(u'Cell line genome analysis'), related_name='genome_analysis_files')
-    vcf_file = models.FileField(_(u'VCF File'), upload_to=upload_to, null=True, blank=True)
+    vcf_file = models.FileField(_(u'VCF File'), upload_to=upload_to)
+    vcf_file_enc = models.CharField(_(u'VCF File enc'), max_length=300)
+    vcf_file_description = models.CharField(_(u'VCF File description'), max_length=500, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line genome analysis file')
