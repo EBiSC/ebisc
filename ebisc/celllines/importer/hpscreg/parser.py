@@ -1,13 +1,18 @@
 import re
+import os
+import requests
 import functools
 
 import logging
 logger = logging.getLogger('management.commands')
 
+from django.conf import settings
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
+
 from django.db import IntegrityError
 
 from .utils import format_integrity_error
-
 
 from ebisc.celllines.models import  \
     AgeRange,  \
@@ -22,6 +27,8 @@ from ebisc.celllines.models import  \
     Donor,  \
     DonorDisease,  \
     DonorDiseaseVariant, \
+    DonorGenomeAnalysis, \
+    DonorGenomeAnalysisFile, \
     Disease,  \
     CelllineDisease,  \
     CelllineCultureConditions,  \
@@ -55,6 +62,7 @@ from ebisc.celllines.models import  \
     CelllineHlaTyping, \
     CelllineStrFingerprinting, \
     CelllineGenomeAnalysis, \
+    CelllineGenomeAnalysisFile, \
     ModificationVariantDisease, \
     ModificationVariantNonDisease, \
     ModificationIsogenicDisease, \
@@ -191,7 +199,52 @@ def inject_valuef(func):
 
 
 # -----------------------------------------------------------------------------
+# Parse and save files
+
+def value_of_file(source_file_link, source_file_name, file_field, current_enc=None):
+
+    # Save file for file_field and return its enc_hash
+
+    if source_file_link == '':
+        file_field.delete()
+        return None
+
+    if source_file_name is None:
+        source_filename = os.path.basename(source_file_link)
+    else:
+        source_filename = source_file_name
+
+    if file_field:
+        current_filename = os.path.basename(file_field.name)
+    else:
+        current_filename = ''
+
+    source_enc = os.path.splitext(os.path.basename(source_file_link))[0]
+
+    if source_enc is not None and current_enc is not None and source_enc == current_enc and source_filename == current_filename:
+        return current_enc
+
+    logger.info('Fetching data file from %s' % source_file_link)
+
+    response = requests.get(source_file_link, stream=True, auth=(settings.HPSCREG.get('username'), settings.HPSCREG.get('password')))
+
+    with NamedTemporaryFile(delete=True) as f:
+        for chunk in response.iter_content(10240):
+            f.write(chunk)
+
+        f.seek(0)
+        file_field.save(source_filename, File(f), save=False)
+        file_field.instance.save()
+
+        f.seek(0)
+        return source_enc
+
+
+# -----------------------------------------------------------------------------
 # Specific parsers
+
+# -----------------------------------------------------------------------------
+# Cell line diseases
 
 def parse_cell_line_diseases(source, cell_line):
 
@@ -448,6 +501,9 @@ def parse_cell_line_disease_variant(valuef, source, cell_line_disease):
     return cell_line_disease_variant
 
 
+# -----------------------------------------------------------------------------
+# Donor
+
 @inject_valuef
 def parse_donor(valuef, source):
 
@@ -487,9 +543,13 @@ def parse_donor(valuef, source):
             return None
 
     parse_donor_diseases(source, donor)
+    parse_donor_genome_analysis(source, donor)
 
     return donor
 
+
+# -----------------------------------------------------------------------------
+# Donor diseases
 
 def parse_donor_diseases(source, donor):
 
@@ -632,6 +692,9 @@ def parse_disease(valuef, source):
 
     return disease
 
+
+# -----------------------------------------------------------------------------
+# Genetic modifications not associated with diseases
 
 @inject_valuef
 def parse_genetic_modifications_non_disease(valuef, source, cell_line):
@@ -1312,11 +1375,13 @@ def parse_culture_conditions(valuef, source, cell_line):
     return False
 
 
+# -----------------------------------------------------------------------------
+# Genotyping
+
 @inject_valuef
 def parse_karyotyping(valuef, source, cell_line):
 
     if valuef('karyotyping_flag', 'bool'):
-
         if valuef('karyotyping_method') == 'Other' or valuef('karyotyping_method') == 'other':
             if valuef('karyotyping_method_other') is not None:
                 karyotype_method = valuef('karyotyping_method_other')
@@ -1325,13 +1390,28 @@ def parse_karyotyping(valuef, source, cell_line):
         else:
             karyotype_method = valuef('karyotyping_method')
 
-        if valuef('karyotyping_karyotype') or valuef('karyotyping_method') or valuef('karyotyping_number_passages'):
+        if valuef('karyotyping_karyotype') or valuef('karyotyping_method') or valuef('karyotyping_number_passages') or valuef('karyotyping_image_upload_file_enc'):
 
             cell_line_karyotype, cell_line_karyotype_created = CelllineKaryotype.objects.get_or_create(cell_line=cell_line)
 
             cell_line_karyotype.karyotype = valuef('karyotyping_karyotype')
             cell_line_karyotype.karyotype_method = karyotype_method
             cell_line_karyotype.passage_number = valuef('karyotyping_number_passages')
+
+            if cell_line_karyotype.karyotype_file_enc:
+                karyotype_file_current_enc = cell_line_karyotype.karyotype_file_enc
+            else:
+                karyotype_file_current_enc = None
+
+            # Save or upadate a file if it exists
+            if valuef('karyotyping_image_upload_file_enc'):
+                cell_line_karyotype.karyotype_file_enc = value_of_file(valuef('karyotyping_image_upload_file_enc'), valuef('karyotyping_image_upload_file'), cell_line_karyotype.karyotype_file, karyotype_file_current_enc)
+
+            # Delete old file if it is no longer in the export
+            elif cell_line_karyotype.karyotype_file_enc:
+                logger.info('Deleting obsolete karyotyping file %s' % cell_line_karyotype.karyotype_file)
+                cell_line_karyotype.karyotype_file.delete()
+                cell_line_karyotype.karyotype_file_enc = None
 
             if cell_line_karyotype_created or cell_line_karyotype.is_dirty():
                 if cell_line_karyotype_created:
@@ -1466,40 +1546,202 @@ def parse_str_fingerprinting(valuef, source, cell_line):
             return False
 
 
+# Genome analysis - Cell line
 @inject_valuef
 def parse_genome_analysis(valuef, source, cell_line):
 
-    if valuef('genome_wide_genotyping_flag', 'bool'):
+    if valuef('genome_wide_analysis_flag'):
 
-        data_type = None
+        cell_line_genome_analysis_old = list(cell_line.genome_analysis.all().order_by('id'))
+        cell_line_genome_analysis_old_ids = set([d.id for d in cell_line_genome_analysis_old])
 
-        if valuef('genome_wide_genotyping_ega'):
-            if valuef('genome_wide_genotyping_ega') == 'Other':
-                if valuef('genome_wide_genotyping_ega_other') is not None:
-                    data_type = valuef('genome_wide_genotyping_ega_other')
-                else:
-                    data_type = u'Other'
+        # Parse new ones and save them
+
+        cell_line_genome_analysis_new = []
+
+        for analysis in source.get('genome_wide_analysis', []):
+            cell_line_genome_analysis_new.append(parse_genome_analysis_item(analysis, cell_line))
+
+        cell_line_genome_analysis_new_ids = set([a.id for a in cell_line_genome_analysis_new if a is not None])
+
+        # Delete ones that are no longer in the export
+        to_delete = cell_line_genome_analysis_old_ids - cell_line_genome_analysis_new_ids
+
+        for genome_analysis in [ga for ga in cell_line_genome_analysis_old if ga.id in to_delete]:
+            logger.info('Deleting obsolete genome analysis %s' % genome_analysis)
+            genome_analysis.delete()
+
+
+@inject_valuef
+def parse_genome_analysis_item(valuef, source, cell_line):
+
+    analysis_method = None
+
+    if valuef('analysis_method'):
+        if valuef('analysis_method') == 'Other':
+            if valuef('analysis_method_other') is not None:
+                analysis_method = valuef('analysis_method_other')
             else:
-                data_type = valuef('genome_wide_genotyping_ega')
+                analysis_method = u'Other'
+        else:
+            analysis_method = valuef('analysis_method')
 
-        if data_type or valuef('genome_wide_genotyping_ega_url'):
+        cell_line_genome_analysis, created = CelllineGenomeAnalysis.objects.update_or_create(
+            cell_line=cell_line,
+            analysis_method=analysis_method,
+            defaults={
+                'link': valuef('public_data_link'),
+            }
+        )
 
-            cell_line_genome_analysis, cell_line_genome_analysis_created = CelllineGenomeAnalysis.objects.get_or_create(cell_line=cell_line)
+        genome_analysis_files_old = list(cell_line_genome_analysis.genome_analysis_files.all().order_by('id'))
+        genome_analysis_files_old_encs = set([f.vcf_file_enc for f in genome_analysis_files_old])
 
-            cell_line_genome_analysis.data = data_type
-            cell_line_genome_analysis.link = valuef('genome_wide_genotyping_ega_url')
+        # Parse files and save them
 
-            if cell_line_genome_analysis_created or cell_line_genome_analysis.is_dirty():
-                if cell_line_genome_analysis_created:
-                    logger.info('Added cell line genome analysis')
-                else:
-                    logger.info('Updated cell line genome analysis')
+        genome_analysis_files_new = []
 
-                cell_line_genome_analysis.save()
+        for f in source.get('uploads', []):
+            genome_analysis_files_new.append(parse_genome_analysis_file(f, cell_line_genome_analysis))
 
-                return True
+        genome_analysis_files_new_encs = set(genome_analysis_files_new)
 
-            return False
+        # Delete existing files that are not present in new data
+
+        to_delete = genome_analysis_files_old_encs - genome_analysis_files_new_encs
+
+        for genome_analysis_file in [f for f in genome_analysis_files_old if f.vcf_file_enc in to_delete]:
+            logger.info('Deleting obsolete genome analysis file %s' % genome_analysis_file)
+            genome_analysis_file.vcf_file.delete()
+            genome_analysis_file.delete()
+
+        if created or cell_line_genome_analysis.is_dirty():
+            if created:
+                logger.info('Added cell line genome analysis')
+            else:
+                logger.info('Updated cell line genome analysis')
+
+            cell_line_genome_analysis.save()
+
+        return cell_line_genome_analysis
+
+    else:
+        return None
+
+
+@inject_valuef
+def parse_genome_analysis_file(valuef, source, genome_analysis):
+
+    genome_analysis_file, created = CelllineGenomeAnalysisFile.objects.get_or_create(
+        genome_analysis=genome_analysis,
+        vcf_file_enc=valuef('filename_enc').split('.')[0]
+    )
+
+    genome_analysis_file.vcf_file_enc = value_of_file(valuef('url'), valuef('filename'), genome_analysis_file.vcf_file, genome_analysis_file.vcf_file_enc)
+
+    genome_analysis_file.vcf_file_description = valuef('description')
+    genome_analysis_file.save()
+
+    return genome_analysis_file.vcf_file_enc
+
+
+# Genome analysis - Donor
+@inject_valuef
+def parse_donor_genome_analysis(valuef, source, donor):
+
+    if valuef('genome_wide_analysis_flag'):
+
+        donor_genome_analysis_old = list(donor.donor_genome_analysis.all().order_by('id'))
+        donor_genome_analysis_old_ids = set([d.id for d in donor_genome_analysis_old])
+
+        # Parse new ones and save them
+
+        donor_genome_analysis_new = []
+
+        for analysis in source.get('genome_wide_analysis', []):
+            donor_genome_analysis_new.append(parse_donor_genome_analysis_item(analysis, donor))
+
+        donor_genome_analysis_new_ids = set([a.id for a in donor_genome_analysis_new if a is not None])
+
+        # Delete ones that are no longer in the export
+        to_delete = donor_genome_analysis_old_ids - donor_genome_analysis_new_ids
+
+        for genome_analysis in [ga for ga in donor_genome_analysis_old if ga.id in to_delete]:
+            logger.info('Deleting obsolete donor genome analysis %s' % genome_analysis)
+            genome_analysis.delete()
+
+
+@inject_valuef
+def parse_donor_genome_analysis_item(valuef, source, donor):
+
+    analysis_method = None
+
+    if valuef('analysis_method'):
+        if valuef('analysis_method') == 'Other':
+            if valuef('analysis_method_other') is not None:
+                analysis_method = valuef('analysis_method_other')
+            else:
+                analysis_method = u'Other'
+        else:
+            analysis_method = valuef('analysis_method')
+
+        donor_genome_analysis, created = DonorGenomeAnalysis.objects.update_or_create(
+            donor=donor,
+            analysis_method=analysis_method,
+            defaults={
+                'link': valuef('public_data_link'),
+            }
+        )
+
+        donor_genome_analysis_files_old = list(donor_genome_analysis.donor_genome_analysis_files.all().order_by('id'))
+        donor_genome_analysis_files_old_encs = set([f.vcf_file_enc for f in donor_genome_analysis_files_old])
+
+        # Parse files and save them
+
+        donor_genome_analysis_files_new = []
+
+        for f in source.get('uploads', []):
+            donor_genome_analysis_files_new.append(parse_donor_genome_analysis_file(f, donor_genome_analysis))
+
+        donor_genome_analysis_files_new_encs = set(donor_genome_analysis_files_new)
+
+        # Delete existing files that are not present in new data
+
+        to_delete = donor_genome_analysis_files_old_encs - donor_genome_analysis_files_new_encs
+
+        for donor_genome_analysis_file in [f for f in donor_genome_analysis_files_old if f.vcf_file_enc in to_delete]:
+            logger.info('Deleting obsolete donor genome analysis file %s' % donor_genome_analysis_file)
+            donor_genome_analysis_file.vcf_file.delete()
+            donor_genome_analysis_file.delete()
+
+        if created or donor_genome_analysis.is_dirty():
+            if created:
+                logger.info('Added donor genome analysis')
+            else:
+                logger.info('Updated donor genome analysis')
+
+            donor_genome_analysis.save()
+
+        return donor_genome_analysis
+
+    else:
+        return None
+
+
+@inject_valuef
+def parse_donor_genome_analysis_file(valuef, source, genome_analysis):
+
+    genome_analysis_file, created = DonorGenomeAnalysisFile.objects.get_or_create(
+        genome_analysis=genome_analysis,
+        vcf_file_enc=valuef('filename_enc').split('.')[0]
+    )
+
+    genome_analysis_file.vcf_file_enc = value_of_file(valuef('url'), valuef('filename'), genome_analysis_file.vcf_file, genome_analysis_file.vcf_file_enc)
+
+    genome_analysis_file.vcf_file_description = valuef('description')
+    genome_analysis_file.save()
+
+    return genome_analysis_file.vcf_file_enc
 
 
 @inject_valuef
@@ -1817,11 +2059,6 @@ def parse_characterization(valuef, source, cell_line):
         return True
 
     return False
-
-
-# @inject_valuef
-# def parse_doc(valuef, source):
-#     print valuef('filename_enc')
 
 
 @inject_valuef

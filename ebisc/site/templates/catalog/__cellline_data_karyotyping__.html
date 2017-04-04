@@ -2,8 +2,19 @@
 <tr><th class="sub-title"><h3>Karyotyping</h3></th><th></th></tr>
 
 {% if cellline.karyotype.passage_number %}
-<tr><td class="label">Passage number:</td><td>{{ cellline.karyotype.passage_number|default:"-" }}</td></tr>
+<tr><td class="label">Passage number:</td><td>{{ cellline.karyotype.passage_number }}</td></tr>
 {% endif %}
-<tr><td class="label">Cell line karyotype:</td><td>{{ cellline.karyotype.karyotype|default:"-" }}</td></tr>
+
+{% if cellline.karyotype.karyotype %}
+<tr><td class="label">Cell line karyotype:</td><td>{{ cellline.karyotype.karyotype }}</td></tr>
+{% endif %}
+
+{% if cellline.karyotype.karyotype_method %}
 <tr><td class="label">Karyotyping method:</td><td>{{ cellline.karyotype.karyotype_method|default:"-" }}</td></tr>
+{% endif %}
+
+{% if cellline.karyotype.karyotype_file %}
+<tr><td class="label"></td><td><a href="{{ cellline.karyotype.karyotype_file.url }}" target="_blank">Image / Result</a></td></tr>
+{% endif %}
+
 {% endif %}
