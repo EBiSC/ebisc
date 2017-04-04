@@ -493,6 +493,9 @@ class Donor(DirtyFieldsMixin, models.Model):
     ethnicity = models.CharField(_(u'Ethnicity'), max_length=100, null=True, blank=True)
 
     karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
+    karyotype_method = models.CharField(_(u'Karyotype method'), max_length=100, null=True, blank=True)
+    karyotype_file = models.FileField(_(u'File'), upload_to=upload_to, null=True, blank=True)
+    karyotype_file_enc = models.CharField(_(u'File enc'), max_length=300, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Donor')
@@ -585,7 +588,7 @@ class DonorDisease(models.Model):
 
     primary_disease = models.BooleanField(_(u'Primary disease'), default=False)
 
-    disease_stage = models.CharField(_(u'Disease stage'), max_length=100, null=True, blank=True)
+    disease_stage = models.CharField(_(u'Disease stage'), max_length=1000, null=True, blank=True)
     affected_status = models.CharField(_(u'Affected status'), max_length=12, null=True, blank=True)
     carrier = models.CharField(_(u'Carrier'), max_length=12, null=True, blank=True)
 
