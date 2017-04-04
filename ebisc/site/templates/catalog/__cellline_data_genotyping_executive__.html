@@ -28,7 +28,7 @@
 
     {% if cellline.genome_analysis.all %}
     <tr>
-        <td class="label">Genome-wide genotyping or functional data:</td>
+        <td class="label">Genome-wide genotyping (cell line):</td>
         <td>
             {% for analysis in cellline.genome_analysis.all %}
               <p>{{ analysis.analysis_method }}
@@ -36,6 +36,25 @@
 
               {% if analysis.genome_analysis_files.all %}
               {% for file in analysis.genome_analysis_files.all %}
+                <br><a href="{{ file.vcf_file.url }}" target="_blank">Data file</a>{% if file.vcf_file_description %} - {{ file.vcf_file_description }}{% endif %}
+              {% endfor %}
+              {% endif %}
+              </p>
+            {% endfor %}
+        </td>
+    </tr>
+    {% endif %}
+
+    {% if cellline.donor.donor_genome_analysis.all %}
+    <tr>
+        <td class="label">Genome-wide genotyping (donor):</td>
+        <td>
+            {% for analysis in cellline.donor.donor_genome_analysis.all %}
+              <p>{{ analysis.analysis_method }}
+              {% if analysis.link %}<br/><a href="{{ analysis.link }}" target="_blank">{{ analysis.link }}</a>{% endif %}
+
+              {% if analysis.donor_genome_analysis_files.all %}
+              {% for file in analysis.donor_genome_analysis_files.all %}
                 <br><a href="{{ file.vcf_file.url }}" target="_blank">Data file</a>{% if file.vcf_file_description %} - {{ file.vcf_file_description }}{% endif %}
               {% endfor %}
               {% endif %}

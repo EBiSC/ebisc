@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, DonorDisease, DonorDiseaseVariant, Disease, Cellline, CelllineDisease, ModificationVariantDisease, ModificationVariantNonDisease, ModificationIsogenicDisease, ModificationIsogenicNonDisease, ModificationTransgeneExpressionDisease, ModificationTransgeneExpressionNonDisease, ModificationGeneKnockOutDisease, ModificationGeneKnockOutNonDisease, ModificationGeneKnockInDisease, ModificationGeneKnockInNonDisease, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, CelllineGenomeAnalysis, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
+from ..celllines.models import Donor, DonorDisease, DonorDiseaseVariant, DonorGenomeAnalysis, Disease, Cellline, CelllineDisease, ModificationVariantDisease, ModificationVariantNonDisease, ModificationIsogenicDisease, ModificationIsogenicNonDisease, ModificationTransgeneExpressionDisease, ModificationTransgeneExpressionNonDisease, ModificationGeneKnockOutDisease, ModificationGeneKnockOutNonDisease, ModificationGeneKnockInDisease, ModificationGeneKnockInNonDisease, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, CelllineGenomeAnalysis, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
 
 
 # -----------------------------------------------------------------------------
@@ -614,6 +614,20 @@ class DonorDiseaseResource(ModelResource):
 
 
 # -----------------------------------------------------------------------------
+# Donor Genome-wide Analysis
+
+class DonorGenomeAnalysisResource(ModelResource):
+
+    analysis_method = fields.CharField('analysis_method', null=True)
+    link = fields.CharField('link', null=True)
+
+    class Meta:
+        queryset = DonorGenomeAnalysis.objects.all()
+        include_resource_uri = False
+        fields = ('analysis_method', 'link')
+
+
+# -----------------------------------------------------------------------------
 # Donor
 
 class DonorResource(ModelResource):
@@ -628,10 +642,14 @@ class DonorResource(ModelResource):
     # Diseases
     diseases = fields.ToManyField(DonorDiseaseResource, 'diseases', null=True, full=True)
 
+    # Genome-wide analysis
+    genome_wide_analysis = fields.ToManyField(DonorGenomeAnalysisResource, 'donor_genome_analysis', null=True, full=True)
+
     class Meta:
         queryset = Donor.objects.all().select_related(
             'gender',
             'diseases',
+            'donor_genome_analysis',
         ).prefetch_related(
             'diseases__disease',
         )
