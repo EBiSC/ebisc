@@ -26,13 +26,41 @@
     </tr>
     {% endif %}
 
-    {% if cellline.genome_analysis %}
+    {% if cellline.genome_analysis.all %}
     <tr>
         <td class="label">Genome-wide analysis:</td>
         <td>
-            {% if cellline.genome_analysis.data %}{{ cellline.genome_analysis.data }}{% endif %}
-            {% if cellline.genome_analysis.data and cellline.genome_analysis.link %}<br/>{% endif %}
-            {% if cellline.genome_analysis.link %}<a href="{{ cellline.genome_analysis.link }}">{{ cellline.genome_analysis.link }}</a>{% endif %}</td>
+            {% for analysis in cellline.genome_analysis.all %}
+              <p>{{ analysis.analysis_method }}
+              {% if analysis.link %}<br/><a href="{{ analysis.link }}" target="_blank">{{ analysis.link }}</a>{% endif %}
+
+              {% if analysis.genome_analysis_files.all %}
+              {% for file in analysis.genome_analysis_files.all %}
+                <br><a href="{{ file.vcf_file.url }}" target="_blank">Data file</a>{% if file.vcf_file_description %} - {{ file.vcf_file_description }}{% endif %}
+              {% endfor %}
+              {% endif %}
+              </p>
+            {% endfor %}
+        </td>
+    </tr>
+    {% endif %}
+
+    {% if cellline.donor.donor_genome_analysis.all %}
+    <tr>
+        <td class="label">Genome-wide analysis (donor):</td>
+        <td>
+            {% for analysis in cellline.donor.donor_genome_analysis.all %}
+              <p>{{ analysis.analysis_method }}
+              {% if analysis.link %}<br/><a href="{{ analysis.link }}" target="_blank">{{ analysis.link }}</a>{% endif %}
+
+              {% if analysis.donor_genome_analysis_files.all %}
+              {% for file in analysis.donor_genome_analysis_files.all %}
+                <br><a href="{{ file.vcf_file.url }}" target="_blank">Data file</a>{% if file.vcf_file_description %} - {{ file.vcf_file_description }}{% endif %}
+              {% endfor %}
+              {% endif %}
+              </p>
+            {% endfor %}
+        </td>
     </tr>
     {% endif %}
 
