@@ -1,20 +1,35 @@
 # TODO
 
+## ECACC exchange
+
+- Start using the ECACC API to check for availability in their catalogue
+
 ## LIMS exchange
 
-- Go from pseudo LIMS to LIMS
+- Go from pseudo LIMS to LIMS?
 
 ## New data from hPSCreg
 
-1) Multiple diseases
+1) Genetic modification
 
-2) In the depositor culture conditions section:
+  Remove old fields when hPSCreg completes migration of data from old fields
+
+2) Genotyping
+
+  Remove 'Disease associated genotype (old)' when hPSCreg completes migration of data from old fields
+  Remove DonorGenotype, DonorGenotypingSNP, DonorGenotypingRsNumber from models
+
+3) Donor karyotype
+
+  Add files and method (with links and files)
+
+4) In the depositor culture conditions section:
 
   1)  "Has Rock inhibitor (Y27632) been used at passage previously with this cell line?" -> “Yes” or “No” or “Unknown”  (Mandatory question)
   2)  "Has Rock inhibitor (Y27632) been used at cryo previously with this cell line?" -> “Yes” or “No” or “Unknown”  (Mandatory question)
   3)  "Has Rock inhibitor (Y27632) been used at thaw previously with this cell line?" -> “Yes” or “No” or “Unknown”  (Mandatory question)
 
-3) In the reprogramming method section.
+5) In the reprogramming method section.
 
   If the depositor selects non-intergrating vector then ask:
   	4) Is reprogramming vector detectable? -> “Yes” or “No” or “Unknown”  (Mandatory question)
@@ -30,20 +45,18 @@
   		7b) “Notes on reprogramming vector silencing” -> Free text  (Optional question)
   		7c) “Files and images showing reprogramming vector expressed or silenced” -> File upload  (Optional question)
 
-4) Characterization
+6) Characterization
 
-5) Genetic modification
 
 ## hPSCreg importer
 
 - Documents
-- Check for updates for genes in Reprogramming method and Genetic modification
+- Check for updates for genes in Reprogramming method and Genotyping data
 - Check Disease associated genotype (no data yet)
 
 ## Exec dashboard
 
-- Withdrawn/recalled lines and batches
-- Sales information
+- Stock information
 
 ## Cell line Catalog
 
