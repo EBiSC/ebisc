@@ -7,7 +7,7 @@
 
     {% if cellline.genome_analysis.all %}
     <tr>
-        <td class="label">Genome-wide genotyping (cell line):</td>
+        <td class="label">Genome-wide analysis:</td>
         <td>
             {% for analysis in cellline.genome_analysis.all %}
               <p>{{ analysis.analysis_method }}
@@ -26,7 +26,7 @@
 
     {% if cellline.donor.donor_genome_analysis.all %}
     <tr>
-        <td class="label">Genome-wide genotyping (donor):</td>
+        <td class="label">Genome-wide analysis (donor):</td>
         <td>
             {% for analysis in cellline.donor.donor_genome_analysis.all %}
               <p>{{ analysis.analysis_method }}
