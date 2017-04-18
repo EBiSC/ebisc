@@ -56,9 +56,6 @@ from ebisc.celllines.models import  \
     CelllineOrgType,  \
     CelllinePublication,  \
     CelllineKaryotype,  \
-    CelllineDiseaseGenotype, \
-    CelllineGenotypingSNP, \
-    CelllineGenotypingRsNumber, \
     CelllineHlaTyping, \
     CelllineStrFingerprinting, \
     CelllineGenomeAnalysis, \
@@ -1737,74 +1734,6 @@ def parse_donor_genome_analysis_file(valuef, source, genome_analysis):
     genome_analysis_file.save()
 
     return genome_analysis_file.vcf_file_enc
-
-
-@inject_valuef
-def parse_disease_associated_genotype(valuef, source, cell_line):
-
-    if valuef('carries_disease_phenotype_associated_variants_flag'):
-
-        cell_line_disease_genotype, cell_line_disease_genotype_created = CelllineDiseaseGenotype.objects.get_or_create(cell_line=cell_line)
-
-        cell_line_disease_genotype.carries_disease_phenotype_associated_variants = valuef('carries_disease_phenotype_associated_variants_flag', 'nullbool')
-        cell_line_disease_genotype.variant_of_interest = valuef('variant_of_interest_flag', 'nullbool')
-        cell_line_disease_genotype.allele_carried = valuef('rs_allele_carried')
-        cell_line_disease_genotype.cell_line_form = valuef('rs_cell_line_variant_homozygote_heterozygote')
-        cell_line_disease_genotype.chormosome = valuef('variant_details_chromosome')
-        cell_line_disease_genotype.coordinate = valuef('variant_details_coordinate')
-        cell_line_disease_genotype.reference_allele = valuef('variant_details_ref_allele')
-        cell_line_disease_genotype.alternative_allele = valuef('variant_details_alt_allele')
-        cell_line_disease_genotype.protein_sequence_variants = valuef('description_sequence_changes')
-
-        if valuef('variant_details_assembly'):
-            cell_line_disease_genotype.assembly = valuef('variant_details_assembly')
-        elif valuef('variant_details_assembly_other'):
-            cell_line_disease_genotype.assembly = valuef('variant_details_assembly_other')
-
-        def parse_snps(cell_line_disease_genotype, snps):
-
-            if snps is None:
-                return
-
-            else:
-                for snp in snps:
-                    (gene_name, chromosomal_position) = snp.split('###')
-                    CelllineGenotypingSNP(
-                        disease_genotype=cell_line_disease_genotype,
-                        gene_name=gene_name,
-                        chromosomal_position=chromosomal_position,
-                    ).save()
-
-        def parse_rs_numbers(cell_line_disease_genotype, rs_numbers):
-
-            if rs_numbers is None:
-                return
-
-            else:
-                for rs_number in rs_numbers:
-                    (rs_number, link) = rs_number.split('###')
-                    CelllineGenotypingRsNumber(
-                        disease_genotype=cell_line_disease_genotype,
-                        rs_number=rs_number,
-                        link=link,
-                    ).save()
-
-        parse_snps(cell_line_disease_genotype, valuef('snp_list'))
-        parse_rs_numbers(cell_line_disease_genotype, valuef('rs_number_list'))
-
-        dirty = [cell_line_disease_genotype.is_dirty(check_relationship=True)]
-
-        if True in dirty:
-            if cell_line_disease_genotype_created:
-                logger.info('Added cell line disease associated genotype: %s' % cell_line_disease_genotype)
-            else:
-                logger.info('Updated cell line disease associated genotype: %s' % cell_line_disease_genotype)
-
-            cell_line_disease_genotype.save()
-
-            return True
-
-        return False
 
 
 @inject_valuef

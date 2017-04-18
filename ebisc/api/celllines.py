@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, DonorDisease, DonorDiseaseVariant, DonorGenomeAnalysis, Disease, Cellline, CelllineDisease, ModificationVariantDisease, ModificationVariantNonDisease, ModificationIsogenicDisease, ModificationIsogenicNonDisease, ModificationTransgeneExpressionDisease, ModificationTransgeneExpressionNonDisease, ModificationGeneKnockOutDisease, ModificationGeneKnockOutNonDisease, ModificationGeneKnockInDisease, ModificationGeneKnockInNonDisease, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, CelllineGenomeAnalysis, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype
+from ..celllines.models import Donor, DonorDisease, DonorDiseaseVariant, DonorGenomeAnalysis, Disease, Cellline, CelllineDisease, ModificationVariantDisease, ModificationVariantNonDisease, ModificationIsogenicDisease, ModificationIsogenicNonDisease, ModificationTransgeneExpressionDisease, ModificationTransgeneExpressionNonDisease, ModificationGeneKnockOutDisease, ModificationGeneKnockOutNonDisease, ModificationGeneKnockInDisease, ModificationGeneKnockInNonDisease, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, CelllineGenomeAnalysis, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack
 
 
 # -----------------------------------------------------------------------------
@@ -146,20 +146,6 @@ class CelllineGenomeAnalysisResource(ModelResource):
         queryset = CelllineGenomeAnalysis.objects.all()
         include_resource_uri = False
         fields = ('analysis_method', 'link')
-
-
-# -----------------------------------------------------------------------------
-# CelllineGenotyping
-
-class CelllineDiseaseGenotypeResource(ModelResource):
-
-    carries_disease_phenotype_associated_variants_flag = fields.BooleanField('carries_disease_phenotype_associated_variants', null=True)
-    variant_of_interest_flag = fields.BooleanField('variant_of_interest', null=True)
-
-    class Meta:
-        queryset = CelllineDiseaseGenotype.objects.all()
-        include_resource_uri = False
-        fields = ('carries_disease_phenotype_associated_variants_flag', 'variant_of_interest_flag')
 
 
 # -----------------------------------------------------------------------------
@@ -948,7 +934,6 @@ class CelllineResource(ModelResource):
 
     # Genotyping
     cellline_karyotype = fields.ToOneField(CelllineKaryotypeResource, 'karyotype', null=True, full=True)
-    cellline_disease_associated_genotype = fields.ToOneField(CelllineDiseaseGenotypeResource, 'genotyping_variant', null=True, full=True)
 
     # Genome-wide analysis
     genome_wide_analysis = fields.ToManyField(CelllineGenomeAnalysisResource, 'genome_analysis', null=True, full=True)
@@ -981,7 +966,6 @@ class CelllineResource(ModelResource):
             'derivation__primary_cell_type',
             'celllinecharacterization',
             'karyotype',
-            'genotyping_variant',
             'generator',
             'celllinecultureconditions__culture_medium_other',
             'integrating_vector__virus',
