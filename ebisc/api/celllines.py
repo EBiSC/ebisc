@@ -7,7 +7,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 
 from . import IndentedJSONSerializer
-from ..celllines.models import Donor, DonorDisease, DonorDiseaseVariant, DonorGenomeAnalysis, Disease, Cellline, CelllineDisease, ModificationVariantDisease, ModificationVariantNonDisease, ModificationIsogenicDisease, ModificationIsogenicNonDisease, ModificationTransgeneExpressionDisease, ModificationTransgeneExpressionNonDisease, ModificationGeneKnockOutDisease, ModificationGeneKnockOutNonDisease, ModificationGeneKnockInDisease, ModificationGeneKnockInNonDisease, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, CelllineGenomeAnalysis, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype, CelllineGeneticModification, GeneticModificationTransgeneExpression, GeneticModificationGeneKnockOut, GeneticModificationGeneKnockIn, GeneticModificationIsogenic
+from ..celllines.models import Donor, DonorDisease, DonorDiseaseVariant, DonorGenomeAnalysis, Disease, Cellline, CelllineDisease, ModificationVariantDisease, ModificationVariantNonDisease, ModificationIsogenicDisease, ModificationIsogenicNonDisease, ModificationTransgeneExpressionDisease, ModificationTransgeneExpressionNonDisease, ModificationGeneKnockOutDisease, ModificationGeneKnockOutNonDisease, ModificationGeneKnockInDisease, ModificationGeneKnockInNonDisease, CelllineStatus, CelllineCultureConditions, CultureMediumOther, CelllineCultureMediumSupplement, CelllineDerivation, CelllineCharacterization, CelllineCharacterizationPluritest, CelllineKaryotype, CelllineGenomeAnalysis, Organization, CelllineBatch, CelllineBatchImages, BatchCultureConditions, CelllineAliquot, CelllinePublication, CelllineInformationPack, CelllineDiseaseGenotype
 
 
 # -----------------------------------------------------------------------------
@@ -160,96 +160,6 @@ class CelllineDiseaseGenotypeResource(ModelResource):
         queryset = CelllineDiseaseGenotype.objects.all()
         include_resource_uri = False
         fields = ('carries_disease_phenotype_associated_variants_flag', 'variant_of_interest_flag')
-
-
-# -----------------------------------------------------------------------------
-# CelllineGenoticModification
-
-class GeneticModificationResource(ModelResource):
-
-    genetic_modification_flag = fields.BooleanField('genetic_modification_flag', null=True)
-    types = fields.ListField('types', null=True)
-
-    class Meta:
-        queryset = CelllineGeneticModification.objects.all()
-        include_resource_uri = False
-        fields = ('genetic_modification_flag', 'types')
-
-
-class GeneticModificationTransgeneExpressionResource(ModelResource):
-
-    delivery_method = fields.CharField('delivery_method', null=True)
-    genes = fields.DictField(null=True)
-
-    class Meta:
-        queryset = GeneticModificationTransgeneExpression.objects.all()
-        include_resource_uri = False
-        fields = ('delivery_method', 'genes')
-
-    def dehydrate_genes(self, bundle):
-        if hasattr(bundle.obj, 'genes'):
-            return [gene.name for gene in bundle.obj.genes.all()]
-        else:
-            return []
-
-
-class GeneticModificationGeneKnockOutResource(ModelResource):
-
-    delivery_method = fields.CharField('delivery_method', null=True)
-    target_genes = fields.DictField(null=True)
-
-    class Meta:
-        queryset = GeneticModificationGeneKnockOut.objects.all()
-        include_resource_uri = False
-        fields = ('delivery_method', 'target_genes')
-
-    def dehydrate_target_genes(self, bundle):
-        if hasattr(bundle.obj, 'target_genes'):
-            return [gene.name for gene in bundle.obj.target_genes.all()]
-        else:
-            return []
-
-
-class GeneticModificationGeneKnockInResource(ModelResource):
-
-    delivery_method = fields.CharField('delivery_method', null=True)
-    target_genes = fields.DictField(null=True)
-    transgenes = fields.DictField(null=True)
-
-    class Meta:
-        queryset = GeneticModificationGeneKnockIn.objects.all()
-        include_resource_uri = False
-        fields = ('delivery_method', 'target_genes', 'transgenes')
-
-    def dehydrate_target_genes(self, bundle):
-        if hasattr(bundle.obj, 'target_genes'):
-            return [gene.name for gene in bundle.obj.target_genes.all()]
-        else:
-            return []
-
-    def dehydrate_transgenes(self, bundle):
-        if hasattr(bundle.obj, 'transgenes'):
-            return [gene.name for gene in bundle.obj.transgenes.all()]
-        else:
-            return []
-
-
-class GeneticModificationIsogenicResource(ModelResource):
-
-    change_type = fields.CharField('change_type', null=True)
-    modified_sequence = fields.CharField('modified_sequence', null=True)
-    target_locus = fields.DictField(null=True)
-
-    class Meta:
-        queryset = GeneticModificationIsogenic.objects.all()
-        include_resource_uri = False
-        fields = ('change_type', 'modified_sequence', 'target_locus')
-
-    def dehydrate_target_locus(self, bundle):
-        if hasattr(bundle.obj, 'target_locus'):
-            return [locus.name for locus in bundle.obj.target_locus.all()]
-        else:
-            return []
 
 
 # -----------------------------------------------------------------------------
@@ -1042,13 +952,6 @@ class CelllineResource(ModelResource):
 
     # Genome-wide analysis
     genome_wide_analysis = fields.ToManyField(CelllineGenomeAnalysisResource, 'genome_analysis', null=True, full=True)
-
-    # Genetic modifications (Old fields)
-    genetic_modification = fields.ToOneField(GeneticModificationResource, 'genetic_modification', null=True, full=True)
-    genetic_modification_gene_knock_out = fields.ToOneField(GeneticModificationGeneKnockOutResource, 'genetic_modification_gene_knock_out', null=True, full=True)
-    genetic_modification_gene_knock_in = fields.ToOneField(GeneticModificationGeneKnockInResource, 'genetic_modification_gene_knock_in', null=True, full=True)
-    genetic_modification_transgene_expression = fields.ToOneField(GeneticModificationTransgeneExpressionResource, 'genetic_modification_transgene_expression', null=True, full=True)
-    genetic_modification_isogenic = fields.ToOneField(GeneticModificationIsogenicResource, 'genetic_modification_isogenic', null=True, full=True)
 
     # Genetic modifications (New fields)
     genetic_modification_flag = fields.BooleanField('has_genetic_modification', null=True)

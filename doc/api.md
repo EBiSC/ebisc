@@ -495,21 +495,22 @@ Additional fields and endpoints may be created for future exchanges.
         "donor_age": 35-39,
         "ecacc_cat_no": "66540003",
         "flag_go_live": true,
-        "genetic_modification": {
-            "genetic_modification_flag": true,
-            "types": [
-                "gen_mod_gene_knock_out"
-            ]
-        },
-        "genetic_modification_gene_knock_in": null,
-        "genetic_modification_gene_knock_out": {
-            "delivery_method": "viral",
-            "target_genes": [
-                "FANCD2"
-            ]
-        },
-        "genetic_modification_isogenic": null,
-        "genetic_modification_transgene_expression": null,
+        "genetic_modification_flag": true,
+        "genetic_modifications_non_disease": [
+          {
+            "chromosome_location": "19q13.32",
+            "clinvar_id": null,
+            "dbsnp_id": null,
+            "dbvar_id": null,
+            "gene": "ApoE",
+            "notes": "ApoE3/E3 isogenic mutant of BIONi010-C (ApoE3/E4)",
+            "nucleotide_sequence_hgvs": "NM_001302691: rs429358 (C/C), rs7412 (T/T)",
+            "protein_sequence_hgvs": "NP_001289620.1 (ApoE3/E3)",
+            "publication_pmid": null,
+            "type": "Variant",
+            "zygosity_status": "Heterozygous"
+          }
+        ],
         "name": "UKBi008-A",
         "primary_cell_type": {
             "name": "fibroblast of dermis"
