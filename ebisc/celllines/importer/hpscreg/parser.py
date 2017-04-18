@@ -512,6 +512,12 @@ def parse_donor(valuef, source):
             donor.provider_donor_ids = valuef('internal_ids')
         if valuef('ethnicity') is not None:
             donor.ethnicity = valuef('ethnicity')
+        if valuef('family_history') is not None:
+            donor.family_history = valuef('family_history')
+        if valuef('medical_history') is not None:
+            donor.medical_history = valuef('medical_history')
+        if valuef('clinical_information') is not None:
+            donor.clinical_information = valuef('clinical_information')
 
         dirty = [donor.is_dirty(check_relationship=True)]
 
@@ -526,6 +532,9 @@ def parse_donor(valuef, source):
             provider_donor_ids=valuef('internal_ids'),
             gender=gender,
             ethnicity=valuef('ethnicity'),
+            family_history=valuef('family_history'),
+            medical_history=valuef('medical_history'),
+            clinical_information=valuef('clinical_information')
         )
 
         try:
