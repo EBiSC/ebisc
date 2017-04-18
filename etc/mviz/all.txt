@@ -15,7 +15,6 @@ CultureMediumOther
 CelllineCultureMediumSupplement
 CelllineDerivation
 Celllinegenemutations
-CelllineGeneticModification
 CelllineGenomeAnalysis
 Celllinegenotypingother
 Celllinehlatyping
