@@ -13,9 +13,6 @@ CelllineKaryotype
 CelllineOrganization
 CelllineOrgType
 CelllinePublication
-CelllineGenotypingSNP
-CelllineGenotypingRsNumber
-CelllineDiseaseGenotype
 CelllineStatus
 CelllineStrFingerprinting
 CelllineValue

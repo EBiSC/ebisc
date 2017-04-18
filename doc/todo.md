@@ -10,23 +10,18 @@
 
 ## New data from hPSCreg
 
-1) Genotyping
-
-  Remove 'Disease associated genotype (old)' when hPSCreg completes migration of data from old fields
-  Remove DonorGenotype, DonorGenotypingSNP, DonorGenotypingRsNumber from models
-
-2) Donor karyotype
+1) Donor karyotype
 
   Add files and method (with links and files)
   Move fields from cellline to donor (medical history, clinical info, ...)
 
-3) In the depositor culture conditions section:
+2) In the depositor culture conditions section:
 
   1)  "Has Rock inhibitor (Y27632) been used at passage previously with this cell line?" -> “Yes” or “No” or “Unknown”  (Mandatory question)
   2)  "Has Rock inhibitor (Y27632) been used at cryo previously with this cell line?" -> “Yes” or “No” or “Unknown”  (Mandatory question)
   3)  "Has Rock inhibitor (Y27632) been used at thaw previously with this cell line?" -> “Yes” or “No” or “Unknown”  (Mandatory question)
 
-4) In the reprogramming method section.
+3) In the reprogramming method section.
 
   If the depositor selects non-intergrating vector then ask:
   	4) Is reprogramming vector detectable? -> “Yes” or “No” or “Unknown”  (Mandatory question)
@@ -42,7 +37,7 @@
   		7b) “Notes on reprogramming vector silencing” -> Free text  (Optional question)
   		7c) “Files and images showing reprogramming vector expressed or silenced” -> File upload  (Optional question)
 
-5) Characterization
+4) Characterization
 
 
 ## hPSCreg importer
