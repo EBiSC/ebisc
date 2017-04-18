@@ -1,6 +1,5 @@
 Cellline
 Celllinegenemutations
-CelllineGeneticModification
 CelllineGenomeAnalysis
 Celllinegenotypingother
 Celllinehlatyping
