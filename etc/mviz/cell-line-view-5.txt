@@ -4,9 +4,6 @@ CelllineGenomeAnalysis
 Celllinegenotypingother
 Celllinehlatyping
 CelllineKaryotype
-CelllineGenotypingSNP
-CelllineGenotypingRsNumber
-CelllineDiseaseGenotype
 CelllineStrFingerprinting
 Hla
 KaryotypeMethod

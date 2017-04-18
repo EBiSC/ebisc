@@ -353,10 +353,6 @@ Additional fields and endpoints may be created for future exchanges.
         "cellline_certificate_of_analysis": {
             "certificate_of_analysis_flag": true
         },
-        "cellline_disease_associated_genotype": {
-            "carries_disease_phenotype_associated_variants_flag": false,
-            "variant_of_interest_flag": null
-        },
         "cellline_karyotype": {
             "karyotype": "46XX",
             "passage_number": 30
