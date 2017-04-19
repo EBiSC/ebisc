@@ -213,7 +213,7 @@ def value_of_file(source_file_link, source_file_name, file_field, current_enc=No
 
     source_enc = os.path.splitext(os.path.basename(source_file_link))[0]
 
-    if source_enc is not None and current_enc is not None and source_enc == current_enc and source_filename == current_filename:
+    if source_enc is not None and current_enc is not None and source_enc == current_enc:
         return current_enc
 
     logger.info('Fetching data file from %s' % source_file_link)
@@ -954,9 +954,9 @@ def parse_organization(valuef, source):
 @inject_valuef
 def parse_derived_from(valuef, source):
 
-    if valuef('same_donor_derived_from_cell_line_id') is not None:
+    if valuef(['subclone_of', 'id']) is not None:
         try:
-            return Cellline.objects.get(hescreg_id=valuef('same_donor_derived_from_cell_line_id'))
+            return Cellline.objects.get(hescreg_id=valuef(['subclone_of', 'id']))
 
         except Cellline.DoesNotExist:
             return None
