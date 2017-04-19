@@ -12,7 +12,7 @@
 {% if not forloop.last %}<tr><td colspan="2"><hr></td></tr>{% endif %}
 {% endfor %}
 {% if cellline.donor.diseases.all|length >= 2 %}
-{% if cellline.disease_associated_phenotypes|length or cellline.non_disease_associated_phenotypes|length or cellline.family_history or cellline.medical_history or cellline.clinical_information %}
+{% if cellline.disease_associated_phenotypes|length or cellline.non_disease_associated_phenotypes|length or cellline.donor.family_history or cellline.donor.medical_history or cellline.donor.clinical_information %}
 <tr><td colspan="2"><hr></td></tr>
 {% endif %}
 {% endif %}
@@ -29,14 +29,14 @@
 {% if cellline.non_disease_associated_phenotypes|length %}
 <tr><td class="label">Non-disease associated phenotypes:</td><td>{{ cellline.non_disease_associated_phenotypes|join:", " }}</td></tr>
 {% endif %}
-{% if cellline.family_history %}
-<tr><td class="label">Family history:</td><td>{{ cellline.family_history|capfirst }}</td></tr>
+{% if cellline.donor.family_history %}
+<tr><td class="label">Family history:</td><td>{{ cellline.donor.family_history|capfirst }}</td></tr>
 {% endif %}
-{% if cellline.medical_history %}
-<tr><td class="label">Medical history:</td><td>{{ cellline.medical_history|capfirst }}</td></tr>
+{% if cellline.donor.medical_history %}
+<tr><td class="label">Medical history:</td><td>{{ cellline.donor.medical_history|capfirst }}</td></tr>
 {% endif %}
-{% if cellline.clinical_information %}
-<tr><td class="label">Clinical information:</td><td>{{ cellline.clinical_information|capfirst }}</td></tr>
+{% if cellline.donor.clinical_information %}
+<tr><td class="label">Clinical information:</td><td>{{ cellline.donor.clinical_information|capfirst }}</td></tr>
 {% endif %}
 
 <!-- Disease associated genetic modifications -->

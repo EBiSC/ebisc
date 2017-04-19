@@ -13,7 +13,6 @@
 1) Donor karyotype
 
   Add files and method (with links and files)
-  Move fields from cellline to donor (medical history, clinical info, ...)
 
 2) In the depositor culture conditions section:
 
