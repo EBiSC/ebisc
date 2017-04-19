@@ -34,12 +34,12 @@
       <td class="label">Comparator lines from relatives:</td>
       <td>
         {% if cellline.comparator_cell_line %}
-        <a href="{% url 'executive:cellline' cellline.comparator_cell_line.name %}">{{ cellline.comparator_cell_line.name }}</a><span class="comment"> - disease status: {% if cellline.comparator_cell_line.primary_disease %}{{ cellline.comparator_cell_line.primary_disease }}{% else %}Normal{% endif %}{% if cellline.comparator_cell_line.affected_status %}, {{ cellline.comparator_cell_line.affected_status }}{% endif %}{% if cellline.comparator_cell_line_relation %} ({{ cellline.comparator_cell_line_relation }}){% endif %}</span>
+        <a href="{% url 'executive:cellline' cellline.comparator_cell_line.name %}">{{ cellline.comparator_cell_line.name }}</a><span class="comment"> - disease status: {% if cellline.comparator_cell_line.primary_disease %}{{ cellline.comparator_cell_line.primary_disease.disease.name }}{% else %}Normal{% endif %}{% if cellline.comparator_cell_line.affected_status %}, {{ cellline.comparator_cell_line.affected_status }}{% endif %}{% if cellline.comparator_cell_line_relation %} ({{ cellline.comparator_cell_line_relation }}){% endif %}</span>
         {% endif %}
         {% if cellline.comparator_cell_line and cellline.comparator_cell_lines.all %}<br/>{% endif %}
         {% if cellline.comparator_cell_lines.all %}
         {% for line in cellline.comparator_cell_lines.all %}
-        <a href="{% url 'executive:cellline' line.name %}">{{ line.name }}</a> <span class="comment"> - disease status: {% if line.primary_disease %}{{ line.primary_disease }}{% else %}Normal{% endif %}{% if line.affected_status %}, {{ line.affected_status }}{% endif %}</span>{% if forloop.last %}{% else %}<br/>{% endif %}
+        <a href="{% url 'executive:cellline' line.name %}">{{ line.name }}</a> <span class="comment"> - disease status: {% if line.primary_disease %}{{ line.primary_disease.disease.name }}{% else %}Normal{% endif %}{% if line.affected_status %}, {{ line.affected_status }}{% endif %}</span>{% if forloop.last %}{% else %}<br/>{% endif %}
         {% endfor %}
         {% endif %}
       </td>
