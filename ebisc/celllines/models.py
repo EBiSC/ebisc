@@ -194,9 +194,6 @@ class Cellline(DirtyFieldsMixin, models.Model):
     has_diseases = models.NullBooleanField(_(u'Has diseases'))
     disease_associated_phenotypes = ArrayField(models.CharField(max_length=500), verbose_name=_(u'Disease associated phenotypes'), null=True, blank=True)
     non_disease_associated_phenotypes = ArrayField(models.CharField(max_length=700), verbose_name=_(u'Non-disease associated phenotypes'), null=True, blank=True)
-    family_history = models.CharField(_(u'Family history'), max_length=500, null=True, blank=True)
-    medical_history = models.CharField(_(u'Medical history'), max_length=500, null=True, blank=True)
-    clinical_information = models.CharField(_(u'Clinical information'), max_length=500, null=True, blank=True)
 
     has_genetic_modification = models.NullBooleanField(_(u'Genetic modification flag'))
 
@@ -491,6 +488,9 @@ class Donor(DirtyFieldsMixin, models.Model):
     provider_donor_ids = ArrayField(models.CharField(max_length=200), verbose_name=_(u'Provider donor ids'), null=True)
     country_of_origin = models.ForeignKey('Country', verbose_name=_(u'Country of origin'), null=True, blank=True)
     ethnicity = models.CharField(_(u'Ethnicity'), max_length=100, null=True, blank=True)
+    family_history = models.CharField(_(u'Family history'), max_length=500, null=True, blank=True)
+    medical_history = models.CharField(_(u'Medical history'), max_length=500, null=True, blank=True)
+    clinical_information = models.CharField(_(u'Clinical information'), max_length=500, null=True, blank=True)
 
     karyotype = models.CharField(_(u'Karyotype'), max_length=500, null=True, blank=True)
     karyotype_method = models.CharField(_(u'Karyotype method'), max_length=100, null=True, blank=True)

@@ -213,7 +213,7 @@ def value_of_file(source_file_link, source_file_name, file_field, current_enc=No
 
     source_enc = os.path.splitext(os.path.basename(source_file_link))[0]
 
-    if source_enc is not None and current_enc is not None and source_enc == current_enc and source_filename == current_filename:
+    if source_enc is not None and current_enc is not None and source_enc == current_enc:
         return current_enc
 
     logger.info('Fetching data file from %s' % source_file_link)
@@ -512,6 +512,12 @@ def parse_donor(valuef, source):
             donor.provider_donor_ids = valuef('internal_ids')
         if valuef('ethnicity') is not None:
             donor.ethnicity = valuef('ethnicity')
+        if valuef('family_history') is not None:
+            donor.family_history = valuef('family_history')
+        if valuef('medical_history') is not None:
+            donor.medical_history = valuef('medical_history')
+        if valuef('clinical_information') is not None:
+            donor.clinical_information = valuef('clinical_information')
 
         dirty = [donor.is_dirty(check_relationship=True)]
 
@@ -526,6 +532,9 @@ def parse_donor(valuef, source):
             provider_donor_ids=valuef('internal_ids'),
             gender=gender,
             ethnicity=valuef('ethnicity'),
+            family_history=valuef('family_history'),
+            medical_history=valuef('medical_history'),
+            clinical_information=valuef('clinical_information')
         )
 
         try:
@@ -945,9 +954,9 @@ def parse_organization(valuef, source):
 @inject_valuef
 def parse_derived_from(valuef, source):
 
-    if valuef('same_donor_derived_from_cell_line_id') is not None:
+    if valuef(['subclone_of', 'id']) is not None:
         try:
-            return Cellline.objects.get(hescreg_id=valuef('same_donor_derived_from_cell_line_id'))
+            return Cellline.objects.get(hescreg_id=valuef(['subclone_of', 'id']))
 
         except Cellline.DoesNotExist:
             return None
