@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% load markdown_deux_tags %}
+
+{% block body-class %}template-default{% endblock%}
+
+{% block title %}Frequently Asked Questions{% endblock %}
+
+{% block article %}
+<div class="text-page">
+    <h1 id="#top">Frequently Asked Questions <small>{{ category_name }}</small></h1>
+
+    <ul>
+      {% for faq in faqs %}
+      <li><a href="#{{ faq.slug }}">{{ faq.question }}</a></li>
+      {% endfor %}
+    </ul>
+    <hr>
+
+    {% for faq in faqs %}
+    <h2 id="{{ faq.slug }}">{{ faq.question }}</h2>
+    {{ faq.answer|markdown|safe }}
+    <p class="small"><a href="#top">back to top</a></p>
+    <hr>
+    {% endfor %}
+
+</div>
+{% endblock %}
