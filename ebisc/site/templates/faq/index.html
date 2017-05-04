@@ -20,7 +20,7 @@
     {% for faq in faqs %}
     <h2 id="{{ faq.slug }}">{{ faq.question }}</h2>
     {{ faq.answer|markdown|safe }}
-    <p class="small"><a href="#top">back to top</a></p>
+    <p class="small"><a href="#top" class="light-gray"><i class="glyphicon glyphicon-arrow-up"></i> back to top</a></p>
     <hr>
     {% endfor %}
 
