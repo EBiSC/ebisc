@@ -6,7 +6,7 @@ from django.template import TemplateDoesNotExist
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 
-from ebisc.cms.models import Page
+from ebisc.cms.models import Page, Faq, FaqCategory
 from ebisc.celllines.models import Cellline
 
 
@@ -35,6 +35,21 @@ class Menu(object):
 def search(request):
     return render(request, 'catalog/search.html', {})
 
+# -----------------------------------------------------------------------------
+# FAQ
+
+def faq(request, category):
+
+    try:
+        category = FaqCategory.objects.get(slug=category)
+
+        return render(request, 'faq/index.html', {
+            'category_name': category.name,
+            'faqs': Faq.objects.filter(published=True, category=category)
+        })
+        
+    except FaqCategory.DoesNotExist:
+        raise Http404
 
 # -----------------------------------------------------------------------------
 # Pages
