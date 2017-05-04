@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Page, Document
+from .models import Page, Document, Faq, FaqCategory
 
 
 @admin.register(Page)
@@ -18,3 +18,18 @@ class DocumentAdmin(admin.ModelAdmin):
         return '[%s](%s)' % (instance.title, instance.document.url)
 
     field_markdown.short_description = u'Markdown tag'
+
+
+@admin.register(FaqCategory)
+class FaqCategoryAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    list_display_links = ['name']
+    prepopulated_fields = {'slug': ['name']}
+
+
+@admin.register(Faq)
+class FaqAdmin(admin.ModelAdmin):
+    list_display = ['position', 'published', 'question', 'category', 'updated']
+    list_display_links = ['question']
+    list_filter = ['category__name']
+    list_editable = ['position']
