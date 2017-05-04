@@ -1,5 +1,7 @@
 from django.db import models
 
+from django.utils.text import slugify
+
 
 class Page(models.Model):
 
@@ -33,3 +35,41 @@ class Document(models.Model):
 
     def __unicode__(self):
         return self.title
+
+
+class FaqCategory(models.Model):
+
+    name = models.CharField(u'Category', max_length=100, unique=True)
+    slug = models.SlugField(u'Slug', unique=True)
+
+    class Meta:
+        verbose_name = u'FAQ Category'
+        verbose_name_plural = u'FAQ Categories'
+        ordering = ['slug']
+
+    def __unicode__(self):
+        return self.name
+
+
+class Faq(models.Model):
+
+    published = models.BooleanField(u'Published', default=False)
+    updated = models.DateTimeField(u'Last update', auto_now=True)
+    position = models.PositiveIntegerField(u'Position', default=0)
+
+    category = models.ForeignKey(FaqCategory, verbose_name=u'Category', related_name='faqs')
+    question = models.CharField(u'Question', max_length=1000)
+    answer = models.TextField(u'Answer')
+
+    class Meta:
+        verbose_name = u'FAQ'
+        verbose_name_plural = u'FAQs'
+        unique_together = [('question', 'category')]
+        ordering = ['position']
+
+    def __unicode__(self):
+        return self.question
+
+    @property
+    def slug(self):
+        return slugify(self.question)
