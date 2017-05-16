@@ -41,7 +41,7 @@ def run():
     # Import cell lines
 
     logger.info(u'Importing cell lines')
-    for cellline in Cellline.objects.filter(available_for_sale_at_ecacc=True).exclude(current_status__status__in=['withdrawn', 'not_available']):
+    for cellline in Cellline.objects.filter(available_for_sale_at_ecacc=True).exclude(current_status__status__in=['withdrawn', 'not_available', 'recalled']):
         document = cellline.to_elastic()
         logger.info('Importing cell line {}'.format(cellline))
         es.index(settings.ELASTIC_INDEX, doc_type='cellline', body=document)
