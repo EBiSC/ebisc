@@ -47,7 +47,7 @@ def faq(request, category):
             'category_name': category.name,
             'faqs': Faq.objects.filter(published=True, category=category)
         })
-        
+
     except FaqCategory.DoesNotExist:
         raise Http404
 
@@ -74,7 +74,7 @@ def page(request, path):
 
     try:
         name = path.rstrip('/')
-        cellline = Cellline.objects.get(name=name, available_for_sale_at_ecacc=True)
+        cellline = Cellline.objects.get(name=name, available_for_sale_at_ecacc=True, current_status__status__in=['at_ecacc', 'expand_to_order','restricted_distribution'])
 
         # Subclones from this line
         subclones = []
