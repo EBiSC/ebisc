@@ -46,6 +46,7 @@ from ebisc.celllines.models import  \
     CelllineCharacterizationPluritestFile, \
     CelllineCharacterizationEpipluriscore, \
     CelllineCharacterizationEpipluriscoreFile, \
+    CelllineCharacterizationUndifferentiatedMorphologyFile, \
     UndifferentiatedMorphologyMarkerImune,  \
     UndifferentiatedMorphologyMarkerImuneMolecule,  \
     UndifferentiatedMorphologyMarkerRtPcr,  \
@@ -1982,6 +1983,65 @@ def parse_characterization_epipluriscore_file(valuef, source, characterization_e
     return characterization_epipluriscore_file.epipluriscore_file_enc
 
 
+# Morphology images - undifferentitated cells
+@inject_valuef
+def parse_characterization_undiff_morphology(valuef, source, cell_line):
+
+    if valuef('characterisation_morphology_flag'):
+
+        # Parse files and save them
+
+        characterization_undiff_morphology_files_old = list(cell_line.undifferentiated_morphology_files.all().order_by('id'))
+
+        characterization_undiff_morphology_files_old_encs = set([f.morphology_file_enc for f in characterization_undiff_morphology_files_old])
+
+        characterization_undiff_morphology_files_new = []
+        characterization_undiff_morphology_files_new_encs = set([])
+
+        if valuef('characterisation_morphology_data'):
+            for f in valuef(['characterisation_morphology_data']).get('uploads', []):
+                characterization_undiff_morphology_files_new.append(parse_characterization_undiff_morphology_file(f, cell_line))
+
+            characterization_undiff_morphology_files_new_encs = set(characterization_undiff_morphology_files_new)
+
+        # Delete existing files that are not present in new data
+
+        to_delete = characterization_undiff_morphology_files_old_encs - characterization_undiff_morphology_files_new_encs
+
+        for characterization_undiff_morphology_file in [f for f in characterization_undiff_morphology_files_old if f.morphology_file_enc in to_delete]:
+            logger.info('Deleting obsolete undiff morphology file %s' % characterization_undiff_morphology_file)
+            characterization_undiff_morphology_file.morphology_file.delete()
+            characterization_undiff_morphology_file.delete()
+
+        if characterization_undiff_morphology_files_old_encs != characterization_undiff_morphology_files_new_encs:
+            logger.info('Updated cell line characterization morphology')
+            return True
+        else:
+            return False
+
+
+@inject_valuef
+def parse_characterization_undiff_morphology_file(valuef, source, cell_line):
+
+    characterization_undiff_morphology_file, created = CelllineCharacterizationUndifferentiatedMorphologyFile.objects.get_or_create(
+        cell_line=cell_line,
+        morphology_file_enc=valuef('filename_enc').split('.')[0]
+    )
+
+    if created:
+        current_enc = None
+    else:
+        current_enc = characterization_undiff_morphology_file.morphology_file_enc
+
+    characterization_undiff_morphology_file.morphology_file_enc = value_of_file(valuef('url'), valuef('filename'), characterization_undiff_morphology_file.morphology_file, current_enc)
+
+    characterization_undiff_morphology_file.morphology_file_description = valuef('description')
+    characterization_undiff_morphology_file.save()
+
+    return characterization_undiff_morphology_file.morphology_file_enc
+
+
+# OLD fields
 @inject_valuef
 def parse_characterization_markers(valuef, source, cell_line):
 

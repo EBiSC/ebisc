@@ -1123,9 +1123,34 @@ class CelllineCharacterization(DirtyFieldsMixin, models.Model):
     def __unicode__(self):
         return unicode(self.cell_line)
 
+# Analysis of Undifferentiated Cells
+
+# Morphology images
+class CelllineCharacterizationUndifferentiatedMorphologyFile(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='undifferentiated_morphology_files')
+
+    morphology_file = models.FileField(_(u'File'), upload_to=upload_to, null=True, blank=True)
+    morphology_file_enc = models.CharField(_(u'File enc'), max_length=300, null=True, blank=True)
+    morphology_file_description = models.TextField(_(u'File description'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line undifferentiated cells morphology file')
+        verbose_name_plural = _(u'Cell line undifferentiated cells morphology files')
+        ordering = ['cell_line']
+
+    def __unicode__(self):
+        return unicode(self.cell_line)
+
+    def filename(self):
+        return os.path.basename(self.morphology_file.name)
+
+    def extension(self):
+        name, extension = os.path.splitext(self.morphology_file.name)
+        return extension
+        
 
 # Pluritest
-
 class CelllineCharacterizationPluritest(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
@@ -1165,7 +1190,6 @@ class CelllineCharacterizationPluritestFile(DirtyFieldsMixin, models.Model):
 
 
 # EpiPluriScore
-
 class CelllineCharacterizationEpipluriscore(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))

@@ -1,3 +1,5 @@
+{% load thumbnail %}
+
 <tr><th colspan="2" class="title" id="characterization"><h2>Characterization</h2></th></tr>
 
 {% if cellline.celllinecharacterization.certificate_of_analysis_passage_number %}
@@ -32,11 +34,11 @@
     </td>
 </tr>
 
-{% if cellline.undifferentiated_morphology_marker_imune or cellline.undifferentiated_morphology_marker_facs or cellline.undifferentiated_morphology_marker_rtpcr or cellline.undifferentiated_morphology_marker_morphology or cellline.undifferentiated_morphology_marker_expression_profile or cellline.celllinecharacterizationpluritest or cellline.celllinecharacterizationepipluriscore %}
+{% if cellline.undifferentiated_morphology_marker_imune or cellline.undifferentiated_morphology_marker_facs or cellline.undifferentiated_morphology_marker_rtpcr or cellline.undifferentiated_morphology_marker_morphology or cellline.undifferentiated_morphology_marker_expression_profile or cellline.celllinecharacterizationpluritest or cellline.celllinecharacterizationepipluriscore or cellline.undifferentiated_morphology_files.all %}
 <tr><th class="sub-title"><h3>Undifferentiated cells</h3></th></tr>
 
 <tr>
-    <td class="label">Morphology and Marker expression:</td>
+    <td class="label">Marker expression:</td>
     <td>
         {% if cellline.undifferentiated_morphology_marker_imune %}
         <p><b>Immune/Markerstaining</b><br/>
@@ -155,7 +157,7 @@
 
 {% if cellline.celllinecharacterizationpluritest and cellline.celllinecharacterizationpluritest.pluripotency_score %}
 <tr>
-  <td class="label">PluriTest assessment for pluripotency:</td>
+  <td class="label">PluriTest:</td>
   <td>
     Pluripotency score: {{ cellline.celllinecharacterizationpluritest.pluripotency_score }}
     {% if cellline.celllinecharacterizationpluritest.novelty_score %}
@@ -177,6 +179,28 @@
 
       <p>PluriTest scores should be assessed in the context of the empirical distribution of pluripotent and somatic samples used to construct and validate PluriTest (<i>e.g. <a href="https://www.ncbi.nlm.nih.gov/books/NBK133282/figure/assessmentofhumanpluripotent.F6/" target="_blank">Exemplary use of PluriTest</a></i>). The training set of iPSC clustered with pluripotency score > 25 and novelty score < 1.67  with 98% sensitivity and 100% specificity.  Cell lines with pluritest scores > 10 also cluster with the PluriTest training data set with high sensitivy and specificity.</p>
     </div>
+  </td>
+</tr>
+{% endif %}
+
+{% if cellline.undifferentiated_morphology_files.all %}
+<tr>
+  <td class="label">Morphology:</td>
+  <td>
+    {% for file in cellline.undifferentiated_morphology_files.all %}
+    <!-- Images -->
+    {% if file.extension in '.jpg,.jpeg,.png,.gif'|slice:',' %}
+    {% thumbnail file.morphology_file "250" as img %}
+    <p><a href="{{ file.morphology_file.url }}" target="_blank"><img src="{{ img.url }}" width="{{ img.width }}" height="{{ img.height }}"></a>
+    {% endthumbnail %}
+    {% if file.morphology_file_description %}<br/>{{ file.morphology_file_description }}{% endif %}
+    </p>
+    <!-- Not images -->
+    {% else %}
+    <p><a href="{{ file.morphology_file.url }}" target="_blank">{{ file.filename }}</a>{% if file.morphology_file_description %} - {{ file.morphology_file_description }}{% endif %}
+    </p>
+    {% endif %}
+    {% endfor %}
   </td>
 </tr>
 {% endif %}
