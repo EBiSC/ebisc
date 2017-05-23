@@ -118,7 +118,7 @@ def import_cellline(source):
         parser.parse_characterization(source, cell_line),
         parser.parse_characterization_markers(source, cell_line),
         parser.parse_characterization_pluritest(source, cell_line),
-        # parser.parse_characterization_epipluriscore(source, cell_line),
+        parser.parse_characterization_epipluriscore(source, cell_line),
         check_availability_on_ecacc(cell_line),
     ]
 

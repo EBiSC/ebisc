@@ -1091,6 +1091,8 @@ class CelllineVectorFreeReprogrammingFactors(DirtyFieldsMixin, models.Model):
 # -----------------------------------------------------------------------------
 # Cell line Characterization
 
+# Microbiology/Virology Screening
+
 class CelllineCharacterization(DirtyFieldsMixin, models.Model):
 
     SCREENING_CHOICES = (
@@ -1121,6 +1123,8 @@ class CelllineCharacterization(DirtyFieldsMixin, models.Model):
     def __unicode__(self):
         return unicode(self.cell_line)
 
+
+# Pluritest
 
 class CelllineCharacterizationPluritest(DirtyFieldsMixin, models.Model):
 
@@ -1160,6 +1164,8 @@ class CelllineCharacterizationPluritestFile(DirtyFieldsMixin, models.Model):
         return os.path.basename(self.pluritest_file.name)
 
 
+# EpiPluriScore
+
 class CelllineCharacterizationEpipluriscore(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
@@ -1176,6 +1182,26 @@ class CelllineCharacterizationEpipluriscore(DirtyFieldsMixin, models.Model):
 
     def __unicode__(self):
         return unicode(self.cell_line)
+
+
+class CelllineCharacterizationEpipluriscoreFile(DirtyFieldsMixin, models.Model):
+
+    epipluriscore = models.ForeignKey(CelllineCharacterizationEpipluriscore, verbose_name=_(u'Cell line EpiPluriScore'), related_name='epipluriscore_files')
+
+    epipluriscore_file = models.FileField(_(u'File'), upload_to=upload_to, null=True, blank=True)
+    epipluriscore_file_enc = models.CharField(_(u'File enc'), max_length=300, null=True, blank=True)
+    epipluriscore_file_description = models.TextField(_(u'File description'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line EpiPluriScore file')
+        verbose_name_plural = _(u'Cell line EpiPluriScore files')
+        ordering = ['epipluriscore']
+
+    def __unicode__(self):
+        return unicode(self.epipluriscore)
+
+    def filename(self):
+        return os.path.basename(self.epipluriscore_file.name)
 
 
 class MarkerMoleculeBase(models.Model):

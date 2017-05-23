@@ -32,7 +32,7 @@
     </td>
 </tr>
 
-{% if cellline.undifferentiated_morphology_marker_imune or cellline.undifferentiated_morphology_marker_facs or cellline.undifferentiated_morphology_marker_rtpcr or cellline.undifferentiated_morphology_marker_morphology or cellline.undifferentiated_morphology_marker_expression_profile or cellline.celllinecharacterizationpluritest %}
+{% if cellline.undifferentiated_morphology_marker_imune or cellline.undifferentiated_morphology_marker_facs or cellline.undifferentiated_morphology_marker_rtpcr or cellline.undifferentiated_morphology_marker_morphology or cellline.undifferentiated_morphology_marker_expression_profile or cellline.celllinecharacterizationpluritest or cellline.celllinecharacterizationepipluriscore %}
 <tr><th class="sub-title"><h3>Undifferentiated cells</h3></th></tr>
 
 <tr>
@@ -98,6 +98,60 @@
 
     </td>
 </tr>
+
+{% if cellline.celllinecharacterizationepipluriscore and cellline.celllinecharacterizationepipluriscore.score %}
+<tr>
+  <td class="label">EpiPluriScore:</td>
+  <td>
+    <p>Score: {{ cellline.celllinecharacterizationepipluriscore.score }}</p>
+
+    <table class="bordered">
+      <tr>
+        <th>Marker</th>
+        <th>Present</th>
+        <th>Absent</th>
+      </tr>
+      <tr>
+        <td>mCpG</td>
+        {% if cellline.celllinecharacterizationepipluriscore.marker_mcpg == None %}
+        <td></td>
+        <td></td>
+        {% else %}
+          {% if cellline.celllinecharacterizationepipluriscore.marker_mcpg %}
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"></td>
+          {% else %}
+          <td class="center"></td>
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          {% endif %}
+        {% endif %}
+      </tr>
+      <tr>
+        <td>OCT4</td>
+        {% if cellline.celllinecharacterizationepipluriscore.marker_OCT4 == None %}
+        <td></td>
+        <td></td>
+        {% else %}
+          {% if cellline.celllinecharacterizationepipluriscore.marker_OCT4 %}
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"></td>
+          {% else %}
+          <td class="center"></td>
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          {% endif %}
+        {% endif %}
+      </tr>
+    </table>
+
+    {% if cellline.celllinecharacterizationepipluriscore.epipluriscore_files.all %}
+    <br/>Report: {% if not cellline.celllinecharacterizationepipluriscore.epipluriscore_files.all.count == 1 %}<br/>{% endif %}
+    {% for report in cellline.celllinecharacterizationepipluriscore.epipluriscore_files.all %}
+    <a href="{{ report.epipluriscore_file.url }}">{{ report.filename }}</a>{% if report.epipluriscore_file_description %} - {{ report.epipluriscore_file_description }}{% endif %}<br/>
+    {% endfor %}
+    {% endif %}
+  </td>
+</tr>
+{% endif %}
 
 {% if cellline.celllinecharacterizationpluritest and cellline.celllinecharacterizationpluritest.pluripotency_score %}
 <tr>

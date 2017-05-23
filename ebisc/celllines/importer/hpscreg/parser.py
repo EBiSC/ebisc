@@ -44,6 +44,8 @@ from ebisc.celllines.models import  \
     CelllineCharacterization,  \
     CelllineCharacterizationPluritest, \
     CelllineCharacterizationPluritestFile, \
+    CelllineCharacterizationEpipluriscore, \
+    CelllineCharacterizationEpipluriscoreFile, \
     UndifferentiatedMorphologyMarkerImune,  \
     UndifferentiatedMorphologyMarkerImuneMolecule,  \
     UndifferentiatedMorphologyMarkerRtPcr,  \
@@ -1774,6 +1776,7 @@ def parse_publications(valuef, source, cell_line):
             return False
 
 
+# Microbiology/Virology Screening
 @inject_valuef
 def parse_characterization(valuef, source, cell_line):
 
@@ -1812,6 +1815,7 @@ def parse_characterization(valuef, source, cell_line):
     return False
 
 
+# Pluritest
 @inject_valuef
 def parse_characterization_pluritest(valuef, source, cell_line):
 
@@ -1884,22 +1888,99 @@ def parse_characterization_pluritest_file(valuef, source, characterization_pluri
     characterization_pluritest_file.pluritest_file_description = valuef('description')
     characterization_pluritest_file.save()
 
-    # print characterization_pluritest_file.pluritest_file_enc
     return characterization_pluritest_file.pluritest_file_enc
 
 
-# @inject_valuef
-# def parse_characterization_epipluriscore(valuef, source, cell_line):
-#
-#     # for doc in valuef(['characterisation_epipluriscore_data', 'uploads']):
-#     #     parse_doc(doc)
-#
-#     if valuef('characterisation_epipluriscore_flag'):
-#         cell_line_characterization_epipluriscore, created = CelllineCharacterizationEpipluriscore.objects.get_or_create(cell_line=cell_line)
-#
-#         cell_line_characterization_epipluriscore.epipluriscore_flag = valuef('characterisation_epipluriscore_flag', 'nullbool')
-#         cell_line_characterization_epipluriscore.score = valuef(['characterisation_epipluriscore_data', 'score'])
-#
+# EpiPluriTest
+@inject_valuef
+def parse_characterization_epipluriscore(valuef, source, cell_line):
+
+    if valuef('characterisation_epipluriscore_flag'):
+        cell_line_characterization_epipluriscore, created = CelllineCharacterizationEpipluriscore.objects.get_or_create(cell_line=cell_line)
+
+        cell_line_characterization_epipluriscore.epipluriscore_flag = valuef('characterisation_epipluriscore_flag', 'nullbool')
+        cell_line_characterization_epipluriscore.score = valuef(['characterisation_epipluriscore_data', 'score'])
+
+        if valuef(['characterisation_epipluriscore_data', 'mcpg_present_flag']) == '1':
+            marker_mcpg = True
+        elif valuef(['characterisation_epipluriscore_data', 'mcpg_absent_flag']) == '1':
+            marker_mcpg = False
+        else:
+            marker_mcpg = None
+
+        if valuef(['characterisation_epipluriscore_data', 'oct4_present_flag']) == '1':
+            marker_OCT4 = True
+        elif valuef(['characterisation_epipluriscore_data', 'oct4_absent_flag']) == '1':
+            marker_OCT4 = False
+        else:
+            marker_OCT4 = None
+
+        cell_line_characterization_epipluriscore.marker_mcpg = marker_mcpg
+        cell_line_characterization_epipluriscore.marker_OCT4 = marker_OCT4
+
+        # Parse files and save them
+
+        characterization_epipluriscore_files_old = list(cell_line_characterization_epipluriscore.epipluriscore_files.all().order_by('id'))
+        characterization_epipluriscore_files_old_encs = set([f.epipluriscore_file_enc for f in characterization_epipluriscore_files_old])
+
+        characterization_epipluriscore_files_new = []
+
+        for f in valuef(['characterisation_epipluriscore_data']).get('uploads', []):
+            characterization_epipluriscore_files_new.append(parse_characterization_epipluriscore_file(f, cell_line_characterization_epipluriscore))
+
+        characterization_epipluriscore_files_new_encs = set(characterization_epipluriscore_files_new)
+
+        # Delete existing files that are not present in new data
+
+        to_delete = characterization_epipluriscore_files_old_encs - characterization_epipluriscore_files_new_encs
+
+        for characterization_epipluriscore_file in [f for f in characterization_epipluriscore_files_old if f.epipluriscore_file_enc in to_delete]:
+            logger.info('Deleting obsolete epipluriscore file %s' % characterization_epipluriscore_file)
+            characterization_epipluriscore_file.epipluriscore_file.delete()
+            characterization_epipluriscore_file.delete()
+
+        if created or cell_line_characterization_epipluriscore.is_dirty():
+            if created:
+                logger.info('Added cell line characterization EpiPluriScore: %s' % cell_line_characterization_epipluriscore)
+            else:
+                logger.info('Updated cell line characterization EpiPluriScore: %s' % cell_line_characterization_epipluriscore)
+
+            cell_line_characterization_epipluriscore.save()
+
+            return True
+
+        return False
+
+    else:
+        try:
+            p = CelllineCharacterizationEpipluriscore.objects.get(cell_line=cell_line)
+            p.delete()
+            return True
+
+        except CelllineCharacterizationEpipluriscore.DoesNotExist:
+            pass
+
+
+@inject_valuef
+def parse_characterization_epipluriscore_file(valuef, source, characterization_epipluriscore):
+
+    characterization_epipluriscore_file, created = CelllineCharacterizationEpipluriscoreFile.objects.get_or_create(
+        epipluriscore=characterization_epipluriscore,
+        epipluriscore_file_enc=valuef('filename_enc').split('.')[0]
+    )
+
+    if created:
+        current_enc = None
+    else:
+        current_enc = characterization_epipluriscore_file.epipluriscore_file_enc
+
+    characterization_epipluriscore_file.epipluriscore_file_enc = value_of_file(valuef('url'), valuef('filename'), characterization_epipluriscore_file.epipluriscore_file, current_enc)
+
+    characterization_epipluriscore_file.epipluriscore_file_description = valuef('description')
+    characterization_epipluriscore_file.save()
+
+    return characterization_epipluriscore_file.epipluriscore_file_enc
+
 
 @inject_valuef
 def parse_characterization_markers(valuef, source, cell_line):
