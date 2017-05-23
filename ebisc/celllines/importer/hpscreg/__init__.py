@@ -27,7 +27,7 @@ def run(cellline=None):
         return
 
     # Tests
-    # json = request_get('http://test.hescreg.eu/api/export_readable/1940')
+    # json = request_get('http://test.hescreg.eu/api/export_readable/2152')
     # import_cellline(json)
 
     for cellline_id in [id for id in cellline_ids]:

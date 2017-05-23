@@ -43,6 +43,7 @@ from ebisc.celllines.models import  \
     VectorFreeReprogrammingFactor, \
     CelllineCharacterization,  \
     CelllineCharacterizationPluritest, \
+    CelllineCharacterizationPluritestFile, \
     UndifferentiatedMorphologyMarkerImune,  \
     UndifferentiatedMorphologyMarkerImuneMolecule,  \
     UndifferentiatedMorphologyMarkerRtPcr,  \
@@ -1814,9 +1815,6 @@ def parse_characterization(valuef, source, cell_line):
 @inject_valuef
 def parse_characterization_pluritest(valuef, source, cell_line):
 
-    # for doc in valuef(['characterisation_pluritest_data', 'uploads']):
-    #     parse_doc(doc)
-
     if valuef('characterisation_pluritest_flag'):
         cell_line_characterization_pluritest, created = CelllineCharacterizationPluritest.objects.get_or_create(cell_line=cell_line)
 
@@ -1824,6 +1822,27 @@ def parse_characterization_pluritest(valuef, source, cell_line):
         cell_line_characterization_pluritest.pluripotency_score = valuef(['characterisation_pluritest_data', 'pluripotency_score'])
         cell_line_characterization_pluritest.novelty_score = valuef(['characterisation_pluritest_data', 'novelty_score'])
         cell_line_characterization_pluritest.microarray_url = valuef(['characterisation_pluritest_data', 'microarray_url'])
+
+        # Parse files and save them
+
+        characterization_pluritest_files_old = list(cell_line_characterization_pluritest.pluritest_files.all().order_by('id'))
+        characterization_pluritest_files_old_encs = set([f.pluritest_file_enc for f in characterization_pluritest_files_old])
+
+        characterization_pluritest_files_new = []
+
+        for f in valuef(['characterisation_pluritest_data']).get('uploads', []):
+            characterization_pluritest_files_new.append(parse_characterization_pluritest_file(f, cell_line_characterization_pluritest))
+
+        characterization_pluritest_files_new_encs = set(characterization_pluritest_files_new)
+
+        # Delete existing files that are not present in new data
+
+        to_delete = characterization_pluritest_files_old_encs - characterization_pluritest_files_new_encs
+
+        for characterization_pluritest_file in [f for f in characterization_pluritest_files_old if f.pluritest_file_enc in to_delete]:
+            logger.info('Deleting obsolete pluritest file %s' % characterization_pluritest_file)
+            characterization_pluritest_file.pluritest_file.delete()
+            characterization_pluritest_file.delete()
 
         if created or cell_line_characterization_pluritest.is_dirty():
             if created:
@@ -1845,6 +1864,28 @@ def parse_characterization_pluritest(valuef, source, cell_line):
 
         except CelllineCharacterizationPluritest.DoesNotExist:
             pass
+
+
+@inject_valuef
+def parse_characterization_pluritest_file(valuef, source, characterization_pluritest):
+
+    characterization_pluritest_file, created = CelllineCharacterizationPluritestFile.objects.get_or_create(
+        pluritest=characterization_pluritest,
+        pluritest_file_enc=valuef('filename_enc').split('.')[0]
+    )
+
+    if created:
+        current_enc = None
+    else:
+        current_enc = characterization_pluritest_file.pluritest_file_enc
+
+    characterization_pluritest_file.pluritest_file_enc = value_of_file(valuef('url'), valuef('filename'), characterization_pluritest_file.pluritest_file, current_enc)
+
+    characterization_pluritest_file.pluritest_file_description = valuef('description')
+    characterization_pluritest_file.save()
+
+    # print characterization_pluritest_file.pluritest_file_enc
+    return characterization_pluritest_file.pluritest_file_enc
 
 
 # @inject_valuef
