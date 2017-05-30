@@ -1149,13 +1149,13 @@ class DepositorDataFile(models.Model):
 
 
 # Morphology images
-class CelllineCharacterizationUndifferentiatedMorphologyFile(DirtyFieldsMixin, models.Model):
+class CelllineCharacterizationUndifferentiatedMorphologyFile(DepositorDataFile):
 
     cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='undifferentiated_morphology_files')
 
-    morphology_file = models.FileField(_(u'File'), upload_to=upload_to, null=True, blank=True)
-    morphology_file_enc = models.CharField(_(u'File enc'), max_length=300, null=True, blank=True)
-    morphology_file_description = models.TextField(_(u'File description'), null=True, blank=True)
+    # morphology_file = models.FileField(_(u'File'), upload_to=upload_to, null=True, blank=True)
+    # morphology_file_enc = models.CharField(_(u'File enc'), max_length=300, null=True, blank=True)
+    # morphology_file_description = models.TextField(_(u'File description'), null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line undifferentiated cells morphology file')
@@ -1164,13 +1164,6 @@ class CelllineCharacterizationUndifferentiatedMorphologyFile(DirtyFieldsMixin, m
 
     def __unicode__(self):
         return unicode(self.cell_line)
-
-    def filename(self):
-        return os.path.basename(self.morphology_file.name)
-
-    def extension(self):
-        name, extension = os.path.splitext(self.morphology_file.name)
-        return extension
 
 
 # Pluritest
@@ -1192,13 +1185,13 @@ class CelllineCharacterizationPluritest(DirtyFieldsMixin, models.Model):
         return unicode(self.cell_line)
 
 
-class CelllineCharacterizationPluritestFile(DirtyFieldsMixin, models.Model):
+class CelllineCharacterizationPluritestFile(DepositorDataFile):
 
     pluritest = models.ForeignKey(CelllineCharacterizationPluritest, verbose_name=_(u'Cell line pluritest'), related_name='pluritest_files')
 
-    pluritest_file = models.FileField(_(u'File'), upload_to=upload_to, null=True, blank=True)
-    pluritest_file_enc = models.CharField(_(u'File enc'), max_length=300, null=True, blank=True)
-    pluritest_file_description = models.TextField(_(u'File description'), null=True, blank=True)
+    # pluritest_file = models.FileField(_(u'File'), upload_to=upload_to, null=True, blank=True)
+    # pluritest_file_enc = models.CharField(_(u'File enc'), max_length=300, null=True, blank=True)
+    # pluritest_file_description = models.TextField(_(u'File description'), null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line Pluritest file')
@@ -1207,9 +1200,6 @@ class CelllineCharacterizationPluritestFile(DirtyFieldsMixin, models.Model):
 
     def __unicode__(self):
         return unicode(self.pluritest)
-
-    def filename(self):
-        return os.path.basename(self.pluritest_file.name)
 
 
 # EpiPluriScore
@@ -1231,13 +1221,13 @@ class CelllineCharacterizationEpipluriscore(DirtyFieldsMixin, models.Model):
         return unicode(self.cell_line)
 
 
-class CelllineCharacterizationEpipluriscoreFile(DirtyFieldsMixin, models.Model):
+class CelllineCharacterizationEpipluriscoreFile(DepositorDataFile):
 
     epipluriscore = models.ForeignKey(CelllineCharacterizationEpipluriscore, verbose_name=_(u'Cell line EpiPluriScore'), related_name='epipluriscore_files')
 
-    epipluriscore_file = models.FileField(_(u'File'), upload_to=upload_to, null=True, blank=True)
-    epipluriscore_file_enc = models.CharField(_(u'File enc'), max_length=300, null=True, blank=True)
-    epipluriscore_file_description = models.TextField(_(u'File description'), null=True, blank=True)
+    # epipluriscore_file = models.FileField(_(u'File'), upload_to=upload_to, null=True, blank=True)
+    # epipluriscore_file_enc = models.CharField(_(u'File enc'), max_length=300, null=True, blank=True)
+    # epipluriscore_file_description = models.TextField(_(u'File description'), null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line EpiPluriScore file')
@@ -1246,9 +1236,6 @@ class CelllineCharacterizationEpipluriscoreFile(DirtyFieldsMixin, models.Model):
 
     def __unicode__(self):
         return unicode(self.epipluriscore)
-
-    def filename(self):
-        return os.path.basename(self.epipluriscore_file.name)
 
 
 # hPSC Scorecard

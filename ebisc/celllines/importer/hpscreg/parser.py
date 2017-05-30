@@ -1834,7 +1834,7 @@ def parse_characterization_pluritest(valuef, source, cell_line):
         # Parse files and save them
 
         characterization_pluritest_files_old = list(cell_line_characterization_pluritest.pluritest_files.all().order_by('id'))
-        characterization_pluritest_files_old_encs = set([f.pluritest_file_enc for f in characterization_pluritest_files_old])
+        characterization_pluritest_files_old_encs = set([f.file_enc for f in characterization_pluritest_files_old])
 
         characterization_pluritest_files_new = []
 
@@ -1847,9 +1847,9 @@ def parse_characterization_pluritest(valuef, source, cell_line):
 
         to_delete = characterization_pluritest_files_old_encs - characterization_pluritest_files_new_encs
 
-        for characterization_pluritest_file in [f for f in characterization_pluritest_files_old if f.pluritest_file_enc in to_delete]:
+        for characterization_pluritest_file in [f for f in characterization_pluritest_files_old if f.file_enc in to_delete]:
             logger.info('Deleting obsolete pluritest file %s' % characterization_pluritest_file)
-            characterization_pluritest_file.pluritest_file.delete()
+            characterization_pluritest_file.file_doc.delete()
             characterization_pluritest_file.delete()
 
         if created or cell_line_characterization_pluritest.is_dirty():
@@ -1879,20 +1879,20 @@ def parse_characterization_pluritest_file(valuef, source, characterization_pluri
 
     characterization_pluritest_file, created = CelllineCharacterizationPluritestFile.objects.get_or_create(
         pluritest=characterization_pluritest,
-        pluritest_file_enc=valuef('filename_enc').split('.')[0]
+        file_enc=valuef('filename_enc').split('.')[0]
     )
 
     if created:
         current_enc = None
     else:
-        current_enc = characterization_pluritest_file.pluritest_file_enc
+        current_enc = characterization_pluritest_file.file_enc
 
-    characterization_pluritest_file.pluritest_file_enc = value_of_file(valuef('url'), valuef('filename'), characterization_pluritest_file.pluritest_file, current_enc)
+    characterization_pluritest_file.file_enc = value_of_file(valuef('url'), valuef('filename'), characterization_pluritest_file.file_doc, current_enc)
 
-    characterization_pluritest_file.pluritest_file_description = valuef('description')
+    characterization_pluritest_file.file_description = valuef('description')
     characterization_pluritest_file.save()
 
-    return characterization_pluritest_file.pluritest_file_enc
+    return characterization_pluritest_file.file_enc
 
 
 # EpiPluriTest
@@ -1925,7 +1925,7 @@ def parse_characterization_epipluriscore(valuef, source, cell_line):
         # Parse files and save them
 
         characterization_epipluriscore_files_old = list(cell_line_characterization_epipluriscore.epipluriscore_files.all().order_by('id'))
-        characterization_epipluriscore_files_old_encs = set([f.epipluriscore_file_enc for f in characterization_epipluriscore_files_old])
+        characterization_epipluriscore_files_old_encs = set([f.file_enc for f in characterization_epipluriscore_files_old])
 
         characterization_epipluriscore_files_new = []
 
@@ -1938,9 +1938,9 @@ def parse_characterization_epipluriscore(valuef, source, cell_line):
 
         to_delete = characterization_epipluriscore_files_old_encs - characterization_epipluriscore_files_new_encs
 
-        for characterization_epipluriscore_file in [f for f in characterization_epipluriscore_files_old if f.epipluriscore_file_enc in to_delete]:
+        for characterization_epipluriscore_file in [f for f in characterization_epipluriscore_files_old if f.file_enc in to_delete]:
             logger.info('Deleting obsolete epipluriscore file %s' % characterization_epipluriscore_file)
-            characterization_epipluriscore_file.epipluriscore_file.delete()
+            characterization_epipluriscore_file.file_doc.delete()
             characterization_epipluriscore_file.delete()
 
         if created or cell_line_characterization_epipluriscore.is_dirty():
@@ -1970,20 +1970,20 @@ def parse_characterization_epipluriscore_file(valuef, source, characterization_e
 
     characterization_epipluriscore_file, created = CelllineCharacterizationEpipluriscoreFile.objects.get_or_create(
         epipluriscore=characterization_epipluriscore,
-        epipluriscore_file_enc=valuef('filename_enc').split('.')[0]
+        file_enc=valuef('filename_enc').split('.')[0]
     )
 
     if created:
         current_enc = None
     else:
-        current_enc = characterization_epipluriscore_file.epipluriscore_file_enc
+        current_enc = characterization_epipluriscore_file.file_enc
 
-    characterization_epipluriscore_file.epipluriscore_file_enc = value_of_file(valuef('url'), valuef('filename'), characterization_epipluriscore_file.epipluriscore_file, current_enc)
+    characterization_epipluriscore_file.file_enc = value_of_file(valuef('url'), valuef('filename'), characterization_epipluriscore_file.file_doc, current_enc)
 
-    characterization_epipluriscore_file.epipluriscore_file_description = valuef('description')
+    characterization_epipluriscore_file.file_description = valuef('description')
     characterization_epipluriscore_file.save()
 
-    return characterization_epipluriscore_file.epipluriscore_file_enc
+    return characterization_epipluriscore_file.file_enc
 
 
 # Morphology images - undifferentitated cells
@@ -1996,7 +1996,7 @@ def parse_characterization_undiff_morphology(valuef, source, cell_line):
 
         characterization_undiff_morphology_files_old = list(cell_line.undifferentiated_morphology_files.all().order_by('id'))
 
-        characterization_undiff_morphology_files_old_encs = set([f.morphology_file_enc for f in characterization_undiff_morphology_files_old])
+        characterization_undiff_morphology_files_old_encs = set([f.file_enc for f in characterization_undiff_morphology_files_old])
 
         characterization_undiff_morphology_files_new = []
         characterization_undiff_morphology_files_new_encs = set([])
@@ -2011,9 +2011,9 @@ def parse_characterization_undiff_morphology(valuef, source, cell_line):
 
         to_delete = characterization_undiff_morphology_files_old_encs - characterization_undiff_morphology_files_new_encs
 
-        for characterization_undiff_morphology_file in [f for f in characterization_undiff_morphology_files_old if f.morphology_file_enc in to_delete]:
+        for characterization_undiff_morphology_file in [f for f in characterization_undiff_morphology_files_old if f.file_enc in to_delete]:
             logger.info('Deleting obsolete undiff morphology file %s' % characterization_undiff_morphology_file)
-            characterization_undiff_morphology_file.morphology_file.delete()
+            characterization_undiff_morphology_file.file_doc.delete()
             characterization_undiff_morphology_file.delete()
 
         if characterization_undiff_morphology_files_old_encs != characterization_undiff_morphology_files_new_encs:
@@ -2028,20 +2028,20 @@ def parse_characterization_undiff_morphology_file(valuef, source, cell_line):
 
     characterization_undiff_morphology_file, created = CelllineCharacterizationUndifferentiatedMorphologyFile.objects.get_or_create(
         cell_line=cell_line,
-        morphology_file_enc=valuef('filename_enc').split('.')[0]
+        file_enc=valuef('filename_enc').split('.')[0]
     )
 
     if created:
         current_enc = None
     else:
-        current_enc = characterization_undiff_morphology_file.morphology_file_enc
+        current_enc = characterization_undiff_morphology_file.file_enc
 
-    characterization_undiff_morphology_file.morphology_file_enc = value_of_file(valuef('url'), valuef('filename'), characterization_undiff_morphology_file.morphology_file, current_enc)
+    characterization_undiff_morphology_file.file_enc = value_of_file(valuef('url'), valuef('filename'), characterization_undiff_morphology_file.file_doc, current_enc)
 
-    characterization_undiff_morphology_file.morphology_file_description = valuef('description')
+    characterization_undiff_morphology_file.file_description = valuef('description')
     characterization_undiff_morphology_file.save()
 
-    return characterization_undiff_morphology_file.morphology_file_enc
+    return characterization_undiff_morphology_file.file_enc
 
 
 # hPSC Scorecard

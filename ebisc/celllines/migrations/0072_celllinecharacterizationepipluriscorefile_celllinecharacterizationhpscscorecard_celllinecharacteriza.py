@@ -9,7 +9,7 @@ import dirtyfields.dirtyfields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('celllines', '0074_celllinecharacterizationundifferentiatedmorphologyfile'),
+        ('celllines', '0071_auto_20170418_1203'),
     ]
 
     operations = [
@@ -45,6 +45,19 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='CelllineCharacterizationEpipluriscoreFile',
+            fields=[
+                ('depositordatafile_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='celllines.DepositorDataFile')),
+                ('epipluriscore', models.ForeignKey(related_name='epipluriscore_files', verbose_name='Cell line EpiPluriScore', to='celllines.CelllineCharacterizationEpipluriscore')),
+            ],
+            options={
+                'ordering': ['epipluriscore'],
+                'verbose_name': 'Cell line EpiPluriScore file',
+                'verbose_name_plural': 'Cell line EpiPluriScore files',
+            },
+            bases=('celllines.depositordatafile',),
+        ),
+        migrations.CreateModel(
             name='CelllineCharacterizationHpscScorecardReport',
             fields=[
                 ('depositordatafile_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='celllines.DepositorDataFile')),
@@ -67,6 +80,32 @@ class Migration(migrations.Migration):
                 'ordering': ['hpsc_scorecard'],
                 'verbose_name': 'Cell line hPSC Scorecard scorecard',
                 'verbose_name_plural': 'Cell line hPSC Scorecard scorecards',
+            },
+            bases=('celllines.depositordatafile',),
+        ),
+        migrations.CreateModel(
+            name='CelllineCharacterizationPluritestFile',
+            fields=[
+                ('depositordatafile_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='celllines.DepositorDataFile')),
+                ('pluritest', models.ForeignKey(related_name='pluritest_files', verbose_name='Cell line pluritest', to='celllines.CelllineCharacterizationPluritest')),
+            ],
+            options={
+                'ordering': ['pluritest'],
+                'verbose_name': 'Cell line Pluritest file',
+                'verbose_name_plural': 'Cell line Pluritest files',
+            },
+            bases=('celllines.depositordatafile',),
+        ),
+        migrations.CreateModel(
+            name='CelllineCharacterizationUndifferentiatedMorphologyFile',
+            fields=[
+                ('depositordatafile_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='celllines.DepositorDataFile')),
+                ('cell_line', models.ForeignKey(related_name='undifferentiated_morphology_files', verbose_name='Cell line', to='celllines.Cellline')),
+            ],
+            options={
+                'ordering': ['cell_line'],
+                'verbose_name': 'Cell line undifferentiated cells morphology file',
+                'verbose_name_plural': 'Cell line undifferentiated cells morphology files',
             },
             bases=('celllines.depositordatafile',),
         ),
