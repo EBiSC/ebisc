@@ -120,6 +120,7 @@ def import_cellline(source):
         parser.parse_characterization_pluritest(source, cell_line),
         parser.parse_characterization_epipluriscore(source, cell_line),
         parser.parse_characterization_undiff_morphology(source, cell_line),
+        parser.parse_characterization_hpscscorecard(source, cell_line),
         check_availability_on_ecacc(cell_line),
     ]
 

@@ -47,6 +47,9 @@ from ebisc.celllines.models import  \
     CelllineCharacterizationEpipluriscore, \
     CelllineCharacterizationEpipluriscoreFile, \
     CelllineCharacterizationUndifferentiatedMorphologyFile, \
+    CelllineCharacterizationHpscScorecard, \
+    CelllineCharacterizationHpscScorecardReport, \
+    CelllineCharacterizationHpscScorecardScorecard, \
     UndifferentiatedMorphologyMarkerImune,  \
     UndifferentiatedMorphologyMarkerImuneMolecule,  \
     UndifferentiatedMorphologyMarkerRtPcr,  \
@@ -2039,6 +2042,159 @@ def parse_characterization_undiff_morphology_file(valuef, source, cell_line):
     characterization_undiff_morphology_file.save()
 
     return characterization_undiff_morphology_file.morphology_file_enc
+
+
+# hPSC Scorecard
+@inject_valuef
+def parse_characterization_hpscscorecard(valuef, source, cell_line):
+
+    if valuef('characterisation_hpsc_scorecard_flag') and valuef('characterisation_hpsc_scorecard_data'):
+        cell_line_characterization_hpscscorecard, created = CelllineCharacterizationHpscScorecard.objects.get_or_create(cell_line=cell_line)
+
+        if valuef(['characterisation_hpsc_scorecard_data', 'self_renewal_flag']) == '1':
+            self_renewal = True
+        elif valuef(['characterisation_hpsc_scorecard_data', 'self_renewal_flag']) == '0':
+            self_renewal = False
+        else:
+            self_renewal = None
+
+        cell_line_characterization_hpscscorecard.self_renewal = self_renewal
+
+        if valuef(['characterisation_hpsc_scorecard_data', 'endoderm_flag']) == '1':
+            endoderm = True
+        elif valuef(['characterisation_hpsc_scorecard_data', 'endoderm_flag']) == '0':
+            endoderm = False
+        else:
+            endoderm = None
+
+        cell_line_characterization_hpscscorecard.endoderm = endoderm
+
+        if valuef(['characterisation_hpsc_scorecard_data', 'mesoderm_flag']) == '1':
+            mesoderm = True
+        elif valuef(['characterisation_hpsc_scorecard_data', 'mesoderm_flag']) == '0':
+            mesoderm = False
+        else:
+            mesoderm = None
+
+        cell_line_characterization_hpscscorecard.mesoderm = mesoderm
+
+        if valuef(['characterisation_hpsc_scorecard_data', 'ectoderm_flag']) == '1':
+            ectoderm = True
+        elif valuef(['characterisation_hpsc_scorecard_data', 'ectoderm_flag']) == '0':
+            ectoderm = False
+        else:
+            ectoderm = None
+
+        cell_line_characterization_hpscscorecard.ectoderm = ectoderm
+
+        # Parse files and save them
+
+        # Data files
+        characterization_hpscscorecard_files_old = list(cell_line_characterization_hpscscorecard.hpsc_scorecard_reports.all().order_by('id'))
+        characterization_hpscscorecard_files_old_encs = set([f.file_enc for f in characterization_hpscscorecard_files_old])
+
+        characterization_hpscscorecard_files_new = []
+
+        for f in valuef(['characterisation_hpsc_scorecard_data']).get('data_analysis_uploads', []):
+            characterization_hpscscorecard_files_new.append(parse_characterization_hpscscorecard_file(f, cell_line_characterization_hpscscorecard))
+
+        characterization_hpscscorecard_files_new_encs = set(characterization_hpscscorecard_files_new)
+
+        # Scorecards
+        characterization_hpscscorecard_cards_old = list(cell_line_characterization_hpscscorecard.hpsc_scorecard_files.all().order_by('id'))
+        characterization_hpscscorecard_cards_old_encs = set([f.file_enc for f in characterization_hpscscorecard_cards_old])
+
+        characterization_hpscscorecard_cards_new = []
+
+        for f in valuef(['characterisation_hpsc_scorecard_data']).get('scorecard_uploads', []):
+            characterization_hpscscorecard_cards_new.append(parse_characterization_hpscscorecard_card(f, cell_line_characterization_hpscscorecard))
+
+        characterization_hpscscorecard_cards_new_encs = set(characterization_hpscscorecard_cards_new)
+
+
+        # Delete existing files that are not present in new data
+
+        # Data files
+        to_delete = characterization_hpscscorecard_files_old_encs - characterization_hpscscorecard_files_new_encs
+
+        for characterization_hpscscorecard_file in [f for f in characterization_hpscscorecard_files_old if f.file_enc in to_delete]:
+            logger.info('Deleting obsolete hPSC Scorecard data file %s' % characterization_hpscscorecard_file)
+            characterization_hpscscorecard_file.file_doc.delete()
+            characterization_hpscscorecard_file.delete()
+
+        # Data files
+        to_delete = characterization_hpscscorecard_cards_old_encs - characterization_hpscscorecard_cards_new_encs
+
+        for characterization_hpscscorecard_card in [f for f in characterization_hpscscorecard_cards_old if f.file_enc in to_delete]:
+            logger.info('Deleting obsolete hPSC Scorecard %s' % characterization_hpscscorecard_card)
+            characterization_hpscscorecard_card.file_doc.delete()
+            characterization_hpscscorecard_card.delete()
+
+
+        # Save
+
+        if created or cell_line_characterization_hpscscorecard.is_dirty():
+            if created:
+                logger.info('Added cell line characterization hPSC Scorecard: %s' % cell_line_characterization_hpscscorecard)
+            else:
+                logger.info('Updated cell line characterization hPSC Scorecard: %s' % cell_line_characterization_hpscscorecard)
+
+            cell_line_characterization_hpscscorecard.save()
+
+            return True
+
+        return False
+
+    else:
+        try:
+            p = CelllineCharacterizationHpscScorecard.objects.get(cell_line=cell_line)
+            p.delete()
+            return True
+
+        except CelllineCharacterizationHpscScorecard.DoesNotExist:
+            pass
+
+
+@inject_valuef
+def parse_characterization_hpscscorecard_file(valuef, source, characterization_hpscscorecard):
+
+    characterization_hpscscorecard_file, created = CelllineCharacterizationHpscScorecardReport.objects.get_or_create(
+        hpsc_scorecard=characterization_hpscscorecard,
+        file_enc=valuef('filename_enc').split('.')[0]
+    )
+
+    if created:
+        current_enc = None
+    else:
+        current_enc = characterization_hpscscorecard_file.file_enc
+
+    characterization_hpscscorecard_file.file_enc = value_of_file(valuef('url'), valuef('filename'), characterization_hpscscorecard_file.file_doc, current_enc)
+
+    characterization_hpscscorecard_file.file_description = valuef('description')
+    characterization_hpscscorecard_file.save()
+
+    return characterization_hpscscorecard_file.file_enc
+
+
+@inject_valuef
+def parse_characterization_hpscscorecard_card(valuef, source, characterization_hpscscorecard):
+
+    characterization_hpscscorecard_card, created = CelllineCharacterizationHpscScorecardScorecard.objects.get_or_create(
+        hpsc_scorecard=characterization_hpscscorecard,
+        file_enc=valuef('filename_enc').split('.')[0]
+    )
+
+    if created:
+        current_enc = None
+    else:
+        current_enc = characterization_hpscscorecard_card.file_enc
+
+    characterization_hpscscorecard_card.file_enc = value_of_file(valuef('url'), valuef('filename'), characterization_hpscscorecard_card.file_doc, current_enc)
+
+    characterization_hpscscorecard_card.file_description = valuef('description')
+    characterization_hpscscorecard_card.save()
+
+    return characterization_hpscscorecard_card.file_enc
 
 
 # OLD fields

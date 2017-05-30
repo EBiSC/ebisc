@@ -155,6 +155,95 @@
 </tr>
 {% endif %}
 
+{% if cellline.celllinecharacterizationhpscscorecard %}
+<tr>
+  <td class="label">hPSC Scorecard&trade;:</td>
+  <td>
+    <table class="bordered">
+      <tr>
+        <th></th>
+        <th>Positive</th>
+        <th>Negative</th>
+      </tr>
+      <tr>
+        <td>Self-renewal</td>
+        {% if cellline.celllinecharacterizationhpscscorecard.self_renewal == None %}
+        <td></td>
+        <td></td>
+        {% else %}
+          {% if cellline.celllinecharacterizationhpscscorecard.self_renewal %}
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"></td>
+          {% else %}
+          <td class="center"></td>
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          {% endif %}
+        {% endif %}
+      </tr>
+      <tr>
+        <td>Endoderm</td>
+        {% if cellline.celllinecharacterizationhpscscorecard.endoderm == None %}
+        <td></td>
+        <td></td>
+        {% else %}
+          {% if cellline.celllinecharacterizationhpscscorecard.endoderm %}
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"></td>
+          {% else %}
+          <td class="center"></td>
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          {% endif %}
+        {% endif %}
+      </tr>
+      <tr>
+        <td>Mesoderm</td>
+        {% if cellline.celllinecharacterizationhpscscorecard.mesoderm == None %}
+        <td></td>
+        <td></td>
+        {% else %}
+          {% if cellline.celllinecharacterizationhpscscorecard.mesoderm %}
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"></td>
+          {% else %}
+          <td class="center"></td>
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          {% endif %}
+        {% endif %}
+      </tr>
+      <tr>
+        <td>Ectoderm</td>
+        {% if cellline.celllinecharacterizationhpscscorecard.ectoderm == None %}
+        <td></td>
+        <td></td>
+        {% else %}
+          {% if cellline.celllinecharacterizationhpscscorecard.ectoderm %}
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"></td>
+          {% else %}
+          <td class="center"></td>
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          {% endif %}
+        {% endif %}
+      </tr>
+    </table>
+    <p>
+    {% if cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_reports.all %}
+    Data analysis report: {% if not cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_reports.all.count == 1 %}<br/>{% endif %}
+    {% for report in cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_reports.all %}
+    <a href="{{ report.file_doc.url }}">{{ report.filename }}</a>{% if report.file_description %} - {{ report.file_description }}{% endif %}<br/>
+    {% endfor %}
+    {% endif %}
+    {% if cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_files.all %}
+    Scorecard: {% if not cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_files.all.count == 1 %}<br/>{% endif %}
+    {% for report in cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_files.all %}
+    <a href="{{ report.file_doc.url }}">{{ report.filename }}</a>{% if report.file_description %} - {{ report.file_description }}{% endif %}<br/>
+    {% endfor %}
+    {% endif %}
+    </p>
+  </td>
+</tr>
+{% endif %}
+
 {% if cellline.celllinecharacterizationpluritest and cellline.celllinecharacterizationpluritest.pluripotency_score %}
 <tr>
   <td class="label">PluriTest:</td>

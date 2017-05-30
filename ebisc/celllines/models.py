@@ -1125,6 +1125,29 @@ class CelllineCharacterization(DirtyFieldsMixin, models.Model):
 
 # Analysis of Undifferentiated Cells
 
+# Depositor provided files
+class DepositorDataFile(models.Model):
+
+    file_doc = models.FileField(_(u'File'), upload_to=upload_to, null=True, blank=True)
+    file_enc = models.CharField(_(u'File enc'), max_length=300, null=True, blank=True)
+    file_description = models.TextField(_(u'File description'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Depositor data file')
+        verbose_name_plural = _(u'Depositor data files')
+        ordering = ['file_enc']
+
+    def __unicode__(self):
+        return unicode(self.id)
+
+    def filename(self):
+        return os.path.basename(self.file_doc.name)
+
+    def extension(self):
+        name, extension = os.path.splitext(self.file_doc.name)
+        return extension
+
+
 # Morphology images
 class CelllineCharacterizationUndifferentiatedMorphologyFile(DirtyFieldsMixin, models.Model):
 
@@ -1148,7 +1171,7 @@ class CelllineCharacterizationUndifferentiatedMorphologyFile(DirtyFieldsMixin, m
     def extension(self):
         name, extension = os.path.splitext(self.morphology_file.name)
         return extension
-        
+
 
 # Pluritest
 class CelllineCharacterizationPluritest(DirtyFieldsMixin, models.Model):
@@ -1226,6 +1249,51 @@ class CelllineCharacterizationEpipluriscoreFile(DirtyFieldsMixin, models.Model):
 
     def filename(self):
         return os.path.basename(self.epipluriscore_file.name)
+
+
+# hPSC Scorecard
+class CelllineCharacterizationHpscScorecard(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
+
+    self_renewal = models.NullBooleanField(_(u'Self renewal'))
+    endoderm = models.NullBooleanField(_(u'Endoderm'))
+    mesoderm = models.NullBooleanField(_(u'Mesoderm'))
+    ectoderm = models.NullBooleanField(_(u'Ectoderm'))
+
+    class Meta:
+        verbose_name = _(u'Cell line hPSC Scorecard')
+        verbose_name_plural = _(u'Cell line hPSC Scorecards')
+        ordering = ['cell_line']
+
+    def __unicode__(self):
+        return unicode(self.cell_line)
+
+
+class CelllineCharacterizationHpscScorecardReport(DepositorDataFile):
+
+    hpsc_scorecard = models.ForeignKey(CelllineCharacterizationHpscScorecard, verbose_name=_(u'Cell line hPSC Scorecard'), related_name='hpsc_scorecard_reports')
+
+    class Meta:
+        verbose_name = _(u'Cell line hPSC Scorecard report')
+        verbose_name_plural = _(u'Cell line hPSC Scorecard reports')
+        ordering = ['hpsc_scorecard']
+
+    def __unicode__(self):
+        return unicode(self.hpsc_scorecard)
+
+
+class CelllineCharacterizationHpscScorecardScorecard(DepositorDataFile):
+
+    hpsc_scorecard = models.ForeignKey(CelllineCharacterizationHpscScorecard, verbose_name=_(u'Cell line hPSC Scorecard'), related_name='hpsc_scorecard_files')
+
+    class Meta:
+        verbose_name = _(u'Cell line hPSC Scorecard scorecard')
+        verbose_name_plural = _(u'Cell line hPSC Scorecard scorecards')
+        ordering = ['hpsc_scorecard']
+
+    def __unicode__(self):
+        return unicode(self.hpsc_scorecard)
 
 
 class MarkerMoleculeBase(models.Model):
