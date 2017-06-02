@@ -4,84 +4,92 @@
             "biosamples_id": {
                 "type": "string",
                 "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "text_autocomplete", "search_analyzer": "standard"}}
             },
 
             "name": {
                 "type": "string",
                 "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "name_autocomplete", "search_analyzer": "name_query"}}
             },
 
             "depositor": {
                 "type": "string",
                 "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "text_autocomplete", "search_analyzer": "standard"}}
             },
 
             "primary_disease": {
                 "type": "string",
                 "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "text_autocomplete", "search_analyzer": "standard"}}
             },
 
             "donor_disease": {
                 "type": "string",
                 "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "text_autocomplete", "search_analyzer": "standard"}}
             },
 
             "all_diseases": {
                 "type": "string",
                 "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "text_autocomplete", "search_analyzer": "standard"}}
             },
 
             "genetic_modification_disease": {
                 "type": "string",
                 "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "text_autocomplete", "search_analyzer": "standard"}}
             },
 
             "primary_disease_synonyms": {
                 "type": "string",
-                "index": "analyzed"
+                "index": "analyzed",
+                "index_analyzer": "text_autocomplete",
+                "search_analyzer": "standard"
             },
 
             "disease_associated_phenotypes": {
                 "type": "string",
                 "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "text_autocomplete", "search_analyzer": "standard"}}
             },
 
             "non_disease_associated_phenotypes": {
                 "type": "string",
                 "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "text_autocomplete", "search_analyzer": "standard"}}
             },
 
             "primary_cell_type": {
                 "type": "string",
                 "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "text_autocomplete", "search_analyzer": "standard"}}
             },
 
             "alternative_names": {
                 "type": "string",
                 "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "name_autocomplete", "search_analyzer": "name_query"}}
             },
 
             "donor_sex": {
                 "type": "string",
                 "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "text_autocomplete", "search_analyzer": "standard"}}
             },
 
             "donor_age": {
                 "type": "string",
                 "index": "not_analyzed",
-                "fields": {"analyzed": {"type": "string", "index": "analyzed"}}
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "text_autocomplete", "search_analyzer": "standard"}}
+            },
+
+            "all_genes": {
+                "type": "string",
+                "index": "not_analyzed",
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "name_autocomplete", "search_analyzer": "name_query"}}
             }
         }
     }

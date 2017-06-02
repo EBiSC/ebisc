@@ -1,0 +1,39 @@
+{
+    "index": {
+        "analysis": {
+            "analyzer": {
+                "text_autocomplete": {
+                    "type": "custom",
+                    "tokenizer": "standard",
+                    "filter": ["lowercase", "autocomplete_filter"]
+                },
+                "name_autocomplete": {
+                    "type": "custom",
+                    "tokenizer": "whitespace",
+                    "filter": ["lowercase", "autocomplete_filter"],
+                    "char_filter": "alphanumeric"
+                },
+                "name_query": {
+                    "type": "custom",
+                    "tokenizer": "whitespace",
+                    "filter": ["lowercase"],
+                    "char_filter": "alphanumeric"
+                }
+            },
+            "filter": {
+              "autocomplete_filter": {
+                "type": "edge_ngram",
+                "min_gram": 1,
+                "max_gram": 20
+              }
+            },
+            "char_filter": {
+                "alphanumeric": {
+                    "type": "pattern_replace",
+                    "pattern": "[^A-Za-z0-9]+",
+                    "replacement": ""
+                }
+            }
+        }
+    }
+}
