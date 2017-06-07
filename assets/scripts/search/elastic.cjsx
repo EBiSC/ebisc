@@ -74,17 +74,21 @@ buildFilteredQuery = () ->
 buildQuery = () ->
 
     queryString = _.trim(State.select('filter', 'query').get().toLowerCase())
-    queryString = XRegExp.replace(queryString, XRegExp('[^(\\p{L}|\\d)]'), '')
-
+    
     if not queryString
         return match_all: {}
 
     else
+        words = (w for w in XRegExp.split(queryString, XRegExp('[^(\\p{L}|\\d)]')) when w != '')
 
-        multi_match:
-            query: queryString
-            type: 'best_fields'
-            fields: Config.query_fields
+        buildQueryMultiMatch = (word, fields) ->
+            multi_match:
+                query: word
+                type: 'best_fields'
+                fields: fields
+
+        bool:
+            must: (buildQueryMultiMatch(word, Config.query_fields) for word in words)
 
 # -----------------------------------------------------------------------------
 # Filters
