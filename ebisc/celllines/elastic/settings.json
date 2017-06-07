@@ -9,7 +9,7 @@
                 },
                 "name_autocomplete": {
                     "type": "custom",
-                    "tokenizer": "whitespace",
+                    "tokenizer": "standard",
                     "filter": ["lowercase", "autocomplete_filter"],
                     "char_filter": "alphanumeric"
                 },
@@ -30,7 +30,7 @@
             "char_filter": {
                 "alphanumeric": {
                     "type": "pattern_replace",
-                    "pattern": "[^A-Za-z0-9]+",
+                    "pattern": "[^A-Za-z0-9\\s]+",
                     "replacement": ""
                 }
             }
