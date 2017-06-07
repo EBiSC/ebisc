@@ -270,6 +270,54 @@ class Cellline(DirtyFieldsMixin, models.Model):
         return cellline_diseases
 
     @property
+    def all_genes(self):
+
+        genes = []
+
+        for disease in self.diseases.all():
+            for mod in disease.genetic_modification_cellline_disease_gene_knock_out.all():
+                if mod.gene:
+                    genes.append(mod.gene.name)
+            for mod in disease.genetic_modification_cellline_disease_gene_knock_in.all():
+                if mod.target_gene:
+                    genes.append(mod.target_gene.name)
+                if mod.transgene:
+                    genes.append(mod.transgene.name)
+            for mod in disease.genetic_modification_cellline_disease_transgene_expression.all():
+                if mod.gene:
+                    genes.append(mod.gene.name)
+            for mod in disease.genetic_modification_cellline_disease_isogenic.all():
+                if mod.gene:
+                    genes.append(mod.gene.name)
+            for variant in disease.genetic_modification_cellline_disease_variants.all():
+                if mod.gene:
+                    genes.append(variant.gene.name)
+        if self.donor:
+            for disease in self.donor.diseases.all():
+                for variant in disease.donor_disease_variants.all():
+                    if variant.gene:
+                        genes.append(variant.gene.name)
+        for mod in self.genetic_modification_cellline_gene_knock_out.all():
+            if mod.gene:
+                genes.append(mod.gene.name)
+        for mod in self.genetic_modification_cellline_gene_knock_in.all():
+            if mod.target_gene:
+                genes.append(mod.target_gene.name)
+            if mod.transgene:
+                genes.append(mod.transgene.name)
+        for mod in self.genetic_modification_cellline_transgene_expression.all():
+            if mod.gene:
+                genes.append(mod.gene.name)
+        for mod in self.genetic_modification_cellline_isogenic.all():
+            if mod.gene:
+                genes.append(mod.gene.name)
+        for variant in self.genetic_modification_cellline_variants.all():
+            if variant.gene:
+                genes.append(variant.gene.name)
+
+        return genes
+
+    @property
     def all_diseases(self):
 
         return list(set(self.donor_diseases + self.cellline_diseases))
@@ -308,6 +356,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'alternative_names': self.alternative_names,
             'donor_sex': self.donor.gender.name if self.donor and self.donor.gender else _(u'Not known'),
             'donor_age': self.donor_age.name if self.donor_age else None,
+            'all_genes': self.all_genes if self.all_genes else None,
         }
 
     def get_latest_batch(self):
