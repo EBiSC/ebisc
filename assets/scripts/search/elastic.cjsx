@@ -137,8 +137,9 @@ buildAggregation = (facet, filters) ->
 
     # If there is a query, use it to filter this facet
     query = buildQuery()
-    if 'multi_match' of query
-        otherFilters.push query: query
+    if 'bool' of query
+        for match in query.bool.must
+            otherFilters.push query: match
 
     terms =
         field: facet.name
