@@ -74,12 +74,13 @@ buildFilteredQuery = () ->
 buildQuery = () ->
 
     queryString = _.trim(State.select('filter', 'query').get().toLowerCase())
+    queryString = XRegExp.replace(queryString, XRegExp('[^(\\p{L}|\\d|\\p{Z})]'), '', 'all')
     
     if not queryString
         return match_all: {}
 
     else
-        words = (w for w in XRegExp.split(queryString, XRegExp('[^(\\p{L}|\\d)]')) when w != '')
+        words = (w for w in XRegExp.split(queryString, XRegExp('\\p{Z}')) when w != '')
 
         buildQueryMultiMatch = (word, fields) ->
             multi_match:
