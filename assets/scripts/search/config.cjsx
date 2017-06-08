@@ -41,6 +41,7 @@ config = {
         'donor_sex.analyzed'
         'donor_age.analyzed'
         'all_genetics.analyzed'
+        'all_derivation.analyzed'
     ]
 
     facets: [

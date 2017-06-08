@@ -270,7 +270,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
         return cellline_diseases
 
     @property
-    def all_genetics(self):
+    def search_terms_genetics(self):
 
         genetics = []
         variants = []
@@ -348,6 +348,31 @@ class Cellline(DirtyFieldsMixin, models.Model):
         return genetics
 
     @property
+    def search_terms_derivation(self):
+
+        derivation=[]
+        genes = []
+        if hasattr(self, 'non_integrating_vector'):
+            if self.non_integrating_vector.vector:
+                derivation.append(self.non_integrating_vector.vector.name)
+            genes.extend(self.non_integrating_vector.genes.all())
+        if hasattr(self, 'integrating_vector'):
+            if self.integrating_vector.vector:
+                derivation.append(self.integrating_vector.vector.name)
+            if self.integrating_vector.virus:
+                derivation.append(self.integrating_vector.virus.name)
+            if self.integrating_vector.transposon:
+                derivation.append(self.integrating_vector.transposon.name)
+            genes.extend(self.integrating_vector.genes.all())
+        if hasattr(self, 'vector_free_reprogramming_factors'):
+            for factor in self.vector_free_reprogramming_factors.factors.all():
+                derivation.append(factor.name)
+
+        for gene in genes:
+            derivation.append(gene.name)
+        return derivation
+
+    @property
     def all_diseases(self):
 
         return list(set(self.donor_diseases + self.cellline_diseases))
@@ -386,7 +411,8 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'alternative_names': self.alternative_names,
             'donor_sex': self.donor.gender.name if self.donor and self.donor.gender else _(u'Not known'),
             'donor_age': self.donor_age.name if self.donor_age else None,
-            'all_genetics': self.all_genetics if self.all_genetics else None,
+            'all_genetics': self.search_terms_genetics if self.search_terms_genetics else None,
+            'all_derivation': self.search_terms_derivation if self.search_terms_derivation else None,
         }
 
     def get_latest_batch(self):
