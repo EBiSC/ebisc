@@ -270,7 +270,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
         return cellline_diseases
 
     @property
-    def all_genes(self):
+    def all_genetics(self):
 
         genes = []
 
@@ -356,7 +356,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'alternative_names': self.alternative_names,
             'donor_sex': self.donor.gender.name if self.donor and self.donor.gender else _(u'Not known'),
             'donor_age': self.donor_age.name if self.donor_age else None,
-            'all_genes': self.all_genes if self.all_genes else None,
+            'all_genetics': self.all_genetics if self.all_genetics else None,
         }
 
     def get_latest_batch(self):

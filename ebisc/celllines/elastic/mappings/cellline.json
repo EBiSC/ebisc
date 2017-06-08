@@ -86,7 +86,7 @@
                 "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "text_autocomplete", "search_analyzer": "standard"}}
             },
 
-            "all_genes": {
+            "all_genetics": {
                 "type": "string",
                 "index": "not_analyzed",
                 "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "name_autocomplete", "search_analyzer": "name_query"}}

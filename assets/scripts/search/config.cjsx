@@ -40,7 +40,7 @@ config = {
         'non_disease_associated_phenotypes.analyzed'
         'donor_sex.analyzed'
         'donor_age.analyzed'
-        'all_genes.analyzed'
+        'all_genetics.analyzed'
     ]
 
     facets: [
