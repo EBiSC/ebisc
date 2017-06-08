@@ -272,50 +272,80 @@ class Cellline(DirtyFieldsMixin, models.Model):
     @property
     def all_genetics(self):
 
-        genes = []
+        genetics = []
+        variants = []
+        mods_isogenic = []
+        mods_transgene_expression = []
+        mods_gene_ko = []
+        mods_gene_ki = []
 
         for disease in self.diseases.all():
-            for mod in disease.genetic_modification_cellline_disease_gene_knock_out.all():
-                if mod.gene:
-                    genes.append(mod.gene.name)
-            for mod in disease.genetic_modification_cellline_disease_gene_knock_in.all():
-                if mod.target_gene:
-                    genes.append(mod.target_gene.name)
-                if mod.transgene:
-                    genes.append(mod.transgene.name)
-            for mod in disease.genetic_modification_cellline_disease_transgene_expression.all():
-                if mod.gene:
-                    genes.append(mod.gene.name)
-            for mod in disease.genetic_modification_cellline_disease_isogenic.all():
-                if mod.gene:
-                    genes.append(mod.gene.name)
-            for variant in disease.genetic_modification_cellline_disease_variants.all():
-                if mod.gene:
-                    genes.append(variant.gene.name)
+            mods_gene_ko.extend(disease.genetic_modification_cellline_disease_gene_knock_out.all())
+            mods_gene_ki.extend(disease.genetic_modification_cellline_disease_gene_knock_in.all())
+            mods_transgene_expression.extend(disease.genetic_modification_cellline_disease_transgene_expression.all())
+            mods_isogenic.extend(disease.genetic_modification_cellline_disease_isogenic.all())
+            variants.extend(disease.genetic_modification_cellline_disease_variants.all())
         if self.donor:
             for disease in self.donor.diseases.all():
-                for variant in disease.donor_disease_variants.all():
-                    if variant.gene:
-                        genes.append(variant.gene.name)
-        for mod in self.genetic_modification_cellline_gene_knock_out.all():
-            if mod.gene:
-                genes.append(mod.gene.name)
-        for mod in self.genetic_modification_cellline_gene_knock_in.all():
-            if mod.target_gene:
-                genes.append(mod.target_gene.name)
-            if mod.transgene:
-                genes.append(mod.transgene.name)
-        for mod in self.genetic_modification_cellline_transgene_expression.all():
-            if mod.gene:
-                genes.append(mod.gene.name)
-        for mod in self.genetic_modification_cellline_isogenic.all():
-            if mod.gene:
-                genes.append(mod.gene.name)
-        for variant in self.genetic_modification_cellline_variants.all():
-            if variant.gene:
-                genes.append(variant.gene.name)
+                variants.extend(disease.donor_disease_variants.all())
+        mods_gene_ko.extend(self.genetic_modification_cellline_gene_knock_out.all())
+        mods_gene_ki.extend(self.genetic_modification_cellline_gene_knock_in.all())
+        mods_transgene_expression.extend(self.genetic_modification_cellline_transgene_expression.all())
+        mods_isogenic.extend(self.genetic_modification_cellline_isogenic.all())
+        variants.extend(self.genetic_modification_cellline_variants.all())
 
-        return genes
+        for variant in variants:
+            if variant.gene:
+                genetics.append(variant.gene.name)
+            if variant.chromosome_location:
+                genetics.append(variant.chromosome_location)
+            if variant.nucleotide_sequence_hgvs:
+                genetics.append(variant.nucleotide_sequence_hgvs)
+            if variant.protein_sequence_hgvs:
+                genetics.append(variant.protein_sequence_hgvs)
+            if variant.zygosity_status:
+                genetics.append(variant.zygosity_status)
+            if variant.clinvar_id:
+                genetics.append(variant.clinvar_id)
+            if variant.dbsnp_id:
+                genetics.append(variant.dbsnp_id)
+            if variant.dbvar_id:
+                genetics.append(variant.dbvar_id)
+            if variant.publication_pmid:
+                genetics.append(variant.publication_pmid)
+
+        for mod in mods_isogenic:
+            if mod.gene and mod.gene.name:
+                genetics.append(mod.gene.name)
+            if mod.chromosome_location:
+                genetics.append(mod.chromosome_location)
+            if mod.nucleotide_sequence_hgvs:
+                genetics.append(mod.nucleotide_sequence_hgvs)
+            if mod.protein_sequence_hgvs:
+                genetics.append(mod.protein_sequence_hgvs)
+            if mod.zygosity_status:
+                genetics.append(mod.zygosity_status)
+            if mod.modification_type:
+                genetics.append(mod.modification_type)
+                
+        for mod in mods_transgene_expression:
+            if mod.gene and mod.gene.name:
+                genetics.append(mod.gene.name)
+            if mod.chromosome_location:
+                genetics.append(mod.chromosome_location)
+
+        for mod in mods_gene_ko:
+            if mod.gene and mod.gene.name:
+                genetics.append(mod.gene.name)
+            if mod.chromosome_location:
+                genetics.append(mod.chromosome_location)
+        for mod in mods_gene_ki:
+            if mod.target_gene and mod.target_gene.name:
+                genetics.append(mod.target_gene.name)
+            if mod.chromosome_location:
+                genetics.append(mod.chromosome_location)
+
+        return genetics
 
     @property
     def all_diseases(self):
