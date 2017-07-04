@@ -42,6 +42,9 @@ from ebisc.celllines.models import  \
     CelllineVectorFreeReprogrammingFactors,  \
     VectorFreeReprogrammingFactor, \
     CelllineCharacterization,  \
+    CelllineCharacterizationMarkerExpression, \
+    CelllineCharacterizationMarkerExpressionMethod, \
+    CelllineCharacterizationMarkerExpressionMethodFile, \
     CelllineCharacterizationPluritest, \
     CelllineCharacterizationPluritestFile, \
     CelllineCharacterizationEpipluriscore, \
@@ -2195,6 +2198,157 @@ def parse_characterization_hpscscorecard_card(valuef, source, characterization_h
     characterization_hpscscorecard_card.save()
 
     return characterization_hpscscorecard_card.file_enc
+
+
+@inject_valuef
+def parse_characterization_marker_expression(valuef, source, cell_line):
+
+    cell_line_marker_expressions_old = list(cell_line.undifferentiated_marker_expression.all().order_by('id'))
+    cell_line_marker_expressions_old_ids = set([m.id for m in cell_line_marker_expressions_old])
+
+    # Parse marker expressions and save them
+
+    cell_line_marker_expressions_new = []
+
+    for marker in source.get('characterisation_marker_expression_data', []):
+        cell_line_marker_expressions_new.append(parse_marker_expression(marker, cell_line))
+
+    cell_line_marker_expressions_new_ids = set([m.id for m in cell_line_marker_expressions_new if m is not None])
+
+    # Delete existing marker expressions that are not present in new data
+
+    to_delete = cell_line_marker_expressions_old_ids - cell_line_marker_expressions_new_ids
+
+    for cell_line_marker_expression in [me for me in cell_line_marker_expressions_old if me.id in to_delete]:
+        logger.info('Deleting obsolete cell line marker expression %s' % cell_line_marker_expression)
+        cell_line_marker_expression.delete()
+
+    # Check for changes (dirty)
+
+    if (cell_line_marker_expressions_old_ids != cell_line_marker_expressions_new_ids):
+        return True
+    else:
+        def marker_expressions_equal(a, b):
+            return (
+                a.marker == b.marker and
+                a.expressed == b.expressed
+            )
+        for (old, new) in zip(cell_line_marker_expressions_old, cell_line_marker_expressions_new):
+            if not marker_expressions_equal(old, new):
+                return True
+
+    return False
+
+
+@inject_valuef
+def parse_marker_expression(valuef, source, cell_line):
+
+    if valuef('marker') is not None:
+        marker_name = valuef('marker').get('name')
+
+        if valuef('expressed') == '1':
+            marker_expressed_flag = True
+        elif valuef('not_expressed') == '1':
+            marker_expressed_flag = False
+        else:
+            marker_expressed_flag = None
+
+        cell_line_marker_expression, created = CelllineCharacterizationMarkerExpression.objects.update_or_create(
+            cell_line=cell_line,
+            marker=marker_name,
+            defaults={
+                'expressed': marker_expressed_flag,
+            }
+        )
+
+        list_old = list(cell_line_marker_expression.marker_expression_method.all().order_by('id'))
+        list_old_ids = set([m.id for m in list_old])
+
+        list_new = []
+
+        for method in source.get('methods', []):
+            list_new.append(parse_marker_expression_method(method, cell_line_marker_expression))
+
+        list_new_ids = set([m.id for m in list_new if m is not None])
+
+        # Delete existing disease variants that are not present in new data
+
+        to_delete = list_old_ids - list_new_ids
+
+        for marker_expression_method in [m for m in list_old if m.id in to_delete]:
+            logger.info('Deleting obsolete marker expression method %s' % marker_expression_method)
+            marker_expression_method.delete()
+
+        if created:
+            logger.info('Created new cell line marker expression: %s' % cell_line_marker_expression)
+
+        return cell_line_marker_expression
+
+    else:
+        return None
+
+
+@inject_valuef
+def parse_marker_expression_method(valuef, source, cell_line_marker_expression):
+
+    if valuef('name') is not None:
+
+        cell_line_marker_expression_method, created = CelllineCharacterizationMarkerExpressionMethod.objects.update_or_create(
+            marker_expression=cell_line_marker_expression,
+            name=valuef('name'),
+        )
+
+        # Parse files and save them
+
+        method_files_old = list(cell_line_marker_expression_method.marker_expression_method_files.all().order_by('id'))
+        method_files_old_encs = set([f.file_enc for f in method_files_old])
+
+        method_files_new = []
+        method_files_new_encs = set()
+
+        if valuef('uploads'):
+            for f in valuef('uploads'):
+                method_files_new.append(parse_marker_expression_method_file(f, cell_line_marker_expression_method))
+
+            method_files_new_encs = set(method_files_new)
+
+        # Delete existing files that are not present in new data
+
+        to_delete = method_files_old_encs - method_files_new_encs
+
+        for method_file in [f for f in method_files_old if f.file_enc in to_delete]:
+            logger.info('Deleting obsolete marker method file %s' % method_file)
+            method_file.file_doc.delete()
+            method_file.delete()
+
+        if created:
+            logger.info('Created new cell line marker expression method: %s' % cell_line_marker_expression_method)
+
+        return cell_line_marker_expression_method
+
+    else:
+        return None
+
+
+@inject_valuef
+def parse_marker_expression_method_file(valuef, source, cell_line_marker_expression_method):
+
+    marker_method_file, created = CelllineCharacterizationMarkerExpressionMethodFile.objects.get_or_create(
+        marker_expression_method=cell_line_marker_expression_method,
+        file_enc=valuef('filename_enc').split('.')[0]
+    )
+
+    if created:
+        current_enc = None
+    else:
+        current_enc = marker_method_file.file_enc
+
+    marker_method_file.file_enc = value_of_file(valuef('url'), valuef('filename'), marker_method_file.file_doc, current_enc)
+
+    marker_method_file.file_description = valuef('description')
+    marker_method_file.save()
+
+    return marker_method_file.file_enc
 
 
 # OLD fields

@@ -1148,14 +1148,55 @@ class DepositorDataFile(models.Model):
         return extension
 
 
+# Marker expression
+class CelllineCharacterizationMarkerExpression(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='undifferentiated_marker_expression')
+
+    marker = models.CharField(_(u'Marker'), max_length=100)
+    expressed = models.NullBooleanField(_(u'Expressed'))
+
+    class Meta:
+        verbose_name = _(u'Undifferentiated cells - marker expression')
+        verbose_name_plural = _(u'Undifferentiated cells - marker expressions')
+        ordering = ['cell_line']
+
+    def __unicode__(self):
+        return '%s (%s)' % (self.marker, self.cell_line)
+
+
+class CelllineCharacterizationMarkerExpressionMethod(DirtyFieldsMixin, models.Model):
+
+    marker_expression = models.ForeignKey(CelllineCharacterizationMarkerExpression, verbose_name=_(u'Marker expression'), related_name='marker_expression_method')
+
+    name = models.CharField(_(u'Method name'), max_length=500)
+
+    class Meta:
+        verbose_name = _(u'Marker expression method')
+        verbose_name_plural = _(u'Marker expression methods')
+        ordering = ['name']
+
+    def __unicode__(self):
+        return '%s (%s)' % (self.name, self.marker_expression)
+
+
+class CelllineCharacterizationMarkerExpressionMethodFile(DepositorDataFile):
+
+    marker_expression_method = models.ForeignKey(CelllineCharacterizationMarkerExpressionMethod, verbose_name=_(u'Marker expression method'), related_name='marker_expression_method_files')
+
+    class Meta:
+        verbose_name = _(u'Marker expression method file')
+        verbose_name_plural = _(u'Marker expression method files')
+        ordering = ['marker_expression_method']
+
+    def __unicode__(self):
+        return unicode(self.marker_expression_method)
+
+
 # Morphology images
 class CelllineCharacterizationUndifferentiatedMorphologyFile(DepositorDataFile):
 
     cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='undifferentiated_morphology_files')
-
-    # morphology_file = models.FileField(_(u'File'), upload_to=upload_to, null=True, blank=True)
-    # morphology_file_enc = models.CharField(_(u'File enc'), max_length=300, null=True, blank=True)
-    # morphology_file_description = models.TextField(_(u'File description'), null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line undifferentiated cells morphology file')
@@ -1189,10 +1230,6 @@ class CelllineCharacterizationPluritestFile(DepositorDataFile):
 
     pluritest = models.ForeignKey(CelllineCharacterizationPluritest, verbose_name=_(u'Cell line pluritest'), related_name='pluritest_files')
 
-    # pluritest_file = models.FileField(_(u'File'), upload_to=upload_to, null=True, blank=True)
-    # pluritest_file_enc = models.CharField(_(u'File enc'), max_length=300, null=True, blank=True)
-    # pluritest_file_description = models.TextField(_(u'File description'), null=True, blank=True)
-
     class Meta:
         verbose_name = _(u'Cell line Pluritest file')
         verbose_name_plural = _(u'Cell line Pluritest files')
@@ -1224,10 +1261,6 @@ class CelllineCharacterizationEpipluriscore(DirtyFieldsMixin, models.Model):
 class CelllineCharacterizationEpipluriscoreFile(DepositorDataFile):
 
     epipluriscore = models.ForeignKey(CelllineCharacterizationEpipluriscore, verbose_name=_(u'Cell line EpiPluriScore'), related_name='epipluriscore_files')
-
-    # epipluriscore_file = models.FileField(_(u'File'), upload_to=upload_to, null=True, blank=True)
-    # epipluriscore_file_enc = models.CharField(_(u'File enc'), max_length=300, null=True, blank=True)
-    # epipluriscore_file_description = models.TextField(_(u'File description'), null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line EpiPluriScore file')
@@ -1281,6 +1314,10 @@ class CelllineCharacterizationHpscScorecardScorecard(DepositorDataFile):
 
     def __unicode__(self):
         return unicode(self.hpsc_scorecard)
+
+
+
+
 
 
 class MarkerMoleculeBase(models.Model):

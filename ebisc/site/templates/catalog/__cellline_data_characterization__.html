@@ -2,104 +2,46 @@
 
 <tr><th colspan="2" class="title" id="characterization"><h2>Characterization</h2></th></tr>
 
-{% if cellline.celllinecharacterization.certificate_of_analysis_passage_number %}
-<tr><td class="label">Certificate of analysis passage number:</td><td>{{ cellline.celllinecharacterization.certificate_of_analysis_passage_number|default:"-" }}</td></tr>
-{% endif %}
+{% if cellline.undifferentiated_marker_expression.all or cellline.celllinecharacterizationpluritest or cellline.celllinecharacterizationepipluriscore or cellline.undifferentiated_morphology_files.all %}
+<tr><th class="sub-title"><h3>Analysis of Undifferentiated Cells</h3></th></tr>
 
-<tr>
-    <td class="label">Microbiology / Virology Screening:</td>
-    <td>
-        <table>
-            <tr>
-                <td>HIV 1:</td>
-                <td>{{ cellline.celllinecharacterization.get_screening_hiv1_display|default:"-" }}</td>
-            </tr>
-            <tr>
-                <td>HIV 2:</td>
-                <td>{{ cellline.celllinecharacterization.get_screening_hiv2_display|default:"-" }}</td>
-            </tr>
-            <tr>
-                <td>Hepatitis B:</td>
-                <td>{{ cellline.celllinecharacterization.get_screening_hepatitis_b_display|default:"-" }}</td>
-            </tr>
-            <tr>
-                <td>Hepatitis C:</td>
-                <td>{{ cellline.celllinecharacterization.get_screening_hepatitis_c_display|default:"-" }}</td>
-            </tr>
-            <tr>
-                <td>Mycoplasma:</td>
-                <td>{{ cellline.celllinecharacterization.get_screening_mycoplasma_display|default:"-" }}</td>
-            </tr>
-        </table>
-    </td>
-</tr>
-
-{% if cellline.undifferentiated_morphology_marker_imune or cellline.undifferentiated_morphology_marker_facs or cellline.undifferentiated_morphology_marker_rtpcr or cellline.undifferentiated_morphology_marker_morphology or cellline.undifferentiated_morphology_marker_expression_profile or cellline.celllinecharacterizationpluritest or cellline.celllinecharacterizationepipluriscore or cellline.undifferentiated_morphology_files.all %}
-<tr><th class="sub-title"><h3>Undifferentiated cells</h3></th></tr>
-
+{% if cellline.undifferentiated_marker_expression.all %}
 <tr>
     <td class="label">Marker expression:</td>
     <td>
-        {% if cellline.undifferentiated_morphology_marker_imune %}
-        <p><b>Immune/Markerstaining</b><br/>
-        Passage number: {{ cellline.undifferentiated_morphology_marker_imune.passage_number|default:'-' }}</p>
-        <table>
-        {% for molecule in cellline.undifferentiated_morphology_marker_imune.molecules.all %}
-        <tr><td>{{ molecule.molecule }}:</td><td class="center">{{ molecule.result }}</td></tr>
+      <table class="bordered">
+        <tr>
+          <th>Marker</th>
+          <th>Expressed</th>
+          <th>Methods</th>
+        </tr>
+        {% for marker in cellline.undifferentiated_marker_expression.all %}
+        <tr>
+          <td>{{ marker.marker }}</td>
+          <td>
+            {% if marker.expressed %}<i class="glyphicon glyphicon-ok success"></i>
+            {% elif marker.not_expressed %}<i class="glyphicon glyphicon-minus error"></i>
+            {% else %}<span class="user-note">Unknown</span>
+            {% endif %}
+          </td>
+          {% if marker.marker_expression_method.all %}
+          <td>
+            {% for method in marker.marker_expression_method.all %}
+            {{ method.name }}
+            {% if method.marker_expression_method_files.all %}
+            ({% for file in method.marker_expression_method_files.all %}<a href="{{ file.file_doc.url }}" target="_blank">{{ file.filename }}</a>{% if file.file_description %} - <span class="user-note">{{ file.file_description }}</span>{% endif %}{% if forloop.last %}{% else %}; {% endif %}{% endfor %})
+            {% endif %}{% if forloop.last %}{% else %}<br/>{% endif %}
+            {% endfor %}
+          </td>
+          {% else %}
+          <td></td>
+          {% endif %}
+        </tr>
         {% endfor %}
-        </table>
-        {% endif %}
-
-        {% if cellline.undifferentiated_morphology_marker_facs %}
-        <p><br/><b>FACS</b><br/>
-        Passage number: {{ cellline.undifferentiated_morphology_marker_facs.passage_number|default:'-' }}</p>
-        <table>
-        {% for molecule in cellline.undifferentiated_morphology_marker_facs.molecules.all %}
-        <tr><td>{{ molecule.molecule }}:</td><td class="center">{{ molecule.result }}</td></tr>
-        {% endfor %}
-        </table>
-        {% endif %}
-
-        {% if cellline.undifferentiated_morphology_marker_rtpcr %}
-        <p><br/><b>RT-PCR</b><br/>
-        Passage number: {{ cellline.undifferentiated_morphology_marker_rtpcr.passage_number|default:'-' }}</p>
-        <table>
-        {% for molecule in cellline.undifferentiated_morphology_marker_rtpcr.molecules.all %}
-        <tr><td>{{ molecule.molecule }}:</td><td class="center">{{ molecule.result }}</td></tr>
-        {% endfor %}
-        </table>
-        {% endif %}
-
-        {% if cellline.undifferentiated_morphology_marker_morphology %}
-        <p><br/><b>Morphology</b><br/>
-        Passage number: {{ cellline.undifferentiated_morphology_marker_morphology.passage_number|default:'-' }}<br/>
-        Description: {{ cellline.undifferentiated_morphology_marker_morphology.description|default:'-' }}<br/>
-        {% if cellline.undifferentiated_morphology_marker_morphology.data_url %}
-        File: <a href="{{ cellline.undifferentiated_morphology_marker_morphology.data_url }}">Image</a>
-        {% endif %}
-        {% endif %}
-
-        {% if cellline.undifferentiated_morphology_marker_expression_profile %}
-        <p><br/><b>Expression profiles (Omics)</b><br/>
-        Passage number: {{ cellline.undifferentiated_morphology_marker_expression_profile.passage_number|default:'-' }}<br/>
-        Method: {{ cellline.undifferentiated_morphology_marker_expression_profile.method|default:'-' }}<br/>
-        <table>
-        {% for molecule in undifferentiated_morphology_marker_expression_profile.molecules.all %}
-        <tr><td>{{ molecule.molecule }}:</td><td class="center">{{ molecule.result }}</td></tr>
-        {% endfor %}
-        </table>
-        Data:
-        {% if undifferentiated_morphology_marker_expression_profile.uploaded_data_url %}
-            <a href="{{ cellline.undifferentiated_morphology_marker_expression_profile.uploaded_data_url }}">Data file</a>
-        {% endif %}
-        {% if undifferentiated_morphology_marker_expression_profile.uploaded_data_url and cellline.undifferentiated_morphology_marker_expression_profile.data_url %}, {% endif %}
-        {% if cellline.undifferentiated_morphology_marker_expression_profile.data_url %}
-            <a href="{{ cellline.undifferentiated_morphology_marker_expression_profile.data_url }}">Link</a>
-        {% endif %}
-        {% endif %}
-
+      </table>
     </td>
 </tr>
+{% endif %}
 
 {% if cellline.celllinecharacterizationepipluriscore and cellline.celllinecharacterizationepipluriscore.score %}
 <tr>
@@ -148,7 +90,7 @@
     {% if cellline.celllinecharacterizationepipluriscore.epipluriscore_files.all %}
     <br/>Report: {% if not cellline.celllinecharacterizationepipluriscore.epipluriscore_files.all.count == 1 %}<br/>{% endif %}
     {% for report in cellline.celllinecharacterizationepipluriscore.epipluriscore_files.all %}
-    <a href="{{ report.file_doc.url }}">{{ report.filename }}</a>{% if report.file_description %} - {{ report.file_description }}{% endif %}<br/>
+    <a href="{{ report.file_doc.url }}" target="_blank">{{ report.filename }}</a>{% if report.file_description %} - <span class="user-note">{{ report.file_description }}</span>{% endif %}<br/>
     {% endfor %}
     {% endif %}
   </td>
@@ -230,13 +172,13 @@
     {% if cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_reports.all %}
     Data analysis report: {% if not cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_reports.all.count == 1 %}<br/>{% endif %}
     {% for report in cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_reports.all %}
-    <a href="{{ report.file_doc.url }}">{{ report.filename }}</a>{% if report.file_description %} - {{ report.file_description }}{% endif %}<br/>
+    <a href="{{ report.file_doc.url }}" target="_blank">{{ report.filename }}</a>{% if report.file_description %} - <span class="user-note">{{ report.file_description }}</span>{% endif %}<br/>
     {% endfor %}
     {% endif %}
     {% if cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_files.all %}
     Scorecard: {% if not cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_files.all.count == 1 %}<br/>{% endif %}
     {% for report in cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_files.all %}
-    <a href="{{ report.file_doc.url }}">{{ report.filename }}</a>{% if report.file_description %} - {{ report.file_description }}{% endif %}<br/>
+    <a href="{{ report.file_doc.url }}" target="_blank">{{ report.filename }}</a>{% if report.file_description %} - <span class="user-note">{{ report.file_description }}</span>{% endif %}<br/>
     {% endfor %}
     {% endif %}
     </p>
@@ -259,7 +201,7 @@
     {% if cellline.celllinecharacterizationpluritest.pluritest_files.all %}
     <br/>Report: {% if not cellline.celllinecharacterizationpluritest.pluritest_files.all.count == 1 %}<br/>{% endif %}
     {% for report in cellline.celllinecharacterizationpluritest.pluritest_files.all %}
-    <a target="_blank" href="{{ report.file_doc.url }}">{{ report.filename }}</a>{% if report.file_description %} - {{ report.file_description }}{% endif %}<br/>
+    <a target="_blank" href="{{ report.file_doc.url }}">{{ report.filename }}</a>{% if report.file_description %} - <span class="user-note">{{ report.file_description }}</span>{% endif %}<br/>
     {% endfor %}
     {% endif %}
 
@@ -282,11 +224,11 @@
     {% thumbnail file.file_doc "250" as img %}
     <p><a href="{{ file.file_doc.url }}" target="_blank"><img src="{{ img.url }}" width="{{ img.width }}" height="{{ img.height }}"></a>
     {% endthumbnail %}
-    {% if file.file_description %}<br/>{{ file.file_description }}{% endif %}
+    {% if file.file_description %}<br/><span class="user-note">{{ file.file_description }}</span>{% endif %}
     </p>
     <!-- Not images -->
     {% else %}
-    <p><a href="{{ file.file_doc.url }}" target="_blank">{{ file.filename }}</a>{% if file.file_description %} - {{ file.file_description }}{% endif %}
+    <p><a href="{{ file.file_doc.url }}" target="_blank">{{ file.filename }}</a>{% if file.file_description %} - <span class="user-note">{{ file.file_description }}</span>{% endif %}
     </p>
     {% endif %}
     {% endfor %}
@@ -294,4 +236,28 @@
 </tr>
 {% endif %}
 
+{% endif %}
+
+{% if cellline.celllinecharacterization %}
+<tr><th class="sub-title"><h3>Microbiology / Virus Screening</h3></th></tr>
+<tr>
+    <td class="label">HIV 1:</td>
+    <td>{{ cellline.celllinecharacterization.get_screening_hiv1_display|default:"-" }}</td>
+</tr>
+<tr>
+    <td class="label">HIV 2:</td>
+    <td>{{ cellline.celllinecharacterization.get_screening_hiv2_display|default:"-" }}</td>
+</tr>
+<tr>
+    <td class="label">Hepatitis B:</td>
+    <td>{{ cellline.celllinecharacterization.get_screening_hepatitis_b_display|default:"-" }}</td>
+</tr>
+<tr>
+    <td class="label">Hepatitis C:</td>
+    <td>{{ cellline.celllinecharacterization.get_screening_hepatitis_c_display|default:"-" }}</td>
+</tr>
+<tr>
+    <td class="label">Mycoplasma:</td>
+    <td>{{ cellline.celllinecharacterization.get_screening_mycoplasma_display|default:"-" }}</td>
+</tr>
 {% endif %}
