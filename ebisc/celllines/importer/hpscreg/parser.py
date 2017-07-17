@@ -53,6 +53,8 @@ from ebisc.celllines.models import  \
     CelllineCharacterizationHpscScorecard, \
     CelllineCharacterizationHpscScorecardReport, \
     CelllineCharacterizationHpscScorecardScorecard, \
+    CelllineCharacterizationRNASequencing, \
+    CelllineCharacterizationGeneExpressionArray, \
     UndifferentiatedMorphologyMarkerImune,  \
     UndifferentiatedMorphologyMarkerImuneMolecule,  \
     UndifferentiatedMorphologyMarkerRtPcr,  \
@@ -2356,6 +2358,106 @@ def parse_marker_expression_method_file(valuef, source, cell_line_marker_express
     marker_method_file.save()
 
     return marker_method_file.file_enc
+
+
+# RNA sequencing
+@inject_valuef
+def parse_characterization_rna_sequencing(valuef, source, cell_line):
+
+    if valuef('characterisation_rna_sequencing_data'):
+        if valuef('characterisation_rna_sequencing_data').get('data_url'):
+
+            cell_line_characterization_rna_sequencing, created = CelllineCharacterizationRNASequencing.objects.update_or_create(
+                cell_line=cell_line,
+                defaults={
+                    'data_url': valuef('characterisation_rna_sequencing_data').get('data_url')
+                },
+            )
+
+            if created or cell_line_characterization_rna_sequencing.is_dirty():
+                if created:
+                    logger.info('Added cell line RNA sequencing link')
+                else:
+                    logger.info('Updated cell line RNA sequencing link')
+
+                cell_line_characterization_rna_sequencing.save()
+
+                return True
+
+            else:
+                return False
+
+        else:
+            try:
+                rs = CelllineCharacterizationRNASequencing.objects.get(cell_line=cell_line)
+                rs.delete()
+
+                logger.info('Deleting cell line RNA sequencing link')
+                return True
+
+            except CelllineCharacterizationRNASequencing.DoesNotExist:
+                return False
+
+    else:
+        try:
+            rs = CelllineCharacterizationRNASequencing.objects.get(cell_line=cell_line)
+            rs.delete()
+
+            logger.info('Deleting cell line RNA sequencing link')
+            return True
+
+        except CelllineCharacterizationRNASequencing.DoesNotExist:
+            return False
+
+
+# Gene expression array
+@inject_valuef
+def parse_characterization_gene_expression_array(valuef, source, cell_line):
+
+    if valuef('characterisation_gene_expression_array_data'):
+        if valuef('characterisation_gene_expression_array_data').get('data_url'):
+
+            cell_line_characterization_gene_expression_array, created = CelllineCharacterizationGeneExpressionArray.objects.update_or_create(
+                cell_line=cell_line,
+                defaults={
+                    'data_url': valuef('characterisation_gene_expression_array_data').get('data_url')
+                },
+            )
+
+            if created or cell_line_characterization_gene_expression_array.is_dirty():
+                if created:
+                    logger.info('Added cell line Gene Expression Array link')
+                else:
+                    logger.info('Updated cell line Gene Expression Array link')
+
+                cell_line_characterization_gene_expression_array.save()
+
+                return True
+
+            else:
+                return False
+
+        else:
+            try:
+                gea = CelllineCharacterizationGeneExpressionArray.objects.get(cell_line=cell_line)
+                gea.delete()
+
+                logger.info('Deleting cell line Gene Expression Array link')
+                return True
+
+            except CelllineCharacterizationGeneExpressionArray.DoesNotExist:
+                return False
+
+    else:
+        try:
+            gea = CelllineCharacterizationGeneExpressionArray.objects.get(cell_line=cell_line)
+            gea.delete()
+
+            logger.info('Deleting cell line Gene Expression Array link')
+            return True
+
+        except CelllineCharacterizationGeneExpressionArray.DoesNotExist:
+            return False
 
 
 # OLD fields

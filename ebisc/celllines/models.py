@@ -1318,6 +1318,36 @@ class CelllineCharacterizationHpscScorecardScorecard(DepositorDataFile):
         return unicode(self.hpsc_scorecard)
 
 
+# RNA Sequencing
+class CelllineCharacterizationRNASequencing(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
+    data_url = models.CharField(_(u'RNA Sequencing data link'), max_length=500, blank=True, default='')
+
+    class Meta:
+        verbose_name = _(u'Link to RNA Sequencing data')
+        verbose_name_plural = _(u'Links to RNA Sequencing data')
+        ordering = ['data_url']
+
+    def __unicode__(self):
+        return u'%s' % (self.data_url,)
+
+
+# Gene Expression Array
+class CelllineCharacterizationGeneExpressionArray(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
+    data_url = models.CharField(_(u'Gene Expression Array data link'), max_length=500, blank=True, default='')
+
+    class Meta:
+        verbose_name = _(u'Link to Gene Expression Array data')
+        verbose_name_plural = _(u'Links to Gene Expression Array data')
+        ordering = ['data_url']
+
+    def __unicode__(self):
+        return u'%s' % (self.data_url,)
+
+
 # Characterisation (Old fields)
 class MarkerMoleculeBase(models.Model):
 

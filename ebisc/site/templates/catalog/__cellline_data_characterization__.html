@@ -2,6 +2,22 @@
 
 <tr><th colspan="2" class="title" id="characterization"><h2>Characterization</h2></th></tr>
 
+{% if cellline.celllinecharacterizationrnasequencing or cellline.celllinecharacterizationgeneexpressionarray %}
+<tr><th class="sub-title"><h3>Transcriptome Characterisation</h3></th></tr>
+{% if cellline.celllinecharacterizationrnasequencing %}
+<tr>
+  <td class="label">RNA Sequencing:</td>
+  <td>{{ cellline.celllinecharacterizationrnasequencing.data_url|urlizetrunc:50 }}</td>
+</tr>
+{% endif %}
+{% if cellline.celllinecharacterizationgeneexpressionarray %}
+<tr>
+  <td class="label">Gene Expression Array:</td>
+  <td>{{ cellline.celllinecharacterizationgeneexpressionarray.data_url|urlizetrunc:50 }}</td>
+</tr>
+{% endif %}
+{% endif %}
+
 {% if cellline.undifferentiated_marker_expression.all or cellline.celllinecharacterizationpluritest or cellline.celllinecharacterizationepipluriscore or cellline.undifferentiated_morphology_files.all %}
 <tr><th class="sub-title"><h3>Analysis of Undifferentiated Cells</h3></th></tr>
 
