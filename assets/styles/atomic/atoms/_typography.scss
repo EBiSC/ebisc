@@ -114,6 +114,10 @@ hr {
   }
 }
 
+.lighter-gray {
+  color: lighten($color-text, 50%);
+}
+
 .light-gray {
   color: lighten($color-text, 30%);
 }

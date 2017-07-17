@@ -7,39 +7,45 @@
 
 {% if cellline.undifferentiated_marker_expression.all %}
 <tr>
-    <td class="label">Marker expression:</td>
-    <td>
-      <table class="bordered">
-        <tr>
-          <th>Marker</th>
-          <th>Expressed</th>
-          <th>Methods</th>
-        </tr>
-        {% for marker in cellline.undifferentiated_marker_expression.all %}
-        <tr>
-          <td>{{ marker.marker }}</td>
-          <td>
-            {% if marker.expressed %}<i class="glyphicon glyphicon-ok success"></i>
-            {% elif marker.not_expressed %}<i class="glyphicon glyphicon-minus error"></i>
-            {% else %}<span class="user-note">Unknown</span>
-            {% endif %}
-          </td>
-          {% if marker.marker_expression_method.all %}
-          <td>
-            {% for method in marker.marker_expression_method.all %}
-            {{ method.name }}
-            {% if method.marker_expression_method_files.all %}
-            ({% for file in method.marker_expression_method_files.all %}<a href="{{ file.file_doc.url }}" target="_blank">{{ file.filename }}</a>{% if file.file_description %} - <span class="user-note">{{ file.file_description }}</span>{% endif %}{% if forloop.last %}{% else %}; {% endif %}{% endfor %})
-            {% endif %}{% if forloop.last %}{% else %}<br/>{% endif %}
-            {% endfor %}
-          </td>
-          {% else %}
-          <td></td>
-          {% endif %}
-        </tr>
+  <td class="label">Marker expression:</td>
+  <td>
+    <table class="bordered bottom-margin small-heading">
+      <tr>
+        <th>Marker</th>
+        <th>Expressed</th>
+        {% for method in marker_expression_methods %}
+        <th>{{ method }}</th>
         {% endfor %}
-      </table>
-    </td>
+      </tr>
+      {% for marker_expression, methods in undiff_marker_expression.items %}
+      <tr>
+        <td><nobr>{{ marker_expression.marker }}</nobr></td>
+        <td>{% if marker_expression.expressed == True %}
+          <i class="glyphicon glyphicon-ok success"></i> <span class="user-note">Yes</span>
+          {% elif marker_expression.expressed == False %}
+          <i class="glyphicon glyphicon-minus error"></i> <span class="user-note">No</span>
+          {% else %}
+          <span class="user-note">Unknown</span>
+          {% endif %}</td>
+        {% for method, expressions in methods.items %}
+        <td>
+          {% if expressions %}<i class="glyphicon glyphicon-ok lighter-gray"></i>
+
+          {% for expression in expressions %}
+          {% if expression.marker_expression_method_files.all %} -
+          {% for file in expression.marker_expression_method_files.all %}
+          <a href="{{ file.file_doc.url }}" target="_blank"><i class="glyphicon glyphicon-file lighter-gray"></i></a>{% if forloop.last %}{% else %}, {% endif %}
+          {% endfor %}
+          {% endif %}
+          {% endfor %}
+
+          {% endif %}
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+  </td>
 </tr>
 {% endif %}
 
@@ -49,7 +55,7 @@
   <td>
     <p>Score: {{ cellline.celllinecharacterizationepipluriscore.score }}</p>
 
-    <table class="bordered">
+    <table class="bordered bottom-margin">
       <tr>
         <th>Marker</th>
         <th>Present</th>
@@ -66,7 +72,7 @@
           <td class="center"></td>
           {% else %}
           <td class="center"></td>
-          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"><i class="glyphicon glyphicon-ok lighter-gray"></i></td>
           {% endif %}
         {% endif %}
       </tr>
@@ -81,7 +87,7 @@
           <td class="center"></td>
           {% else %}
           <td class="center"></td>
-          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"><i class="glyphicon glyphicon-ok lighter-gray"></i></td>
           {% endif %}
         {% endif %}
       </tr>
@@ -101,7 +107,7 @@
 <tr>
   <td class="label">hPSC Scorecard&trade;:</td>
   <td>
-    <table class="bordered">
+    <table class="bordered bottom-margin">
       <tr>
         <th></th>
         <th>Positive</th>
@@ -118,7 +124,7 @@
           <td class="center"></td>
           {% else %}
           <td class="center"></td>
-          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"><i class="glyphicon glyphicon-ok lighter-gray"></i></td>
           {% endif %}
         {% endif %}
       </tr>
@@ -133,7 +139,7 @@
           <td class="center"></td>
           {% else %}
           <td class="center"></td>
-          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"><i class="glyphicon glyphicon-ok lighter-gray"></i></td>
           {% endif %}
         {% endif %}
       </tr>
@@ -148,7 +154,7 @@
           <td class="center"></td>
           {% else %}
           <td class="center"></td>
-          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"><i class="glyphicon glyphicon-ok lighter-gray"></i></td>
           {% endif %}
         {% endif %}
       </tr>
@@ -163,7 +169,7 @@
           <td class="center"></td>
           {% else %}
           <td class="center"></td>
-          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"><i class="glyphicon glyphicon-ok lighter-gray"></i></td>
           {% endif %}
         {% endif %}
       </tr>

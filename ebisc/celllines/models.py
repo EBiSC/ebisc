@@ -1123,6 +1123,7 @@ class CelllineCharacterization(DirtyFieldsMixin, models.Model):
     def __unicode__(self):
         return unicode(self.cell_line)
 
+
 # Analysis of Undifferentiated Cells
 
 # Depositor provided files
@@ -1153,6 +1154,7 @@ class CelllineCharacterizationMarkerExpression(DirtyFieldsMixin, models.Model):
 
     cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='undifferentiated_marker_expression')
 
+    marker_id = models.IntegerField(_(u'Marker ID'), default=0)
     marker = models.CharField(_(u'Marker'), max_length=100)
     expressed = models.NullBooleanField(_(u'Expressed'))
 
@@ -1316,10 +1318,7 @@ class CelllineCharacterizationHpscScorecardScorecard(DepositorDataFile):
         return unicode(self.hpsc_scorecard)
 
 
-
-
-
-
+# Characterisation (Old fields)
 class MarkerMoleculeBase(models.Model):
 
     RESULT_CHOICES = (

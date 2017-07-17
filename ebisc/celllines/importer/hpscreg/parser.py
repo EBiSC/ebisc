@@ -2114,7 +2114,6 @@ def parse_characterization_hpscscorecard(valuef, source, cell_line):
 
         characterization_hpscscorecard_cards_new_encs = set(characterization_hpscscorecard_cards_new)
 
-
         # Delete existing files that are not present in new data
 
         # Data files
@@ -2125,14 +2124,13 @@ def parse_characterization_hpscscorecard(valuef, source, cell_line):
             characterization_hpscscorecard_file.file_doc.delete()
             characterization_hpscscorecard_file.delete()
 
-        # Data files
+        # hPSC Scorecards files
         to_delete = characterization_hpscscorecard_cards_old_encs - characterization_hpscscorecard_cards_new_encs
 
         for characterization_hpscscorecard_card in [f for f in characterization_hpscscorecard_cards_old if f.file_enc in to_delete]:
             logger.info('Deleting obsolete hPSC Scorecard %s' % characterization_hpscscorecard_card)
             characterization_hpscscorecard_card.file_doc.delete()
             characterization_hpscscorecard_card.delete()
-
 
         # Save
 
@@ -2203,8 +2201,8 @@ def parse_characterization_hpscscorecard_card(valuef, source, characterization_h
 @inject_valuef
 def parse_characterization_marker_expression(valuef, source, cell_line):
 
-    cell_line_marker_expressions_old = list(cell_line.undifferentiated_marker_expression.all().order_by('id'))
-    cell_line_marker_expressions_old_ids = set([m.id for m in cell_line_marker_expressions_old])
+    cell_line_marker_expressions_old = list(cell_line.undifferentiated_marker_expression.all().order_by('marker_id'))
+    cell_line_marker_expressions_old_ids = set([m.marker_id for m in cell_line_marker_expressions_old])
 
     # Parse marker expressions and save them
 
@@ -2213,13 +2211,13 @@ def parse_characterization_marker_expression(valuef, source, cell_line):
     for marker in source.get('characterisation_marker_expression_data', []):
         cell_line_marker_expressions_new.append(parse_marker_expression(marker, cell_line))
 
-    cell_line_marker_expressions_new_ids = set([m.id for m in cell_line_marker_expressions_new if m is not None])
+    cell_line_marker_expressions_new_ids = set([m.marker_id for m in cell_line_marker_expressions_new if m is not None])
 
     # Delete existing marker expressions that are not present in new data
 
     to_delete = cell_line_marker_expressions_old_ids - cell_line_marker_expressions_new_ids
 
-    for cell_line_marker_expression in [me for me in cell_line_marker_expressions_old if me.id in to_delete]:
+    for cell_line_marker_expression in [me for me in cell_line_marker_expressions_old if me.marker_id in to_delete]:
         logger.info('Deleting obsolete cell line marker expression %s' % cell_line_marker_expression)
         cell_line_marker_expression.delete()
 
@@ -2227,15 +2225,18 @@ def parse_characterization_marker_expression(valuef, source, cell_line):
 
     if (cell_line_marker_expressions_old_ids != cell_line_marker_expressions_new_ids):
         return True
-    else:
-        def marker_expressions_equal(a, b):
-            return (
-                a.marker == b.marker and
-                a.expressed == b.expressed
-            )
-        for (old, new) in zip(cell_line_marker_expressions_old, cell_line_marker_expressions_new):
-            if not marker_expressions_equal(old, new):
-                return True
+
+    # TODO - add checking for updates once hPSCreg export is fixed
+    # else:
+    #     def marker_expressions_equal(a, b):
+    #         return (
+    #             a.marker_id == b.marker_id and
+    #             a.marker == b.marker and
+    #             a.expressed == b.expressed
+    #         )
+    #     for (old, new) in zip(cell_line_marker_expressions_old, cell_line_marker_expressions_new):
+    #         if not marker_expressions_equal(old, new):
+    #             return True
 
     return False
 
@@ -2243,7 +2244,8 @@ def parse_characterization_marker_expression(valuef, source, cell_line):
 @inject_valuef
 def parse_marker_expression(valuef, source, cell_line):
 
-    if valuef('marker') is not None:
+    if valuef('marker') is not None and valuef('marker_id') is not None:
+        marker_id = valuef('marker_id')
         marker_name = valuef('marker').get('name')
 
         if valuef('expressed') == '1':
@@ -2255,29 +2257,34 @@ def parse_marker_expression(valuef, source, cell_line):
 
         cell_line_marker_expression, created = CelllineCharacterizationMarkerExpression.objects.update_or_create(
             cell_line=cell_line,
+            marker_id=marker_id,
             marker=marker_name,
             defaults={
                 'expressed': marker_expressed_flag,
             }
         )
 
-        list_old = list(cell_line_marker_expression.marker_expression_method.all().order_by('id'))
-        list_old_ids = set([m.id for m in list_old])
-
-        list_new = []
-
         for method in source.get('methods', []):
-            list_new.append(parse_marker_expression_method(method, cell_line_marker_expression))
+            parse_marker_expression_method(method, cell_line_marker_expression)
 
-        list_new_ids = set([m.id for m in list_new if m is not None])
+        # TODO - add checking for updates once hPSCreg export is fixed
+        # list_old = list(cell_line_marker_expression.marker_expression_method.all().order_by('id'))
+        # list_old_ids = set([m.id for m in list_old])
+        #
+        # list_new = []
+        #
+        # for method in source.get('methods', []):
+        #     list_new.append(parse_marker_expression_method(method, cell_line_marker_expression))
+        #
+        # list_new_ids = set([m.id for m in list_new if m is not None])
 
         # Delete existing disease variants that are not present in new data
 
-        to_delete = list_old_ids - list_new_ids
-
-        for marker_expression_method in [m for m in list_old if m.id in to_delete]:
-            logger.info('Deleting obsolete marker expression method %s' % marker_expression_method)
-            marker_expression_method.delete()
+        # to_delete = list_old_ids - list_new_ids
+        #
+        # for marker_expression_method in [m for m in list_old if m.id in to_delete]:
+        #     logger.info('Deleting obsolete marker expression method %s' % marker_expression_method)
+        #     marker_expression_method.delete()
 
         if created:
             logger.info('Created new cell line marker expression: %s' % cell_line_marker_expression)
