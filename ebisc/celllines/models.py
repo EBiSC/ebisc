@@ -1348,6 +1348,88 @@ class CelllineCharacterizationGeneExpressionArray(DirtyFieldsMixin, models.Model
         return u'%s' % (self.data_url,)
 
 
+# Differentiation potency
+class CelllineCharacterizationDifferentiationPotency(DirtyFieldsMixin, models.Model):
+
+    GERMLAYER_CHOICES = (
+        ('endoderm', _(u'Endoderm')),
+        ('mesoderm', _(u'Mesoderm')),
+        ('ectoderm', _(u'Ectoderm')),
+    )
+
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='differentiation_potency_germ_layers')
+    germ_layer = models.CharField(_(u'Germ layer'), max_length=20, choices=GERMLAYER_CHOICES)
+
+    class Meta:
+        verbose_name = _(u'Germ layer')
+        verbose_name_plural = _(u'Germ layers')
+        ordering = ['germ_layer']
+
+    def __unicode__(self):
+        return u'%s' % (self.germ_layer,)
+
+
+class CelllineCharacterizationDifferentiationPotencyCellType(DirtyFieldsMixin, models.Model):
+
+    germ_layer = models.ForeignKey(CelllineCharacterizationDifferentiationPotency, verbose_name=_(u'Germ layer'), related_name='germ_layer_cell_types')
+    name = models.CharField(_(u'Name'), max_length=200, default='')
+    in_vivo_teratoma_flag = models.NullBooleanField(_(u'In vivo teratoma'))
+    in_vitro_spontaneous_differentiation_flag = models.NullBooleanField(_(u'In vitro spontaneous differentiation'))
+    in_vitro_directed_differentiation_flag = models.NullBooleanField(_(u'In vitro directed differentiation'))
+    scorecard_flag = models.NullBooleanField(_(u'Scorecard'))
+    other_flag = models.NullBooleanField(_(u'Other'))
+    transcriptome_data = models.CharField(_(u'Link to transcriptome data'), max_length=500, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Diferentiation potency cell type')
+        verbose_name_plural = _(u'Diferentiation potency cell types')
+        ordering = ['name']
+
+    def __unicode__(self):
+        return u'%s' % (self.name,)
+
+
+class CelllineCharacterizationDifferentiationPotencyCellTypeMarker(DirtyFieldsMixin, models.Model):
+
+    cell_type = models.ForeignKey(CelllineCharacterizationDifferentiationPotencyCellType, verbose_name=_(u'Cell type'), related_name='germ_layer_cell_type_markers')
+    name = models.CharField(_(u'Name'), max_length=100, default='')
+    expressed = models.NullBooleanField(_(u'Expressed'))
+
+    class Meta:
+        verbose_name = _(u'Diferentiation potency cell type marker')
+        verbose_name_plural = _(u'Diferentiation potency cell type markers')
+        ordering = ['name']
+
+    def __unicode__(self):
+        return u'%s' % (self.name,)
+
+
+class CelllineCharacterizationDifferentiationPotencyMorphologyFile(DepositorDataFile):
+
+    cell_type = models.ForeignKey(CelllineCharacterizationDifferentiationPotencyCellType, verbose_name=_(u'Cell type'), related_name='germ_layer_cell_type_morphology_files')
+
+    class Meta:
+        verbose_name = _(u'Diferentiation potency cell type morphology file')
+        verbose_name_plural = _(u'Diferentiation potency cell type morphology files')
+        ordering = ['cell_type']
+
+    def __unicode__(self):
+        return u'%s' % (self.cell_type, )
+
+
+class CelllineCharacterizationDifferentiationPotencyProtocolFile(DepositorDataFile):
+
+    cell_type = models.ForeignKey(CelllineCharacterizationDifferentiationPotencyCellType, verbose_name=_(u'Cell type'), related_name='germ_layer_cell_type_protocol_files')
+
+    class Meta:
+        verbose_name = _(u'Diferentiation potency cell type protocol file')
+        verbose_name_plural = _(u'Diferentiation potency cell type protocol files')
+        ordering = ['cell_type']
+
+    def __unicode__(self):
+        return u'%s' % (self.cell_type, )
+
+
 # Characterisation (Old fields)
 class MarkerMoleculeBase(models.Model):
 

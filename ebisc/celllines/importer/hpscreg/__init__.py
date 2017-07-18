@@ -124,6 +124,7 @@ def import_cellline(source):
         parser.parse_characterization_hpscscorecard(source, cell_line),
         parser.parse_characterization_rna_sequencing(source, cell_line),
         parser.parse_characterization_gene_expression_array(source, cell_line),
+        parser.parse_characterization_differentiation_potency(source, cell_line),
         check_availability_on_ecacc(cell_line),
     ]
 

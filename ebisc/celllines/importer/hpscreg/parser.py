@@ -55,6 +55,11 @@ from ebisc.celllines.models import  \
     CelllineCharacterizationHpscScorecardScorecard, \
     CelllineCharacterizationRNASequencing, \
     CelllineCharacterizationGeneExpressionArray, \
+    CelllineCharacterizationDifferentiationPotency, \
+    CelllineCharacterizationDifferentiationPotencyCellType, \
+    CelllineCharacterizationDifferentiationPotencyCellTypeMarker, \
+    CelllineCharacterizationDifferentiationPotencyMorphologyFile, \
+    CelllineCharacterizationDifferentiationPotencyProtocolFile, \
     UndifferentiatedMorphologyMarkerImune,  \
     UndifferentiatedMorphologyMarkerImuneMolecule,  \
     UndifferentiatedMorphologyMarkerRtPcr,  \
@@ -2458,6 +2463,127 @@ def parse_characterization_gene_expression_array(valuef, source, cell_line):
 
         except CelllineCharacterizationGeneExpressionArray.DoesNotExist:
             return False
+
+
+# Differentiation potency
+@inject_valuef
+def parse_characterization_differentiation_potency(valuef, source, cell_line):
+
+    germ_layer_data = (
+        ('endoderm', 'characterisation_differentiation_potency_endoderm_data'),
+        ('mesoderm', 'characterisation_differentiation_potency_mesoderm_data'),
+        ('ectoderm', 'characterisation_differentiation_potency_ectoderm_data'),
+    )
+
+    for data in germ_layer_data:
+        if valuef(data[1]):
+            if valuef(data[1]).get('detected_cell_types'):
+                germ_layer, created = CelllineCharacterizationDifferentiationPotency.objects.get_or_create(cell_line=cell_line, germ_layer=data[0])
+
+                cell_types_old = CelllineCharacterizationDifferentiationPotencyCellType.objects.filter(germ_layer=germ_layer)
+
+                cell_types_old_names = set([ct.name for ct in cell_types_old])
+
+                cell_types_new = []
+
+                for cell_type in valuef(data[1]).get('detected_cell_types', []):
+                    cell_types_new.append(parse_characterization_differentiation_potency_cell_type(cell_type, germ_layer))
+
+                cell_types_new_names = set([ct.name for ct in cell_types_new])
+
+                # Delete old cell types
+                to_delete = cell_types_old_names - cell_types_new_names
+
+                for cell_type_deleted in [ct for ct in cell_types_old if ct.name in to_delete]:
+                    logger.info('Deleting obsolete cell line differentation potency cell type %s' % cell_type_deleted)
+                    cell_type_deleted.delete()
+
+        else:
+            try:
+                d = CelllineCharacterizationDifferentiationPotency.objects.get(cell_line=cell_line, germ_layer=data[0])
+                d.delete()
+
+                logger.info('Deleted cell line Differentiation potency %s' % (data[0],))
+                return True
+
+            except CelllineCharacterizationDifferentiationPotency.DoesNotExist:
+                return False
+
+
+@inject_valuef
+def parse_characterization_differentiation_potency_cell_type(valuef, source, germ_layer):
+
+    cell_type, created = CelllineCharacterizationDifferentiationPotencyCellType.objects.update_or_create(
+        germ_layer=germ_layer,
+        name=valuef('ont_name'),
+        defaults={
+            'in_vivo_teratoma_flag': valuef('in_vivo_teratoma_flag', 'nullbool'),
+            'in_vitro_spontaneous_differentiation_flag': valuef('in_vitro_spontaneous_differentiation_flag', 'nullbool'),
+            'in_vitro_directed_differentiation_flag': valuef('in_vitro_directed_differentiation_flag', 'nullbool'),
+            'scorecard_flag': valuef('scorecard_flag', 'nullbool'),
+            'other_flag': valuef('other_flag', 'nullbool'),
+            'transcriptome_data': valuef('transcriptome_data_url'),
+        }
+    )
+
+    markers_old = CelllineCharacterizationDifferentiationPotencyCellTypeMarker.objects.filter(cell_type=cell_type)
+
+    marker_names_old = set([m.name for m in CelllineCharacterizationDifferentiationPotencyCellTypeMarker.objects.filter(cell_type=cell_type)])
+
+    markers_new = []
+
+    for marker in source.get('markers', []):
+        markers_new.append(parse_characterization_differentiation_potency_cell_type_marker(marker, cell_type))
+
+    marker_names_new = set([m.name for m in markers_new])
+
+    # Delete old markers
+    to_delete = marker_names_old - marker_names_new
+
+    for marker_deleted in [m for m in markers_old if m.name in to_delete]:
+        logger.info('Deleting obsolete cell line differentation potency marker %s' % marker_deleted)
+        marker_deleted.delete()
+
+    # Check if dirty and save
+    if created or cell_type.is_dirty(check_relationship=True):
+        if created:
+            logger.info('Added cell line Differentiation potency cell type')
+        else:
+            logger.info('Updated cell line Differentiation potency cell type')
+
+        cell_type.save()
+
+    return cell_type
+
+
+@inject_valuef
+def parse_characterization_differentiation_potency_cell_type_marker(valuef, source, cell_type):
+
+    expressed_value = None
+
+    if valuef('expressed') == '1':
+        expressed_value = True
+
+    if valuef('not_expressed') == '1':
+        expressed_value = False
+
+    marker, created = CelllineCharacterizationDifferentiationPotencyCellTypeMarker.objects.update_or_create(
+        cell_type=cell_type,
+        name=valuef('name'),
+        defaults={
+            'expressed': expressed_value,
+        }
+    )
+
+    if created or marker.is_dirty():
+        if created:
+            logger.info('Added cell line Differentiation potency cell type marker')
+        else:
+            logger.info('Updated cell line Differentiation potency cell type marker')
+
+        marker.save()
+
+    return marker
 
 
 # OLD fields

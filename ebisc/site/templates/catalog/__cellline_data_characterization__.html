@@ -2,22 +2,75 @@
 
 <tr><th colspan="2" class="title" id="characterization"><h2>Characterization</h2></th></tr>
 
-{% if cellline.celllinecharacterizationrnasequencing or cellline.celllinecharacterizationgeneexpressionarray %}
-<tr><th class="sub-title"><h3>Transcriptome Characterisation</h3></th></tr>
-{% if cellline.celllinecharacterizationrnasequencing %}
+
+<!-- Differentiation potency -->
+{% if cellline.differentiation_potency_germ_layers.all %}
+<tr><th class="sub-title"><h3>Differentiation potency</h3></th></tr>
+{% for germ_layer in cellline.differentiation_potency_germ_layers.all %}
 <tr>
-  <td class="label">RNA Sequencing:</td>
-  <td>{{ cellline.celllinecharacterizationrnasequencing.data_url|urlizetrunc:50 }}</td>
+  <td class="label">{{ germ_layer.get_germ_layer_display }}:</td>
+  <td>
+    <table class="bottom-margin">
+      {% for cell_type in germ_layer.germ_layer_cell_types.all %}
+      <tr>
+        <td colspan="2"><b>{{ cell_type }}</b></td>
+      </tr>
+      <tr>
+        <td>
+          {% if cell_type.in_vivo_teratoma_flag %}
+          <i class="glyphicon glyphicon-ok success"></i> In vivo teratoma<br/>
+          {% endif %}
+          {% if cell_type.in_vitro_spontaneous_differentiation_flag %}
+          <i class="glyphicon glyphicon-ok success"></i> In vitro spontaneous differentiation<br/>
+          {% endif %}
+          {% if cell_type.in_vitro_directed_differentiation_flag %}
+          <i class="glyphicon glyphicon-ok success"></i> In vitro directed differentiation<br/>
+          {% endif %}
+          {% if cell_type.scorecard_flag %}
+          <i class="glyphicon glyphicon-ok success"></i> Scorecard<br/>
+          {% endif %}
+          {% if cell_type.other_flag %}
+          <i class="glyphicon glyphicon-ok success"></i> Other<br/>
+          {% endif %}
+        </td>
+        <td>
+          {% if cell_type.germ_layer_cell_type_markers.all %}
+          <table class="bordered bottom-margin small-heading">
+            <tr>
+              <th>Marker</th>
+              <th>Expressed</th>
+            </tr>
+            {% for marker in cell_type.germ_layer_cell_type_markers.all %}
+            <tr>
+              <td>{{ marker.name }}</td>
+              <td class="center">
+                {% if marker.expressed %}<i class="glyphicon glyphicon-ok success"></i> <span class="user-note">Yes</span>
+                {% elif marker.expressed == False %}<i class="glyphicon glyphicon-minus error"></i> <span class="user-note">No</span>{% else %}<span class="user-note">Unknown</span>{% endif %}</td>
+            </tr>
+            {% endfor %}
+          </table>
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          {% if cell_type.transcriptome_data %}
+          <p>Transcriptome data: {{ cell_type.transcriptome_data|urlizetrunc:50 }}</p>
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2"><hr></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </td>
 </tr>
-{% endif %}
-{% if cellline.celllinecharacterizationgeneexpressionarray %}
-<tr>
-  <td class="label">Gene Expression Array:</td>
-  <td>{{ cellline.celllinecharacterizationgeneexpressionarray.data_url|urlizetrunc:50 }}</td>
-</tr>
-{% endif %}
+{% endfor %}
 {% endif %}
 
+
+<!-- Undifferentiated cells -->
 {% if cellline.undifferentiated_marker_expression.all or cellline.celllinecharacterizationpluritest or cellline.celllinecharacterizationepipluriscore or cellline.undifferentiated_morphology_files.all %}
 <tr><th class="sub-title"><h3>Analysis of Undifferentiated Cells</h3></th></tr>
 
@@ -257,9 +310,28 @@
   </td>
 </tr>
 {% endif %}
-
 {% endif %}
 
+
+<!-- RNA Sequencing and Gene Expression Array links -->
+{% if cellline.celllinecharacterizationrnasequencing or cellline.celllinecharacterizationgeneexpressionarray %}
+<tr><th class="sub-title"><h3>Transcriptome Characterisation</h3></th></tr>
+{% if cellline.celllinecharacterizationrnasequencing %}
+<tr>
+  <td class="label">RNA Sequencing:</td>
+  <td>{{ cellline.celllinecharacterizationrnasequencing.data_url|urlizetrunc:50 }}</td>
+</tr>
+{% endif %}
+{% if cellline.celllinecharacterizationgeneexpressionarray %}
+<tr>
+  <td class="label">Gene Expression Array:</td>
+  <td>{{ cellline.celllinecharacterizationgeneexpressionarray.data_url|urlizetrunc:50 }}</td>
+</tr>
+{% endif %}
+{% endif %}
+
+
+<!-- Microbiology / Virus Screening -->
 {% if cellline.celllinecharacterization %}
 <tr><th class="sub-title"><h3>Microbiology / Virus Screening</h3></th></tr>
 <tr>
