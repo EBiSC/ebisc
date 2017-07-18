@@ -341,18 +341,18 @@
       {% if cell_type.germ_layer_cell_type_protocol_files.all %}
       <tr>
         <td colspan="2">
-          <p>Protocol or reference:</p>
+          <p>Protocol or reference:<br/>
           {% for file in cell_type.germ_layer_cell_type_protocol_files.all %}
           <!-- Images -->
           {% if file.extension in '.jpg,.JPG,.jpeg,.JPEG,.png,.PNG,.gif,.GIF'|slice:',' %}
           {% thumbnail file.file_doc "250" as img %}
-          <p><a href="{{ file.file_doc.url }}" target="_blank"><img src="{{ img.url }}" width="{{ img.width }}" height="{{ img.height }}"></a>
+          <a href="{{ file.file_doc.url }}" target="_blank"><img src="{{ img.url }}" width="{{ img.width }}" height="{{ img.height }}"></a>
           {% endthumbnail %}
           {% if file.file_description %}<br/><span class="user-note">{{ file.file_description }}</span>{% endif %}
           </p>
           <!-- Not images -->
           {% else %}
-          <p><a href="{{ file.file_doc.url }}" target="_blank">{{ file.filename }}</a>{% if file.file_description %} - <span class="user-note">{{ file.file_description }}</span>{% endif %}
+          <a href="{{ file.file_doc.url }}" target="_blank">{{ file.filename }}</a>{% if file.file_description %} - <span class="user-note">{{ file.file_description }}</span>{% endif %}
           </p>
           {% endif %}
           {% endfor %}

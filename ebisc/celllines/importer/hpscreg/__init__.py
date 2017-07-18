@@ -14,6 +14,8 @@ logger = logging.getLogger('management.commands')
 from ebisc.celllines.models import Cellline, CelllineStatus, Country
 
 from . import parser
+from . import parser_characterisation
+from . import parser_genotyping
 
 
 # -----------------------------------------------------------------------------
@@ -110,21 +112,20 @@ def import_cellline(source):
         parser.parse_derivation(source, cell_line),
         parser.parse_vector_free_reprogramming_factors(source, cell_line),
         parser.parse_culture_conditions(source, cell_line),
-        parser.parse_karyotyping(source, cell_line),
-        parser.parse_hla_typing(source, cell_line),
-        parser.parse_str_fingerprinting(source, cell_line),
-        parser.parse_genome_analysis(source, cell_line),
         parser.parse_publications(source, cell_line),
-        parser.parse_characterization(source, cell_line),
-        # parser.parse_characterization_markers(source, cell_line),
-        parser.parse_characterization_marker_expression(source, cell_line),
-        parser.parse_characterization_pluritest(source, cell_line),
-        parser.parse_characterization_epipluriscore(source, cell_line),
-        parser.parse_characterization_undiff_morphology(source, cell_line),
-        parser.parse_characterization_hpscscorecard(source, cell_line),
-        parser.parse_characterization_rna_sequencing(source, cell_line),
-        parser.parse_characterization_gene_expression_array(source, cell_line),
-        parser.parse_characterization_differentiation_potency(source, cell_line),
+        parser_genotyping.parse_karyotyping(source, cell_line),
+        parser_genotyping.parse_hla_typing(source, cell_line),
+        parser_genotyping.parse_str_fingerprinting(source, cell_line),
+        parser_genotyping.parse_genome_analysis(source, cell_line),
+        parser_characterisation.parse_characterization(source, cell_line),
+        parser_characterisation.parse_characterization_marker_expression(source, cell_line),
+        parser_characterisation.parse_characterization_pluritest(source, cell_line),
+        parser_characterisation.parse_characterization_epipluriscore(source, cell_line),
+        parser_characterisation.parse_characterization_undiff_morphology(source, cell_line),
+        parser_characterisation.parse_characterization_hpscscorecard(source, cell_line),
+        parser_characterisation.parse_characterization_rna_sequencing(source, cell_line),
+        parser_characterisation.parse_characterization_gene_expression_array(source, cell_line),
+        parser_characterisation.parse_characterization_differentiation_potency(source, cell_line),
         check_availability_on_ecacc(cell_line),
     ]
 
