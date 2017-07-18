@@ -2,74 +2,6 @@
 
 <tr><th colspan="2" class="title" id="characterization"><h2>Characterization</h2></th></tr>
 
-
-<!-- Differentiation potency -->
-{% if cellline.differentiation_potency_germ_layers.all %}
-<tr><th class="sub-title"><h3>Differentiation potency</h3></th></tr>
-{% for germ_layer in cellline.differentiation_potency_germ_layers.all %}
-<tr>
-  <td class="label">{{ germ_layer.get_germ_layer_display }}:</td>
-  <td>
-    <table class="bottom-margin">
-      {% for cell_type in germ_layer.germ_layer_cell_types.all %}
-      <tr>
-        <td colspan="2"><b>{{ cell_type }}</b></td>
-      </tr>
-      <tr>
-        <td>
-          {% if cell_type.in_vivo_teratoma_flag %}
-          <i class="glyphicon glyphicon-ok success"></i> In vivo teratoma<br/>
-          {% endif %}
-          {% if cell_type.in_vitro_spontaneous_differentiation_flag %}
-          <i class="glyphicon glyphicon-ok success"></i> In vitro spontaneous differentiation<br/>
-          {% endif %}
-          {% if cell_type.in_vitro_directed_differentiation_flag %}
-          <i class="glyphicon glyphicon-ok success"></i> In vitro directed differentiation<br/>
-          {% endif %}
-          {% if cell_type.scorecard_flag %}
-          <i class="glyphicon glyphicon-ok success"></i> Scorecard<br/>
-          {% endif %}
-          {% if cell_type.other_flag %}
-          <i class="glyphicon glyphicon-ok success"></i> Other<br/>
-          {% endif %}
-        </td>
-        <td>
-          {% if cell_type.germ_layer_cell_type_markers.all %}
-          <table class="bordered bottom-margin small-heading">
-            <tr>
-              <th>Marker</th>
-              <th>Expressed</th>
-            </tr>
-            {% for marker in cell_type.germ_layer_cell_type_markers.all %}
-            <tr>
-              <td>{{ marker.name }}</td>
-              <td class="center">
-                {% if marker.expressed %}<i class="glyphicon glyphicon-ok success"></i> <span class="user-note">Yes</span>
-                {% elif marker.expressed == False %}<i class="glyphicon glyphicon-minus error"></i> <span class="user-note">No</span>{% else %}<span class="user-note">Unknown</span>{% endif %}</td>
-            </tr>
-            {% endfor %}
-          </table>
-          {% endif %}
-        </td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          {% if cell_type.transcriptome_data %}
-          <p>Transcriptome data: {{ cell_type.transcriptome_data|urlizetrunc:50 }}</p>
-          {% endif %}
-        </td>
-      </tr>
-      <tr>
-        <td colspan="2"><hr></td>
-      </tr>
-      {% endfor %}
-    </table>
-  </td>
-</tr>
-{% endfor %}
-{% endif %}
-
-
 <!-- Undifferentiated cells -->
 {% if cellline.undifferentiated_marker_expression.all or cellline.celllinecharacterizationpluritest or cellline.celllinecharacterizationepipluriscore or cellline.undifferentiated_morphology_files.all %}
 <tr><th class="sub-title"><h3>Analysis of Undifferentiated Cells</h3></th></tr>
@@ -330,6 +262,111 @@
 {% endif %}
 {% endif %}
 
+<!-- Differentiation potency -->
+{% if cellline.differentiation_potency_germ_layers.all %}
+<tr><th class="sub-title"><h3>Differentiation potency</h3></th></tr>
+{% for germ_layer in cellline.differentiation_potency_germ_layers.all %}
+<tr>
+  <td class="label">{{ germ_layer.get_germ_layer_display }}:</td>
+  <td>
+    <table class="bottom-margin">
+      {% for cell_type in germ_layer.germ_layer_cell_types.all %}
+      <tr>
+        <td colspan="2"><b>{{ cell_type.name }}</b></td>
+      </tr>
+      <tr>
+        <td>
+          {% if cell_type.in_vivo_teratoma_flag %}
+          <i class="glyphicon glyphicon-ok success"></i> In vivo teratoma<br/>
+          {% endif %}
+          {% if cell_type.in_vitro_spontaneous_differentiation_flag %}
+          <i class="glyphicon glyphicon-ok success"></i> In vitro spontaneous differentiation<br/>
+          {% endif %}
+          {% if cell_type.in_vitro_directed_differentiation_flag %}
+          <i class="glyphicon glyphicon-ok success"></i> In vitro directed differentiation<br/>
+          {% endif %}
+          {% if cell_type.scorecard_flag %}
+          <i class="glyphicon glyphicon-ok success"></i> Scorecard<br/>
+          {% endif %}
+          {% if cell_type.other_flag %}
+          <i class="glyphicon glyphicon-ok success"></i> Other<br/>
+          {% endif %}
+        </td>
+        <td>
+          {% if cell_type.germ_layer_cell_type_markers.all %}
+          <table class="bordered bottom-margin small-heading">
+            <tr>
+              <th>Marker</th>
+              <th>Expressed</th>
+            </tr>
+            {% for marker in cell_type.germ_layer_cell_type_markers.all %}
+            <tr>
+              <td>{{ marker.name }}</td>
+              <td class="center">
+                {% if marker.expressed %}<i class="glyphicon glyphicon-ok success"></i> <span class="user-note">Yes</span>
+                {% elif marker.expressed == False %}<i class="glyphicon glyphicon-minus error"></i> <span class="user-note">No</span>{% else %}<span class="user-note">Unknown</span>{% endif %}</td>
+            </tr>
+            {% endfor %}
+          </table>
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          {% if cell_type.transcriptome_data %}
+          <p>Transcriptome data: {{ cell_type.transcriptome_data|urlizetrunc:50 }}</p>
+          {% endif %}
+        </td>
+      </tr>
+      {% if cell_type.germ_layer_cell_type_morphology_files.all %}
+      <tr>
+        <td colspan="2">
+          <p>Morphology:</p>
+          {% for file in cell_type.germ_layer_cell_type_morphology_files.all %}
+          <!-- Images -->
+          {% if file.extension in '.jpg,.JPG,.jpeg,.JPEG,.png,.PNG,.gif,.GIF'|slice:',' %}
+          {% thumbnail file.file_doc "250" as img %}
+          <p><a href="{{ file.file_doc.url }}" target="_blank"><img src="{{ img.url }}" width="{{ img.width }}" height="{{ img.height }}"></a>
+          {% endthumbnail %}
+          {% if file.file_description %}<br/><span class="user-note">{{ file.file_description }}</span>{% endif %}
+          </p>
+          <!-- Not images -->
+          {% else %}
+          <p><a href="{{ file.file_doc.url }}" target="_blank">{{ file.filename }}</a>{% if file.file_description %} - <span class="user-note">{{ file.file_description }}</span>{% endif %}
+          </p>
+          {% endif %}
+          {% endfor %}
+      </tr>
+      {% endif %}
+      {% if cell_type.germ_layer_cell_type_protocol_files.all %}
+      <tr>
+        <td colspan="2">
+          <p>Protocol or reference:</p>
+          {% for file in cell_type.germ_layer_cell_type_protocol_files.all %}
+          <!-- Images -->
+          {% if file.extension in '.jpg,.JPG,.jpeg,.JPEG,.png,.PNG,.gif,.GIF'|slice:',' %}
+          {% thumbnail file.file_doc "250" as img %}
+          <p><a href="{{ file.file_doc.url }}" target="_blank"><img src="{{ img.url }}" width="{{ img.width }}" height="{{ img.height }}"></a>
+          {% endthumbnail %}
+          {% if file.file_description %}<br/><span class="user-note">{{ file.file_description }}</span>{% endif %}
+          </p>
+          <!-- Not images -->
+          {% else %}
+          <p><a href="{{ file.file_doc.url }}" target="_blank">{{ file.filename }}</a>{% if file.file_description %} - <span class="user-note">{{ file.file_description }}</span>{% endif %}
+          </p>
+          {% endif %}
+          {% endfor %}
+      </tr>
+      {% endif %}
+      <tr>
+        <td colspan="2"><hr></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </td>
+</tr>
+{% endfor %}
+{% endif %}
 
 <!-- Microbiology / Virus Screening -->
 {% if cellline.celllinecharacterization %}

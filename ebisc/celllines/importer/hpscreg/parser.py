@@ -2526,6 +2526,8 @@ def parse_characterization_differentiation_potency_cell_type(valuef, source, ger
         }
     )
 
+    # Parse markers
+
     markers_old = CelllineCharacterizationDifferentiationPotencyCellTypeMarker.objects.filter(cell_type=cell_type)
 
     marker_names_old = set([m.name for m in CelllineCharacterizationDifferentiationPotencyCellTypeMarker.objects.filter(cell_type=cell_type)])
@@ -2544,7 +2546,54 @@ def parse_characterization_differentiation_potency_cell_type(valuef, source, ger
         logger.info('Deleting obsolete cell line differentation potency marker %s' % marker_deleted)
         marker_deleted.delete()
 
+    # Parse Morphology files and save them
+
+    cell_type_morphology_files_old = list(cell_type.germ_layer_cell_type_morphology_files.all().order_by('id'))
+    cell_type_morphology_files_old_encs = set([f.file_enc for f in cell_type_morphology_files_old])
+
+    cell_type_morphology_files_new = []
+    cell_type_morphology_files_new_encs = set([])
+
+    for f in source.get('morphology_uploads', []):
+        if f.get('is_private') != '1':
+            cell_type_morphology_files_new.append(parse_characterization_differentiation_potency_cell_type_morphology_file(f, cell_type))
+
+    cell_type_morphology_files_new_encs = set(cell_type_morphology_files_new)
+
+    # Delete existing files that are not present in new data
+
+    to_delete = cell_type_morphology_files_old_encs - cell_type_morphology_files_new_encs
+
+    for cell_type_morphology_file in [f for f in cell_type_morphology_files_old if f.file_enc in to_delete]:
+        logger.info('Deleting obsolete diff potency morphology file %s' % cell_type_morphology_file)
+        cell_type_morphology_file.file_doc.delete()
+        cell_type_morphology_file.delete()
+
+    # Parse Protocol files and save them
+
+    cell_type_protocol_files_old = list(cell_type.germ_layer_cell_type_protocol_files.all().order_by('id'))
+    cell_type_protocol_files_old_encs = set([f.file_enc for f in cell_type_protocol_files_old])
+
+    cell_type_protocol_files_new = []
+    cell_type_protocol_files_new_encs = set([])
+
+    for f in source.get('protocol_uploads', []):
+        if f.get('is_private') != '1':
+            cell_type_protocol_files_new.append(parse_characterization_differentiation_potency_cell_type_protocol_file(f, cell_type))
+
+    cell_type_protocol_files_new_encs = set(cell_type_protocol_files_new)
+
+    # Delete existing files that are not present in new data
+
+    to_delete = cell_type_protocol_files_old_encs - cell_type_protocol_files_new_encs
+
+    for cell_type_protocol_file in [f for f in cell_type_protocol_files_old if f.file_enc in to_delete]:
+        logger.info('Deleting obsolete diff potency protocol file %s' % cell_type_protocol_file)
+        cell_type_protocol_file.file_doc.delete()
+        cell_type_protocol_file.delete()
+
     # Check if dirty and save
+
     if created or cell_type.is_dirty(check_relationship=True):
         if created:
             logger.info('Added cell line Differentiation potency cell type')
@@ -2554,6 +2603,48 @@ def parse_characterization_differentiation_potency_cell_type(valuef, source, ger
         cell_type.save()
 
     return cell_type
+
+
+@inject_valuef
+def parse_characterization_differentiation_potency_cell_type_morphology_file(valuef, source, cell_type):
+
+    cell_type_morphology_file, created = CelllineCharacterizationDifferentiationPotencyMorphologyFile.objects.get_or_create(
+        cell_type=cell_type,
+        file_enc=valuef('filename_enc').split('.')[0]
+    )
+
+    if created:
+        current_enc = None
+    else:
+        current_enc = cell_type_morphology_file.file_enc
+
+    cell_type_morphology_file.file_enc = value_of_file(valuef('url'), valuef('filename'), cell_type_morphology_file.file_doc, current_enc)
+
+    cell_type_morphology_file.file_description = valuef('description')
+    cell_type_morphology_file.save()
+
+    return cell_type_morphology_file.file_enc
+
+
+@inject_valuef
+def parse_characterization_differentiation_potency_cell_type_protocol_file(valuef, source, cell_type):
+
+    cell_type_protocol_file, created = CelllineCharacterizationDifferentiationPotencyProtocolFile.objects.get_or_create(
+        cell_type=cell_type,
+        file_enc=valuef('filename_enc').split('.')[0]
+    )
+
+    if created:
+        current_enc = None
+    else:
+        current_enc = cell_type_protocol_file.file_enc
+
+    cell_type_protocol_file.file_enc = value_of_file(valuef('url'), valuef('filename'), cell_type_protocol_file.file_doc, current_enc)
+
+    cell_type_protocol_file.file_description = valuef('description')
+    cell_type_protocol_file.save()
+
+    return cell_type_protocol_file.file_enc
 
 
 @inject_valuef
