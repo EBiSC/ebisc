@@ -15,6 +15,7 @@ from ebisc.celllines.models import Cellline
 
 BASEDIR = os.path.join(os.path.dirname(__file__), '../elastic/')
 MAPPINGS = {'cellline': os.path.abspath(os.path.join(BASEDIR, 'mappings/cellline.json'))}
+SETTINGS = os.path.abspath(os.path.join(BASEDIR, 'settings.json'))
 
 
 # -----------------------------------------------------------------------------
@@ -28,7 +29,8 @@ def run():
 
     logger.info(u'Creating ES index')
     es.indices.delete(index=settings.ELASTIC_INDEX, ignore=[404])
-    es.indices.create(index=settings.ELASTIC_INDEX)
+    with open(SETTINGS) as fi:
+      es.indices.create(index=settings.ELASTIC_INDEX, body=json.load(fi))
 
     # Create mappings
 
