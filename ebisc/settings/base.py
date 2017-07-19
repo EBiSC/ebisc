@@ -11,12 +11,13 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-SECRET_KEY = '@!7ju$b1*1c5!dihak)cw3ao1ema&2quw3s*9l#&8^v8ob%gw1'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # -----------------------------------------------------------------------------
 # Admins
 
 ADMINS = (
+    ('Ian Streeter', 'streeter@ebi.ac.uk'),
     ('Joh Dokler', 'joh@douglasconnect.com'),
     ('Maja Brajnik', 'maja@douglasconnect.com'),
 )
@@ -140,8 +141,8 @@ LOGGING = {
 HPSCREG = {
     'list_url': 'https://hpscreg.eu/api/full_list',
     'cellline_url': 'https://hpscreg.eu/api/export_readable/',
-    'username': 'ebiscims',
-    'password': 'cWNJnc6p',
+    'username': os.getenv('HPSCREG_USER'),
+    'password': os.getenv('HPSCREG_PASSWORD'),
 }
 
 # -----------------------------------------------------------------------------
@@ -149,8 +150,8 @@ HPSCREG = {
 
 LIMS = {
     'url': 'http://www.ebi.ac.uk/~ebiscdcc/api/batch.json',
-    'username': 'ebisc',
-    'password': 'ebisc321',
+    'username': os.getenv('LIMS_USER'),
+    'password': os.getenv('LIMS_PASSWORD'),
 }
 
 # -----------------------------------------------------------------------------
@@ -158,7 +159,7 @@ LIMS = {
 
 BIOSAMPLES = {
     'url': 'http://www.ebi.ac.uk/biosamples/beta',
-    'key': 'WNTGPBNW0NGC3876',
+    'key': os.getenv('BIOSAMPLES_KEY'),
 }
 
 # -----------------------------------------------------------------------------
