@@ -1091,6 +1091,8 @@ class CelllineVectorFreeReprogrammingFactors(DirtyFieldsMixin, models.Model):
 # -----------------------------------------------------------------------------
 # Cell line Characterization
 
+# Microbiology/Virology Screening
+
 class CelllineCharacterization(DirtyFieldsMixin, models.Model):
 
     SCREENING_CHOICES = (
@@ -1122,6 +1124,92 @@ class CelllineCharacterization(DirtyFieldsMixin, models.Model):
         return unicode(self.cell_line)
 
 
+# Analysis of Undifferentiated Cells
+
+# Depositor provided files
+class DepositorDataFile(models.Model):
+
+    file_doc = models.FileField(_(u'File'), upload_to=upload_to, null=True, blank=True)
+    file_enc = models.CharField(_(u'File enc'), max_length=300, null=True, blank=True)
+    file_description = models.TextField(_(u'File description'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Depositor data file')
+        verbose_name_plural = _(u'Depositor data files')
+        ordering = ['file_enc']
+
+    def __unicode__(self):
+        return unicode(self.id)
+
+    def filename(self):
+        return os.path.basename(self.file_doc.name)
+
+    def extension(self):
+        name, extension = os.path.splitext(self.file_doc.name)
+        return extension
+
+
+# Marker expression
+class CelllineCharacterizationMarkerExpression(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='undifferentiated_marker_expression')
+
+    marker_id = models.IntegerField(_(u'Marker ID'), default=0)
+    marker = models.CharField(_(u'Marker'), max_length=100)
+    expressed = models.NullBooleanField(_(u'Expressed'))
+
+    class Meta:
+        verbose_name = _(u'Undifferentiated cells - marker expression')
+        verbose_name_plural = _(u'Undifferentiated cells - marker expressions')
+        ordering = ['cell_line']
+
+    def __unicode__(self):
+        return '%s (%s)' % (self.marker, self.cell_line)
+
+
+class CelllineCharacterizationMarkerExpressionMethod(DirtyFieldsMixin, models.Model):
+
+    marker_expression = models.ForeignKey(CelllineCharacterizationMarkerExpression, verbose_name=_(u'Marker expression'), related_name='marker_expression_method')
+
+    name = models.CharField(_(u'Method name'), max_length=500)
+
+    class Meta:
+        verbose_name = _(u'Marker expression method')
+        verbose_name_plural = _(u'Marker expression methods')
+        ordering = ['name']
+
+    def __unicode__(self):
+        return '%s (%s)' % (self.name, self.marker_expression)
+
+
+class CelllineCharacterizationMarkerExpressionMethodFile(DepositorDataFile):
+
+    marker_expression_method = models.ForeignKey(CelllineCharacterizationMarkerExpressionMethod, verbose_name=_(u'Marker expression method'), related_name='marker_expression_method_files')
+
+    class Meta:
+        verbose_name = _(u'Marker expression method file')
+        verbose_name_plural = _(u'Marker expression method files')
+        ordering = ['marker_expression_method']
+
+    def __unicode__(self):
+        return unicode(self.marker_expression_method)
+
+
+# Morphology images
+class CelllineCharacterizationUndifferentiatedMorphologyFile(DepositorDataFile):
+
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='undifferentiated_morphology_files')
+
+    class Meta:
+        verbose_name = _(u'Cell line undifferentiated cells morphology file')
+        verbose_name_plural = _(u'Cell line undifferentiated cells morphology files')
+        ordering = ['cell_line']
+
+    def __unicode__(self):
+        return unicode(self.cell_line)
+
+
+# Pluritest
 class CelllineCharacterizationPluritest(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
@@ -1140,6 +1228,20 @@ class CelllineCharacterizationPluritest(DirtyFieldsMixin, models.Model):
         return unicode(self.cell_line)
 
 
+class CelllineCharacterizationPluritestFile(DepositorDataFile):
+
+    pluritest = models.ForeignKey(CelllineCharacterizationPluritest, verbose_name=_(u'Cell line pluritest'), related_name='pluritest_files')
+
+    class Meta:
+        verbose_name = _(u'Cell line Pluritest file')
+        verbose_name_plural = _(u'Cell line Pluritest files')
+        ordering = ['pluritest']
+
+    def __unicode__(self):
+        return unicode(self.pluritest)
+
+
+# EpiPluriScore
 class CelllineCharacterizationEpipluriscore(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
@@ -1158,6 +1260,177 @@ class CelllineCharacterizationEpipluriscore(DirtyFieldsMixin, models.Model):
         return unicode(self.cell_line)
 
 
+class CelllineCharacterizationEpipluriscoreFile(DepositorDataFile):
+
+    epipluriscore = models.ForeignKey(CelllineCharacterizationEpipluriscore, verbose_name=_(u'Cell line EpiPluriScore'), related_name='epipluriscore_files')
+
+    class Meta:
+        verbose_name = _(u'Cell line EpiPluriScore file')
+        verbose_name_plural = _(u'Cell line EpiPluriScore files')
+        ordering = ['epipluriscore']
+
+    def __unicode__(self):
+        return unicode(self.epipluriscore)
+
+
+# hPSC Scorecard
+class CelllineCharacterizationHpscScorecard(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
+
+    self_renewal = models.NullBooleanField(_(u'Self renewal'))
+    endoderm = models.NullBooleanField(_(u'Endoderm'))
+    mesoderm = models.NullBooleanField(_(u'Mesoderm'))
+    ectoderm = models.NullBooleanField(_(u'Ectoderm'))
+
+    class Meta:
+        verbose_name = _(u'Cell line hPSC Scorecard')
+        verbose_name_plural = _(u'Cell line hPSC Scorecards')
+        ordering = ['cell_line']
+
+    def __unicode__(self):
+        return unicode(self.cell_line)
+
+
+class CelllineCharacterizationHpscScorecardReport(DepositorDataFile):
+
+    hpsc_scorecard = models.ForeignKey(CelllineCharacterizationHpscScorecard, verbose_name=_(u'Cell line hPSC Scorecard'), related_name='hpsc_scorecard_reports')
+
+    class Meta:
+        verbose_name = _(u'Cell line hPSC Scorecard report')
+        verbose_name_plural = _(u'Cell line hPSC Scorecard reports')
+        ordering = ['hpsc_scorecard']
+
+    def __unicode__(self):
+        return unicode(self.hpsc_scorecard)
+
+
+class CelllineCharacterizationHpscScorecardScorecard(DepositorDataFile):
+
+    hpsc_scorecard = models.ForeignKey(CelllineCharacterizationHpscScorecard, verbose_name=_(u'Cell line hPSC Scorecard'), related_name='hpsc_scorecard_files')
+
+    class Meta:
+        verbose_name = _(u'Cell line hPSC Scorecard scorecard')
+        verbose_name_plural = _(u'Cell line hPSC Scorecard scorecards')
+        ordering = ['hpsc_scorecard']
+
+    def __unicode__(self):
+        return unicode(self.hpsc_scorecard)
+
+
+# RNA Sequencing
+class CelllineCharacterizationRNASequencing(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
+    data_url = models.CharField(_(u'RNA Sequencing data link'), max_length=500, blank=True, default='')
+
+    class Meta:
+        verbose_name = _(u'Link to RNA Sequencing data')
+        verbose_name_plural = _(u'Links to RNA Sequencing data')
+        ordering = ['data_url']
+
+    def __unicode__(self):
+        return u'%s' % (self.data_url,)
+
+
+# Gene Expression Array
+class CelllineCharacterizationGeneExpressionArray(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'))
+    data_url = models.CharField(_(u'Gene Expression Array data link'), max_length=500, blank=True, default='')
+
+    class Meta:
+        verbose_name = _(u'Link to Gene Expression Array data')
+        verbose_name_plural = _(u'Links to Gene Expression Array data')
+        ordering = ['data_url']
+
+    def __unicode__(self):
+        return u'%s' % (self.data_url,)
+
+
+# Differentiation potency
+class CelllineCharacterizationDifferentiationPotency(DirtyFieldsMixin, models.Model):
+
+    GERMLAYER_CHOICES = (
+        ('endoderm', _(u'Endoderm')),
+        ('mesoderm', _(u'Mesoderm')),
+        ('ectoderm', _(u'Ectoderm')),
+    )
+
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='differentiation_potency_germ_layers')
+    germ_layer = models.CharField(_(u'Germ layer'), max_length=20, choices=GERMLAYER_CHOICES)
+
+    class Meta:
+        verbose_name = _(u'Germ layer')
+        verbose_name_plural = _(u'Germ layers')
+        ordering = ['germ_layer']
+
+    def __unicode__(self):
+        return u'%s' % (self.germ_layer,)
+
+
+class CelllineCharacterizationDifferentiationPotencyCellType(DirtyFieldsMixin, models.Model):
+
+    germ_layer = models.ForeignKey(CelllineCharacterizationDifferentiationPotency, verbose_name=_(u'Germ layer'), related_name='germ_layer_cell_types')
+    name = models.CharField(_(u'Name'), max_length=200, default='')
+    in_vivo_teratoma_flag = models.NullBooleanField(_(u'In vivo teratoma'))
+    in_vitro_spontaneous_differentiation_flag = models.NullBooleanField(_(u'In vitro spontaneous differentiation'))
+    in_vitro_directed_differentiation_flag = models.NullBooleanField(_(u'In vitro directed differentiation'))
+    scorecard_flag = models.NullBooleanField(_(u'Scorecard'))
+    other_flag = models.NullBooleanField(_(u'Other'))
+    transcriptome_data = models.CharField(_(u'Link to transcriptome data'), max_length=500, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Diferentiation potency cell type')
+        verbose_name_plural = _(u'Diferentiation potency cell types')
+        ordering = ['name']
+
+    def __unicode__(self):
+        return u'%s' % (self.name,)
+
+
+class CelllineCharacterizationDifferentiationPotencyCellTypeMarker(DirtyFieldsMixin, models.Model):
+
+    cell_type = models.ForeignKey(CelllineCharacterizationDifferentiationPotencyCellType, verbose_name=_(u'Cell type'), related_name='germ_layer_cell_type_markers')
+    name = models.CharField(_(u'Name'), max_length=100, default='')
+    expressed = models.NullBooleanField(_(u'Expressed'))
+
+    class Meta:
+        verbose_name = _(u'Diferentiation potency cell type marker')
+        verbose_name_plural = _(u'Diferentiation potency cell type markers')
+        ordering = ['name']
+
+    def __unicode__(self):
+        return u'%s' % (self.name,)
+
+
+class CelllineCharacterizationDifferentiationPotencyMorphologyFile(DepositorDataFile):
+
+    cell_type = models.ForeignKey(CelllineCharacterizationDifferentiationPotencyCellType, verbose_name=_(u'Cell type'), related_name='germ_layer_cell_type_morphology_files')
+
+    class Meta:
+        verbose_name = _(u'Diferentiation potency cell type morphology file')
+        verbose_name_plural = _(u'Diferentiation potency cell type morphology files')
+        ordering = ['cell_type']
+
+    def __unicode__(self):
+        return u'%s' % (self.cell_type, )
+
+
+class CelllineCharacterizationDifferentiationPotencyProtocolFile(DepositorDataFile):
+
+    cell_type = models.ForeignKey(CelllineCharacterizationDifferentiationPotencyCellType, verbose_name=_(u'Cell type'), related_name='germ_layer_cell_type_protocol_files')
+
+    class Meta:
+        verbose_name = _(u'Diferentiation potency cell type protocol file')
+        verbose_name_plural = _(u'Diferentiation potency cell type protocol files')
+        ordering = ['cell_type']
+
+    def __unicode__(self):
+        return u'%s' % (self.cell_type, )
+
+
+# Characterisation (Old fields)
 class MarkerMoleculeBase(models.Model):
 
     RESULT_CHOICES = (

@@ -1,5 +1,15 @@
 table {
   border-collapse: collapse;
+
+  &.bottom-margin {
+    margin-bottom: 1.5rem;
+  }
+
+  &.small-heading {
+    th {
+      font-size: 0.9rem;
+    }
+  }
 }
 
 td.center {
@@ -46,7 +56,7 @@ td.cellline-status {
 
 td.label {
   // width: 1%;
-  width: 33%;
+  width: 25%;
   vertical-align: top;
   // white-space: nowrap;
   text-align: right;
@@ -204,7 +214,7 @@ table.data {
   max-width: 100%;
 
   td {
-    padding: 3px 10px 3px 0px;
+    padding: 3px 5px 3px 5px;
     vertical-align: top;
 
     table {

@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 
 from ebisc.cms.models import Page, Faq, FaqCategory
-from ebisc.celllines.models import Cellline
+from ebisc.celllines.models import Cellline, CelllineCharacterizationMarkerExpression
 
 
 # -----------------------------------------------------------------------------
@@ -35,6 +35,7 @@ class Menu(object):
 def search(request):
     return render(request, 'catalog/search.html', {})
 
+
 # -----------------------------------------------------------------------------
 # FAQ
 
@@ -50,6 +51,7 @@ def faq(request, category):
 
     except FaqCategory.DoesNotExist:
         raise Http404
+
 
 # -----------------------------------------------------------------------------
 # Pages
@@ -74,7 +76,7 @@ def page(request, path):
 
     try:
         name = path.rstrip('/')
-        cellline = Cellline.objects.get(name=name, available_for_sale_at_ecacc=True, current_status__status__in=['at_ecacc', 'expand_to_order','restricted_distribution'])
+        cellline = Cellline.objects.get(name=name, available_for_sale_at_ecacc=True, current_status__status__in=['at_ecacc', 'expand_to_order', 'restricted_distribution'])
 
         # Subclones from this line
         subclones = []
@@ -102,6 +104,24 @@ def page(request, path):
         if cellline.comparator_cell_lines.all():
             available_comparators = [line for line in cellline.comparator_cell_lines.all() if line.available_for_sale_at_ecacc]
 
+        # Characterization data - undifferentiated marker expression
+        import collections
+
+        undiff_marker_expression = collections.OrderedDict()
+
+        marker_expression_query = CelllineCharacterizationMarkerExpression.objects.filter(cell_line=cellline).order_by('marker')
+
+        marker_expression_methods = ['Immunostaining', 'RT-PCR', 'FACS', 'Enzymatic Assay', 'Expression Profiles']
+
+        for marker_exp in sorted(set([m for m in marker_expression_query])):
+            undiff_marker_expression[marker_exp] = collections.OrderedDict()
+            for method in marker_expression_methods:
+                undiff_marker_expression[marker_exp][method] = []
+
+        for marker_expression in marker_expression_query:
+            for method in marker_expression.marker_expression_method.all():
+                undiff_marker_expression[marker_expression][method.name].append(method)
+
         return render(request, 'catalog/cellline.html', {
             'cellline': cellline,
             'same_donor_lines': same_donor_lines,
@@ -109,6 +129,8 @@ def page(request, path):
             'available_subclones_from_parent': available_subclones_from_parent,
             'comparator_cell_line': comparator_cell_line,
             'available_comparators': available_comparators,
+            'undiff_marker_expression': undiff_marker_expression,
+            'marker_expression_methods': marker_expression_methods,
         })
     except Cellline.DoesNotExist:
         pass

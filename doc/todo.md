@@ -37,7 +37,10 @@
   		7c) “Files and images showing reprogramming vector expressed or silenced” -> File upload  (Optional question)
 
 4) Characterization
-
+- Cleanup display
+- Clean up data model
+- Deploy
+- Optimize parser (divide)
 
 ## hPSCreg importer
 
