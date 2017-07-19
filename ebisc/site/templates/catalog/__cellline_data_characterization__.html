@@ -1,107 +1,201 @@
+{% load thumbnail %}
+
 <tr><th colspan="2" class="title" id="characterization"><h2>Characterization</h2></th></tr>
 
-{% if cellline.celllinecharacterization.certificate_of_analysis_passage_number %}
-<tr><td class="label">Certificate of analysis passage number:</td><td>{{ cellline.celllinecharacterization.certificate_of_analysis_passage_number|default:"-" }}</td></tr>
+<!-- Undifferentiated cells -->
+{% if cellline.undifferentiated_marker_expression.all or cellline.celllinecharacterizationpluritest or cellline.celllinecharacterizationepipluriscore or cellline.undifferentiated_morphology_files.all %}
+<tr><th class="sub-title"><h3>Analysis of Undifferentiated Cells</h3></th></tr>
+
+{% if cellline.undifferentiated_marker_expression.all %}
+<tr>
+  <td class="label">Marker expression:</td>
+  <td>
+    <table class="bordered bottom-margin small-heading">
+      <tr>
+        <th>Marker</th>
+        <th>Expressed</th>
+        {% for method in marker_expression_methods %}
+        <th>{{ method }}</th>
+        {% endfor %}
+      </tr>
+      {% for marker_expression, methods in undiff_marker_expression.items %}
+      <tr>
+        <td><nobr>{{ marker_expression.marker }}</nobr></td>
+        <td>{% if marker_expression.expressed == True %}
+          <i class="glyphicon glyphicon-ok success"></i> <span class="user-note">Yes</span>
+          {% elif marker_expression.expressed == False %}
+          <i class="glyphicon glyphicon-minus error"></i> <span class="user-note">No</span>
+          {% else %}
+          <span class="user-note">Unknown</span>
+          {% endif %}</td>
+        {% for method, expressions in methods.items %}
+        <td>
+          {% if expressions %}<i class="glyphicon glyphicon-ok lighter-gray"></i>
+
+          {% for expression in expressions %}
+          {% if expression.marker_expression_method_files.all %} -
+          {% for file in expression.marker_expression_method_files.all %}
+          <a href="{{ file.file_doc.url }}" target="_blank"><i class="glyphicon glyphicon-file lighter-gray"></i></a>{% if forloop.last %}{% else %}, {% endif %}
+          {% endfor %}
+          {% endif %}
+          {% endfor %}
+
+          {% endif %}
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+  </td>
+</tr>
 {% endif %}
 
+{% if cellline.celllinecharacterizationepipluriscore and cellline.celllinecharacterizationepipluriscore.score %}
 <tr>
-    <td class="label">Microbiology / Virology Screening:</td>
-    <td>
-        <table>
-            <tr>
-                <td>HIV 1:</td>
-                <td>{{ cellline.celllinecharacterization.get_screening_hiv1_display|default:"-" }}</td>
-            </tr>
-            <tr>
-                <td>HIV 2:</td>
-                <td>{{ cellline.celllinecharacterization.get_screening_hiv2_display|default:"-" }}</td>
-            </tr>
-            <tr>
-                <td>Hepatitis B:</td>
-                <td>{{ cellline.celllinecharacterization.get_screening_hepatitis_b_display|default:"-" }}</td>
-            </tr>
-            <tr>
-                <td>Hepatitis C:</td>
-                <td>{{ cellline.celllinecharacterization.get_screening_hepatitis_c_display|default:"-" }}</td>
-            </tr>
-            <tr>
-                <td>Mycoplasma:</td>
-                <td>{{ cellline.celllinecharacterization.get_screening_mycoplasma_display|default:"-" }}</td>
-            </tr>
-        </table>
-    </td>
+  <td class="label">EpiPluriScore:</td>
+  <td>
+    <p>Score: {{ cellline.celllinecharacterizationepipluriscore.score }}</p>
+
+    <table class="bordered bottom-margin">
+      <tr>
+        <th>Marker</th>
+        <th>Present</th>
+        <th>Absent</th>
+      </tr>
+      <tr>
+        <td>mCpG</td>
+        {% if cellline.celllinecharacterizationepipluriscore.marker_mcpg == None %}
+        <td></td>
+        <td></td>
+        {% else %}
+          {% if cellline.celllinecharacterizationepipluriscore.marker_mcpg %}
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"></td>
+          {% else %}
+          <td class="center"></td>
+          <td class="center"><i class="glyphicon glyphicon-ok lighter-gray"></i></td>
+          {% endif %}
+        {% endif %}
+      </tr>
+      <tr>
+        <td>OCT4</td>
+        {% if cellline.celllinecharacterizationepipluriscore.marker_OCT4 == None %}
+        <td></td>
+        <td></td>
+        {% else %}
+          {% if cellline.celllinecharacterizationepipluriscore.marker_OCT4 %}
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"></td>
+          {% else %}
+          <td class="center"></td>
+          <td class="center"><i class="glyphicon glyphicon-ok lighter-gray"></i></td>
+          {% endif %}
+        {% endif %}
+      </tr>
+    </table>
+
+    {% if cellline.celllinecharacterizationepipluriscore.epipluriscore_files.all %}
+    <br/>Report: {% if not cellline.celllinecharacterizationepipluriscore.epipluriscore_files.all.count == 1 %}<br/>{% endif %}
+    {% for report in cellline.celllinecharacterizationepipluriscore.epipluriscore_files.all %}
+    <a href="{{ report.file_doc.url }}" target="_blank">{{ report.filename }}</a>{% if report.file_description %} - <span class="user-note">{{ report.file_description }}</span>{% endif %}<br/>
+    {% endfor %}
+    {% endif %}
+  </td>
 </tr>
+{% endif %}
 
-{% if cellline.undifferentiated_morphology_marker_imune or cellline.undifferentiated_morphology_marker_facs or cellline.undifferentiated_morphology_marker_rtpcr or cellline.undifferentiated_morphology_marker_morphology or cellline.undifferentiated_morphology_marker_expression_profile or cellline.celllinecharacterizationpluritest %}
-<tr><th class="sub-title"><h3>Undifferentiated cells</h3></th></tr>
-
+{% if cellline.celllinecharacterizationhpscscorecard %}
 <tr>
-    <td class="label">Morphology and Marker expression:</td>
-    <td>
-        {% if cellline.undifferentiated_morphology_marker_imune %}
-        <p><b>Immune/Markerstaining</b><br/>
-        Passage number: {{ cellline.undifferentiated_morphology_marker_imune.passage_number|default:'-' }}</p>
-        <table>
-        {% for molecule in cellline.undifferentiated_morphology_marker_imune.molecules.all %}
-        <tr><td>{{ molecule.molecule }}:</td><td class="center">{{ molecule.result }}</td></tr>
-        {% endfor %}
-        </table>
+  <td class="label">hPSC Scorecard&trade;:</td>
+  <td>
+    <table class="bordered bottom-margin">
+      <tr>
+        <th></th>
+        <th>Positive</th>
+        <th>Negative</th>
+      </tr>
+      <tr>
+        <td>Self-renewal</td>
+        {% if cellline.celllinecharacterizationhpscscorecard.self_renewal == None %}
+        <td></td>
+        <td></td>
+        {% else %}
+          {% if cellline.celllinecharacterizationhpscscorecard.self_renewal %}
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"></td>
+          {% else %}
+          <td class="center"></td>
+          <td class="center"><i class="glyphicon glyphicon-ok lighter-gray"></i></td>
+          {% endif %}
         {% endif %}
-
-        {% if cellline.undifferentiated_morphology_marker_facs %}
-        <p><br/><b>FACS</b><br/>
-        Passage number: {{ cellline.undifferentiated_morphology_marker_facs.passage_number|default:'-' }}</p>
-        <table>
-        {% for molecule in cellline.undifferentiated_morphology_marker_facs.molecules.all %}
-        <tr><td>{{ molecule.molecule }}:</td><td class="center">{{ molecule.result }}</td></tr>
-        {% endfor %}
-        </table>
+      </tr>
+      <tr>
+        <td>Endoderm</td>
+        {% if cellline.celllinecharacterizationhpscscorecard.endoderm == None %}
+        <td></td>
+        <td></td>
+        {% else %}
+          {% if cellline.celllinecharacterizationhpscscorecard.endoderm %}
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"></td>
+          {% else %}
+          <td class="center"></td>
+          <td class="center"><i class="glyphicon glyphicon-ok lighter-gray"></i></td>
+          {% endif %}
         {% endif %}
-
-        {% if cellline.undifferentiated_morphology_marker_rtpcr %}
-        <p><br/><b>RT-PCR</b><br/>
-        Passage number: {{ cellline.undifferentiated_morphology_marker_rtpcr.passage_number|default:'-' }}</p>
-        <table>
-        {% for molecule in cellline.undifferentiated_morphology_marker_rtpcr.molecules.all %}
-        <tr><td>{{ molecule.molecule }}:</td><td class="center">{{ molecule.result }}</td></tr>
-        {% endfor %}
-        </table>
+      </tr>
+      <tr>
+        <td>Mesoderm</td>
+        {% if cellline.celllinecharacterizationhpscscorecard.mesoderm == None %}
+        <td></td>
+        <td></td>
+        {% else %}
+          {% if cellline.celllinecharacterizationhpscscorecard.mesoderm %}
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"></td>
+          {% else %}
+          <td class="center"></td>
+          <td class="center"><i class="glyphicon glyphicon-ok lighter-gray"></i></td>
+          {% endif %}
         {% endif %}
-
-        {% if cellline.undifferentiated_morphology_marker_morphology %}
-        <p><br/><b>Morphology</b><br/>
-        Passage number: {{ cellline.undifferentiated_morphology_marker_morphology.passage_number|default:'-' }}<br/>
-        Description: {{ cellline.undifferentiated_morphology_marker_morphology.description|default:'-' }}<br/>
-        {% if cellline.undifferentiated_morphology_marker_morphology.data_url %}
-        File: <a href="{{ cellline.undifferentiated_morphology_marker_morphology.data_url }}">Image</a>
+      </tr>
+      <tr>
+        <td>Ectoderm</td>
+        {% if cellline.celllinecharacterizationhpscscorecard.ectoderm == None %}
+        <td></td>
+        <td></td>
+        {% else %}
+          {% if cellline.celllinecharacterizationhpscscorecard.ectoderm %}
+          <td class="center"><i class="glyphicon glyphicon-ok success"></i></td>
+          <td class="center"></td>
+          {% else %}
+          <td class="center"></td>
+          <td class="center"><i class="glyphicon glyphicon-ok lighter-gray"></i></td>
+          {% endif %}
         {% endif %}
-        {% endif %}
-
-        {% if cellline.undifferentiated_morphology_marker_expression_profile %}
-        <p><br/><b>Expression profiles (Omics)</b><br/>
-        Passage number: {{ cellline.undifferentiated_morphology_marker_expression_profile.passage_number|default:'-' }}<br/>
-        Method: {{ cellline.undifferentiated_morphology_marker_expression_profile.method|default:'-' }}<br/>
-        <table>
-        {% for molecule in undifferentiated_morphology_marker_expression_profile.molecules.all %}
-        <tr><td>{{ molecule.molecule }}:</td><td class="center">{{ molecule.result }}</td></tr>
-        {% endfor %}
-        </table>
-        Data:
-        {% if undifferentiated_morphology_marker_expression_profile.uploaded_data_url %}
-            <a href="{{ cellline.undifferentiated_morphology_marker_expression_profile.uploaded_data_url }}">Data file</a>
-        {% endif %}
-        {% if undifferentiated_morphology_marker_expression_profile.uploaded_data_url and cellline.undifferentiated_morphology_marker_expression_profile.data_url %}, {% endif %}
-        {% if cellline.undifferentiated_morphology_marker_expression_profile.data_url %}
-            <a href="{{ cellline.undifferentiated_morphology_marker_expression_profile.data_url }}">Link</a>
-        {% endif %}
-        {% endif %}
-
-    </td>
+      </tr>
+    </table>
+    <p>
+    {% if cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_reports.all %}
+    Data analysis report: {% if not cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_reports.all.count == 1 %}<br/>{% endif %}
+    {% for report in cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_reports.all %}
+    <a href="{{ report.file_doc.url }}" target="_blank">{{ report.filename }}</a>{% if report.file_description %} - <span class="user-note">{{ report.file_description }}</span>{% endif %}<br/>
+    {% endfor %}
+    {% endif %}
+    {% if cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_files.all %}
+    Scorecard: {% if not cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_files.all.count == 1 %}<br/>{% endif %}
+    {% for report in cellline.celllinecharacterizationhpscscorecard.hpsc_scorecard_files.all %}
+    <a href="{{ report.file_doc.url }}" target="_blank">{{ report.filename }}</a>{% if report.file_description %} - <span class="user-note">{{ report.file_description }}</span>{% endif %}<br/>
+    {% endfor %}
+    {% endif %}
+    </p>
+  </td>
 </tr>
+{% endif %}
 
 {% if cellline.celllinecharacterizationpluritest and cellline.celllinecharacterizationpluritest.pluripotency_score %}
 <tr>
-  <td class="label">PluriTest assessment for pluripotency:</td>
+  <td class="label">PluriTest:</td>
   <td>
     Pluripotency score: {{ cellline.celllinecharacterizationpluritest.pluripotency_score }}
     {% if cellline.celllinecharacterizationpluritest.novelty_score %}
@@ -110,6 +204,14 @@
     {% if cellline.celllinecharacterizationpluritest.microarray_url %}
     <br/>Microarray data: <a href="{{ cellline.celllinecharacterizationpluritest.microarray_url }}" target="_blank">{{ cellline.celllinecharacterizationpluritest.microarray_url }}</a>
     {% endif %}
+
+    {% if cellline.celllinecharacterizationpluritest.pluritest_files.all %}
+    <br/>Report: {% if not cellline.celllinecharacterizationpluritest.pluritest_files.all.count == 1 %}<br/>{% endif %}
+    {% for report in cellline.celllinecharacterizationpluritest.pluritest_files.all %}
+    <a target="_blank" href="{{ report.file_doc.url }}">{{ report.filename }}</a>{% if report.file_description %} - <span class="user-note">{{ report.file_description }}</span>{% endif %}<br/>
+    {% endfor %}
+    {% endif %}
+
     <div class="user-note">
       <p>The PluriTest is a pluripotency assessment based on DNA microarray data, which considers the genome-wide expression profile of the sample (<a href="http://www.nature.com/nmeth/journal/v8/n4/full/nmeth.1580.html" target="_blank">www.nature.com/nmeth/journal/v8/n4/full/nmeth.1580.html</a>).</p>
 
@@ -119,4 +221,174 @@
 </tr>
 {% endif %}
 
+{% if cellline.undifferentiated_morphology_files.all %}
+<tr>
+  <td class="label">Morphology:</td>
+  <td>
+    {% for file in cellline.undifferentiated_morphology_files.all %}
+    <!-- Images -->
+    {% if file.extension in '.jpg,.JPG,.jpeg,.JPEG,.png,.PNG,.gif,.GIF'|slice:',' %}
+    {% thumbnail file.file_doc "250" as img %}
+    <p><a href="{{ file.file_doc.url }}" target="_blank"><img src="{{ img.url }}" width="{{ img.width }}" height="{{ img.height }}"></a>
+    {% endthumbnail %}
+    {% if file.file_description %}<br/><span class="user-note">{{ file.file_description }}</span>{% endif %}
+    </p>
+    <!-- Not images -->
+    {% else %}
+    <p><a href="{{ file.file_doc.url }}" target="_blank">{{ file.filename }}</a>{% if file.file_description %} - <span class="user-note">{{ file.file_description }}</span>{% endif %}
+    </p>
+    {% endif %}
+    {% endfor %}
+  </td>
+</tr>
+{% endif %}
+{% endif %}
+
+
+<!-- RNA Sequencing and Gene Expression Array links -->
+{% if cellline.celllinecharacterizationrnasequencing or cellline.celllinecharacterizationgeneexpressionarray %}
+<tr><th class="sub-title"><h3>Transcriptome Characterisation</h3></th></tr>
+{% if cellline.celllinecharacterizationrnasequencing %}
+<tr>
+  <td class="label">RNA Sequencing:</td>
+  <td>{{ cellline.celllinecharacterizationrnasequencing.data_url|urlizetrunc:50 }}</td>
+</tr>
+{% endif %}
+{% if cellline.celllinecharacterizationgeneexpressionarray %}
+<tr>
+  <td class="label">Gene Expression Array:</td>
+  <td>{{ cellline.celllinecharacterizationgeneexpressionarray.data_url|urlizetrunc:50 }}</td>
+</tr>
+{% endif %}
+{% endif %}
+
+<!-- Differentiation potency -->
+{% if cellline.differentiation_potency_germ_layers.all %}
+<tr><th class="sub-title"><h3>Differentiation potency</h3></th></tr>
+{% for germ_layer in cellline.differentiation_potency_germ_layers.all %}
+<tr>
+  <td class="label">{{ germ_layer.get_germ_layer_display }}:</td>
+  <td>
+    <table class="bottom-margin">
+      {% for cell_type in germ_layer.germ_layer_cell_types.all %}
+      <tr>
+        <td colspan="2"><b>{{ cell_type.name }}</b></td>
+      </tr>
+      <tr>
+        <td>
+          {% if cell_type.in_vivo_teratoma_flag %}
+          <i class="glyphicon glyphicon-ok success"></i> In vivo teratoma<br/>
+          {% endif %}
+          {% if cell_type.in_vitro_spontaneous_differentiation_flag %}
+          <i class="glyphicon glyphicon-ok success"></i> In vitro spontaneous differentiation<br/>
+          {% endif %}
+          {% if cell_type.in_vitro_directed_differentiation_flag %}
+          <i class="glyphicon glyphicon-ok success"></i> In vitro directed differentiation<br/>
+          {% endif %}
+          {% if cell_type.scorecard_flag %}
+          <i class="glyphicon glyphicon-ok success"></i> Scorecard<br/>
+          {% endif %}
+          {% if cell_type.other_flag %}
+          <i class="glyphicon glyphicon-ok success"></i> Other<br/>
+          {% endif %}
+        </td>
+        <td>
+          {% if cell_type.germ_layer_cell_type_markers.all %}
+          <table class="bordered bottom-margin small-heading">
+            <tr>
+              <th>Marker</th>
+              <th>Expressed</th>
+            </tr>
+            {% for marker in cell_type.germ_layer_cell_type_markers.all %}
+            <tr>
+              <td>{{ marker.name }}</td>
+              <td class="center">
+                {% if marker.expressed %}<i class="glyphicon glyphicon-ok success"></i> <span class="user-note">Yes</span>
+                {% elif marker.expressed == False %}<i class="glyphicon glyphicon-minus error"></i> <span class="user-note">No</span>{% else %}<span class="user-note">Unknown</span>{% endif %}</td>
+            </tr>
+            {% endfor %}
+          </table>
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          {% if cell_type.transcriptome_data %}
+          <p>Transcriptome data: {{ cell_type.transcriptome_data|urlizetrunc:50 }}</p>
+          {% endif %}
+        </td>
+      </tr>
+      {% if cell_type.germ_layer_cell_type_morphology_files.all %}
+      <tr>
+        <td colspan="2">
+          <p>Morphology:</p>
+          {% for file in cell_type.germ_layer_cell_type_morphology_files.all %}
+          <!-- Images -->
+          {% if file.extension in '.jpg,.JPG,.jpeg,.JPEG,.png,.PNG,.gif,.GIF'|slice:',' %}
+          {% thumbnail file.file_doc "250" as img %}
+          <p><a href="{{ file.file_doc.url }}" target="_blank"><img src="{{ img.url }}" width="{{ img.width }}" height="{{ img.height }}"></a>
+          {% endthumbnail %}
+          {% if file.file_description %}<br/><span class="user-note">{{ file.file_description }}</span>{% endif %}
+          </p>
+          <!-- Not images -->
+          {% else %}
+          <p><a href="{{ file.file_doc.url }}" target="_blank">{{ file.filename }}</a>{% if file.file_description %} - <span class="user-note">{{ file.file_description }}</span>{% endif %}
+          </p>
+          {% endif %}
+          {% endfor %}
+      </tr>
+      {% endif %}
+      {% if cell_type.germ_layer_cell_type_protocol_files.all %}
+      <tr>
+        <td colspan="2">
+          <p>Protocol or reference:<br/>
+          {% for file in cell_type.germ_layer_cell_type_protocol_files.all %}
+          <!-- Images -->
+          {% if file.extension in '.jpg,.JPG,.jpeg,.JPEG,.png,.PNG,.gif,.GIF'|slice:',' %}
+          {% thumbnail file.file_doc "250" as img %}
+          <a href="{{ file.file_doc.url }}" target="_blank"><img src="{{ img.url }}" width="{{ img.width }}" height="{{ img.height }}"></a>
+          {% endthumbnail %}
+          {% if file.file_description %}<br/><span class="user-note">{{ file.file_description }}</span>{% endif %}
+          </p>
+          <!-- Not images -->
+          {% else %}
+          <a href="{{ file.file_doc.url }}" target="_blank">{{ file.filename }}</a>{% if file.file_description %} - <span class="user-note">{{ file.file_description }}</span>{% endif %}
+          </p>
+          {% endif %}
+          {% endfor %}
+      </tr>
+      {% endif %}
+      <tr>
+        <td colspan="2"><hr></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </td>
+</tr>
+{% endfor %}
+{% endif %}
+
+<!-- Microbiology / Virus Screening -->
+{% if cellline.celllinecharacterization %}
+<tr><th class="sub-title"><h3>Microbiology / Virus Screening</h3></th></tr>
+<tr>
+    <td class="label">HIV 1:</td>
+    <td>{{ cellline.celllinecharacterization.get_screening_hiv1_display|default:"-" }}</td>
+</tr>
+<tr>
+    <td class="label">HIV 2:</td>
+    <td>{{ cellline.celllinecharacterization.get_screening_hiv2_display|default:"-" }}</td>
+</tr>
+<tr>
+    <td class="label">Hepatitis B:</td>
+    <td>{{ cellline.celllinecharacterization.get_screening_hepatitis_b_display|default:"-" }}</td>
+</tr>
+<tr>
+    <td class="label">Hepatitis C:</td>
+    <td>{{ cellline.celllinecharacterization.get_screening_hepatitis_c_display|default:"-" }}</td>
+</tr>
+<tr>
+    <td class="label">Mycoplasma:</td>
+    <td>{{ cellline.celllinecharacterization.get_screening_mycoplasma_display|default:"-" }}</td>
+</tr>
 {% endif %}
