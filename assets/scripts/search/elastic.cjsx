@@ -74,17 +74,22 @@ buildFilteredQuery = () ->
 buildQuery = () ->
 
     queryString = _.trim(State.select('filter', 'query').get().toLowerCase())
-    queryString = XRegExp.replace(queryString, XRegExp('[^(\\p{L}|\\d)]'), '')
-
+    queryString = XRegExp.replace(queryString, XRegExp('[^(\\p{L}|\\d|\\p{Z})]'), '', 'all')
+    
     if not queryString
         return match_all: {}
 
     else
+        words = (w for w in XRegExp.split(queryString, XRegExp('\\p{Z}')) when w != '')
 
-        multi_match:
-            query: queryString
-            type: 'best_fields'
-            fields: Config.query_fields
+        buildQueryMultiMatch = (word, fields) ->
+            multi_match:
+                query: word
+                type: 'best_fields'
+                fields: fields
+
+        bool:
+            must: (buildQueryMultiMatch(word, Config.query_fields) for word in words)
 
 # -----------------------------------------------------------------------------
 # Filters
@@ -133,8 +138,9 @@ buildAggregation = (facet, filters) ->
 
     # If there is a query, use it to filter this facet
     query = buildQuery()
-    if 'multi_match' of query
-        otherFilters.push query: query
+    if 'bool' of query
+        for match in query.bool.must
+            otherFilters.push query: match
 
     terms =
         field: facet.name
