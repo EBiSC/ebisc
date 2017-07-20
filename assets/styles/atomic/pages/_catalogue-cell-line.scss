@@ -86,16 +86,33 @@
       }
     }
 
-    .clip {
+    .clip-container {
+      width: 250px;
+      float: right;
       @extend %card;
       background-color: lighten($color-placeholder, 1%);
       max-width: 100%;
-      width: 250px;
-      float: right;
       text-align: center;
       display: block;
-      padding-left: 0.1rem;
-      padding-right: 0.1rem;
+
+      .clip {
+        display: block;
+        padding-left: 0.1rem;
+        padding-right: 0.1rem;
+      }
+
+      .tooltip-item {
+        text-align: left;
+      }
+
+      .tooltip {
+        text-align: left;
+
+        .user-note {
+          font-size: $font-size-small;
+          line-height: 1.4;
+        }
+      }
 
       @include breakpoint(map-get($breakpoints, small)) {
         float: none;
