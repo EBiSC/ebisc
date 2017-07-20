@@ -327,7 +327,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
                 genetics.append(mod.zygosity_status)
             if mod.modification_type:
                 genetics.append(mod.modification_type)
-                
+
         for mod in mods_transgene_expression:
             if mod.gene and mod.gene.name:
                 genetics.append(mod.gene.name)
@@ -350,7 +350,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
     @property
     def search_terms_derivation(self):
 
-        derivation=[]
+        derivation = []
         genes = []
         if hasattr(self, 'non_integrating_vector'):
             if self.non_integrating_vector.vector:
@@ -1535,103 +1535,6 @@ class CelllineCharacterizationDifferentiationPotencyProtocolFile(DepositorDataFi
         return u'%s' % (self.cell_type, )
 
 
-# Characterisation (Old fields)
-class MarkerMoleculeBase(models.Model):
-
-    RESULT_CHOICES = (
-        ('+', '+'),
-        ('-', '-'),
-        ('nd', 'n.d.'),
-    )
-
-    # molecule = models.ForeignKey(Molecule) TODO
-    molecule = models.CharField(u'Molecule', max_length=25)
-    result = models.CharField(u'Result', max_length=5, choices=RESULT_CHOICES)
-
-    class Meta:
-        abstract = True
-        verbose_name = _(u'Marker molecule')
-        verbose_name_plural = _(u'Marker molecules')
-        ordering = ['molecule']
-
-
-# Undifferentiated cells
-
-class UndifferentiatedMorphologyMarkerImune(DirtyFieldsMixin, models.Model):
-
-    cell_line = models.OneToOneField(Cellline, verbose_name=u'Cell line', related_name='undifferentiated_morphology_marker_imune')
-    passage_number = models.CharField(u'Passage number', max_length=10, null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Markerd Undiff - Imune')
-        verbose_name_plural = _(u'Markerd Undiff - Imune')
-
-
-class UndifferentiatedMorphologyMarkerImuneMolecule(DirtyFieldsMixin, MarkerMoleculeBase):
-
-    marker = models.ForeignKey(UndifferentiatedMorphologyMarkerImune, verbose_name=u'Marker', related_name='molecules')
-
-
-class UndifferentiatedMorphologyMarkerRtPcr(DirtyFieldsMixin, models.Model):
-
-    cell_line = models.OneToOneField(Cellline, verbose_name=u'Cell line', related_name='undifferentiated_morphology_marker_rtpcr')
-    passage_number = models.CharField(u'Passage number', max_length=10, null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Markerd Undiff - RtPcr')
-        verbose_name_plural = _(u'Markerd Undiff - RtPcr')
-
-
-class UndifferentiatedMorphologyMarkerRtPcrMolecule(DirtyFieldsMixin, MarkerMoleculeBase):
-
-    marker = models.ForeignKey(UndifferentiatedMorphologyMarkerRtPcr, verbose_name=u'Marker', related_name='molecules')
-
-
-class UndifferentiatedMorphologyMarkerFacs(DirtyFieldsMixin, models.Model):
-
-    cell_line = models.OneToOneField(Cellline, verbose_name=u'Cell line', related_name='undifferentiated_morphology_marker_facs')
-    passage_number = models.CharField(u'Passage number', max_length=10, null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Markerd Undiff - Facs')
-        verbose_name_plural = _(u'Markerd Undiff - Facs')
-
-
-class UndifferentiatedMorphologyMarkerFacsMolecule(DirtyFieldsMixin, MarkerMoleculeBase):
-
-    marker = models.ForeignKey(UndifferentiatedMorphologyMarkerFacs, verbose_name=u'Marker', related_name='molecules')
-
-
-class UndifferentiatedMorphologyMarkerMorphology(DirtyFieldsMixin, models.Model):
-
-    cell_line = models.OneToOneField(Cellline, verbose_name=u'Cell line', related_name='undifferentiated_morphology_marker_morphology')
-    passage_number = models.CharField(u'Passage number', max_length=10, null=True, blank=True)
-    description = models.TextField(u'Description', null=True, blank=True)
-    data_url = models.URLField(u'URL', null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Markerd Undiff - Morphology')
-        verbose_name_plural = _(u'Markerd Undiff - Morphology')
-
-
-class UndifferentiatedMorphologyMarkerExpressionProfile(DirtyFieldsMixin, models.Model):
-
-    cell_line = models.OneToOneField(Cellline, verbose_name=u'Cell line', related_name='undifferentiated_morphology_marker_expression_profile')
-    method = models.CharField(u'Method', max_length=100, null=True, blank=True)
-    passage_number = models.CharField(u'Passage number', max_length=10, null=True, blank=True)
-    data_url = models.URLField(u'Data URL', null=True, blank=True)
-    uploaded_data_url = models.URLField(u'Uploaded data URL', null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Markerd Undiff - Expression profile')
-        verbose_name_plural = _(u'Markerd Undiff - Expression profile')
-
-
-class UndifferentiatedMorphologyMarkerExpressionProfileMolecule(DirtyFieldsMixin, MarkerMoleculeBase):
-
-    marker = models.ForeignKey(UndifferentiatedMorphologyMarkerExpressionProfile, verbose_name=u'Marker', related_name='molecules')
-
-
 # -----------------------------------------------------------------------------
 # Organizations
 
@@ -1949,107 +1852,5 @@ class CelllineGenomeAnalysisFile(models.Model):
     def __unicode__(self):
         return u'%s' % (self.id,)
 
-
-# -----------------------------------------------------------------------------
-# TODO Cell line differentation 2
-
-
-class Germlayer(models.Model):
-
-    germlayer = models.CharField(_(u'Germ layer'), max_length=100, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Germ layer')
-        verbose_name_plural = _(u'Germ layers')
-        ordering = ['germlayer']
-
-    def __unicode__(self):
-        return u'%s' % (self.germlayer,)
-
-
-class Marker(models.Model):
-
-    name = models.CharField(_(u'Marker'), max_length=200, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Marker')
-        verbose_name_plural = _(u'Markers')
-        ordering = ['name']
-
-    def __unicode__(self):
-        return self.name
-
-
-class Morphologymethod(models.Model):
-
-    morphologymethod = models.CharField(_(u'Morphology method'), max_length=200, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Morphology method')
-        verbose_name_plural = _(u'Morphology methods')
-        ordering = ['morphologymethod']
-
-    def __unicode__(self):
-        return u'%s' % (self.morphologymethod,)
-
-
-class CellLineMarker(models.Model):
-
-    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'))
-
-    marker = models.ForeignKey('Marker', verbose_name=_(u'Marker'), null=True, blank=True)
-    morphology_method = models.ForeignKey('Morphologymethod', verbose_name=_(u'Morphology method'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line marker')
-        verbose_name_plural = _(u'Cell line markers')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class CellLineDifferentiationPotency(models.Model):
-
-    cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), null=True, blank=True)
-
-    passage_number = models.CharField(_(u'Passage number'), max_length=10, blank=True)
-    germ_layer = models.ForeignKey('Germlayer', verbose_name=_(u'Germ layer'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line differentiation potency')
-        verbose_name_plural = _(u'Cell line differentiation potencies')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class CellLineDifferentiationPotencyMarker(models.Model):
-
-    cell_line_differentiation_potency = models.ForeignKey('CellLineDifferentiationPotency', verbose_name=_(u'Cell line differentiation potency'), null=True, blank=True)
-    morphology_method = models.ForeignKey('Morphologymethod', verbose_name=_(u'Morphology method'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line differentiation potency marker')
-        verbose_name_plural = _(u'Cell line differentiation potency markers')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class CellLineDifferentiationPotencyMolecule(models.Model):
-
-    cell_line_differentiation_potency_marker = models.ForeignKey('CellLineDifferentiationPotencyMarker', verbose_name=_(u'Cell line differentiation potency marker'), null=True, blank=True)
-    molecule = models.ForeignKey('Molecule', verbose_name=_(u'Molecule'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line differentiation potency molecule')
-        verbose_name_plural = _(u'Cell line differentiation potency molecules')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
 
 # -----------------------------------------------------------------------------
