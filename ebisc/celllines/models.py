@@ -1076,6 +1076,8 @@ class CelllineDerivation(DirtyFieldsMixin, models.Model):
 
     primary_cell_type = models.ForeignKey('CellType', verbose_name=_(u'Primary cell type'), null=True, blank=True)
     primary_cell_type_not_normalised = models.CharField(_(u'Primary cell type name - not normalised'), max_length=100, null=True, blank=True)
+    primary_cellline = models.CharField(_(u'Primary cell line'), max_length=500, null=True, blank=True)
+    primary_cellline_vendor = models.CharField(_(u'Primary cell line vendor'), max_length=500, null=True, blank=True)
     primary_cell_developmental_stage = models.CharField(_(u'Primary cell developmental stage'), max_length=45, null=True, blank=True)
     tissue_procurement_location = models.CharField(_(u'Location of primary tissue procurement'), max_length=200, null=True, blank=True)
     tissue_collection_date = models.DateField(_(u'Tissue collection date'), null=True, blank=True)
@@ -1134,6 +1136,12 @@ class CelllineNonIntegratingVector(DirtyFieldsMixin, models.Model):
     methods = ArrayField(models.CharField(max_length=200), verbose_name=_(u'Methods used'), null=True, blank=True)
     detectable_notes = models.TextField(u'Notes on reprogramming vector detection', null=True, blank=True)
 
+    expressed_silenced_file = models.FileField(_(u'File - Non-integrating reprogramming vector expressed or silenced'), upload_to=upload_to, null=True, blank=True)
+    expressed_silenced_file_enc = models.CharField(_(u'File enc - Non-integrating reprogramming vector expressed or silenced'), max_length=300, null=True, blank=True)
+
+    vector_map_file = models.FileField(_(u'File - vector map'), upload_to=upload_to, null=True, blank=True)
+    vector_map_file_enc = models.CharField(_(u'File enc - vector map'), max_length=300, null=True, blank=True)
+
     class Meta:
         verbose_name = _(u'Cell line non integrating vector')
         verbose_name_plural = _(u'Cell line non integrating vectors')
@@ -1158,6 +1166,12 @@ class CelllineIntegratingVector(DirtyFieldsMixin, models.Model):
     silenced = models.CharField(u'Have the reprogramming vectors been silenced', max_length=10, choices=EXTENDED_BOOL_CHOICES, default='unknown')
     methods = ArrayField(models.CharField(max_length=200), verbose_name=_(u'Methods used'), null=True, blank=True)
     silenced_notes = models.TextField(u'Notes on reprogramming vector silencing', null=True, blank=True)
+
+    expressed_silenced_file = models.FileField(_(u'File - Integrating reprogramming vector expressed or silenced'), upload_to=upload_to, null=True, blank=True)
+    expressed_silenced_file_enc = models.CharField(_(u'File enc - Integrating reprogramming vector expressed or silenced'), max_length=300, null=True, blank=True)
+
+    vector_map_file = models.FileField(_(u'File - vector map'), upload_to=upload_to, null=True, blank=True)
+    vector_map_file_enc = models.CharField(_(u'File enc - vector map'), max_length=300, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line integrating vector')

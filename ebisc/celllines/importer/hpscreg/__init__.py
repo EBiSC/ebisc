@@ -16,6 +16,7 @@ from ebisc.celllines.models import Cellline, CelllineStatus, Country
 from . import parser
 from . import parser_characterisation
 from . import parser_genotyping
+from . import parser_derivation
 
 
 # -----------------------------------------------------------------------------
@@ -108,9 +109,9 @@ def import_cellline(source):
     dirty += [
         parser.parse_cell_line_diseases(source, cell_line),
         parser.parse_genetic_modifications_non_disease(source, cell_line),
-        parser.parse_reprogramming_vector(source, cell_line),
-        parser.parse_derivation(source, cell_line),
-        parser.parse_vector_free_reprogramming_factors(source, cell_line),
+        parser_derivation.parse_reprogramming_vector(source, cell_line),
+        parser_derivation.parse_derivation(source, cell_line),
+        parser_derivation.parse_vector_free_reprogramming_factors(source, cell_line),
         parser.parse_culture_conditions(source, cell_line),
         parser.parse_publications(source, cell_line),
         parser_genotyping.parse_karyotyping(source, cell_line),

@@ -16,7 +16,7 @@ from ..celllines.models import Donor, DonorDisease, DonorDiseaseVariant, DonorGe
 class CelllineDerivationResource(ModelResource):
 
     name = fields.CharField('primary_cell_type', null=True)
-
+    
     class Meta:
         queryset = CelllineDerivation.objects.all()
         include_resource_uri = False

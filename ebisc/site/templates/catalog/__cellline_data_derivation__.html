@@ -2,6 +2,12 @@
 
 <tr><td class="label">Primary cell type:</td><td>{{ cellline.derivation.primary_cell_type.name|capfirst|default:"-" }}</td></tr>
 
+{% if cellline.derivation.primary_cellline %}
+<tr><td class="label">Primary cell line name:</td><td>{{ cellline.derivation.primary_cellline }}</td></tr>
+{% endif %}
+{% if cellline.derivation.primary_cellline_vendor %}
+<tr><td class="label">Primary cell line vendor:</td><td>{{ cellline.derivation.primary_cellline_vendor }}</td></tr>
+{% endif %}
 {% if cellline.derivation.primary_cell_developmental_stage %}
 <tr><td class="label">Primary cell developmental stage:</td><td>{{ cellline.derivation.primary_cell_developmental_stage }}</td></tr>
 {% endif %}
@@ -38,6 +44,23 @@
 
     {% if cellline.integrating_vector.excisable %}<tr><td class="label">Is the used vector excisable?:</td><td>{{ cellline.integrating_vector.excisable|yesno:"yes,no" }}</td></tr>{% endif %}
     {% if cellline.integrating_vector.absence_reprogramming_vectors %}<tr><td class="label">Absence of reprogramming vector(s):</td><td>{{ cellline.integrating_vector.absence_reprogramming_vectors|yesno:"yes,no" }}</td></tr>{% endif %}
+
+    {% if cellline.integrating_vector.silenced %}
+    <tr><td class="label">Have the reprogramming vectors been silenced:</td><td>{{ cellline.integrating_vector.get_detectable_display }}</td></tr>{% endif %}
+
+    {% if cellline.integrating_vector.methods|length %}
+    <tr><td class="label">Merthods used:</td><td>{{ cellline.integrating_vector.methods|join:", " }}</td></tr>{% endif %}
+
+    {% if cellline.integrating_vector.silenced_notes %}
+    <tr><td class="label">Notes on reprogramming vector silencing:</td><td>{{ cellline.integrating_vector.silenced_notes }}</td></tr>{% endif %}
+
+    {% if cellline.integrating_vector.expressed_silenced_file %}
+    <tr><td class="label">Files showing reprogramming vector expressed or silenced:</td><td><a href="{{ cellline.integrating_vector.expressed_silenced_file.url }}" target="_blank">Image / Result</a></td></tr>
+    {% endif %}
+
+    {% if cellline.integrating_vector.vector_map_file %}
+    <tr><td class="label">Vector map:</td><td><a href="{{ cellline.integrating_vector.vector_map_file.url }}" target="_blank">File</a></td></tr>
+    {% endif %}
 {% endif %}
 
 {% if cellline.non_integrating_vector %}
@@ -55,6 +78,23 @@
             </ul>
         </td>
     </tr>
+    {% endif %}
+
+    {% if cellline.non_integrating_vector.detectable %}
+    <tr><td class="label">Is the reprogramming vector detectable:</td><td>{{ cellline.non_integrating_vector.get_detectable_display }}</td></tr>{% endif %}
+
+    {% if cellline.non_integrating_vector.methods|length %}
+    <tr><td class="label">Merthods used:</td><td>{{ cellline.non_integrating_vector.methods|join:", " }}</td></tr>{% endif %}
+
+    {% if cellline.non_integrating_vector.detectable_notes %}
+    <tr><td class="label">Notes on reprogramming vector detection:</td><td>{{ cellline.non_integrating_vector.detectable_notes }}</td></tr>{% endif %}
+
+    {% if cellline.non_integrating_vector.expressed_silenced_file %}
+    <tr><td class="label">Files showing reprogramming vector expressed or silenced:</td><td><a href="{{ cellline.non_integrating_vector.expressed_silenced_file.url }}" target="_blank">Image / Result</a></td></tr>
+    {% endif %}
+
+    {% if cellline.non_integrating_vector.vector_map_file %}
+    <tr><td class="label">Vector map:</td><td><a href="{{ cellline.non_integrating_vector.vector_map_file.url }}" target="_blank">File</a></td></tr>
     {% endif %}
 
 {% endif %}
