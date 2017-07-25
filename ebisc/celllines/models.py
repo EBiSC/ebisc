@@ -1194,6 +1194,33 @@ class VectorFreeReprogrammingFactor(models.Model):
         return u'%s' % (self.name,)
 
 
+class CelllineVectorFreeReprogrammingFactor(DirtyFieldsMixin, models.Model):
+
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='derivation_vector_free_reprogramming_factors')
+    factor = models.ForeignKey(VectorFreeReprogrammingFactor, verbose_name=_(u'Vector-free reprogramming factor'), blank=True)
+
+    class Meta:
+        verbose_name = _(u'Cell line Vector-free Programming Factor')
+        verbose_name_plural = _(u'Cell line Vector-free Programming Factors')
+
+    def __unicode__(self):
+        return u'%s' % (self.id,)
+
+
+class CelllineVectorFreeReprogrammingFactorMolecule(DirtyFieldsMixin, models.Model):
+
+    reprogramming_factor = models.ForeignKey(CelllineVectorFreeReprogrammingFactor, verbose_name=_(u'Cell line reprogramming factor'), related_name='reprogramming_factor_molecules')
+    name = models.CharField(_(u'Molecule name'), max_length=300)
+
+    class Meta:
+        verbose_name = _(u'Cell line Vector-free Programming Factor molecule')
+        verbose_name_plural = _(u'Cell line Vector-free Programming Factor molecules')
+
+    def __unicode__(self):
+        return u'%s' % (self.name,)
+
+
+# OLD
 class CelllineVectorFreeReprogrammingFactors(DirtyFieldsMixin, models.Model):
 
     cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='vector_free_reprogramming_factors')

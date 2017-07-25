@@ -1,3 +1,4 @@
+import re
 import logging
 logger = logging.getLogger('management.commands')
 
@@ -16,7 +17,8 @@ from ebisc.celllines.models import \
     IntegratingVector,  \
     CelllineNonIntegratingVector,  \
     CelllineIntegratingVector,  \
-    CelllineVectorFreeReprogrammingFactors,  \
+    CelllineVectorFreeReprogrammingFactor,  \
+    CelllineVectorFreeReprogrammingFactorMolecule,  \
     VectorFreeReprogrammingFactor
 
 
@@ -219,7 +221,7 @@ def parse_non_integrating_vector(valuef, source, cell_line):
     return False
 
 
-def parse_vector_free_reprogramming_factor(factor):
+def parse_reprogramming_factor(factor):
 
     factor, created = VectorFreeReprogrammingFactor.objects.get_or_create(name=factor)
 
@@ -229,33 +231,116 @@ def parse_vector_free_reprogramming_factor(factor):
     return factor
 
 
+def parse_vector_free_reprogramming_molecule(molecule_string):
+
+    molecule_data = re.split(r'###', molecule_string)
+
+    molecule_name = molecule_data[1]
+
+    return molecule_name.strip()
+
+
 @inject_valuef
 def parse_vector_free_reprogramming_factors(valuef, source, cell_line):
 
+    reprogramming_factors_old_ids = set([f.id for f in cell_line.derivation_vector_free_reprogramming_factors.all()])
+
+    reprogramming_factors_new = []
+    reprogramming_factors_new_ids = set()
+
     if valuef('vector_free_types') is not None and valuef('vector_free_types'):
-        cell_line_vector_free_reprogramming_factors, cell_line_vector_free_reprogramming_factors_created = CelllineVectorFreeReprogrammingFactors.objects.get_or_create(cell_line=cell_line)
+        for vector_free_type in valuef('vector_free_types'):
+            factor = parse_vector_free_reprogramming_factor(source, cell_line, vector_free_type)
+            if factor is not None:
+                reprogramming_factors_new.append(factor)
 
-        dirty = [cell_line_vector_free_reprogramming_factors.is_dirty(check_relationship=True)]
+    if reprogramming_factors_new:
+        reprogramming_factors_new_ids = set([f.id for f in reprogramming_factors_new])
 
-        for factor in [parse_vector_free_reprogramming_factor(f) for f in source.get('vector_free_types', [])]:
-            cell_line_vector_free_reprogramming_factors.factors.add(factor)
+    to_delete = reprogramming_factors_old_ids - reprogramming_factors_new_ids
 
-        if True in dirty:
+    for factor in [f for f in cell_line.derivation_vector_free_reprogramming_factors.all() if f.id in to_delete]:
+        logger.info('Deleting obsolete vector free reprogramming factor %s' % factor)
+        factor.delete()
+
+    # Check if dirty
+    if reprogramming_factors_old_ids != reprogramming_factors_new_ids:
+        return True
+    else:
+        return False
+
+
+@inject_valuef
+def parse_vector_free_reprogramming_factor(valuef, source, cell_line, vector_free_type):
+    molecules = []
+
+    if vector_free_type == 'vector_free_types_none':
+        return None
+
+    else:
+        if vector_free_type == 'vector_free_types_mrna':
+            factor = parse_reprogramming_factor('mRNA')
+            if valuef('reprogramming_factors_mrna_list'):
+                for molecule_string in valuef('reprogramming_factors_mrna_list'):
+                    molecules.append(parse_vector_free_reprogramming_molecule(molecule_string))
+
+        elif vector_free_type == 'vector_free_types_protein':
+            factor = parse_reprogramming_factor('Protein')
+            if valuef('reprogramming_factors_gene_protein_list'):
+                for molecule_string in valuef('reprogramming_factors_gene_protein_list'):
+                    molecules.append(parse_vector_free_reprogramming_molecule(molecule_string))
+
+        elif vector_free_type == 'vector_free_types_small_molecules':
+            factor = parse_reprogramming_factor('Small molecules')
+            if valuef('reprogramming_factors_small_molecules_list'):
+                for molecule_string in valuef('reprogramming_factors_small_molecules_list'):
+                    molecules.append(parse_vector_free_reprogramming_molecule(molecule_string))
+
+        elif vector_free_type == 'vector_free_types_mirna':
+            factor = parse_reprogramming_factor('miRNA')
+
+        cell_line_vector_free_reprogramming_factor, cell_line_vector_free_reprogramming_factor_created = CelllineVectorFreeReprogrammingFactor.objects.get_or_create(cell_line=cell_line, factor=factor)
+
+        # Check for changes in molecules
+        old_molecule_names = set([m.name for m in cell_line_vector_free_reprogramming_factor.reprogramming_factor_molecules.all()])
+
+        new_molecules = []
+
+        for molecule in molecules:
+            new_molecules.append(parse_vector_free_reprogramming_molecules(source, cell_line_vector_free_reprogramming_factor, molecule))
+
+        new_molecule_names = set([m.name for m in new_molecules])
+
+        to_delete = old_molecule_names - new_molecule_names
+
+        for molecule in [m for m in cell_line_vector_free_reprogramming_factor.reprogramming_factor_molecules.all() if m.name in to_delete]:
+            logger.info('Deleting obsolete vector free reprogramming molecule %s' % molecule)
+            molecule.delete()
+
+        if cell_line_vector_free_reprogramming_factor.is_dirty(check_relationship=True) or cell_line_vector_free_reprogramming_factor_created:
             try:
-                cell_line_vector_free_reprogramming_factors.save()
+                cell_line_vector_free_reprogramming_factor.save()
 
-                if cell_line_vector_free_reprogramming_factors_created:
-                    logger.info('Added cell line vector free reprogramming factors: %s' % cell_line_vector_free_reprogramming_factors)
+                if cell_line_vector_free_reprogramming_factor_created:
+                    logger.info('Added cell line vector free reprogramming factor: %s' % cell_line_vector_free_reprogramming_factor)
                 else:
-                    logger.info('Updated cell line vector free reprogramming factors: %s' % cell_line_vector_free_reprogramming_factors)
+                    logger.info('Updated cell line vector free reprogramming factor: %s' % cell_line_vector_free_reprogramming_factor)
 
-                return True
+                return cell_line_vector_free_reprogramming_factor
 
             except IntegrityError, e:
                 logger.warn(format_integrity_error(e))
                 return None
 
-        return False
+        return cell_line_vector_free_reprogramming_factor
+
+
+@inject_valuef
+def parse_vector_free_reprogramming_molecules(valuef, source, factor, molecule):
+
+    vector_free_reprogramming_molecule, vector_free_reprogramming_molecule_created = CelllineVectorFreeReprogrammingFactorMolecule.objects.get_or_create(reprogramming_factor=factor, name=molecule)
+
+    return vector_free_reprogramming_molecule
 
 
 @inject_valuef

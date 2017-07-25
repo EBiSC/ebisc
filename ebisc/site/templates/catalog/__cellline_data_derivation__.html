@@ -23,6 +23,8 @@
 
 <tr><th class="sub-title"><h3>Reprogramming method</h3></th><th></th></tr>
 
+{% if cellline.integrating_vector or cellline.non_integrating_vector %}
+
 {% if cellline.integrating_vector %}
     <tr><td class="label">Vector type:</td><td>Integrating</td></tr>
     {% if cellline.integrating_vector.vector %}<tr><td class="label">Vector:</td><td>{{ cellline.integrating_vector.vector }}</td></tr>{% endif %}
@@ -46,7 +48,7 @@
     {% if cellline.integrating_vector.absence_reprogramming_vectors %}<tr><td class="label">Absence of reprogramming vector(s):</td><td>{{ cellline.integrating_vector.absence_reprogramming_vectors|yesno:"yes,no" }}</td></tr>{% endif %}
 
     {% if cellline.integrating_vector.silenced %}
-    <tr><td class="label">Have the reprogramming vectors been silenced:</td><td>{{ cellline.integrating_vector.get_detectable_display }}</td></tr>{% endif %}
+    <tr><td class="label">Have the reprogramming vectors been silenced:</td><td>{{ cellline.integrating_vector.get_silenced_display }}</td></tr>{% endif %}
 
     {% if cellline.integrating_vector.methods|length %}
     <tr><td class="label">Merthods used:</td><td>{{ cellline.integrating_vector.methods|join:", " }}</td></tr>{% endif %}
@@ -96,8 +98,43 @@
     {% if cellline.non_integrating_vector.vector_map_file %}
     <tr><td class="label">Vector map:</td><td><a href="{{ cellline.non_integrating_vector.vector_map_file.url }}" target="_blank">File</a></td></tr>
     {% endif %}
+{% endif %}
+
+{% else %}
+<tr><td class="label">Vector type:</td><td>None</td></tr>
+{% endif %}
+
+{% if cellline.derivation_vector_free_reprogramming_factors.all %}
+<tr><th class="sub-title"><h3>Vector Free Reprogramming</h3></th><th></th></tr>
+
+<tr>
+  <td class="label">Types of factor(s) used:</td>
+  <td>{% for factor in cellline.derivation_vector_free_reprogramming_factors.all %}{{ factor.factor.name }}<br/>{% endfor %}</td>
+</tr>
+
+{% for factor in cellline.derivation_vector_free_reprogramming_factors.all %}
+{% if factor.factor.name == 'mRNA' and factor.reprogramming_factor_molecules.all %}
+<tr>
+  <td class="label">mRNA:</td>
+  <td>{% for molecule in factor.reprogramming_factor_molecules.all %}{{ molecule.name }}<br/>{% endfor %}</td>
+</tr>
+{% endif %}
+{% if factor.factor.name == 'Protein' and factor.reprogramming_factor_molecules.all %}
+<tr>
+  <td class="label">Protein:</td>
+  <td>{% for molecule in factor.reprogramming_factor_molecules.all %}{{ molecule.name }}<br/>{% endfor %}</td>
+</tr>
+{% endif %}
+{% if factor.factor.name == 'Small molecules' and factor.reprogramming_factor_molecules.all %}
+<tr>
+  <td class="label">Small molecules:</td>
+  <td>{% for molecule in factor.reprogramming_factor_molecules.all %}{{ molecule.name }}<br/>{% endfor %}</td>
+</tr>
+{% endif %}
+{% endfor %}
 
 {% endif %}
+
 
 <tr><th class="sub-title"><h3>Derivation</h3></th><th></th></tr>
 
