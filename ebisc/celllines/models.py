@@ -364,9 +364,9 @@ class Cellline(DirtyFieldsMixin, models.Model):
             if self.integrating_vector.transposon:
                 derivation.append(self.integrating_vector.transposon.name)
             genes.extend(self.integrating_vector.genes.all())
-        if hasattr(self, 'vector_free_reprogramming_factors'):
-            for factor in self.vector_free_reprogramming_factors.factors.all():
-                derivation.append(factor.name)
+        if hasattr(self, 'derivation_vector_free_reprogramming_factors'):
+            for factor in self.derivation_vector_free_reprogramming_factors.all:
+                derivation.append(factor.factor.name)
 
         for gene in genes:
             derivation.append(gene.name)
@@ -1218,20 +1218,6 @@ class CelllineVectorFreeReprogrammingFactorMolecule(DirtyFieldsMixin, models.Mod
 
     def __unicode__(self):
         return u'%s' % (self.name,)
-
-
-# OLD
-class CelllineVectorFreeReprogrammingFactors(DirtyFieldsMixin, models.Model):
-
-    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='vector_free_reprogramming_factors')
-    factors = models.ManyToManyField(VectorFreeReprogrammingFactor, verbose_name=_(u'Vector-free reprogramming factor'), blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line Vector-free Programming Factor')
-        verbose_name_plural = _(u'Cell line Vector-free Programming Factors')
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
 
 
 # -----------------------------------------------------------------------------

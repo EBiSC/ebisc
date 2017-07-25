@@ -16,7 +16,7 @@ from ..celllines.models import Donor, DonorDisease, DonorDiseaseVariant, DonorGe
 class CelllineDerivationResource(ModelResource):
 
     name = fields.CharField('primary_cell_type', null=True)
-    
+
     class Meta:
         queryset = CelllineDerivation.objects.all()
         include_resource_uri = False
@@ -969,7 +969,6 @@ class CelllineResource(ModelResource):
             'generator',
             'celllinecultureconditions__culture_medium_other',
             'integrating_vector__virus',
-            'vector_free_reprogramming_factors',
 
         ).prefetch_related(
             'diseases',
@@ -984,6 +983,7 @@ class CelllineResource(ModelResource):
             'genetic_modification_cellline_isogenic',
             'genetic_modification_cellline_gene_knock_out',
             'genetic_modification_cellline_gene_knock_in',
+            'derivation_vector_free_reprogramming_factors',
         )
 
         resource_name = 'cell-lines'
@@ -1017,9 +1017,9 @@ class CelllineResource(ModelResource):
             return False
 
     def dehydrate_reprogramming_method_vector_free_types(self, bundle):
-        if hasattr(bundle.obj, 'vector_free_reprogramming_factors'):
-            if bundle.obj.vector_free_reprogramming_factors.factors:
-                factors = [factor.name for factor in bundle.obj.vector_free_reprogramming_factors.factors.all()]
+        if hasattr(bundle.obj, 'derivation_vector_free_reprogramming_factors'):
+            if bundle.obj.derivation_vector_free_reprogramming_factors.all:
+                factors = [factor.factor.name for factor in bundle.obj.derivation_vector_free_reprogramming_factors.all()]
                 return factors
         else:
             return []
