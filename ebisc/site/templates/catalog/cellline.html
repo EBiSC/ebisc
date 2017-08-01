@@ -8,7 +8,7 @@
 
 <div class="catalogue-data">
 
-    <h1>{{ cellline.name }}</h1>
+    <h1>{{ cellline.name }}{% if cellline.has_genetic_modification %} <small class="comment">Gene-edited iPSC line</small>{% endif %}</h1>
 
     {% if cellline.current_status.status == 'withdrawn' %}
     {{ cellline.current_status.comment }}
