@@ -756,9 +756,14 @@ def parse_characterization_differentiation_potency(valuef, source, cell_line):
 @inject_valuef
 def parse_characterization_differentiation_potency_cell_type(valuef, source, germ_layer):
 
+    if valuef('ont_name'):
+        name = valuef('ont_name')
+    elif valuef('celltype_freetext'):
+        name = valuef('celltype_freetext')
+
     cell_type, created = CelllineCharacterizationDifferentiationPotencyCellType.objects.update_or_create(
         germ_layer=germ_layer,
-        name=valuef('ont_name'),
+        name=name,
         defaults={
             'in_vivo_teratoma_flag': valuef('in_vivo_teratoma_flag', 'nullbool'),
             'in_vitro_spontaneous_differentiation_flag': valuef('in_vitro_spontaneous_differentiation_flag', 'nullbool'),
