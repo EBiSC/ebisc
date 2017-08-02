@@ -1018,7 +1018,7 @@ class CelllineResource(ModelResource):
 
     def dehydrate_reprogramming_method_vector_free_types(self, bundle):
         if hasattr(bundle.obj, 'derivation_vector_free_reprogramming_factors'):
-            if bundle.obj.derivation_vector_free_reprogramming_factors.all:
+            if bundle.obj.derivation_vector_free_reprogramming_factors.all():
                 factors = [factor.factor.name for factor in bundle.obj.derivation_vector_free_reprogramming_factors.all()]
                 return factors
         else:

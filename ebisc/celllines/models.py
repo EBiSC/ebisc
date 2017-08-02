@@ -365,7 +365,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
                 derivation.append(self.integrating_vector.transposon.name)
             genes.extend(self.integrating_vector.genes.all())
         if hasattr(self, 'derivation_vector_free_reprogramming_factors'):
-            for factor in self.derivation_vector_free_reprogramming_factors.all:
+            for factor in self.derivation_vector_free_reprogramming_factors.all():
                 derivation.append(factor.factor.name)
 
         for gene in genes:
