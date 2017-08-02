@@ -364,9 +364,9 @@ class Cellline(DirtyFieldsMixin, models.Model):
             if self.integrating_vector.transposon:
                 derivation.append(self.integrating_vector.transposon.name)
             genes.extend(self.integrating_vector.genes.all())
-        if hasattr(self, 'vector_free_reprogramming_factors'):
-            for factor in self.vector_free_reprogramming_factors.factors.all():
-                derivation.append(factor.name)
+        if hasattr(self, 'derivation_vector_free_reprogramming_factors'):
+            for factor in self.derivation_vector_free_reprogramming_factors.all():
+                derivation.append(factor.factor.name)
 
         for gene in genes:
             derivation.append(gene.name)
@@ -1076,6 +1076,8 @@ class CelllineDerivation(DirtyFieldsMixin, models.Model):
 
     primary_cell_type = models.ForeignKey('CellType', verbose_name=_(u'Primary cell type'), null=True, blank=True)
     primary_cell_type_not_normalised = models.CharField(_(u'Primary cell type name - not normalised'), max_length=100, null=True, blank=True)
+    primary_cellline = models.CharField(_(u'Primary cell line'), max_length=500, null=True, blank=True)
+    primary_cellline_vendor = models.CharField(_(u'Primary cell line vendor'), max_length=500, null=True, blank=True)
     primary_cell_developmental_stage = models.CharField(_(u'Primary cell developmental stage'), max_length=45, null=True, blank=True)
     tissue_procurement_location = models.CharField(_(u'Location of primary tissue procurement'), max_length=200, null=True, blank=True)
     tissue_collection_date = models.DateField(_(u'Tissue collection date'), null=True, blank=True)
@@ -1134,6 +1136,12 @@ class CelllineNonIntegratingVector(DirtyFieldsMixin, models.Model):
     methods = ArrayField(models.CharField(max_length=200), verbose_name=_(u'Methods used'), null=True, blank=True)
     detectable_notes = models.TextField(u'Notes on reprogramming vector detection', null=True, blank=True)
 
+    expressed_silenced_file = models.FileField(_(u'File - Non-integrating reprogramming vector expressed or silenced'), upload_to=upload_to, null=True, blank=True)
+    expressed_silenced_file_enc = models.CharField(_(u'File enc - Non-integrating reprogramming vector expressed or silenced'), max_length=300, null=True, blank=True)
+
+    vector_map_file = models.FileField(_(u'File - vector map'), upload_to=upload_to, null=True, blank=True)
+    vector_map_file_enc = models.CharField(_(u'File enc - vector map'), max_length=300, null=True, blank=True)
+
     class Meta:
         verbose_name = _(u'Cell line non integrating vector')
         verbose_name_plural = _(u'Cell line non integrating vectors')
@@ -1159,6 +1167,12 @@ class CelllineIntegratingVector(DirtyFieldsMixin, models.Model):
     methods = ArrayField(models.CharField(max_length=200), verbose_name=_(u'Methods used'), null=True, blank=True)
     silenced_notes = models.TextField(u'Notes on reprogramming vector silencing', null=True, blank=True)
 
+    expressed_silenced_file = models.FileField(_(u'File - Integrating reprogramming vector expressed or silenced'), upload_to=upload_to, null=True, blank=True)
+    expressed_silenced_file_enc = models.CharField(_(u'File enc - Integrating reprogramming vector expressed or silenced'), max_length=300, null=True, blank=True)
+
+    vector_map_file = models.FileField(_(u'File - vector map'), upload_to=upload_to, null=True, blank=True)
+    vector_map_file_enc = models.CharField(_(u'File enc - vector map'), max_length=300, null=True, blank=True)
+
     class Meta:
         verbose_name = _(u'Cell line integrating vector')
         verbose_name_plural = _(u'Cell line integrating vectors')
@@ -1180,10 +1194,10 @@ class VectorFreeReprogrammingFactor(models.Model):
         return u'%s' % (self.name,)
 
 
-class CelllineVectorFreeReprogrammingFactors(DirtyFieldsMixin, models.Model):
+class CelllineVectorFreeReprogrammingFactor(DirtyFieldsMixin, models.Model):
 
-    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), related_name='vector_free_reprogramming_factors')
-    factors = models.ManyToManyField(VectorFreeReprogrammingFactor, verbose_name=_(u'Vector-free reprogramming factor'), blank=True)
+    cell_line = models.ForeignKey(Cellline, verbose_name=_(u'Cell line'), related_name='derivation_vector_free_reprogramming_factors')
+    factor = models.ForeignKey(VectorFreeReprogrammingFactor, verbose_name=_(u'Vector-free reprogramming factor'), blank=True)
 
     class Meta:
         verbose_name = _(u'Cell line Vector-free Programming Factor')
@@ -1191,6 +1205,19 @@ class CelllineVectorFreeReprogrammingFactors(DirtyFieldsMixin, models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.id,)
+
+
+class CelllineVectorFreeReprogrammingFactorMolecule(DirtyFieldsMixin, models.Model):
+
+    reprogramming_factor = models.ForeignKey(CelllineVectorFreeReprogrammingFactor, verbose_name=_(u'Cell line reprogramming factor'), related_name='reprogramming_factor_molecules')
+    name = models.CharField(_(u'Molecule name'), max_length=300)
+
+    class Meta:
+        verbose_name = _(u'Cell line Vector-free Programming Factor molecule')
+        verbose_name_plural = _(u'Cell line Vector-free Programming Factor molecules')
+
+    def __unicode__(self):
+        return u'%s' % (self.name,)
 
 
 # -----------------------------------------------------------------------------
