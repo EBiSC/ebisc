@@ -94,15 +94,8 @@ def page(request, path):
         if cellline.derived_from:
             same_donor_lines = same_donor_lines.exclude(name=cellline.derived_from.name)
 
-        # Line that this line was linked from
-        comparator_cell_line = None
-        if cellline.comparator_cell_line and cellline.comparator_cell_line.available_for_sale_at_ecacc:
-            comparator_cell_line = cellline.comparator_cell_line
-
-        # All lines that were linked from this line
-        available_comparators = []
-        if cellline.comparator_cell_lines.all():
-            available_comparators = [line for line in cellline.comparator_cell_lines.all() if line.available_for_sale_at_ecacc]
+        # Relatives
+        relatives = [related_donor for related_donor in cellline.donor.relatives.all()]
 
         # Characterization data - undifferentiated marker expression
         import collections
@@ -127,8 +120,7 @@ def page(request, path):
             'same_donor_lines': same_donor_lines,
             'subclones': subclones,
             'available_subclones_from_parent': available_subclones_from_parent,
-            'comparator_cell_line': comparator_cell_line,
-            'available_comparators': available_comparators,
+            'relatives': relatives,
             'undiff_marker_expression': undiff_marker_expression,
             'marker_expression_methods': marker_expression_methods,
         })

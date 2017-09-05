@@ -24,6 +24,7 @@ from ebisc.celllines.models import  \
     Transposon,  \
     Unit,  \
     Donor,  \
+    DonorRelatives,  \
     DonorDisease,  \
     DonorDiseaseVariant, \
     DonorGenomeAnalysis, \
@@ -519,10 +520,59 @@ def parse_donor(valuef, source):
             logger.warn(format_integrity_error(e))
             return None
 
+    parse_donor_relatives(source, donor)
     parse_donor_diseases(source, donor)
     parse_donor_genome_analysis(source, donor)
 
     return donor
+
+
+# -----------------------------------------------------------------------------
+# Donor relatives
+
+def parse_donor_relatives(source, donor):
+
+    donor_relatives_old = list(donor.relatives.all().order_by('related_donor__biosamples_id'))
+    donor_relatives_old_ids = set([r.related_donor.biosamples_id for r in donor_relatives_old])
+
+    donor_relatives_new_ids = []
+
+    for relative in source.get('relatives', []):
+        donor_relatives_new_ids.append(parse_donor_relative(relative, donor))
+
+    # Delete existing donor relatives that are not present in new data
+    to_delete = donor_relatives_old_ids - set(donor_relatives_new_ids)
+
+    for donor_relative in [r for r in donor_relatives_old if r.related_donor.biosamples_id in to_delete]:
+        logger.info('Deleting obsolete donor relative %s' % donor_relative)
+        donor_relative.delete()
+
+
+@inject_valuef
+def parse_donor_relative(valuef, source, donor):
+
+    # Save relation if relative exists in IMS
+    try:
+        relative = Donor.objects.get(biosamples_id=valuef('biosamples_id'))
+
+        donor_relative, created = DonorRelatives.objects.update_or_create(
+            donor=donor,
+            related_donor=relative,
+            defaults={
+                'relation': valuef('type'),
+            }
+        )
+
+        if created or donor_relative.is_dirty():
+            if created:
+                logger.info('Added new donor relative %s' % donor_relative)
+            else:
+                logger.info('Updated donor  relative %s' % donor_relative)
+
+        return relative.biosamples_id
+
+    except Donor.DoesNotExist:
+        return None
 
 
 # -----------------------------------------------------------------------------
@@ -908,20 +958,6 @@ def parse_derived_from(valuef, source):
     if valuef(['subclone_of', 'id']) is not None:
         try:
             return Cellline.objects.get(hescreg_id=valuef(['subclone_of', 'id']))
-
-        except Cellline.DoesNotExist:
-            return None
-
-    else:
-        return None
-
-
-@inject_valuef
-def parse_comparator_line(valuef, source):
-
-    if valuef('comparator_cell_line_type') == 'Comparator line' and valuef('comparator_cell_line_id') is not None:
-        try:
-            return Cellline.objects.get(hescreg_id=valuef('comparator_cell_line_id'))
 
         except Cellline.DoesNotExist:
             return None
