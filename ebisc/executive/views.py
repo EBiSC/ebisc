@@ -158,6 +158,9 @@ def cellline(request, name):
     if cellline.derived_from:
         same_donor_lines = same_donor_lines.exclude(name=cellline.derived_from.name)
 
+    # Relatives
+    relatives = [related_donor for related_donor in cellline.donor.relatives.all()]
+
     if not request.user.has_perm('auth.can_manage_executive_dashboard'):
         return render(request, 'executive/cellline.html', {
             'cellline': cellline,
@@ -208,6 +211,7 @@ def cellline(request, name):
         'clip_form': clip_form,
         'status_form': status_form,
         'same_donor_lines': same_donor_lines,
+        'relatives': relatives,
     })
 
 
