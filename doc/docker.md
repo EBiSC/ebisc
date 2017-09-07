@@ -36,6 +36,7 @@ Put the file "ebisc.sql.gz" in the same directory as the docker-compose file, an
 Create these sub-directories from the same directory as the docker-compose file:
 
   mkdir -p var/static var/media
+  sudo chown 1001 var/static var/media
 
 Bring up the uWSGI server:
 
