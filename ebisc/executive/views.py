@@ -405,7 +405,7 @@ def batch_data(request, name, batch_biosample_id):
     for aliquot in batch.aliquots.all():
 
         if batch.cell_line.alternative_names:
-            cell_line_name = batch.cell_line.alternative_names.replace(",", ";")
+            cell_line_name = batch.cell_line.alternative_names.replace(",", ";").encode('utf-8')
         else:
             cell_line_name = batch.cell_line.name
 
@@ -429,7 +429,7 @@ def cell_line_ids(request):
     for cell_line in Cellline.objects.all():
 
         if cell_line.alternative_names:
-            cell_line_alternative_names = cell_line.alternative_names.replace(",", ";")
+            cell_line_alternative_names = cell_line.alternative_names.replace(",", ";").encode('utf-8')
         else:
             cell_line_alternative_names = ''
 
