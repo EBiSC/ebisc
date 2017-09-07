@@ -31,6 +31,9 @@ services:
       dockerfile: Dockerfile-uwsgi
       args:
         - ROLE=develop
+        - http_proxy=${http_proxy}
+        - https_proxy=${https_proxy}
+        - no_proxy=${no_proxy}
     environment:
       - DB_USER=www
       - DB_PASS=ebisc

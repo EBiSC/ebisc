@@ -198,8 +198,6 @@ class Cellline(DirtyFieldsMixin, models.Model):
     has_genetic_modification = models.NullBooleanField(_(u'Genetic modification flag'))
 
     derived_from = models.ForeignKey('Cellline', verbose_name=_(u'Derived from cell line'), null=True, blank=True, related_name='derived_cell_lines')
-    comparator_cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Comparator cell line'), null=True, blank=True, related_name='comparator_cell_lines')
-    comparator_cell_line_relation = models.CharField(_(u'Comparator cell line relation'), max_length=100, null=True, blank=True)
 
     access_and_use_agreement = models.FileField(_(u'Access and use agreement (AUA)'), upload_to=upload_to, null=True, blank=True)
     access_and_use_agreement_md5 = models.CharField(_(u'Access and use agreement md5'), max_length=100, null=True, blank=True)
@@ -609,6 +607,22 @@ class Donor(DirtyFieldsMixin, models.Model):
 
     def __unicode__(self):
         return u'%s' % (self.biosamples_id,)
+
+
+class DonorRelatives(DirtyFieldsMixin, models.Model):
+
+    donor = models.ForeignKey(Donor, verbose_name=_(u'Donor'), related_name='relatives')
+    related_donor = models.ForeignKey(Donor, verbose_name=_(u'Relative'), related_name='relative_of')
+    relation = models.CharField(_(u'Type of relation'), max_length=200, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'Donor relatives')
+        verbose_name_plural = _(u'Donor relatives')
+        unique_together = [('donor', 'related_donor')]
+        ordering = ['related_donor']
+
+    def __unicode__(self):
+        return u'%s - %s' % (self.donor, self.related_donor,)
 
 
 class DonorGenomeAnalysis(DirtyFieldsMixin, models.Model):
