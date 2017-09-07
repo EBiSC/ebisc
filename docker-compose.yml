@@ -16,6 +16,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-nginx
+      args:
+        - PORT=8080
     volumes:
       - $PWD/var/static:/var/static
       - $PWD/var/media:/var/media
@@ -23,6 +25,22 @@ services:
       - uwsgi
     ports:
       - "8080:8080"
+    cap_drop:
+      - ALL
+  nginx-8008:
+    container_name: ims-nginx-8008
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx
+      args:
+        - PORT=8008
+    volumes:
+      - $PWD/var/static:/var/static
+      - $PWD/var/media:/var/media
+    depends_on:
+      - uwsgi
+    ports:
+      - "8008:8008"
     cap_drop:
       - ALL
   django:
