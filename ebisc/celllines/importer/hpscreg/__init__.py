@@ -30,7 +30,7 @@ def run(cellline=None):
         return
 
     # Tests
-    # json = request_get('http://test.hescreg.eu/api/export_readable/2152')
+    # json = request_get('http://test.hescreg.eu/api/export_readable/EDi001-A-1')
     # import_cellline(json)
 
     for cellline_id in [id for id in cellline_ids]:
@@ -101,8 +101,6 @@ def import_cellline(source):
     cell_line.non_disease_associated_phenotypes = valuef('donor_phenotypes')
     cell_line.has_genetic_modification = valuef('genetic_modification_flag', 'nullbool')
     cell_line.derived_from = parser.parse_derived_from(source)
-    cell_line.comparator_cell_line = parser.parse_comparator_line(source)
-    cell_line.comparator_cell_line_relation = valuef('comparator_cell_line_donor_relative_type')
 
     dirty = [cell_line.is_dirty(check_relationship=True)]
 
