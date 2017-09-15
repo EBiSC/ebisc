@@ -1,5 +1,9 @@
 FROM python:2.7
 
+ENV http_proxy "$http_proxy"
+ENV https_proxy "$https_proxy"
+ENV no_proxy "$no_proxy"
+
 COPY ./requirements.txt /app/requirements.txt
 RUN pip install -r /app/requirements.txt
 
