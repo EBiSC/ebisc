@@ -11,7 +11,7 @@ For development convenience, you can use [Docker compose](https://docs.docker.co
 
 Bring up the server
 
-  docker-compose up -d posgres
+  docker-compose up -d postgres
 
 Use this command if you want to start a client to poke around in the database. The password in development is ebisc.
 
@@ -36,6 +36,7 @@ Put the file "ebisc.sql.gz" in the same directory as the docker-compose file, an
 Create these sub-directories from the same directory as the docker-compose file:
 
   mkdir -p var/static var/media
+  sudo chown 1001 var/static var/media
 
 Bring up the uWSGI server:
 
