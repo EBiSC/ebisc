@@ -24,13 +24,8 @@ CelllineOrgType
 CelllinePublication
 CelllineStatus
 CelllineStrFingerprinting
-CelllineValue
 CellType
-Contact
-ContactType
 Disease
-Document
-DocumentType
 Donor
 Enzymatically
 EnzymeFree
@@ -39,9 +34,6 @@ KaryotypeMethod
 Organization
 OrgType
 PassageMethod
-Person
-PhoneCountryCode
-Postcode
 ProteinSource
 SurfaceCoating
 Unit

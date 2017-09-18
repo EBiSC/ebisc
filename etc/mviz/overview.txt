@@ -2,8 +2,5 @@ Cellline
 Celllinebatch
 Celllinealiquot
 CelllineOrganization
-Contact
-Document
 Donor
 Organization
-Person
