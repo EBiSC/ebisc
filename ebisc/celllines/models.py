@@ -199,12 +199,6 @@ class Cellline(DirtyFieldsMixin, models.Model):
 
     derived_from = models.ForeignKey('Cellline', verbose_name=_(u'Derived from cell line'), null=True, blank=True, related_name='derived_cell_lines')
 
-    access_and_use_agreement = models.FileField(_(u'Access and use agreement (AUA)'), upload_to=upload_to, null=True, blank=True)
-    access_and_use_agreement_md5 = models.CharField(_(u'Access and use agreement md5'), max_length=100, null=True, blank=True)
-
-    access_and_use_agreement_participant = models.FileField(_(u'Access and use agreement for participants (prAUA)'), upload_to=upload_to, null=True, blank=True)
-    access_and_use_agreement_participant_md5 = models.CharField(_(u'Access and use agreement for participants md5'), max_length=100, null=True, blank=True)
-
     class Meta:
         verbose_name = _(u'Cell line')
         verbose_name_plural = _(u'Cell lines')
@@ -1599,7 +1593,6 @@ class Organization(models.Model):
 
     name = models.CharField(_(u'Organization name'), max_length=500, unique=True, null=True, blank=True)
     short_name = models.CharField(_(u'Organization short name'), unique=True, max_length=6, null=True, blank=True)
-    contact = models.ForeignKey('Contact', verbose_name=_(u'Contact'), null=True, blank=True)
     org_type = models.ForeignKey('OrgType', verbose_name=_(u'Organization type'), null=True, blank=True)
 
     class Meta:
@@ -1637,92 +1630,8 @@ class OrgType(models.Model):
         return u'%s' % (self.org_type,)
 
 
-class Contact(models.Model):
-
-    contact_type = models.ForeignKey('ContactType', verbose_name=_(u'Contact type'), null=True, blank=True)
-    country = models.ForeignKey('Country', verbose_name=_(u'Country'), db_column='country')
-    postcode = models.ForeignKey('Postcode', verbose_name=_(u'Postcode'), db_column='postcode')
-    state_county = models.IntegerField(_(u'State county'), null=True, blank=True)
-    city = models.CharField(_(u'City'), max_length=45, blank=True)
-    street = models.CharField(_(u'Street'), max_length=45, blank=True)
-    building_number = models.CharField(_(u'Building number'), max_length=20, blank=True)
-    suite_or_apt_or_dept = models.CharField(_(u'Suite or apt or dept'), max_length=10, null=True, blank=True)
-    office_phone_country_code = models.ForeignKey('PhoneCountryCode', verbose_name=_(u'Phone country code'), related_name='contacts_officephonecountrycode', null=True, blank=True)
-    office_phone = models.CharField(_(u'Office phone'), max_length=20, null=True, blank=True)
-    fax_country_code = models.ForeignKey('PhoneCountryCode', verbose_name=_(u'Phone country code'), related_name='contacts_faxcountrycode', null=True, blank=True)
-    fax = models.CharField(_(u'Fax'), max_length=20, null=True, blank=True)
-    mobile_country_code = models.ForeignKey('PhoneCountryCode', verbose_name=_(u'Phone country code'), related_name='contacts_mobilecountrycode', null=True, blank=True)
-    mobile_phone = models.CharField(_(u'Mobile phone'), max_length=20, null=True, blank=True)
-    website = models.CharField(_(u'Website'), max_length=45, null=True, blank=True)
-    email_address = models.CharField(_(u'Email address'), max_length=45, null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Contact')
-        verbose_name_plural = _(u'Contacts')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
-
-
-class ContactType(models.Model):
-
-    contact_type = models.CharField(_(u'Contact type'), max_length=45, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Contact type')
-        verbose_name_plural = _(u'Contact types')
-        ordering = ['contact_type']
-
-    def __unicode__(self):
-        return u'%s' % (self.contact_type,)
-
-
-class PhoneCountryCode(models.Model):
-
-    phonecountrycode = models.DecimalField(_(u'Phone country code'), max_digits=4, decimal_places=0, null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Phone country code')
-        verbose_name_plural = _(u'Phone country codes')
-        ordering = ['phonecountrycode']
-
-    def __unicode__(self):
-        return u'%s' % (self.phonecountrycode,)
-
-
-class Postcode(models.Model):
-
-    postcode = models.CharField(_(u'Postcode'), max_length=45, blank=True)
-    district = models.CharField(_(u'District'), max_length=20)
-
-    class Meta:
-        verbose_name = _(u'Postcode')
-        verbose_name_plural = _(u'Postcodes')
-        ordering = ['postcode', 'district']
-
-    def __unicode__(self):
-        return u'%s %s' % (self.postcode, self.district)
-
-
-class Person(models.Model):
-
-    organization = models.IntegerField(_(u'Organization'), null=True, blank=True)
-    last_name = models.CharField(_(u'Person last name'), max_length=20, blank=True)
-    first_name = models.CharField(_(u'Person first name'), max_length=45, blank=True)
-    contact = models.ForeignKey('Contact', verbose_name=_(u'Contact'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Person')
-        verbose_name_plural = _(u'Persons')
-        ordering = ['last_name', 'first_name']
-
-    def __unicode__(self):
-        return u'%s %s' % (self.last_name, self.first_name)
-
-
 # -----------------------------------------------------------------------------
-# Publications, documents
+# Publications
 
 class CelllinePublication(DirtyFieldsMixin, models.Model):
 
@@ -1749,62 +1658,6 @@ class CelllinePublication(DirtyFieldsMixin, models.Model):
     @staticmethod
     def pubmed_url_from_id(id):
         return 'http://www.ncbi.nlm.nih.gov/pubmed/%s' % id
-
-
-class Document(models.Model):
-
-    # Higly suspect!
-    cell_line = models.IntegerField(_(u'Cell line'), null=True, blank=True)
-    title = models.CharField(_(u'Title'), max_length=45, blank=True)
-    abstract = models.TextField(_(u'Abstract'), null=True, blank=True)
-    document_type = models.ForeignKey('DocumentType', verbose_name=_(u'Document type'), null=True, blank=True)
-    depositor = models.IntegerField(_(u'Document depositor'), null=True, blank=True)
-    authors = models.TextField(_(u'Authors'), null=True, blank=True)
-    owner = models.IntegerField(_(u'Owner'), null=True, blank=True)
-    version = models.CharField(_(u'Version'), max_length=5, blank=True)
-    access_level = models.IntegerField(_(u'Access level'), null=True, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Document')
-        verbose_name_plural = _(u'Documents')
-        ordering = ['title']
-
-    def __unicode__(self):
-        return u'%s' % (self.title,)
-
-
-class DocumentType(models.Model):
-
-    document_type = models.CharField(_(u'Document type'), max_length=30, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Document type')
-        verbose_name_plural = _(u'Document types')
-        ordering = ['document_type']
-
-    def __unicode__(self):
-        return u'%s' % (self.document_type,)
-
-
-# -----------------------------------------------------------------------------
-# Cell line value
-
-
-class CelllineValue(models.Model):
-
-    cell_line = models.OneToOneField(Cellline, verbose_name=_(u'Cell line'), null=True, blank=True)
-    potential_use = models.CharField(_(u'Potential use'), max_length=100, blank=True)
-    value_to_society = models.CharField(_(u'Value to society'), max_length=100, blank=True)
-    value_to_research = models.CharField(_(u'Value to research'), max_length=100, blank=True)
-    other_value = models.CharField(_(u'Other value'), max_length=100, blank=True)
-
-    class Meta:
-        verbose_name = _(u'Cell line value')
-        verbose_name_plural = _(u'Cell line values')
-        ordering = []
-
-    def __unicode__(self):
-        return u'%s' % (self.id,)
 
 
 # -----------------------------------------------------------------------------

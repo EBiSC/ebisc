@@ -447,3 +447,28 @@ def cell_line_ids(request):
         writer.writerow([cell_line.name, cell_line.generator, cell_line_alternative_names, cell_line.biosamples_id, cell_line.ecacc_id, donor_depositor_names, donor_biosamples_id])
 
     return response
+
+
+@permission_required('auth.can_view_executive_dashboard')
+def batch_ids(request):
+
+    '''Return batch IDs as CSV file.'''
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="ebisc_batch_ids-{}.csv"'.format(datetime.date(datetime.now()))
+
+    writer = csv.writer(response)
+
+    writer.writerow(['Cell line name', 'Cell line BioSamples ID', 'Batch No', 'Batch BioSamples ID', 'Batch type'])
+
+    for batch in CelllineBatch.objects.all().order_by('cell_line__name'):
+
+        writer.writerow((
+            batch.cell_line.name,
+            batch.cell_line.biosamples_id,
+            batch.batch_id,
+            batch.biosamples_id,
+            batch.batch_type,
+        ))
+
+    return response

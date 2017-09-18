@@ -8,6 +8,9 @@ urlpatterns = patterns('ebisc.executive.views',
     # IDs for registered cell lines
     url(r'^cell-line-ids/$', 'cell_line_ids', name='cell_line_ids'),
 
+    # IDs for created batches
+    url(r'^batch-ids/$', 'batch_ids', name='batch_ids'),
+
     # Cell line
     url(r'^(?P<name>[^/]+)/$', 'cellline', name='cellline'),
     url(r'^(?P<name>[^/]+)/new-batch/$', 'new_batch', name='new_batch'),

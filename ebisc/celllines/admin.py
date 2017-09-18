@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import *
+from .models import Gender, AgeRange, Disease, Cellline, CelllineAliquot, CelllineBatch, CelllineInformationPack
 
 
 # -----------------------------------------------------------------------------
@@ -26,11 +26,13 @@ class OneToOneStackedInline(admin.StackedInline):
 class GenderAdmin(admin.ModelAdmin):
     pass
 
+
 admin.site.register(Gender, GenderAdmin)
 
 
 class AgeRangeAdmin(admin.ModelAdmin):
     pass
+
 
 admin.site.register(AgeRange, AgeRangeAdmin)
 
@@ -41,81 +43,26 @@ admin.site.register(AgeRange, AgeRangeAdmin)
 class DiseaseAdmin(admin.ModelAdmin):
     list_display = ['xpurl', 'name']
 
+
 admin.site.register(Disease, DiseaseAdmin)
 
 
 # -----------------------------------------------------------------------------
 # CellLine
 
-class CelllineDiseaseInline(StackedInline):
-    model = CelllineDisease
-
-
-class CelllineCharacterizationInline(OneToOneStackedInline):
-    model = CelllineCharacterization
-
-
-class CelllineCultureConditionsInline(OneToOneStackedInline):
-    model = CelllineCultureConditions
-
-
-class CelllineDerivationInline(OneToOneStackedInline):
-    model = CelllineDerivation
-
-
-class CelllineCharacterizationPluritestInline(OneToOneStackedInline):
-    model = CelllineCharacterizationPluritest
-
-
-class CelllineValueInline(OneToOneStackedInline):
-    model = CelllineValue
-
-
-class CelllineIntegratingVectorInline(OneToOneStackedInline):
-    model = CelllineIntegratingVector
-
-
-class CelllineNonIntegratingVectorInline(OneToOneStackedInline):
-    model = CelllineNonIntegratingVector
-
-
-class CelllineStatusInline(TabularInline):
-    model = CelllineStatus
-
-
 class CelllineAdmin(admin.ModelAdmin):
     list_display = ['name', 'biosamples_id', 'alternative_names', 'current_status', 'available_for_sale_at_ecacc']
-    inlines = (
-        CelllineDiseaseInline,
-        CelllineStatusInline,
-        CelllineCharacterizationInline,
-        CelllineCultureConditionsInline,
-        CelllineDerivationInline,
-        CelllineCharacterizationPluritestInline,
-        CelllineValueInline,
-        CelllineIntegratingVectorInline,
-        CelllineNonIntegratingVectorInline,
-    )
     list_filter = ['current_status__status', 'available_for_sale_at_ecacc', 'generator__name']
-    search_fields = ['name', 'biosamples_id']
+    search_fields = ['name', 'biosamples_id', 'ecacc_id']
+
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'biosamples_id', 'hescreg_id', 'ecacc_id', 'donor', 'generator'),
+        }),
+    )
+
 
 admin.site.register(Cellline, CelllineAdmin)
-
-
-# -----------------------------------------------------------------------------
-# Donors
-
-class DonorDiseaseInline(StackedInline):
-    model = DonorDisease
-
-
-class DonorAdmin(admin.ModelAdmin):
-    list_display = ['biosamples_id', 'provider_donor_ids', 'gender']
-    search_fields = ['biosamples_id', 'provider_donor_ids']
-    inlines = (DonorDiseaseInline,)
-    list_filter = ['gender', 'country_of_origin', 'ethnicity']
-
-admin.site.register(Donor, DonorAdmin)
 
 
 # -----------------------------------------------------------------------------
@@ -136,6 +83,7 @@ class CelllineBatchAdmin(admin.ModelAdmin):
         return obj.cell_line.name
     get_cell_line_name.short_description = 'Cell line name'
 
+
 admin.site.register(CelllineBatch, CelllineBatchAdmin)
 
 
@@ -144,5 +92,7 @@ admin.site.register(CelllineBatch, CelllineBatchAdmin)
 
 class CelllineInformationPackAdmin(admin.ModelAdmin):
     list_display = ['cell_line', 'version', 'created', 'updated']
+    search_fields = ['cell_line__name', 'cell_line__biosamples_id']
+
 
 admin.site.register(CelllineInformationPack, CelllineInformationPackAdmin)
