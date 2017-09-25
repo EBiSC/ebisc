@@ -382,9 +382,55 @@ def new_batch(request, name):
                         fail_silently=False,
                     )
 
-    return render(request, 'executive/create-batch/new-batch.html', {
+    return render(request, 'executive/batches/new-batch.html', {
         'cellline': cellline,
         'new_batch_form': new_batch_form,
+    })
+
+
+class UpdateBatchDataForm(forms.ModelForm):
+    # certificate_of_analysis = forms.FileField(label='Certificate of Analysis')
+
+    # vials_at_roslin = forms.IntegerField(label='Vials at Central facility', min_value=0, widget=forms.TextInput(attrs={'class': 'small'}))
+    # vials_shipped_to_ecacc = forms.IntegerField(label='Vials shipped to ECACC', min_value=0, widget=forms.TextInput(attrs={'class': 'small'}))
+    # vials_shipped_to_fraunhoffer = forms.IntegerField(label='Vials shipped to Fraunhoffer', min_value=0, widget=forms.TextInput(attrs={'class': 'small'}))
+
+    class Meta:
+        model = CelllineBatch
+        fields = ['vials_at_roslin', 'vials_shipped_to_ecacc', 'vials_shipped_to_fraunhoffer']
+
+
+@permission_required('auth.can_manage_executive_dashboard')
+def update_batch(request, name, batch_biosample_id):
+
+    batch = get_object_or_404(CelllineBatch, biosamples_id=batch_biosample_id)
+    cellline = get_object_or_404(Cellline, name=name)
+
+    if request.method != 'POST':
+        update_batch_form = UpdateBatchDataForm(instance=batch)
+    else:
+        update_batch_form = UpdateBatchDataForm(request.POST, request.FILES, instance=batch)
+        if not update_batch_form.is_valid():
+            messages.error(request, format_html(u'Invalid batch data submitted. Please check below.'))
+        else:
+            batch = update_batch_form.save(commit=False)
+            batch.cell_line = cellline
+            batch.biosamples_id = batch.biosamples_id
+            batch.batch_id = batch.batch_id
+            batch.batch_type = batch.batch_type
+
+            batch.save()
+            update_batch_form.save_m2m()
+
+            # batch.certificate_of_analysis_md5 = hashlib.md5(open(batch.certificate_of_analysis.url, 'rb').read()).hexdigest()
+            # batch.save()
+
+            return redirect('executive:cellline', name)
+
+    return render(request, 'executive/batches/update-batch.html', {
+        'cellline': cellline,
+        'batch': batch,
+        'update_batch_form': update_batch_form,
     })
 
 

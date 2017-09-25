@@ -14,5 +14,6 @@ urlpatterns = patterns('ebisc.executive.views',
     # Cell line
     url(r'^(?P<name>[^/]+)/$', 'cellline', name='cellline'),
     url(r'^(?P<name>[^/]+)/new-batch/$', 'new_batch', name='new_batch'),
+    url(r'^(?P<name>[^/]+)/update-batch/(?P<batch_biosample_id>[^/]+)$', 'update_batch', name='update_batch'),
     url(r'^(?P<name>[^/]+)/(?P<batch_biosample_id>[^/]+)/$', 'batch_data', name='batch_data'),
 )
