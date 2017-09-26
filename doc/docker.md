@@ -1,5 +1,5 @@
 How to run IMS in docker
-=======================
+========================
 
 In the Embassy deployment, all components of IMS run in [docker](https://www.docker.com/) containers, i.e. postgres, elasticsearch, uwsgi, nginx etc.
 
@@ -65,8 +65,9 @@ The only thing you are missing now is "media" files, which are not part of this 
 You will need to copy the latest "media" files from the production machine and put them in
 your var/media directory.  This includes CofAs, cell images, instructions for depositors etc.
 
+
 Principles of secure docker deployment
-===============================
+======================================
 
 * All containers run non-root
 * SELinux is enforced in production
@@ -76,3 +77,19 @@ Principles of secure docker deployment
 * Use official docker repos, not user-contributed.  The only place where I broke this rule is the centos/postgres image.
 * Keep passwords and API keys out of the image, in case the image ever accidentally ends up in a public repo.  Pass in passwords and keys at run time using environment variables.
 * Run on a host with a minimal operating system. On Embassy we use coreos.
+
+
+Rebuilding images for local changes
+===================================
+
+To update the IMS with code changes run
+
+    docker-compose up -d --build uwsgi
+
+For an updated data deployment (or update, replacing "deploy" with "update"):
+
+    docker-compose build deploy
+    docker-compose run deploy
+
+Note that "uwsgi", "deploy", "update" and "django" are distinct images.
+Rebuilding one does not change the other ones.
