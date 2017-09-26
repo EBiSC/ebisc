@@ -10,8 +10,8 @@ from ebisc.celllines import exporter
 
 DOCS = '''
 Usage:
-  export ecacc
-  export batches
+  export ecacc [--traceback]
+  export batches [--traceback]
 '''
 
 
