@@ -3,6 +3,7 @@ hPSCreg JSON data API importer.
 '''
 
 import re
+import os
 import functools
 import requests
 
@@ -22,9 +23,20 @@ from . import parser_derivation
 # -----------------------------------------------------------------------------
 #  Run
 
-def run(cellline=None):
+def run(cellline=None, local=False):
 
-    cellline_ids = request_get(settings.HPSCREG['list_url'])
+    if local:
+        if os.getenv("TOMCAT_URL"):
+            server = os.getenv("TOMCAT_URL")
+        else:
+            logging.info(u'no local tomcat_url given')
+            local = False
+
+    if local:
+        logger.info(u'using ' + server + settings.HPSCREG['local_list_url'])
+        cellline_ids = request_get(server + settings.HPSCREG['local_list_url'])
+    else:
+        cellline_ids = request_get(settings.HPSCREG['list_url'])
 
     if cellline_ids is None:
         return
@@ -40,7 +52,10 @@ def run(cellline=None):
             continue
         else:
             logger.info('Importing data for cell line %s' % cellline_id)
-            json = request_get(settings.HPSCREG['cellline_url'] + cellline_id)
+            if local:
+                json = request_get(server + settings.HPSCREG['local_cellline_url'] + cellline_id)
+            else:
+                json = request_get(settings.HPSCREG['cellline_url'] + cellline_id)
 
             if json is None:
                 continue
