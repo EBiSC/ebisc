@@ -1019,7 +1019,12 @@ def get_or_create_molecule(name, kind, catalog, catalog_id):
         logger.info('Created new molecule: %s' % molecule)
 
     if catalog and catalog_id:
-        reference, created = MoleculeReference.objects.get_or_create(molecule=molecule, catalog=catalog, catalog_id=catalog_id)
+        try:
+            reference, created = MoleculeReference.objects.get_or_create(molecule=molecule, catalog=catalog, catalog_id=catalog_id)
+        except IntegrityError, e:
+            logger.warn(format_integrity_error(e))
+            pass
+
         if created:
             logger.info('Created new molecule reference: %s' % reference)
 
