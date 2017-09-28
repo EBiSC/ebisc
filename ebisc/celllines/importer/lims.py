@@ -152,7 +152,6 @@ def value_of_file(value, file_field, filename=None, source_md5=None, current_md5
     current_filename = os.path.basename(file_field.name)
 
     if source_md5 is not None and current_md5 is not None and source_md5 == current_md5 and source_filename == current_filename:
-        logger.info('Target file md5 is the same as existing file md5, skipping')
         return current_md5
 
     logger.info('Fetching data file from %s' % value)
