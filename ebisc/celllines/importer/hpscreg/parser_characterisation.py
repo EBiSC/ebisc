@@ -475,17 +475,16 @@ def parse_characterization_marker_expression(valuef, source, cell_line):
     if (cell_line_marker_expressions_old_ids != cell_line_marker_expressions_new_ids):
         return True
 
-    # TODO - add checking for updates once hPSCreg export is fixed
-    # else:
-    #     def marker_expressions_equal(a, b):
-    #         return (
-    #             a.marker_id == b.marker_id and
-    #             a.marker == b.marker and
-    #             a.expressed == b.expressed
-    #         )
-    #     for (old, new) in zip(cell_line_marker_expressions_old, cell_line_marker_expressions_new):
-    #         if not marker_expressions_equal(old, new):
-    #             return True
+    else:
+        def marker_expressions_equal(a, b):
+            return (
+                a.marker_id == b.marker_id and
+                a.marker == b.marker and
+                a.expressed == b.expressed
+            )
+        for (old, new) in zip(cell_line_marker_expressions_old, cell_line_marker_expressions_new):
+            if not marker_expressions_equal(old, new):
+                return True
 
     return False
 
@@ -493,8 +492,8 @@ def parse_characterization_marker_expression(valuef, source, cell_line):
 @inject_valuef
 def parse_marker_expression(valuef, source, cell_line):
 
-    if valuef('marker') is not None and valuef('marker_id') is not None:
-        marker_id = valuef('marker_id')
+    if valuef('marker') is not None and valuef('id') is not None:
+        marker_id = valuef('id')
         marker_name = valuef('marker').get('name')
 
         if valuef('expressed') == '1':
@@ -516,24 +515,23 @@ def parse_marker_expression(valuef, source, cell_line):
         for method in source.get('methods', []):
             parse_marker_expression_method(method, cell_line_marker_expression)
 
-        # TODO - add checking for updates once hPSCreg export is fixed
-        # list_old = list(cell_line_marker_expression.marker_expression_method.all().order_by('id'))
-        # list_old_ids = set([m.id for m in list_old])
-        #
-        # list_new = []
-        #
-        # for method in source.get('methods', []):
-        #     list_new.append(parse_marker_expression_method(method, cell_line_marker_expression))
-        #
-        # list_new_ids = set([m.id for m in list_new if m is not None])
+        list_old = list(cell_line_marker_expression.marker_expression_method.all().order_by('id'))
+        list_old_ids = set([m.id for m in list_old])
 
-        # Delete existing disease variants that are not present in new data
+        list_new = []
 
-        # to_delete = list_old_ids - list_new_ids
-        #
-        # for marker_expression_method in [m for m in list_old if m.id in to_delete]:
-        #     logger.info('Deleting obsolete marker expression method %s' % marker_expression_method)
-        #     marker_expression_method.delete()
+        for method in source.get('methods', []):
+            list_new.append(parse_marker_expression_method(method, cell_line_marker_expression))
+
+        list_new_ids = set([m.id for m in list_new if m is not None])
+
+        # Delete existing methods that are not present in new data
+
+        to_delete = list_old_ids - list_new_ids
+
+        for marker_expression_method in [m for m in list_old if m.id in to_delete]:
+            logger.info('Deleting obsolete marker expression method %s' % marker_expression_method)
+            marker_expression_method.delete()
 
         if created:
             logger.info('Created new cell line marker expression: %s' % cell_line_marker_expression)
