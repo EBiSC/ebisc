@@ -1139,7 +1139,7 @@ def parse_culture_conditions(valuef, source, cell_line):
                         cell_line_culture_medium_supplement.save()
                         dirty_supplements += [True]
 
-            return dirty_supplements
+        return dirty_supplements
 
     if not valuef('culture_conditions_medium_culture_medium') == 'other':
 
