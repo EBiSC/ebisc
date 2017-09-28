@@ -9,11 +9,11 @@ logger = logging.getLogger('management.commands')
 
 DOCS = '''
 Usage:
-    import all
-    import hpscreg [--cellline=<name>]
-    import lims
-    import batches <filename>
-    import toelastic
+    import all [--traceback]
+    import hpscreg [--traceback] [--cellline=<name>]
+    import lims [--traceback]
+    import batches [--traceback] <filename>
+    import toelastic [--traceback]
 '''
 
 
