@@ -92,6 +92,12 @@ services:
     read_only: true
     tmpfs: /tmp
     command: ["run-ims-update"]
+  hpscreg-local:
+    extends:
+      service: django
+    command: ["/app/manage.py", "import",  "hpscreg-local", "--traceback"]
+    environment:
+      - TOMCAT_URL=${tomcat_url}
   elasticsearch:
     container_name: ims-elasticsearch
     image: elasticsearch:1.6.2

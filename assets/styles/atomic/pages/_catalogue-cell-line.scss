@@ -8,6 +8,10 @@
     @include clearfix();
   }
 
+  .card.public-notes {
+    margin-top: 10px;
+  }
+
   .data {
     &.general-info {
       @include span(8);

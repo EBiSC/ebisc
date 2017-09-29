@@ -199,6 +199,8 @@ class Cellline(DirtyFieldsMixin, models.Model):
 
     derived_from = models.ForeignKey('Cellline', verbose_name=_(u'Derived from cell line'), null=True, blank=True, related_name='derived_cell_lines')
 
+    public_notes = models.TextField(_(u'Public notes'), null=True, blank=True)
+
     class Meta:
         verbose_name = _(u'Cell line')
         verbose_name_plural = _(u'Cell lines')

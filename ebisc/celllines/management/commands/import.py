@@ -11,6 +11,7 @@ DOCS = '''
 Usage:
     import all [--traceback]
     import hpscreg [--traceback] [--cellline=<name>]
+    import hpscreg-local [--traceback] [--cellline=<name>]
     import lims [--traceback]
     import batches [--traceback] <filename>
     import toelastic [--traceback]
@@ -31,6 +32,9 @@ class Command(DocOptCommand):
 
         if args.get('hpscreg'):
             importer.hpscreg.run(cellline=args.get('--cellline'))
+
+        if args.get('hpscreg-local'):
+            importer.hpscreg.run(cellline=args.get('--cellline'),local=True)
 
         if args.get('lims'):
             logger.info('Synchronizing batch data with LIMS')
