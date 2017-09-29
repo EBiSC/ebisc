@@ -116,6 +116,7 @@ def import_cellline(source):
     cell_line.non_disease_associated_phenotypes = valuef('donor_phenotypes')
     cell_line.has_genetic_modification = valuef('genetic_modification_flag', 'nullbool')
     cell_line.derived_from = parser.parse_derived_from(source)
+    cell_line.public_notes = valuef('public_notes')
 
     dirty = [cell_line.is_dirty(check_relationship=True)]
 
