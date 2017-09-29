@@ -104,6 +104,12 @@
           {% endif %}
       </ul>
 
+      {% if cellline.public_notes %}
+      <div class="card public-notes">
+        <div class="comment">{{ cellline.public_notes }}</div>
+      </div>
+      {% endif %}
+
       {% if cellline.ecacc_id and cellline.available_for_sale %}
       <div class="buy">
           <a class="ecacc-link" href="{{ cellline.ecacc_url }}"  target="_blank">
