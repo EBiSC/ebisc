@@ -406,7 +406,11 @@ def update_batch(request, name, batch_biosample_id):
 
     cellline = get_object_or_404(Cellline, name=name)
     batch = get_object_or_404(CelllineBatch, biosamples_id=batch_biosample_id)
-    batch_culture_conditions = get_object_or_404(BatchCultureConditions, batch=batch)
+
+    try:
+        batch_culture_conditions = BatchCultureConditions.objects.get(batch=batch)
+    except BatchCultureConditions.DoesNotExist:
+        batch_culture_conditions = None
 
     ImageFormSet = inlineformset_factory(CelllineBatch, CelllineBatchImages, fields=('image', 'magnification', 'time_point'), max_num=6, extra=6)
 

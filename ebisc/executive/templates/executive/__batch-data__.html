@@ -14,15 +14,15 @@
     {% if batch.batch_id and batch.batch_id != batch.biosamples_id %}
 
         {% if perms.auth.can_manage_executive_dashboard %}
-        <p><a href="{% url 'executive:update_batch' cellline.name batch.biosamples_id %}">Update</a></p>
+        <div class="edit-batch-data"><a href="{% url 'executive:update_batch' cellline.name batch.biosamples_id %}"><button class="inverse-button"><i class="glyphicon glyphicon-pencil"></i> Update batch data</button></a></div>
         {% endif %}
 
-        <div class="biosample-ids-file">
-            <a href="{% url 'executive:batch_data' cellline.name batch.biosamples_id %}"><i class="glyphicon glyphicon-download"></i>Download vial Biosample IDs file</a>
-        </div>
+        <h3>Batch and vial IDs</h3>
+        <div><a href="{% url 'executive:batch_data' cellline.name batch.biosamples_id %}"><i class="glyphicon glyphicon-download-alt"></i>Download vial Biosample IDs file</a></div>
 
         {% if batch.certificate_of_analysis %}
-        <div class="certificate-of-anlysis">
+        <h3>Certificate of Analysis</h3>
+        <div>
             <a href="{{ batch.certificate_of_analysis.url }}"><i class="glyphicon glyphicon-file"></i>Certificate of analysis</a>
         </div>
         {% endif %}
@@ -48,8 +48,8 @@
         <p><span class="comment">No data available.</span></p>
         {% endif %}
 
-        {% if batch.images.all %}
         <h3>Images</h3>
+        {% if batch.images.all %}
         <div class="cellline-batch-images">
             {% for image in batch.images.all %}
             <div class="image-with-caption">
@@ -63,6 +63,8 @@
             </div>
             {% endfor %}
         </div>
+        {% else %}
+        <p><span class="comment">No images available.</span></p>
         {% endif %}
 
     {% else %}
