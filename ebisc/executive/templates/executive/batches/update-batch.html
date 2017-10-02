@@ -23,7 +23,16 @@
         <th>Batch:</th>
         <td>{{ batch.batch_id }} <span class="light-gray">/ {{ batch.biosamples_id }} - {{ batch.get_batch_type_display }}</span></td>
       </tr>
+      <tr>
+        <td></td>
+        <td><hr><div class="large light-blue">CoA and inventory</div></td>
+      </tr>
       {{ update_batch_form }}
+      <tr>
+        <td></td>
+        <td><hr><div class="large light-blue">Culture conditions</div></td>
+      </tr>
+      {{ update_batch_culture_conditions_form }}
       <tr>
           <td></td>
           <td>

@@ -22,7 +22,7 @@ from django.db.models import Q
 from django.db.models.functions import Lower
 
 from ebisc.site.views import render
-from ebisc.celllines.models import Cellline, CelllineStatus, CelllineBatch, CelllineInformationPack, CelllineAliquot, Disease, Organization
+from ebisc.celllines.models import Cellline, CelllineStatus, CelllineBatch, CelllineInformationPack, CelllineAliquot, Disease, Organization, BatchCultureConditions
 
 
 class BiosamplesError(Exception):
@@ -389,45 +389,60 @@ def new_batch(request, name):
 
 
 class UpdateBatchDataForm(forms.ModelForm):
-    # certificate_of_analysis = forms.FileField(label='Certificate of Analysis')
-
-    # vials_at_roslin = forms.IntegerField(label='Vials at Central facility', min_value=0, widget=forms.TextInput(attrs={'class': 'small'}))
-    # vials_shipped_to_ecacc = forms.IntegerField(label='Vials shipped to ECACC', min_value=0, widget=forms.TextInput(attrs={'class': 'small'}))
-    # vials_shipped_to_fraunhoffer = forms.IntegerField(label='Vials shipped to Fraunhoffer', min_value=0, widget=forms.TextInput(attrs={'class': 'small'}))
 
     class Meta:
         model = CelllineBatch
         fields = ['certificate_of_analysis', 'vials_at_roslin', 'vials_shipped_to_ecacc', 'vials_shipped_to_fraunhoffer']
 
 
+class UpdateBatchCultureConditionsForm(forms.ModelForm):
+
+    class Meta:
+        model = BatchCultureConditions
+        exclude = ['batch']
+
+
 @permission_required('auth.can_view_executive_dashboard')
 def update_batch(request, name, batch_biosample_id):
 
     batch = get_object_or_404(CelllineBatch, biosamples_id=batch_biosample_id)
+    batch_culture_conditions = get_object_or_404(BatchCultureConditions, batch=batch)
     cellline = get_object_or_404(Cellline, name=name)
 
     if request.method != 'POST':
         update_batch_form = UpdateBatchDataForm(instance=batch)
+        update_batch_culture_conditions_form = UpdateBatchCultureConditionsForm(instance=batch_culture_conditions)
     else:
         update_batch_form = UpdateBatchDataForm(request.POST, request.FILES, instance=batch)
-        if not update_batch_form.is_valid():
+        update_batch_culture_conditions_form = UpdateBatchCultureConditionsForm(request.POST, instance=batch_culture_conditions)
+        if not update_batch_form.is_valid() or not update_batch_culture_conditions_form.is_valid():
             messages.error(request, format_html(u'Invalid batch data submitted. Please check below.'))
         else:
+            batch_culture_conditions = update_batch_culture_conditions_form.save(commit=False)
+            batch_culture_conditions.batch = batch
+            batch_culture_conditions.save()
+
             batch = update_batch_form.save(commit=False)
             batch.cell_line = cellline
             batch.biosamples_id = batch.biosamples_id
             batch.batch_id = batch.batch_id
             batch.batch_type = batch.batch_type
-            batch.certificate_of_analysis_md5 = hashlib.md5(batch.certificate_of_analysis.read()).hexdigest()
+            if batch.certificate_of_analysis:
+                batch.certificate_of_analysis_md5 = hashlib.md5(batch.certificate_of_analysis.read()).hexdigest()
+            else:
+                batch.certificate_of_analysis_md5 = None
             batch.save()
+
             # update_batch_form.save_m2m()
 
+            messages.success(request, format_html(u'Batch data for batch <code><strong>{0}</strong></code> / <code><strong>{1}</strong></code> has been successfuly updated.', cellline.name, batch.batch_id))
             return redirect('executive:cellline', name)
 
     return render(request, 'executive/batches/update-batch.html', {
         'cellline': cellline,
         'batch': batch,
         'update_batch_form': update_batch_form,
+        'update_batch_culture_conditions_form': update_batch_culture_conditions_form,
     })
 
 
