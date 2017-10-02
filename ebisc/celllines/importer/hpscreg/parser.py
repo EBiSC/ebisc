@@ -193,6 +193,14 @@ def value_of_file(source_file_link, source_file_name, file_field, current_enc=No
     if source_enc is not None and current_enc is not None and source_enc == current_enc:
         return current_enc
 
+    if os.getenv("TOMCAT_URL"):
+        server = os.getenv("TOMCAT_URL").split("/")[2].split(":")[0]
+
+    if "hpscreg.local" in source_file_link and server:
+        source_file_link = source_file_link.replace("hpscreg.local", server)
+    if "localhost" in source_file_link and server:
+        source_file_link = source_file_link.replace("localhost", server)
+
     logger.info('Fetching data file from %s' % source_file_link)
 
     response = requests.get(source_file_link, stream=True, auth=(settings.HPSCREG.get('username'), settings.HPSCREG.get('password')))
@@ -1019,7 +1027,12 @@ def get_or_create_molecule(name, kind, catalog, catalog_id):
         logger.info('Created new molecule: %s' % molecule)
 
     if catalog and catalog_id:
-        reference, created = MoleculeReference.objects.get_or_create(molecule=molecule, catalog=catalog, catalog_id=catalog_id)
+        try:
+            reference, created = MoleculeReference.objects.get_or_create(molecule=molecule, catalog=catalog, catalog_id=catalog_id)
+        except IntegrityError, e:
+            logger.warn(format_integrity_error(e))
+            pass
+
         if created:
             logger.info('Created new molecule reference: %s' % reference)
 
@@ -1134,7 +1147,7 @@ def parse_culture_conditions(valuef, source, cell_line):
                         cell_line_culture_medium_supplement.save()
                         dirty_supplements += [True]
 
-            return dirty_supplements
+        return dirty_supplements
 
     if not valuef('culture_conditions_medium_culture_medium') == 'other':
 
