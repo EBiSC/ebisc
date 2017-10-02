@@ -397,10 +397,10 @@ class UpdateBatchDataForm(forms.ModelForm):
 
     class Meta:
         model = CelllineBatch
-        fields = ['vials_at_roslin', 'vials_shipped_to_ecacc', 'vials_shipped_to_fraunhoffer']
+        fields = ['certificate_of_analysis', 'vials_at_roslin', 'vials_shipped_to_ecacc', 'vials_shipped_to_fraunhoffer']
 
 
-@permission_required('auth.can_manage_executive_dashboard')
+@permission_required('auth.can_view_executive_dashboard')
 def update_batch(request, name, batch_biosample_id):
 
     batch = get_object_or_404(CelllineBatch, biosamples_id=batch_biosample_id)
@@ -418,12 +418,9 @@ def update_batch(request, name, batch_biosample_id):
             batch.biosamples_id = batch.biosamples_id
             batch.batch_id = batch.batch_id
             batch.batch_type = batch.batch_type
-
+            batch.certificate_of_analysis_md5 = hashlib.md5(batch.certificate_of_analysis.read()).hexdigest()
             batch.save()
-            update_batch_form.save_m2m()
-
-            # batch.certificate_of_analysis_md5 = hashlib.md5(open(batch.certificate_of_analysis.url, 'rb').read()).hexdigest()
-            # batch.save()
+            # update_batch_form.save_m2m()
 
             return redirect('executive:cellline', name)
 

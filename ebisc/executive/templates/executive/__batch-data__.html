@@ -13,7 +13,9 @@
     <div class="content">
     {% if batch.batch_id and batch.batch_id != batch.biosamples_id %}
 
+        {% if perms.auth.can_manage_executive_dashboard %}
         <p><a href="{% url 'executive:update_batch' cellline.name batch.biosamples_id %}">Update</a></p>
+        {% endif %}
 
         <div class="biosample-ids-file">
             <a href="{% url 'executive:batch_data' cellline.name batch.biosamples_id %}"><i class="glyphicon glyphicon-download"></i>Download vial Biosample IDs file</a>

@@ -17,11 +17,11 @@
     <table class="form">
       <tr>
         <th>Cell line:</th>
-        <td>{{ cellline.name }} / {{ cellline.biosamples_id }}</td>
+        <td>{{ cellline.name }} <span class="light-gray">/ {{ cellline.biosamples_id }}</span></td>
       </tr>
       <tr>
         <th>Batch:</th>
-        <td>{{ batch.batch_id }} - {{ batch.biosamples_id }} ({{ batch.get_batch_type_display }})</td>
+        <td>{{ batch.batch_id }} <span class="light-gray">/ {{ batch.biosamples_id }} - {{ batch.get_batch_type_display }}</span></td>
       </tr>
       {{ update_batch_form }}
       <tr>
