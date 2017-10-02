@@ -9,20 +9,19 @@ from django import forms
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.views.decorators.http import require_POST
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.utils.html import format_html
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import permission_required
-from django.forms import ModelForm
+from django.forms import ModelForm, inlineformset_factory
 from django.core.validators import RegexValidator
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.db.models.functions import Lower
 
 from ebisc.site.views import render
-from ebisc.celllines.models import Cellline, CelllineStatus, CelllineBatch, CelllineInformationPack, CelllineAliquot, Disease, Organization, BatchCultureConditions
+from ebisc.celllines.models import Cellline, CelllineStatus, CelllineBatch, CelllineInformationPack, CelllineAliquot, Disease, Organization, BatchCultureConditions, CelllineBatchImages
 
 
 class BiosamplesError(Exception):
@@ -405,23 +404,30 @@ class UpdateBatchCultureConditionsForm(forms.ModelForm):
 @permission_required('auth.can_view_executive_dashboard')
 def update_batch(request, name, batch_biosample_id):
 
+    cellline = get_object_or_404(Cellline, name=name)
     batch = get_object_or_404(CelllineBatch, biosamples_id=batch_biosample_id)
     batch_culture_conditions = get_object_or_404(BatchCultureConditions, batch=batch)
-    cellline = get_object_or_404(Cellline, name=name)
+
+    ImageFormSet = inlineformset_factory(CelllineBatch, CelllineBatchImages, fields=('image', 'magnification', 'time_point'), max_num=6, extra=6)
 
     if request.method != 'POST':
         update_batch_form = UpdateBatchDataForm(instance=batch)
         update_batch_culture_conditions_form = UpdateBatchCultureConditionsForm(instance=batch_culture_conditions)
+        image_formset = ImageFormSet(instance=batch)
     else:
         update_batch_form = UpdateBatchDataForm(request.POST, request.FILES, instance=batch)
         update_batch_culture_conditions_form = UpdateBatchCultureConditionsForm(request.POST, instance=batch_culture_conditions)
-        if not update_batch_form.is_valid() or not update_batch_culture_conditions_form.is_valid():
+        image_formset = ImageFormSet(request.POST, request.FILES, instance=batch)
+
+        if not update_batch_form.is_valid() or not update_batch_culture_conditions_form.is_valid() or not image_formset.is_valid():
             messages.error(request, format_html(u'Invalid batch data submitted. Please check below.'))
         else:
+            # Save batch culture conditions
             batch_culture_conditions = update_batch_culture_conditions_form.save(commit=False)
             batch_culture_conditions.batch = batch
             batch_culture_conditions.save()
 
+            # Save inventory and CoA
             batch = update_batch_form.save(commit=False)
             batch.cell_line = cellline
             batch.biosamples_id = batch.biosamples_id
@@ -433,7 +439,14 @@ def update_batch(request, name, batch_biosample_id):
                 batch.certificate_of_analysis_md5 = None
             batch.save()
 
-            # update_batch_form.save_m2m()
+            # Save images
+            instances = image_formset.save()
+            for instance in instances:
+                if instance.image:
+                    instance.md5 = hashlib.md5(instance.image.read()).hexdigest()
+                else:
+                    instance.md5 = None
+                instance.save()
 
             messages.success(request, format_html(u'Batch data for batch <code><strong>{0}</strong></code> / <code><strong>{1}</strong></code> has been successfuly updated.', cellline.name, batch.batch_id))
             return redirect('executive:cellline', name)
@@ -443,6 +456,7 @@ def update_batch(request, name, batch_biosample_id):
         'batch': batch,
         'update_batch_form': update_batch_form,
         'update_batch_culture_conditions_form': update_batch_culture_conditions_form,
+        'image_formset': image_formset,
     })
 
 
