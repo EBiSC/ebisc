@@ -412,7 +412,7 @@ def update_batch(request, name, batch_biosample_id):
     except BatchCultureConditions.DoesNotExist:
         batch_culture_conditions = None
 
-    ImageFormSet = inlineformset_factory(CelllineBatch, CelllineBatchImages, fields=('image', 'magnification', 'time_point'), max_num=6, extra=6)
+    ImageFormSet = inlineformset_factory(CelllineBatch, CelllineBatchImages, fields=('image', 'magnification', 'time_point'), max_num=4, extra=4)
 
     if request.method != 'POST':
         update_batch_form = UpdateBatchDataForm(instance=batch)

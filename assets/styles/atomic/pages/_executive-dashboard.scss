@@ -267,3 +267,27 @@ table.cell-line-status {
     max-width: 5rem;
   }
 }
+
+// Update batch data
+.update-batch {
+  .image {
+    background-color: white;
+    border: solid 1px $light-gray;
+    padding: 1rem;
+
+    input[type="text"] {
+      padding: 0.2rem;
+      display: inline-block;
+      width: 200px;
+    }
+
+    .image-uploads {
+      margin-top: 0.3rem;
+
+      label {
+        font-weight: normal;
+        display: inline-block;
+      }
+    }
+  }
+}

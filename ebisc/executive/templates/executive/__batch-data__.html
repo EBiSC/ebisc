@@ -20,11 +20,13 @@
         <h3>Batch and vial IDs</h3>
         <div><a href="{% url 'executive:batch_data' cellline.name batch.biosamples_id %}"><i class="glyphicon glyphicon-download-alt"></i>Download vial Biosample IDs file</a></div>
 
-        {% if batch.certificate_of_analysis %}
         <h3>Certificate of Analysis</h3>
+        {% if batch.certificate_of_analysis %}
         <div>
             <a href="{{ batch.certificate_of_analysis.url }}"><i class="glyphicon glyphicon-file"></i>Certificate of analysis</a>
         </div>
+        {% else %}
+        <p><span class="comment">No file available.</span></p>
         {% endif %}
 
         <h3>Inventory</h3>

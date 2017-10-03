@@ -12,7 +12,7 @@
 
 <h2 class="no-margin">Update batch data</h2>
 
-<form enctype="multipart/form-data" method="post">
+<form enctype="multipart/form-data" method="post" class="update-batch">
     {% csrf_token %}
     <table class="form">
       <tr>
@@ -33,7 +33,41 @@
         <td></td>
         <td><hr><div class="large light-blue">Images</div></td>
       </tr>
-      {{ image_formset }}
+      {{ image_formset.management_form }}
+      {% for form in image_formset %}
+      <tr>
+        <th>Image {{ forloop.counter }}:</th>
+        <td>
+          <div class="image">
+              {{ form.image.errors }}
+              <div class="image-input {% if form.image.errors %}has-error{% endif %}">
+                {{ form.image }}
+              </div>
+              <table class="image-uploads">
+                <tr>
+                  <td>
+                    {{ form.magnification.errors }}
+                    <div class="{% if form.magnification.errors %}has-error{% endif %}">
+                        {{ form.magnification.label_tag }} {{ form.magnification }}
+                    </div>
+                  </td>
+                  <td>
+                    {{ form.time_point.errors }}
+                    <div class="{% if form.time_point.errors %}has-error{% endif %}">
+                        {{ form.time_point.label_tag }} {{ form.time_point }}
+                    </div>
+                  </td>
+                </tr>
+              </table>
+              {% if image_formset.can_delete %}
+              Delete: {{ form.DELETE }}
+              {% endif %}
+              {{ form.id }} {{ form.batch }}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+
       <tr>
           <td></td>
           <td>
