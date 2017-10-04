@@ -143,8 +143,8 @@ HPSCREG = {
     'local_list_url': '/get_data_export/?full=true',
     'cellline_url': 'https://hpscreg.eu/api/export_readable/',
     'local_cellline_url': '/get_data_export/?ldap_user_id='
-                            + os.getenv('HPSCREG_USER') + '&id=',
-    'username': os.getenv('HPSCREG_USER'),
+                            + os.getenv('HPSCREG_USER', 'ebiscims') + '&id=',
+    'username': os.getenv('HPSCREG_USER', 'ebiscims'),
     'password': os.getenv('HPSCREG_PASSWORD'),
 }
 
