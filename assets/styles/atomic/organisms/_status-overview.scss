@@ -26,16 +26,12 @@
       min-width: 32%;
       max-width: 32%;
 
-      &.sales {
-        min-width: 20%;
-      }
-
       &.registration {
         min-width: 30%;
       }
 
       &.availability {
-        min-width: 45%;
+        min-width: 68%;
       }
 
       .header {
@@ -74,16 +70,12 @@
     @include breakpoint(map-get($breakpoints, medium)) {
       > div {
 
-        &.sales {
-          min-width: 20%;
-        }
-
         &.registration {
           min-width: 25%;
         }
 
         &.availability {
-          min-width: 40%;
+          min-width: 73%;
         }
 
         .header {
@@ -93,7 +85,7 @@
 
         .data {
           > div {
-            font-size: $font-size-small;
+            font-size: $font-size-small * 0.9;
 
             .count {
              font-size: $base-font-size;

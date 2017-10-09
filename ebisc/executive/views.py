@@ -120,6 +120,8 @@ def dashboard(request):
         'celllines_at_ecacc': Cellline.objects.filter(current_status__status='at_ecacc').count(),
         'celllines_expand_to_order': Cellline.objects.filter(current_status__status='expand_to_order').count(),
         'celllines_restricted_distribution': Cellline.objects.filter(current_status__status='restricted_distribution').count(),
+        'celllines_recalled': Cellline.objects.filter(current_status__status='recalled').count(),
+        'celllines_withdrawn': Cellline.objects.filter(current_status__status='withdrawn').count(),
     })
 
 
