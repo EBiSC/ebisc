@@ -1024,12 +1024,12 @@ class BatchCultureConditions(DirtyFieldsMixin, models.Model):
 
     batch = models.OneToOneField(CelllineBatch, verbose_name=_(u'Batch'))
 
-    culture_medium = models.CharField(_(u'Medium'), max_length=100, null=True, blank=True)
-    passage_method = models.CharField(_(u'Passage method'), max_length=100, null=True, blank=True)
-    matrix = models.CharField(_(u'Matrix'), max_length=100, null=True, blank=True)
-    o2_concentration = models.CharField(_(u'O2 Concentration'), max_length=12, null=True, blank=True)
-    co2_concentration = models.CharField(_(u'CO2 Concentration'), max_length=12, null=True, blank=True)
-    temperature = models.CharField(_(u'Temperature'), max_length=12, null=True, blank=True)
+    culture_medium = models.CharField(_(u'Medium'), max_length=100, null=True, blank=True, help_text="e.g.: Essential E8")
+    passage_method = models.CharField(_(u'Passage method'), max_length=100, null=True, blank=True, help_text="e.g.: EDTA")
+    matrix = models.CharField(_(u'Matrix'), max_length=100, null=True, blank=True, help_text="e.g.: Matrigel / Geltrex")
+    o2_concentration = models.CharField(_(u'O2 Concentration'), max_length=12, null=True, blank=True, help_text="e.g.: 18%")
+    co2_concentration = models.CharField(_(u'CO2 Concentration'), max_length=12, null=True, blank=True, help_text="e.g.: 5%")
+    temperature = models.CharField(_(u'Temperature'), max_length=12, null=True, blank=True, help_text="e.g.: 37C")
 
     class Meta:
         verbose_name = _(u'Batch culture conditions')
