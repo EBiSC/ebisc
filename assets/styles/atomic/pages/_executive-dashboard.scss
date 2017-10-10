@@ -255,6 +255,13 @@ table.cell-line-status {
 
 // Clips
 
+.delete-clips {
+  input[type="submit"] {
+    font-size: $font-size-small;
+    padding: 0.3rem 0.6rem;
+  }
+}
+
 .clip-upload {
   margin-top: 3rem;
 

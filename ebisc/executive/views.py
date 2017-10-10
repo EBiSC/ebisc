@@ -6,6 +6,7 @@ from datetime import datetime
 
 from django import forms
 
+from django.db import IntegrityError
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -175,8 +176,12 @@ def cellline(request, name):
                 clip = clip_form.save(commit=False)
                 clip.cell_line = cellline
                 clip.md5 = hashlib.md5(clip.clip_file.read()).hexdigest()
-                clip.save()
-                messages.success(request, format_html(u'A new CLIP <code>{0}</code> has been sucessfully added.', clip.version))
+                try:
+                    clip.save()
+                    messages.success(request, format_html(u'A new CLIP <code>{0}</code> has been sucessfully added.', clip.version))
+                except IntegrityError:
+                    messages.error(request, format_html(u'CLIP version {0} for cell line {1} already exists.', clip.version, cellline.name))
+
                 return redirect('.')
             else:
                 messages.error(request, format_html(u'Invalid CLIP data submitted. Please check below.'))
@@ -202,6 +207,22 @@ def cellline(request, name):
             else:
                 messages.error(request, format_html(u'Invalid status data submitted. Please check below.'))
             clip_form = CelllineInformationPackForm(prefix='clip')
+
+        elif 'delete_clip' in request.POST:
+            delete_clip_ids = request.POST.getlist('delete-clip')
+
+            for clip_id in delete_clip_ids:
+                try:
+                    clip = CelllineInformationPack.objects.get(cell_line=cellline, id=clip_id)
+                    clip.delete()
+                    messages.success(request, format_html(u'CLIP version <code><strong>{0}</strong></code> for cell line <code><strong>{1}</strong></code> has been sucessfully deleted.', clip.version, cellline.name))
+
+                except CelllineInformationPack.DoesNotExist:
+                    messages.error(request, format_html(u'The CLIP you are trying to delete does not exist.'))
+
+            return redirect('.')
+            clip_form = CelllineInformationPackForm(prefix='clip')
+            status_form = CelllineStatusForm(prefix='status')
 
     else:
         clip_form = CelllineInformationPackForm(prefix='clip')
