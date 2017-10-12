@@ -27,14 +27,13 @@ class Command(DocOptCommand):
 
         if args.get('all'):
             importer.hpscreg.run()
-            importer.lims.run()
             importer.toelastic.run()
 
         if args.get('hpscreg'):
             importer.hpscreg.run(cellline=args.get('--cellline'))
 
         if args.get('hpscreg-local'):
-            importer.hpscreg.run(cellline=args.get('--cellline'),local=True)
+            importer.hpscreg.run(cellline=args.get('--cellline'), local=True)
 
         if args.get('lims'):
             logger.info('Synchronizing batch data with LIMS')

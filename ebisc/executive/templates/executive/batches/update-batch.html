@@ -1,0 +1,84 @@
+{% extends 'executive/executive-base.html' %}
+
+{% block title %}Cell line {{ cellline.name }}{% endblock %}
+
+{% block page-content %}
+
+{% if perms.auth.can_manage_executive_dashboard %}
+
+<h1>{{ cellline.name }} <small>{{ cellline.biosamples_id }}</small></h1>
+
+<p class="back-link"><a href="{% url 'executive:cellline' cellline.name %}"><i class="glyphicon glyphicon-chevron-left"></i> Back to cell line page</a></p>
+
+<h2 class="no-margin">Update batch data</h2>
+
+<form enctype="multipart/form-data" method="post" class="update-batch">
+    {% csrf_token %}
+    <table class="form">
+      <tr>
+        <th>Batch:</th>
+        <td>{{ batch.batch_id }} <span class="light-gray">/ {{ batch.biosamples_id }} - {{ batch.get_batch_type_display }}</span></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><hr><div class="large light-blue">CoA and inventory</div></td>
+      </tr>
+      {{ update_batch_form }}
+      <tr>
+        <td></td>
+        <td><hr><div class="large light-blue">Culture conditions</div></td>
+      </tr>
+      {{ update_batch_culture_conditions_form }}
+      <tr>
+        <td></td>
+        <td><hr><div class="large light-blue">Images</div></td>
+      </tr>
+      {{ image_formset.management_form }}
+      {% for form in image_formset %}
+      <tr>
+        <th>Image {{ forloop.counter }}:</th>
+        <td>
+          <div class="image">
+              {{ form.image.errors }}
+              <div class="image-input {% if form.image.errors %}has-error{% endif %}">
+                {{ form.image }}
+              </div>
+              <table class="image-uploads">
+                <tr>
+                  <td>
+                    {{ form.magnification.errors }}
+                    <div class="{% if form.magnification.errors %}has-error{% endif %}">
+                        {{ form.magnification.label_tag }} {{ form.magnification }}
+                    </div>
+                  </td>
+                  <td>
+                    {{ form.time_point.errors }}
+                    <div class="{% if form.time_point.errors %}has-error{% endif %}">
+                        {{ form.time_point.label_tag }} {{ form.time_point }}
+                    </div>
+                  </td>
+                </tr>
+              </table>
+              {% if image_formset.can_delete %}
+              Delete: {{ form.DELETE }}
+              {% endif %}
+              {{ form.id }} {{ form.batch }}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+
+      <tr>
+          <td></td>
+          <td>
+            <p><input type="submit" value="Update batch data"></p>
+          </td>
+      </tr>
+    </table>
+</form>
+
+{% else %}
+<p><i>You do not have permission to access this page.</i></p>
+{% endif %}
+
+{% endblock %}
