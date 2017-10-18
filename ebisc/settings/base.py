@@ -161,7 +161,7 @@ LIMS = {
 # BioSamples
 
 BIOSAMPLES = {
-    'url': 'http://www.ebi.ac.uk/biosamples/beta',
+    'url': 'https://www.ebi.ac.uk/biosamples/beta',
     'key': os.getenv('BIOSAMPLES_KEY'),
 }
 
