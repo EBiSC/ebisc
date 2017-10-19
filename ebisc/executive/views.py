@@ -337,7 +337,8 @@ def new_batch(request, name):
                     if r.status_code == 202:
                         vials.append((vial_number, r.text))
                     else:
-                        raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'), r.status_code, r.text)
+                        request_url = '%s/sampletab/api/v2/source/EBiSCIMS/sample?apikey=' % (biosamples_url,)
+                        raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'), r.status_code, request_url, r.text)
 
                 vial_list = ''.join(['<Id>%s</Id>' % v[1] for v in vials])
 
@@ -369,7 +370,8 @@ def new_batch(request, name):
                 if r.status_code == 202:
                     batch_biosamples_id = r.text
                 else:
-                    raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'), r.status_code, r.text)
+                    request_url = '%s/sampletab/api/v2/source/EBiSCIMS/group?apikey=' % (biosamples_url,)
+                    raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'), r.status_code, request_url, r.text)
 
                 # Save batch
                 batch = CelllineBatch(
@@ -393,12 +395,12 @@ def new_batch(request, name):
                 messages.success(request, format_html(u'A new batch <code><strong>{0}</strong></code> for cell line <code><strong>{1}</strong></code> has been sucessfully created.', batch_id, cellline_name))
                 return redirect('executive:cellline', cellline_name)
 
-            except BiosamplesError, (message, status_code, text):
+            except BiosamplesError, (message, status_code, url, text):
                 messages.error(request, message)
                 if hasattr(settings, 'BIOSAMPLES_ADMINS'):
                     send_mail(
                         'EBiSC Biosamples API error',
-                        'Status code: %s\n\nMessage: %s' % (status_code, text),
+                        'Status code: %s\n\nUrl: %s\n\nMessage: %s' % (status_code, url, text),
                         settings.SERVER_EMAIL,
                         ['%s <%s>' % (admin[0], admin[1]) for admin in settings.BIOSAMPLES_ADMINS],
                         fail_silently=False,
