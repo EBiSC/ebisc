@@ -14,7 +14,7 @@ EMAIL_HOST_USER = 'apikey'
 EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_API_KEY')
 
 BIOSAMPLES_ADMINS = ADMINS + (
-#    ('Biosamples', 'biosamples@ebi.ac.uk'),
+   ('Biosamples', 'biosamples@ebi.ac.uk'),
 )
 
 # -----------------------------------------------------------------------------
@@ -37,7 +37,7 @@ ELASTIC_HOSTS = [{'host': os.getenv('ES_HOST', 'localhost'), 'port': 9200}]
 # BioSamples
 
 BIOSAMPLES = {
-    'url': 'http://www.ebi.ac.uk/biosamples',
+    'url': 'https://www.ebi.ac.uk/biosamples',
     'key': os.getenv('BIOSAMPLES_KEY'),
 }
 

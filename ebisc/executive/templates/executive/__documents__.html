@@ -1,23 +1,57 @@
 <h2>Cell Line Information Packs (CLIPS)</h2>
+
 {% if cellline.clips.all|length %}
-<table class="bordered">
-    <thead>
-        <tr>
-            <th class="center">Version</th>
-            <th>Uploaded</th>
-            <th>File</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for clip in cellline.clips.all %}
-        <tr>
-            <td class="center">{{ clip.version }}</td>
-            <td>{{ clip.updated|date:"j M Y @ H:m" }}</td>
-            <td><a href="{{ clip.clip_file.url }}">{{ clip.filename }}</a></td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+    {% if perms.auth.can_manage_executive_dashboard %}
+    <table class="bordered delete-clips">
+        <thead>
+            <tr>
+                <th class="center">Version</th>
+                <th>Uploaded</th>
+                <th>File</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+          <form method="post">
+            {% csrf_token %}
+            {% for clip in cellline.clips.all %}
+                <tr>
+                    <td class="center">{{ clip.version }}</td>
+                    <td>{{ clip.updated|date:"j M Y @ H:m" }}</td>
+                    <td><a href="{{ clip.clip_file.url }}" target="_blank">{{ clip.filename }}</a></td>
+                    <td><input id="id_delete-clip" type="checkbox" name="delete-clip" value="{{ clip.id }}"> delete</td>
+                </tr>
+            {% endfor %}
+                <tr>
+                  <td colspan="3"></td>
+                  <td><input class="inverse-button" type="submit" name="delete_clip" value="Delete selected clips"></td>
+                </tr>
+          </form>
+        </tbody>
+    </table>
+    <p><br/>NOTE: <span class="comment">Delete CLIPs only in case an incorrect CLIP was uploaded.<br/>If a new version of a CLIP was created please upload it as a new version in the form below.</span></p>
+    {% else %}
+    <table class="bordered">
+        <thead>
+            <tr>
+                <th class="center">Version</th>
+                <th>Uploaded</th>
+                <th>File</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for clip in cellline.clips.all %}
+            <tr>
+                <td class="center">{{ clip.version }}</td>
+                <td>{{ clip.updated|date:"j M Y @ H:m" }}</td>
+                <td><a href="{{ clip.clip_file.url }}" target="_blank">{{ clip.filename }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+
 {% else %}
 <p><span class="comment">No CLIPs available.</span></p>
 {% endif %}

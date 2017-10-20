@@ -6,23 +6,23 @@ from datetime import datetime
 
 from django import forms
 
+from django.db import IntegrityError
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.views.decorators.http import require_POST
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.utils.html import format_html
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import permission_required
-from django.forms import ModelForm
+from django.forms import ModelForm, inlineformset_factory
 from django.core.validators import RegexValidator
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.db.models.functions import Lower
 
 from ebisc.site.views import render
-from ebisc.celllines.models import Cellline, CelllineStatus, CelllineBatch, CelllineInformationPack, CelllineAliquot, Disease, Organization
+from ebisc.celllines.models import Cellline, CelllineStatus, CelllineBatch, CelllineInformationPack, CelllineAliquot, Disease, Organization, BatchCultureConditions, CelllineBatchImages
 
 
 class BiosamplesError(Exception):
@@ -121,6 +121,8 @@ def dashboard(request):
         'celllines_at_ecacc': Cellline.objects.filter(current_status__status='at_ecacc').count(),
         'celllines_expand_to_order': Cellline.objects.filter(current_status__status='expand_to_order').count(),
         'celllines_restricted_distribution': Cellline.objects.filter(current_status__status='restricted_distribution').count(),
+        'celllines_recalled': Cellline.objects.filter(current_status__status='recalled').count(),
+        'celllines_withdrawn': Cellline.objects.filter(current_status__status='withdrawn').count(),
     })
 
 
@@ -174,8 +176,12 @@ def cellline(request, name):
                 clip = clip_form.save(commit=False)
                 clip.cell_line = cellline
                 clip.md5 = hashlib.md5(clip.clip_file.read()).hexdigest()
-                clip.save()
-                messages.success(request, format_html(u'A new CLIP <code>{0}</code> has been sucessfully added.', clip.version))
+                try:
+                    clip.save()
+                    messages.success(request, format_html(u'A new CLIP <code>{0}</code> has been sucessfully added.', clip.version))
+                except IntegrityError:
+                    messages.error(request, format_html(u'CLIP version {0} for cell line {1} already exists.', clip.version, cellline.name))
+
                 return redirect('.')
             else:
                 messages.error(request, format_html(u'Invalid CLIP data submitted. Please check below.'))
@@ -201,6 +207,22 @@ def cellline(request, name):
             else:
                 messages.error(request, format_html(u'Invalid status data submitted. Please check below.'))
             clip_form = CelllineInformationPackForm(prefix='clip')
+
+        elif 'delete_clip' in request.POST:
+            delete_clip_ids = request.POST.getlist('delete-clip')
+
+            for clip_id in delete_clip_ids:
+                try:
+                    clip = CelllineInformationPack.objects.get(cell_line=cellline, id=clip_id)
+                    clip.delete()
+                    messages.success(request, format_html(u'CLIP version <code><strong>{0}</strong></code> for cell line <code><strong>{1}</strong></code> has been sucessfully deleted.', clip.version, cellline.name))
+
+                except CelllineInformationPack.DoesNotExist:
+                    messages.error(request, format_html(u'The CLIP you are trying to delete does not exist.'))
+
+            return redirect('.')
+            clip_form = CelllineInformationPackForm(prefix='clip')
+            status_form = CelllineStatusForm(prefix='status')
 
     else:
         clip_form = CelllineInformationPackForm(prefix='clip')
@@ -315,7 +337,8 @@ def new_batch(request, name):
                     if r.status_code == 202:
                         vials.append((vial_number, r.text))
                     else:
-                        raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'), r.status_code, r.text)
+                        request_url = '%s/sampletab/api/v2/source/EBiSCIMS/sample?apikey=' % (biosamples_url,)
+                        raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'), r.status_code, request_url, r.text)
 
                 vial_list = ''.join(['<Id>%s</Id>' % v[1] for v in vials])
 
@@ -347,7 +370,8 @@ def new_batch(request, name):
                 if r.status_code == 202:
                     batch_biosamples_id = r.text
                 else:
-                    raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'), r.status_code, r.text)
+                    request_url = '%s/sampletab/api/v2/source/EBiSCIMS/group?apikey=' % (biosamples_url,)
+                    raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'), r.status_code, request_url, r.text)
 
                 # Save batch
                 batch = CelllineBatch(
@@ -371,20 +395,97 @@ def new_batch(request, name):
                 messages.success(request, format_html(u'A new batch <code><strong>{0}</strong></code> for cell line <code><strong>{1}</strong></code> has been sucessfully created.', batch_id, cellline_name))
                 return redirect('executive:cellline', cellline_name)
 
-            except BiosamplesError, (message, status_code, text):
+            except BiosamplesError, (message, status_code, url, text):
                 messages.error(request, message)
                 if hasattr(settings, 'BIOSAMPLES_ADMINS'):
                     send_mail(
                         'EBiSC Biosamples API error',
-                        'Status code: %s\n\nMessage: %s' % (status_code, text),
+                        'Status code: %s\n\nUrl: %s\n\nMessage: %s' % (status_code, url, text),
                         settings.SERVER_EMAIL,
                         ['%s <%s>' % (admin[0], admin[1]) for admin in settings.BIOSAMPLES_ADMINS],
                         fail_silently=False,
                     )
 
-    return render(request, 'executive/create-batch/new-batch.html', {
+    return render(request, 'executive/batches/new-batch.html', {
         'cellline': cellline,
         'new_batch_form': new_batch_form,
+    })
+
+
+class UpdateBatchDataForm(forms.ModelForm):
+
+    class Meta:
+        model = CelllineBatch
+        fields = ['certificate_of_analysis', 'vials_at_roslin', 'vials_shipped_to_ecacc', 'vials_shipped_to_fraunhoffer']
+
+
+class UpdateBatchCultureConditionsForm(forms.ModelForm):
+
+    class Meta:
+        model = BatchCultureConditions
+        exclude = ['batch']
+
+
+@permission_required('auth.can_view_executive_dashboard')
+def update_batch(request, name, batch_biosample_id):
+
+    cellline = get_object_or_404(Cellline, name=name)
+    batch = get_object_or_404(CelllineBatch, biosamples_id=batch_biosample_id)
+
+    try:
+        batch_culture_conditions = BatchCultureConditions.objects.get(batch=batch)
+    except BatchCultureConditions.DoesNotExist:
+        batch_culture_conditions = None
+
+    ImageFormSet = inlineformset_factory(CelllineBatch, CelllineBatchImages, fields=('image', 'magnification', 'time_point'), max_num=4, extra=4)
+
+    if request.method != 'POST':
+        update_batch_form = UpdateBatchDataForm(instance=batch)
+        update_batch_culture_conditions_form = UpdateBatchCultureConditionsForm(instance=batch_culture_conditions)
+        image_formset = ImageFormSet(instance=batch)
+    else:
+        update_batch_form = UpdateBatchDataForm(request.POST, request.FILES, instance=batch)
+        update_batch_culture_conditions_form = UpdateBatchCultureConditionsForm(request.POST, instance=batch_culture_conditions)
+        image_formset = ImageFormSet(request.POST, request.FILES, instance=batch)
+
+        if not update_batch_form.is_valid() or not update_batch_culture_conditions_form.is_valid() or not image_formset.is_valid():
+            messages.error(request, format_html(u'Invalid batch data submitted. Please check below.'))
+        else:
+            # Save batch culture conditions
+            batch_culture_conditions = update_batch_culture_conditions_form.save(commit=False)
+            batch_culture_conditions.batch = batch
+            batch_culture_conditions.save()
+
+            # Save inventory and CoA
+            batch = update_batch_form.save(commit=False)
+            batch.cell_line = cellline
+            batch.biosamples_id = batch.biosamples_id
+            batch.batch_id = batch.batch_id
+            batch.batch_type = batch.batch_type
+            if batch.certificate_of_analysis:
+                batch.certificate_of_analysis_md5 = hashlib.md5(batch.certificate_of_analysis.read()).hexdigest()
+            else:
+                batch.certificate_of_analysis_md5 = None
+            batch.save()
+
+            # Save images
+            instances = image_formset.save()
+            for instance in instances:
+                if instance.image:
+                    instance.md5 = hashlib.md5(instance.image.read()).hexdigest()
+                else:
+                    instance.md5 = None
+                instance.save()
+
+            messages.success(request, format_html(u'Batch data for batch <code><strong>{0}</strong></code> / <code><strong>{1}</strong></code> has been successfuly updated.', cellline.name, batch.batch_id))
+            return redirect('executive:cellline', name)
+
+    return render(request, 'executive/batches/update-batch.html', {
+        'cellline': cellline,
+        'batch': batch,
+        'update_batch_form': update_batch_form,
+        'update_batch_culture_conditions_form': update_batch_culture_conditions_form,
+        'image_formset': image_formset,
     })
 
 
