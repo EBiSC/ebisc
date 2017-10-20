@@ -17,7 +17,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # Admins
 
 ADMINS = (
-    ('Ian Streeter', 'streeter@ebi.ac.uk'),
+    ('Peter Harrison', 'peter@ebi.ac.uk'),
+    ('Luca Cherubin', 'cherubin@ebi.ac.uk'),
     ('Joh Dokler', 'joh@douglasconnect.com'),
     ('Maja Brajnik', 'maja@douglasconnect.com'),
 )
@@ -142,8 +143,7 @@ HPSCREG = {
     'list_url': 'https://hpscreg.eu/api/full_list',
     'local_list_url': '/get_data_export/?full=true',
     'cellline_url': 'https://hpscreg.eu/api/export_readable/',
-    'local_cellline_url': '/get_data_export/?ldap_user_id='
-                            + os.getenv('HPSCREG_USER', 'ebiscims') + '&id=',
+    'local_cellline_url': '/get_data_export/?ldap_user_id=' + os.getenv('HPSCREG_USER', 'ebiscims') + '&id=',
     'username': os.getenv('HPSCREG_USER', 'ebiscims'),
     'password': os.getenv('HPSCREG_PASSWORD'),
 }
