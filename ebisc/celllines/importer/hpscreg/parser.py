@@ -221,6 +221,27 @@ def value_of_file(source_file_link, source_file_name, file_field, current_enc=No
 # Specific parsers
 
 # -----------------------------------------------------------------------------
+# hPSCreg status
+
+@inject_valuef
+def parse_validation_status(valuef, source):
+
+    status = None
+
+    if valuef('validated'):
+        if valuef('released'):
+            status = "1"
+        else:
+            status = "2"
+    elif valuef('submitted'):
+        status = "3"
+    else:
+        status = "5"
+
+    return status
+
+
+# -----------------------------------------------------------------------------
 # Cell line diseases
 
 def parse_cell_line_diseases(source, cell_line):
