@@ -102,7 +102,7 @@ def import_cellline(source):
 
         logger.info('Found new cell line %s' % valuef('name'))
 
-    cell_line.validated = valuef('validation_status')
+    cell_line.validated = parser.parse_validation_status(valuef('status')) if valuef('status') is not None else "5"
     cell_line.hescreg_id = valuef('id')
     cell_line.name = valuef('name')
     cell_line.alternative_names = ', '.join(valuef('alternate_name')) if valuef('alternate_name') is not None else ''
