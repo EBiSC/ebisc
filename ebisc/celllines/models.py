@@ -373,8 +373,6 @@ class Cellline(DirtyFieldsMixin, models.Model):
         if hasattr(self, 'non_integrating_vector'):
             if self.non_integrating_vector.vector:
                 derivation.append(self.non_integrating_vector.vector.name)
-            else:
-                derivation.append('Non-integrating')
         if hasattr(self, 'integrating_vector'):
             if self.integrating_vector.virus:
                 derivation.append(self.integrating_vector.virus.name)
@@ -382,8 +380,6 @@ class Cellline(DirtyFieldsMixin, models.Model):
                 derivation.append(self.integrating_vector.transposon.name)
             elif self.integrating_vector.vector:
                 derivation.append(self.integrating_vector.vector.name)
-            else:
-                derivation.append('Integrating')
         if hasattr(self, 'derivation_vector_free_reprogramming_factors'):
             for factor in self.derivation_vector_free_reprogramming_factors.all():
                 derivation.append(factor.factor.name)
@@ -403,7 +399,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
         - Donor sex
         - Donor age
         - Primary cell type
-        - Depositor
+        - Derivation
 
         Searching
         - Disease
