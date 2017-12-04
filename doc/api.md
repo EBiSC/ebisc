@@ -1192,7 +1192,7 @@ The four fields described below contain the details of the modification.
         }
 
 
-####Batch types
+#### Batch types
 
 `batch_type` field can hold one of three possible values:
 

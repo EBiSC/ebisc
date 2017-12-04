@@ -1,8 +1,8 @@
 # The EBiSC IMS code
 
-This document gives and overview of the files where main pieces of code that drive the EBiSC IMS are located.
-
 EBiSC IMS is just one of the components in the EBiSC data system. You can refer to file [EBiSC Data Overview](https://cells.ebisc.org/static/documents/201709-EBiSC_Data_Overview.xlsx) to see where EBiSC cell line data originates and how it moves through different system components.
+
+This document gives and overview of the files where main pieces of code that drive the EBiSC IMS are located.
 
 ## Models
 
@@ -16,7 +16,7 @@ Code in the file:
 
     /ebisc/celllines/admin.py
 
-defines the automatic Django admin interface for managing some cell line data. Since most of the data is imported into IMS from different sources and gets updated once a day, this interface is set up to only manage certain fields (eg. cell line, donor BioSample IDs) in case of errors or inconsistencies between the EBiSC components.
+defines the automatic Django admin interface for managing some cell line data. Since most of the data is imported into IMS from other components and gets updated once a day, this interface is set up to only manage certain fields (eg. cell line, donor BioSample IDs) in case of errors or inconsistencies between the EBiSC components.
 
 ## Importers
 
@@ -68,7 +68,7 @@ Tastypie API framework for Django is used to create the EBiSC API. Settings and 
 
     /ebisc/api/
 
-Detailed API documentation is located [here](../api.md).
+Detailed API documentation is located [here](./api.md).
 
 
 ## Supporting content pages (pages for customers, depositors and FAQ pages)
@@ -79,9 +79,11 @@ Pages for customers and depositors are managed via a simple CMS that uses the de
 
 FAQ management is written in a separate app:
 
-        /ebisc/site/faq/
+    /ebisc/site/faq/
 
-The CMS UI is located here: [https://cells.ebisc.org/admin/cms/](https://cells.ebisc.org/admin/cms/). You need administrator credentials to access these pages.
+The CMS user interface is located here: [https://cells.ebisc.org/admin/cms/](https://cells.ebisc.org/admin/cms/).
+
+You need administrator credentials to access these pages.
 
 
 ## Frontend: CSS and JS
