@@ -14,8 +14,13 @@
 {% if cellline.derivation.tissue_procurement_location %}
 <tr><td class="label">Location of primary tissue procurement:</td><td>{{ cellline.derivation.tissue_procurement_location|capfirst }}</td></tr>
 {% endif %}
-{% if cellline.derivation.tissue_collection_date %}
-<tr><td class="label">Tissue collection date:</td><td>{{ cellline.derivation.tissue_collection_date }}</td></tr>
+{% if cellline.derivation.tissue_collection_year %}
+<tr>
+  <td class="label">Tissue collection year:</td>
+  <td>
+    {{ cellline.derivation.tissue_collection_year }}
+  </td>
+</tr>
 {% endif %}
 {% if cellline.derivation.reprogramming_passage_number %}
 <tr><td class="label">Passage number reprogrammed:</td><td>{{ cellline.derivation.reprogramming_passage_number }}</td></tr>
