@@ -1091,6 +1091,7 @@ class CelllineDerivation(DirtyFieldsMixin, models.Model):
     primary_cell_developmental_stage = models.CharField(_(u'Primary cell developmental stage'), max_length=45, null=True, blank=True)
     tissue_procurement_location = models.CharField(_(u'Location of primary tissue procurement'), max_length=200, null=True, blank=True)
     tissue_collection_date = models.DateField(_(u'Tissue collection date'), null=True, blank=True)
+    tissue_collection_year = models.CharField(_(u'Tissue collection year'), max_length=50, null=True, blank=True)
     reprogramming_passage_number = models.CharField(_(u'Passage number reprogrammed'), max_length=100, null=True, blank=True)
 
     selection_criteria_for_clones = models.TextField(_(u'Selection criteria for clones'), null=True, blank=True)

@@ -379,7 +379,7 @@ def parse_derivation(valuef, source, cell_line):
     cell_line_derivation.primary_cellline_vendor = valuef('primary_cell_line_vendor')
     cell_line_derivation.primary_cell_developmental_stage = valuef('dev_stage_primary_cell') if valuef('dev_stage_primary_cell') and valuef('dev_stage_primary_cell') != '0' else ''
     cell_line_derivation.tissue_procurement_location = valuef('location_primary_tissue_procurement')
-    cell_line_derivation.tissue_collection_date = valuef('collection_date')
+    cell_line_derivation.tissue_collection_year = valuef('collection_date')
     cell_line_derivation.reprogramming_passage_number = valuef('passage_number_reprogrammed')
 
     cell_line_derivation.selection_criteria_for_clones = valuef('selection_of_clones')
