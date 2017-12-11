@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Gender, AgeRange, Disease, Cellline, CelllineAliquot, CelllineBatch, CelllineInformationPack
+from .models import Cellline, CelllineAliquot, CelllineBatch, CelllineInformationPack
 
 
 # -----------------------------------------------------------------------------
@@ -18,33 +18,6 @@ class OneToOneStackedInline(admin.StackedInline):
     min_num = 1
     max_num = 1
     extra = 0
-
-
-# -----------------------------------------------------------------------------
-# Dictionaries
-
-class GenderAdmin(admin.ModelAdmin):
-    pass
-
-
-admin.site.register(Gender, GenderAdmin)
-
-
-class AgeRangeAdmin(admin.ModelAdmin):
-    pass
-
-
-admin.site.register(AgeRange, AgeRangeAdmin)
-
-
-# -----------------------------------------------------------------------------
-# Disease
-
-class DiseaseAdmin(admin.ModelAdmin):
-    list_display = ['xpurl', 'name']
-
-
-admin.site.register(Disease, DiseaseAdmin)
 
 
 # -----------------------------------------------------------------------------
