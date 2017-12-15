@@ -1107,7 +1107,7 @@ def parse_culture_conditions(valuef, source, cell_line):
     if valuef('rock_inhibitor_used_at_thaw_flag'):
         cell_line_culture_conditions.rock_inhibitor_used_at_thaw = valuef('rock_inhibitor_used_at_thaw_flag', 'extended_bool')
 
-    if not valuef('culture_conditions_medium_culture_medium') == 'other':
+    if (not valuef('culture_conditions_medium_culture_medium') == 'other') or (not valuef('culture_conditions_medium_culture_medium') == 'other_medium'):
         cell_line_culture_conditions.culture_medium = valuef('culture_conditions_medium_culture_medium')
 
     dirty = [cell_line_culture_conditions.is_dirty(check_relationship=True)]
@@ -1170,7 +1170,7 @@ def parse_culture_conditions(valuef, source, cell_line):
 
         return dirty_supplements
 
-    if not valuef('culture_conditions_medium_culture_medium') == 'other':
+    if (not valuef('culture_conditions_medium_culture_medium') == 'other_medium') or (not valuef('culture_conditions_medium_culture_medium') == 'other'):
 
         # Culture medium supplements
         dirty += parse_supplements(cell_line_culture_conditions, valuef('culture_conditions_medium_culture_medium_supplements'))
