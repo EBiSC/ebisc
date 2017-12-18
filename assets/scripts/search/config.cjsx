@@ -10,7 +10,7 @@ config = {
             label: 'Donor disease status'
         }
         {
-            name: 'genetic_modification_disease'
+            name: 'cellline_diseases_genes'
             label: 'Genetic modification'
         }
         {
