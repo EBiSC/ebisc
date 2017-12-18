@@ -22,8 +22,8 @@ config = {
             label: 'Donor age'
         }
         {
-            name: 'primary_cell_type'
-            label: 'Primary cell type'
+            name: 'derivation'
+            label: 'Derivation'
         }
     ]
 
@@ -40,6 +40,8 @@ config = {
         'non_disease_associated_phenotypes.analyzed'
         'donor_sex.analyzed'
         'donor_age.analyzed'
+        'donor_ethnicity.analyzed'
+        'derivation.analyzed'
         'all_genetics.analyzed'
         'all_derivation.analyzed'
     ]
@@ -51,11 +53,6 @@ config = {
             selectedTerms: {}
         }
         {
-            name: 'primary_cell_type'
-            label: 'Primary cell type'
-            selectedTerms: {}
-        }
-        {
             name: 'donor_sex'
             label: 'Donor sex'
             selectedTerms: {}
@@ -63,6 +60,11 @@ config = {
         {
             name: 'donor_age'
             label: 'Donor age'
+            selectedTerms: {}
+        }
+        {
+            name: 'derivation'
+            label: 'Derivation'
             selectedTerms: {}
         }
     ]

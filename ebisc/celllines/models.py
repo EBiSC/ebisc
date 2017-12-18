@@ -367,6 +367,26 @@ class Cellline(DirtyFieldsMixin, models.Model):
         return derivation
 
     @property
+    def filter_derivation(self):
+
+        derivation = []
+        if hasattr(self, 'non_integrating_vector'):
+            if self.non_integrating_vector.vector:
+                derivation.append(self.non_integrating_vector.vector.name)
+        if hasattr(self, 'integrating_vector'):
+            if self.integrating_vector.virus:
+                derivation.append(self.integrating_vector.virus.name)
+            elif self.integrating_vector.transposon:
+                derivation.append(self.integrating_vector.transposon.name)
+            elif self.integrating_vector.vector:
+                derivation.append(self.integrating_vector.vector.name)
+        if hasattr(self, 'derivation_vector_free_reprogramming_factors'):
+            for factor in self.derivation_vector_free_reprogramming_factors.all():
+                derivation.append(factor.factor.name)
+
+        return derivation
+
+    @property
     def all_diseases(self):
 
         return list(set(self.donor_diseases + self.cellline_diseases))
@@ -379,7 +399,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
         - Donor sex
         - Donor age
         - Primary cell type
-        - Depositor
+        - Derivation
 
         Searching
         - Disease
@@ -405,6 +425,8 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'alternative_names': self.alternative_names,
             'donor_sex': self.donor.gender.name if self.donor and self.donor.gender else _(u'Not known'),
             'donor_age': self.donor_age.name if self.donor_age else None,
+            'donor_ethnicity': self.donor.ethnicity if self.donor and self.donor.ethnicity else None,
+            'derivation': self.filter_derivation if self.filter_derivation else _(u'/'),
             'all_genetics': self.search_terms_genetics if self.search_terms_genetics else None,
             'all_derivation': self.search_terms_derivation if self.search_terms_derivation else None,
         }

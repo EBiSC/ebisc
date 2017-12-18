@@ -26,6 +26,11 @@ Celllines = React.createClass
                     <span class="comment">{value}</span>
                 else
                     value.join(', ')
+            else if name == 'derivation'
+                if value == '/'
+                    <span class="comment">{value}</span>
+                else
+                    value.join(', ')
             else
                 value
 
