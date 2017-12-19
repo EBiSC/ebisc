@@ -12,18 +12,18 @@ header {
     }
 
     @include breakpoint(map-get($breakpoints, medium)) {
-      width: 100px;
       padding-top: 15px;
+    }
+
+    .tagline {
+      color: lighten($color-text, 30%);
+      font-size: $font-size-small;
     }
   }
 
   .collapsible-menu {
     display: inline-block;
     margin-left: 40px;
-
-    @include breakpoint(map-get($breakpoints, medium)) {
-      margin-left: 5px;
-    }
 
     button {
       outline: none;
@@ -33,7 +33,7 @@ header {
       display: none;
     }
 
-    @include breakpoint(map-get($breakpoints, small)) {
+    @include breakpoint(map-get($breakpoints, medium)) {
       position: absolute;
       right: 0px;
       top: 50px;
@@ -56,10 +56,6 @@ header {
           margin-right: 0px;
         }
 
-        @include breakpoint(map-get($breakpoints, medium)) {
-          margin-right: 11px;
-        }
-
         a {
           color: $action-color;
 
@@ -73,7 +69,7 @@ header {
         }
       }
 
-      @include breakpoint(map-get($breakpoints, small)) {
+      @include breakpoint(map-get($breakpoints, medium)) {
         display: none;
 
         margin-left: 0;

@@ -264,6 +264,56 @@ class Cellline(DirtyFieldsMixin, models.Model):
         return cellline_diseases
 
     @property
+    def cellline_diseases_genes(self):
+
+        cellline_diseases_genes = []
+
+        for disease in self.diseases.all():
+            genes = []
+            variants = []
+            mods_isogenic = []
+            mods_transgene_expression = []
+            mods_gene_ko = []
+            mods_gene_ki = []
+            disease_info = None
+
+            if disease.disease:
+                mods_gene_ko.extend(disease.genetic_modification_cellline_disease_gene_knock_out.all())
+                mods_gene_ki.extend(disease.genetic_modification_cellline_disease_gene_knock_in.all())
+                mods_transgene_expression.extend(disease.genetic_modification_cellline_disease_transgene_expression.all())
+                mods_isogenic.extend(disease.genetic_modification_cellline_disease_isogenic.all())
+                variants.extend(disease.genetic_modification_cellline_disease_variants.all())
+
+                for variant in variants:
+                    if variant.gene and variant.gene.name:
+                        genes.append(variant.gene.name)
+
+                for mod in mods_isogenic:
+                    if mod.gene and mod.gene.name:
+                        genes.append(mod.gene.name)
+
+                for mod in mods_transgene_expression:
+                    if mod.gene and mod.gene.name:
+                        genes.append(mod.gene.name)
+
+                for mod in mods_gene_ko:
+                    if mod.gene and mod.gene.name:
+                        genes.append(mod.gene.name)
+
+                for mod in mods_gene_ki:
+                    if mod.target_gene and mod.target_gene.name:
+                        genes.append(mod.target_gene.name)
+
+                if not genes:
+                    disease_info = disease.disease.name
+                else:
+                    disease_info = "%s (%s)" % (disease.disease.name, ", ".join(genes))
+
+                cellline_diseases_genes.append(disease_info)
+
+        return cellline_diseases_genes
+
+    @property
     def search_terms_genetics(self):
 
         genetics = []
@@ -367,6 +417,26 @@ class Cellline(DirtyFieldsMixin, models.Model):
         return derivation
 
     @property
+    def filter_derivation(self):
+
+        derivation = []
+        if hasattr(self, 'non_integrating_vector'):
+            if self.non_integrating_vector.vector:
+                derivation.append(self.non_integrating_vector.vector.name)
+        if hasattr(self, 'integrating_vector'):
+            if self.integrating_vector.virus:
+                derivation.append(self.integrating_vector.virus.name)
+            elif self.integrating_vector.transposon:
+                derivation.append(self.integrating_vector.transposon.name)
+            elif self.integrating_vector.vector:
+                derivation.append(self.integrating_vector.vector.name)
+        if hasattr(self, 'derivation_vector_free_reprogramming_factors'):
+            for factor in self.derivation_vector_free_reprogramming_factors.all():
+                derivation.append(factor.factor.name)
+
+        return derivation
+
+    @property
     def all_diseases(self):
 
         return list(set(self.donor_diseases + self.cellline_diseases))
@@ -379,7 +449,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
         - Donor sex
         - Donor age
         - Primary cell type
-        - Depositor
+        - Derivation
 
         Searching
         - Disease
@@ -396,6 +466,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'primary_disease': self.primary_disease.disease.name if self.primary_disease.disease else None,
             'donor_disease': self.donor_diseases if self.donor_diseases else None,
             'genetic_modification_disease': self.cellline_diseases if self.cellline_diseases else _(u'/'),
+            'cellline_diseases_genes': self.cellline_diseases_genes if self.cellline_diseases_genes else None,
             'all_diseases': self.all_diseases if self.all_diseases else None,
             'primary_disease_synonyms': [s.strip() for s in self.primary_disease.disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.disease.synonyms else None,
             'disease_associated_phenotypes': self.disease_associated_phenotypes if self.disease_associated_phenotypes else None,
@@ -405,6 +476,8 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'alternative_names': self.alternative_names,
             'donor_sex': self.donor.gender.name if self.donor and self.donor.gender else _(u'Not known'),
             'donor_age': self.donor_age.name if self.donor_age else None,
+            'donor_ethnicity': self.donor.ethnicity if self.donor and self.donor.ethnicity else None,
+            'derivation': self.filter_derivation if self.filter_derivation else None,
             'all_genetics': self.search_terms_genetics if self.search_terms_genetics else None,
             'all_derivation': self.search_terms_derivation if self.search_terms_derivation else None,
         }

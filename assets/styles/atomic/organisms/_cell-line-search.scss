@@ -15,6 +15,37 @@
     }
   }
 
+  .allelic-query {
+    @include clearfix;
+    display: block;
+    width: 250px;
+    padding-left: 0.5rem;
+    margin-bottom: 10px;
+    margin-top: -10px;
+
+    @include breakpoint(map-get($breakpoints, small)) {
+      margin-top: -20px;
+      margin-bottom: 20px;
+    }
+
+   a {
+      color: lighten($color-text, 30%);
+      font-size: $font-size-small;
+      width: 250px;
+      display: inline-block;
+      text-align: left;
+    }
+
+   .tooltip {
+      text-align: left;
+
+      .user-note {
+        font-size: $font-size-small;
+        line-height: 1.4;
+      }
+    }
+  }
+
   #filter {
     margin-bottom: 30px;
     width: span(12);
@@ -44,6 +75,12 @@
   #search {
     width: span(8);
     float: left;
+    @include clearfix;
+    margin-bottom: 10px;
+
+    input[type="text"] {
+      margin-bottom: 0;
+    }
 
     @include breakpoint(map-get($breakpoints, small)) {
       width: span(12);

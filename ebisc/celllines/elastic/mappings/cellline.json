@@ -43,6 +43,12 @@
                 "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "text_autocomplete", "search_analyzer": "standard"}}
             },
 
+            "cellline_diseases_genes": {
+                "type": "string",
+                "index": "not_analyzed",
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "text_autocomplete", "search_analyzer": "standard"}}
+            },
+
             "primary_disease_synonyms": {
                 "type": "string",
                 "index": "analyzed",
@@ -85,6 +91,19 @@
                 "index": "not_analyzed",
                 "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "text_autocomplete", "search_analyzer": "standard"}}
             },
+
+            "donor_ethnicity": {
+                "type": "string",
+                "index": "not_analyzed",
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "text_autocomplete", "search_analyzer": "standard"}}
+            },
+
+            "derivation": {
+                "type": "string",
+                "index": "not_analyzed",
+                "fields": {"analyzed": {"type": "string", "index": "analyzed", "index_analyzer": "name_autocomplete", "search_analyzer": "name_query"}}
+            },
+
             "all_genetics": {
                 "type": "string",
                 "index": "not_analyzed",
