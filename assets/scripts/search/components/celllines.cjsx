@@ -20,7 +20,10 @@ Celllines = React.createClass
             if name == 'name'
                 <a href="./#{value}/">{value}</a>
             else if name == 'donor_disease'
-                value.join(', ')
+                if value != null
+                    value.join(', ')
+                else
+                    <span class="comment">/</span>
             else if name == 'cellline_diseases_genes'
                 if value != null
                     value.join(', ')
