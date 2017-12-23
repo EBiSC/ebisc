@@ -463,7 +463,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
         return {
             'biosamples_id': self.biosamples_id,
             'name': self.name,
-            'primary_disease': self.primary_disease.disease.name if self.primary_disease.disease else None,
+            'primary_disease': self.primary_disease.disease.name if self.primary_disease and self.primary_disease.disease else None,
             'donor_disease': self.donor_diseases if self.donor_diseases else None,
             'genetic_modification_disease': self.cellline_diseases if self.cellline_diseases else _(u'/'),
             'cellline_diseases_genes': self.cellline_diseases_genes if self.cellline_diseases_genes else None,
