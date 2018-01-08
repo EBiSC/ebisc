@@ -468,7 +468,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
             'genetic_modification_disease': self.cellline_diseases if self.cellline_diseases else _(u'/'),
             'cellline_diseases_genes': self.cellline_diseases_genes if self.cellline_diseases_genes else None,
             'all_diseases': self.all_diseases if self.all_diseases else None,
-            'primary_disease_synonyms': [s.strip() for s in self.primary_disease.disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.disease.synonyms else None,
+            'primary_disease_synonyms': [s.strip() for s in self.primary_disease.disease.synonyms.split(',')] if self.primary_disease and self.primary_disease.disease and self.primary_disease.disease.synonyms else None,
             'disease_associated_phenotypes': self.disease_associated_phenotypes if self.disease_associated_phenotypes else None,
             'non_disease_associated_phenotypes': self.non_disease_associated_phenotypes if self.non_disease_associated_phenotypes else None,
             'depositor': self.generator.name,
