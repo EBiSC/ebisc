@@ -90,6 +90,7 @@ services:
     extends:
       service: django
     read_only: true
+    tmpfs: /tmp
     command: ["run-ims-update"]
   hpscreg-local:
     extends:

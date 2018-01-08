@@ -2,4 +2,4 @@
 
 set -e
 
-exec python /app/manage.py import all
+exec python /app/manage.py import all --traceback
