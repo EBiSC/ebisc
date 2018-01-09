@@ -249,6 +249,8 @@ class Cellline(DirtyFieldsMixin, models.Model):
             for disease in self.donor.diseases.all():
                 if disease.disease:
                     donor_diseases.append(disease.disease.name)
+                else:
+                    donor_diseases.append(disease.disease_not_normalised)
 
         return donor_diseases
 
@@ -260,6 +262,8 @@ class Cellline(DirtyFieldsMixin, models.Model):
         for disease in self.diseases.all():
             if disease.disease:
                 cellline_diseases.append(disease.disease.name)
+            else:
+                cellline_diseases.append(disease.disease_not_normalised)
 
         return cellline_diseases
 
