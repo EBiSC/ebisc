@@ -82,17 +82,29 @@
             <td><a href="{% url 'executive:cellline' cellline.name %}">{{ cellline.name }}</a></td>
             <td>
               {% if cellline.donor.diseases.all %}
-              {% for disease in cellline.donor.diseases.all %}
-              {{ disease.disease.name }}{% if forloop.last %}{% else %}<br/>{% endif %}
-              {% endfor %}
+                {% for disease in cellline.donor.diseases.all %}
+                  {% if disease.disease %}
+                    {{ disease.disease.name }}
+                  {% elif disease.disease_not_normalised %}
+                    {{ disease.disease_not_normalised }}
+                  {% endif %}
+                  {% if forloop.last %}{% else %}<br/>{% endif %}
+                {% endfor %}
               {% else %}
-              normal
+                normal
               {% endif %}
               {% if cellline.diseases.all %}
-              <br/>
-              {% for disease in cellline.diseases.all %}
-              <i>{{ disease.disease.name }}</i> <span class="comment"> - gen. modified</span>{% if forloop.last %}{% else %}<br/>{% endif %}
-              {% endfor %}
+                <br/>
+                {% for disease in cellline.diseases.all %}
+                  <i>
+                    {% if disease.disease %}
+                      {{ disease.disease.name }}
+                    {% elif disease.disease_not_normalised %}
+                      {{ disease.disease_not_normalised }}
+                    {% endif %}
+                  </i> <span class="comment"> - gen. modified</span>
+                  {% if forloop.last %}{% else %}<br/>{% endif %}
+                {% endfor %}
               {% endif %}
             </td>
             <td>{{ cellline.generator.name }}</td>
