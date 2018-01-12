@@ -1,0 +1,23 @@
+{
+  "name": "ebisc",
+  "version": "0.0.0",
+  "homepage": "http://www.ebisc.org/",
+  "authors": [
+    "Joh Dokler <joh.dokler@gmail.com>"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "ebisc/static/components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "bourbon": "~4.2.1",
+    "bitters": "~1.0.0",
+    "susy": "~2.2.2",
+    "breakpoint-sass": "~2.5.0"
+  }
+}

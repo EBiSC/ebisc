@@ -635,18 +635,22 @@ def parse_donor_disease(valuef, source, donor):
 
     disease = parse_disease(source)
 
-    if disease is not None:
+    if disease is not None or valuef('free_text'):
+        if disease is None:
+            notes = None
+        else:
+            notes = valuef('free_text')
 
         donor_disease, created = DonorDisease.objects.update_or_create(
             donor=donor,
             disease=disease,
-            disease_not_normalised=valuef('other'),
+            disease_not_normalised=valuef('free_text'),
             defaults={
                 'primary_disease': valuef('primary', 'bool'),
                 'disease_stage': valuef('stage'),
                 'affected_status': valuef('affected'),
                 'carrier': valuef('carrier'),
-                'notes': valuef('free_text'),
+                'notes': notes,
             }
         )
 
