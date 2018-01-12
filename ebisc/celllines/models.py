@@ -210,6 +210,14 @@ class Cellline(DirtyFieldsMixin, models.Model):
         return u'%s' % (self.biosamples_id,)
 
     @property
+    def biosamples_url(self):
+        return 'https://www.ebi.ac.uk/biosamples/samples/%s' % self.biosamples_id
+
+    @property
+    def hpscreg_url(self):
+        return 'https://hpscreg.eu/cell-line/%s' % self.name
+
+    @property
     def ecacc_url(self):
         return 'http://www.phe-culturecollections.org.uk/products/celllines/ipsc/detail.jsp?refId=%s&collection=ecacc_ipsc' % self.ecacc_id
 

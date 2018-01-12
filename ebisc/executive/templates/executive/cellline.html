@@ -38,9 +38,9 @@
             <div class="data">
                 <div>
                     <span class="light-gray">Depositor:</span> {{ cellline.generator }}<br/>
-                    <span class="light-gray">hPSCreg name:</span> {{ cellline.name }}<br/>
+					<span class="light-gray">hPSCreg name:</span> <a href="{{ cellline.hpscreg_url }}" target="_blank">{{ cellline.name }}</a><br/>
                     <span class="light-gray">Depositor names:</span> {% if cellline.alternative_names %}{{ cellline.alternative_names }}{% else %}/{% endif %}<br/>
-                    <span class="light-gray">BioSamples ID:</span> {{ cellline.biosamples_id }}<br/>
+					<span class="light-gray">BioSamples ID:</span> <a href="{{ cellline.biosamples_url }}" target="_blank">{{ cellline.biosamples_id }}</a><br/>
                     <span class="light-gray">ECACC Cat. No:</span> {% if cellline.ecacc_id %}<a href="{{ cellline.ecacc_url }}" target="_blank">{{ cellline.ecacc_id }}</a>{% else %}/{% endif %}
                 </div>
             </div>
