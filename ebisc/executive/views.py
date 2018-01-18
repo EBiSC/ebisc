@@ -321,7 +321,7 @@ def new_batch(request, name):
                     headers = {'Accept': 'text/plain', 'Content-Type': 'application/xml'}
                     xml = '''
 <?xml version="1.0" encoding="UTF-8"?>
-    <BioSample xmlns="http://www.ebi.ac.uk/biosamples/SampleGroupExport/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" submissionReleaseDate="2115/03/04" xsi:schemaLocation="http://wwwdev.ebi.ac.uk/biosamples/assets/xsd/v1.0/BioSDSchema.xsd">
+    <BioSample xmlns="http://www.ebi.ac.uk/biosamples/SampleGroupExport/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://wwwdev.ebi.ac.uk/biosamples/assets/xsd/v1.0/BioSDSchema.xsd">
         <Property class="Sample Name" characteristic="true" comment="false" type="STRING">
             <QualifiedValue>
                 <Value>%s %s vial %s</Value>
