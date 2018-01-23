@@ -521,7 +521,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
                 clips_versions.append(clip.version)
 
             if clips_versions:
-                latest_version = sorted(clips_versions, lambda a, b: cmp(int(b[1:]), int(a[1:])) != 0 or cmp(a[0], b[0]))[0]
+                latest_version = sorted(clips_versions, lambda a, b: cmp(int(b.replace("v", "")), int(a.replace("v", ""))) != 0 or cmp(a[0], b[0]))[0]
                 return self.clips.get(version=latest_version)
             else:
                 return None
