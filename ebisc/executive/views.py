@@ -334,11 +334,11 @@ def new_batch(request, name):
                     r = requests.post(url, data=xml.strip(), headers=headers)
 
                     # Store vial number, vial BioSample ID
-                    if r.status_code == 202:
+                    if r.status_code >= 200 and r.status_code < 300:
                         vials.append((vial_number, r.text))
                     else:
                         request_url = '%s/sampletab/api/v2/source/EBiSCIMS/sample?apikey=' % (biosamples_url,)
-                        raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'), r.status_code, request_url, r.text)
+                        raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again. (%s)' % r.status_code), r.status_code, request_url, r.text)
 
                 vial_list = ''.join(['<Id>%s</Id>' % v[1] for v in vials])
 
@@ -367,11 +367,11 @@ def new_batch(request, name):
 
                 r = requests.post(url, data=xml.strip(), headers=headers)
 
-                if r.status_code == 202:
+                if r.status_code >= 200 and r.status_code < 300:
                     batch_biosamples_id = r.text
                 else:
                     request_url = '%s/sampletab/api/v2/source/EBiSCIMS/group?apikey=' % (biosamples_url,)
-                    raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again.'), r.status_code, request_url, r.text)
+                    raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again. (%s)' % r.status_code), r.status_code, request_url, r.text)
 
                 # Save batch
                 batch = CelllineBatch(
