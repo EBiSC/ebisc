@@ -7,6 +7,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
+from django.core.validators import RegexValidator
 
 # -----------------------------------------------------------------------------
 # Utilities
@@ -573,7 +574,7 @@ class CelllineInformationPack(models.Model):
 
     cell_line = models.ForeignKey('Cellline', verbose_name=_(u'Cell line'), related_name='clips')
 
-    version = models.CharField(_(u'CLIP version'), max_length=10, help_text='e.g. "v1"')
+    version = models.CharField(_(u'CLIP version'), max_length=10, help_text='e.g. "v1"', validators=[RegexValidator('^v[0-9]+$', message='version needs the form v1, v2, ...')])
     created = models.DateTimeField(u'Created', auto_now_add=True)
     updated = models.DateTimeField(u'Updated', auto_now=True)
 
