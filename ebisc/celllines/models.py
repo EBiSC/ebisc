@@ -517,12 +517,17 @@ class Cellline(DirtyFieldsMixin, models.Model):
         clips = self.clips.all()
         clips_versions = []
 
+        def __vcmp(a, b):
+            x = int(a.lower().replace("v", ""));
+            y = int(b.lower().replace("v", ""));
+            return cmp(x, y)
+
         if clips:
             for clip in clips:
                 clips_versions.append(clip.version)
 
             if clips_versions:
-                latest_version = sorted(clips_versions, lambda a, b: cmp(int(b.replace("v", "")), int(a.replace("v", ""))) != 0 or cmp(a[0], b[0]))[0]
+                latest_version = sorted(clips_versions, __vcmp, reverse=True)[0]
                 return self.clips.get(version=latest_version)
             else:
                 return None
