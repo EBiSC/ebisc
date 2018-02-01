@@ -409,7 +409,6 @@ def new_batch(request, name):
     return render(request, 'executive/batches/new-batch.html', {
         'cellline': cellline,
         'new_batch_form': new_batch_form,
-        'biosamples_hash': hashlib.md5(settings.BIOSAMPLES.get('key')).hexdigest(),
     })
 
 
