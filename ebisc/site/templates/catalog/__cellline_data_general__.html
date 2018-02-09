@@ -27,7 +27,8 @@
 <tr><td class="label">Depositor:</td><td>{{ cellline.generator.name|default:"-" }}</td></tr>
 <tr><td class="label">Cell line name:</td><td>{{ cellline.name|default:"-" }}</td></tr>
 <tr><td class="label">Cell line alternative names:</td><td>{{ cellline.alternative_names|default:"-" }}</td></tr>
-<tr><td class="label">Biosamples ID:</td><td><a href="{{ cellline.biosamples_url }}" target="_blank">{{ cellline.biosamples_id }}</a></td></tr>
+<tr><td class="label">Biosamples ID:</td><td><a href="{{ cellline.biosamples_url }}" target="_blank">{{ cellline.biosamples_id|default:"-" }}</a></td></tr>
+<tr><td class="label">hPSCreg name:</td><td><a href="{{ cellline.hpscreg_url }}" target="_blank">{{ cellline.name|default:"-" }}</a></td></tr>
 
 {% if cellline.derivation_country %}
 <tr><td class="label">Derivation country:</td><td>{{ cellline.derivation_country }}</td></tr>
