@@ -125,7 +125,15 @@ def page(request, path):
             'marker_expression_methods': marker_expression_methods,
         })
     except Cellline.DoesNotExist:
-        pass
+        try:
+            # try to get unavailable (but known) cell line
+            cellline = Cellline.objects.get(name=name)
+            cellline.available_for_sale = False
+            return render(request, 'catalog/cellline.html', {
+                'cellline': cellline,
+            })
+        except Cellline.DoesNotExist:
+            pass
 
     return render(request, 'page.html', {
         'page': get_object_or_404(Page, path='/' + path, published=True)

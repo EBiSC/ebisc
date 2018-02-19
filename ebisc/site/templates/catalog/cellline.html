@@ -11,7 +11,21 @@
     <h1>{{ cellline.name }}{% if cellline.has_genetic_modification %} <small class="comment">Gene-edited iPSC line</small>{% endif %}</h1>
 
     {% if cellline.current_status.status == 'withdrawn' %}
-    {{ cellline.current_status.comment }}
+        <div class="availability">
+            <div class="status-label withdrawn">
+            {{ cellline.current_status.get_status_display }}</div></div>
+        <div class="user-note">{{ cellline.current_status.comment }}</div>
+    {% elif cellline.current_status.status == 'recalled' %}
+        <div class="availability"><div class="status-label recalled">
+            {{ cellline.current_status.get_status_display }}</div></div>
+        <div class="user-note">{{ cellline.current_status.comment }}</div>
+    {% elif cellline.current_status.status == 'not_available' %}
+        <div class="availability"><div class="status-label not-available">
+            {{ cellline.current_status.get_status_display }}</div></div>
+          <div class="user-note">
+              <a href="http://ebisc.org/contact/contact-us.php"  target="_blank">Contact us</a>
+              when you are interested in the cell line to find out when the line will be available.
+          </div>
     {% else %}
 
       <div class="card general-info">
