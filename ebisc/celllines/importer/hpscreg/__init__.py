@@ -182,7 +182,7 @@ def request_get(url):
     r = requests.get(url, auth=(settings.HPSCREG['username'], settings.HPSCREG['password']))
 
     if r.status_code != requests.codes.ok:
-        logger.error('Can\' connect to the hPSGreg API (%s): %s' % (url, r.status_code))
+        logger.error('Can\'t connect to the hPSCreg API (%s): %s' % (url, r.status_code))
         return None
     else:
         return r.json()
