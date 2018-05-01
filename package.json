@@ -4,18 +4,19 @@
   "dependencies": {
     "baobab": "^0.4.3",
     "classnames": "^1.2.0",
+    "hoek": "^5.0.3",
     "xregexp": "^2.0.0"
   },
   "devDependencies": {
-    "browser-sync": "^2.10.0",
+    "browser-sync": "^2.24.1",
     "browserify": "^12.0.1",
     "coffee-reactify": "^4.0.0",
     "gulp": "^3.9.0",
     "gulp-sass": "^2.1.0",
-    "gulp-sourcemaps": "^1.6.0",
+    "gulp-sourcemaps": "^1.12.1",
     "gulp-uglify": "^1.5.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.6.1"
+    "watchify": "^3.11.0"
   }
 }
