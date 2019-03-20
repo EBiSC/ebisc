@@ -13,7 +13,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ebisc',
+        'NAME': os.getenv('DB_NAME', 'ebisc'),
         'USER': os.getenv('DB_USER', 'www'),
         'PASSWORD': os.getenv('DB_PASS'),
         'HOST': os.getenv('DB_HOST'),
