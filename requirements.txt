@@ -1,4 +1,4 @@
-Django>=1.8,<1.9
+Django>=1.9,<1.10
 uwsgi==2.0.17
 psycopg2==2.5.4
 django-cleanup==0.3.0
