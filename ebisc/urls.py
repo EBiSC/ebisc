@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.auth.views import login, logout
 from django.conf.urls.static import static
 from django.utils.translation import ugettext as _
 
@@ -13,8 +14,8 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
 
     # Auth
-    url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'auth/login.html'}, name='login'),
-    url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),
+    url(r'^login/$', login, {'template_name': 'auth/login.html'}, name='login'),
+    url(r'^logout/$', logout, {'next_page': '/'}, name='logout'),
 
     # Elastic proxy
     url(r'^es/', include('ebisc.elastic.urls', namespace='elastic')),
