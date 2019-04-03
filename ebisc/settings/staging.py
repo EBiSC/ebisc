@@ -2,7 +2,6 @@ from .base import *
 import os
 
 DEBUG = False
-TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = ['cells-stage.ebisc.org', '193.62.54.96']
 
