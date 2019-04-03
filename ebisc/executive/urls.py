@@ -1,7 +1,7 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from ebisc.executive.views import dashboard, cell_line_ids, batch_ids, cellline, new_batch, update_batch, batch_data
 
-urlpatterns = patterns('',
+urlpatterns = [
 
     # Index
     url(r'^$', dashboard, name='dashboard'),
@@ -19,4 +19,4 @@ urlpatterns = patterns('',
     url(r'^(?P<name>[^/]+)/new-batch/$', new_batch, name='new_batch'),
     url(r'^(?P<name>[^/]+)/update-batch/(?P<batch_biosample_id>[^/]+)$', update_batch, name='update_batch'),
     url(r'^(?P<name>[^/]+)/(?P<batch_biosample_id>[^/]+)/$', batch_data, name='batch_data'),
-)
+]
