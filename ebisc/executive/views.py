@@ -1,7 +1,6 @@
 import csv
 import hashlib
 import requests
-from sets import Set
 from datetime import datetime
 
 from django import forms
@@ -263,7 +262,7 @@ class NewBatchForm(forms.Form):
         cellline = Cellline.objects.get(biosamples_id=cellline_biosample_id)
 
         if cellline_biosample_id and batch_id:
-            existing_batch_ids = Set([b.batch_id for b in CelllineBatch.objects.filter(cell_line__biosamples_id=cellline_biosample_id)])
+            existing_batch_ids = set([b.batch_id for b in CelllineBatch.objects.filter(cell_line__biosamples_id=cellline_biosample_id)])
 
             if batch_id in existing_batch_ids:
                 raise forms.ValidationError(
@@ -272,7 +271,7 @@ class NewBatchForm(forms.Form):
                 )
 
         if cellline_biosample_id and derived_from:
-            existing_vial_ids = Set([v.biosamples_id for v in CelllineAliquot.objects.filter(batch__cell_line__biosamples_id=cellline_biosample_id)])
+            existing_vial_ids = set([v.biosamples_id for v in CelllineAliquot.objects.filter(batch__cell_line__biosamples_id=cellline_biosample_id)])
 
             if derived_from != cellline.biosamples_id and derived_from not in existing_vial_ids:
                 raise forms.ValidationError(
