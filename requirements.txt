@@ -1,4 +1,4 @@
-Django>=1.9,<1.10
+Django>=1.10,<1.11
 uwsgi==2.0.17
 psycopg2==2.5.4
 django-cleanup==0.3.0
@@ -6,7 +6,7 @@ django-tastypie==0.13.3
 defusedxml==0.4.1
 elasticsearch==1.4.0
 django-extensions==1.5.5
-django-docopt-command==0.2.1
+django-docopt-command==0.3.0
 requests==2.20.0
 certifi==2018.04.16
 easydict==1.6
