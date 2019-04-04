@@ -7,7 +7,7 @@
 <div class="login-container">
     <div class="login">
         <h1>Login</h1>
-        <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
+        <form method="post" action="{% url 'login' %}">
 
             {% csrf_token %}
 
