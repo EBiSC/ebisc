@@ -17,9 +17,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # Admins
 
 ADMINS = (
-    ('Peter Harrison', 'peter@ebi.ac.uk'),
-    ('Luca Cherubin', 'cherubin@ebi.ac.uk'),
     ('Johannes Dewender', 'johannes.dewender@charite.de'),
+    ('Nils Bultjer', 'nils.bultjer@charite.de'),
     ('Trisha Rawat', 'Trisha.Rawat@phe.gov.uk'),
 )
 
