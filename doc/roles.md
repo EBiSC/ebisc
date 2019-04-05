@@ -1,27 +1,37 @@
 # The EBiSC user roles
 
-## user
+## Groups
+
+### Members
 
 - no authentication
 - can see cell line catalog
 
-## member
+### Executives
 
 - authentication
 - can see cell line catalog
 - can see executive dashboard
 
-## executive-member
-
-- authentication
-- can see cell line catalog
-- can see executive dashboard
-- can manage executive dashboard
-
-## administrator
+### Executive administrators
 
 - authentication
 - can see cell line catalog
 - can see executive dashboard
 - can manage executive dashboard
+
+## Account modifiers
+
+### Active
+
+- can log in
+
+### Staff
+
 - can access admin site
+- can change own password
+
+### Superuser
+
+- can access admin site
+- automatically has all permissions
