@@ -4,7 +4,6 @@
   "dependencies": {
     "baobab": "^0.4.3",
     "classnames": "^1.2.0",
-    "hoek": "^5.0.4",
     "xregexp": "^2.0.0"
   },
   "devDependencies": {
