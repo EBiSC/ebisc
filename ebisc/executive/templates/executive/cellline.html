@@ -18,7 +18,7 @@
                         {% else %}<i class="glyphicon glyphicon-minus error"></i>{% endif %}
                         {{ cellline.get_validated_display }}</p>
 
-                    <div><span class="light-gray">Availability:</span></div>
+                    <p><span class="light-gray">Availability (as set in IMS):</span><br/>
                         {% if cellline.current_status %}
                         {% if cellline.current_status.status == 'not_available' or cellline.current_status.status == 'withdrawn' or cellline.current_status.status == 'recalled' %}
                         <i class="glyphicon glyphicon-minus error"></i>
@@ -29,7 +29,17 @@
                         {% else %}
                         /
                         {% endif %}
-                      </p>
+                    </p>
+
+                    <p><span class="light-gray">For Sale (found on ECACC):</span><br/>
+                        {% if cellline.available_for_sale_at_ecacc %}
+                        <i class="glyphicon glyphicon-ok success"></i>
+						Available for sale at ECACC
+                        {% else %}
+                        <i class="glyphicon glyphicon-minus error"></i>
+						Not Available for sale at ECACC
+                        {% endif %}
+                    </p>
                 </div>
             </div>
         </div>

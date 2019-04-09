@@ -152,6 +152,19 @@
               {{ cellline.current_status.get_status_display }}</div>
               {% if perms.auth.can_manage_executive_dashboard %}<a href="{% url 'executive:cellline' cellline.name %}#status" class="status-edit-link"><i class="glyphicon glyphicon-pencil"></i></a>{% endif %}
             </td>
+            <td class="for-sale">
+                {% if cellline.available_for_sale_at_ecacc %}
+                <div class="tooltip-item">
+                    <i class="glyphicon glyphicon-ok success"></i>
+                    <div class="tooltip">for sale at ECACC</div>
+                </div>
+                {% else %}
+                <div class="tooltip-item">
+                    <i class="glyphicon glyphicon-minus error"></i>
+                    <div class="tooltip">NOT for sale at ECACC</div>
+                </div>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>

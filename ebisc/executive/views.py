@@ -41,6 +41,7 @@ def dashboard(request):
         ('batches', 'Batches', None),
         ('quantity', 'QTY', None),
         ('status', 'Status', 'current_status__status'),
+        ('forSale', 'For Sale', 'available_for_sale_at_ecacc'),
     ]
 
     SORT_COLUMNS = dict([(x[0], x[2]) for x in COLUMNS])
