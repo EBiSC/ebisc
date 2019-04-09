@@ -3,6 +3,8 @@ import os
 
 DEBUG = False
 
+IS_LIVE = False
+
 ALLOWED_HOSTS = ['cells-stage.ebisc.org', '193.62.54.96']
 
 BIOSAMPLES_ADMINS = ADMINS

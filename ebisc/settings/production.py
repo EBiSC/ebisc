@@ -3,6 +3,8 @@ import os
 
 DEBUG = False
 
+IS_LIVE = True
+
 ALLOWED_HOSTS = ['cells.ebisc.org', 'cell.ebisc.org', 'catalog.ebisc.org', 'catalogue.ebisc.org', 'ebisc.douglasconnect.com', '193.62.54.96', '127.0.0.1']
 
 BIOSAMPLES_ADMINS = ADMINS + (

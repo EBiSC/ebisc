@@ -45,6 +45,12 @@
         </div>
     </header>
 
+    {% if not IS_LIVE %}
+    <ul class="messages">
+		<li class="message-warning">This is a test server. The official server is <a href="https://cells.ebisc.org">cells.ebisc.org</a></li>
+    </ul>
+    {% endif %}
+
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}

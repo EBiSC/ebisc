@@ -116,6 +116,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 # commented in default, but we want it
                 'django.template.context_processors.request',
+                'ebisc.context_processors.is_live',
             ],
         },
     },
