@@ -5,16 +5,12 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['cells.ebisc.org', 'cell.ebisc.org', 'catalog.ebisc.org', 'catalogue.ebisc.org', 'ebisc.douglasconnect.com', '193.62.54.96', '127.0.0.1']
 
-SERVER_EMAIL = 'EBiSC <www@douglasconnect.com>'
-
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_API_KEY')
-
 BIOSAMPLES_ADMINS = ADMINS + (
    ('Biosamples', 'biosamples@ebi.ac.uk'),
 )
+
+# write (error) mails to console on mail server problems:
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # -----------------------------------------------------------------------------
 # Database

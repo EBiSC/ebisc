@@ -23,6 +23,21 @@ ADMINS = (
 )
 
 # -----------------------------------------------------------------------------
+# Email
+
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'webmaster@localhost')
+SERVER_EMAIL = os.getenv('SERVER_EMAIL', 'root@localhost')
+
+EMAIL_HOST = os.getenv('SMTP_SERVER', 'localhost')
+EMAIL_PORT = int(os.getenv('SMTP_PORT', '25'))
+EMAIL_HOST_USER = os.getenv('SMTP_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('SMTP_PASSWORD', '')
+if os.getenv('SMTP_USE_TLS', 'False').lower() == 'true':
+    EMAIL_USE_TLS = True
+if os.getenv('SMTP_USE_SSL', 'False').lower() == 'true':
+    EMAIL_USE_SSL = True
+
+# -----------------------------------------------------------------------------
 # Application definition
 
 INSTALLED_APPS = (
