@@ -5,7 +5,7 @@ DEBUG = False
 
 IS_LIVE = False
 
-ALLOWED_HOSTS = ['ebisc-ims.charite.de']
+ALLOWED_HOSTS = ['ebisc-ims.charite.de', '141.42.207.1']
 
 BIOSAMPLES_ADMINS = ADMINS
 
