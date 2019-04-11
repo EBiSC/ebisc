@@ -19,7 +19,6 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 ADMINS = (
     ('Johannes Dewender', 'johannes.dewender@charite.de'),
     ('Nils Bultjer', 'nils.bultjer@charite.de'),
-    ('Trisha Rawat', 'Trisha.Rawat@phe.gov.uk'),
 )
 
 # -----------------------------------------------------------------------------
