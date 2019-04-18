@@ -793,7 +793,7 @@ def parse_genetic_modifications_non_disease(valuef, source, cell_line):
             list_new = []
 
             for modification in source.get('genetic_modifications_non_disease', []):
-                if modification["type"] == modification_type:
+                if "type" in modification and modification["type"] == modification_type:
                     list_new.append(parse_genetic_modification(modification, cell_line))
 
             # Delete existing disease variants that are not present in new data
