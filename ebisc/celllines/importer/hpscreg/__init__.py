@@ -42,13 +42,12 @@ def run(cellline=None, local=False):
         return
 
     # Tests
-    # json = request_get('http://test.hescreg.eu/api/export_readable/EDi001-A-1')
+    # json = request_get(settings.HPSCREG['cellline_url'] + 'BIONi010-C-2')
     # import_cellline(json)
+    # return
 
     for cellline_id in [id for id in cellline_ids]:
         if cellline is not None and cellline_id != cellline:
-            continue
-        elif cellline_id == 'BCRTi005-A' or cellline_id == 'BCRTi004-A':
             continue
         else:
             logger.info('Importing data for cell line %s' % cellline_id)
