@@ -33,7 +33,7 @@
         {% if batch.vials_at_roslin or batch.vials_shipped_to_ecacc or batch.vials_shipped_to_fraunhoffer %}
         <div>Vials at Roslin: {{ batch.vials_at_roslin|default_if_none:"-" }}</div>
         <div>Vials shipped to ECACC: {{ batch.vials_shipped_to_ecacc|default_if_none:"-" }}</div>
-        <div>Vials shipped to Fraunhoffer: {{ batch.vials_shipped_to_fraunhoffer|default_if_none:"-" }}</div>
+        <div>Vials shipped to Fraunhofer: {{ batch.vials_shipped_to_fraunhoffer|default_if_none:"-" }}</div>
         {% else %}
         <p><span class="comment">No data available.</span></p>
         {% endif %}
