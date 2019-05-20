@@ -525,7 +525,7 @@ def cell_line_ids(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['hPSCreg name', 'Depositor', 'Owner', 'Alternative names', 'BioSamples Cell line ID', 'ECACC Cat. No', 'Depositor Donor ID', 'BioSamples Donor ID', 'Genetics', 'Derivation', 'Passage', 'Culture Conditions', 'notes'])
+    writer.writerow(['hPSCreg name', 'Depositor', 'Owner', 'Alternative names', 'BioSamples Cell line ID', 'ECACC Cat. No', 'Depositor Donor ID', 'BioSamples Donor ID', 'Batches', 'Genetics', 'Derivation', 'Culture Conditions', 'notes'])
 
     for cell_line in Cellline.objects.all():
 
@@ -577,7 +577,15 @@ def cell_line_ids(request):
                 culture_conditions += "; " + cc.culture_medium
         culture_conditions = culture_conditions.replace("&trade;", u"\u2122").replace("&#8482;", u"\u2122").replace("&reg;", u"\u00ae").encode('utf-8')
 
-        writer.writerow([cell_line.name, cell_line.generator, cell_line.owner, cell_line_alternative_names, cell_line.biosamples_id, cell_line.ecacc_id, donor_depositor_names, donor_biosamples_id, genetics, derivation, passage, culture_conditions, notes])
+        batches = cell_line.batches.all();
+        batch_ids = []
+        if batches:
+            for batch in batches:
+                if batch.batch_id:
+                    batch_ids.append(batch.batch_id)
+        batches_list = "; ".join(batch_ids)
+
+        writer.writerow([cell_line.name, cell_line.generator, cell_line.owner, cell_line_alternative_names, cell_line.biosamples_id, cell_line.ecacc_id, donor_depositor_names, donor_biosamples_id, batches_list, genetics, derivation, passage, culture_conditions, notes])
 
     return response
 
