@@ -587,14 +587,18 @@ def batch_ids(request):
 
     '''Return batch IDs as CSV file.'''
 
-    response = HttpResponse(content_type='text/csv')
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
     response['Content-Disposition'] = 'attachment; filename="ebisc_batch_ids-{}.csv"'.format(datetime.date(datetime.now()))
 
     writer = csv.writer(response)
 
-    writer.writerow(['Cell line name', 'Cell line BioSamples ID', 'Batch No', 'Batch BioSamples ID', 'Batch type'])
+    writer.writerow(['Cell line name', 'Cell line BioSamples ID', 'Batch No', 'Batch BioSamples ID', 'Batch type', 'Medium', "Vials Central", "Vials to ECACC", "Vials to FH"])
 
     for batch in CelllineBatch.objects.all().order_by('cell_line__name'):
+
+        medium = ''
+        if hasattr(batch, 'batchcultureconditions') and batch.batchcultureconditions.culture_medium:
+            medium = batch.batchcultureconditions.culture_medium.encode('utf-8')
 
         writer.writerow((
             batch.cell_line.name,
@@ -602,6 +606,10 @@ def batch_ids(request):
             batch.batch_id,
             batch.biosamples_id,
             batch.batch_type,
+            medium,
+            batch.vials_at_roslin,
+            batch.vials_shipped_to_ecacc,
+            batch.vials_shipped_to_fraunhoffer
         ))
 
     return response
