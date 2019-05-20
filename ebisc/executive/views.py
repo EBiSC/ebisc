@@ -520,12 +520,12 @@ def cell_line_ids(request):
 
     '''Return cell line IDs as CSV file.'''
 
-    response = HttpResponse(content_type='text/csv')
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
     response['Content-Disposition'] = 'attachment; filename="ebisc_cell_line_ids-{}.csv"'.format(datetime.date(datetime.now()))
 
     writer = csv.writer(response)
 
-    writer.writerow(['hPSCreg name', 'Depositor', 'Depositor names', 'BioSamples Cell line ID', 'ECACC Cat. No', 'Depositor Donor ID', 'BioSamples Donor ID'])
+    writer.writerow(['hPSCreg name', 'Depositor', 'Owner', 'Alternative names', 'BioSamples Cell line ID', 'ECACC Cat. No', 'Depositor Donor ID', 'BioSamples Donor ID', 'Genetics', 'Derivation', 'Passage', 'Culture Conditions', 'notes'])
 
     for cell_line in Cellline.objects.all():
 
@@ -545,7 +545,39 @@ def cell_line_ids(request):
             donor_biosamples_id = ''
             donor_depositor_names = ''
 
-        writer.writerow([cell_line.name, cell_line.generator, cell_line_alternative_names, cell_line.biosamples_id, cell_line.ecacc_id, donor_depositor_names, donor_biosamples_id])
+        if cell_line.search_terms_genetics:
+            genetics = "; ".join(cell_line.search_terms_genetics).encode('utf-8')
+        else:
+            genetics = ''
+
+        if cell_line.search_terms_derivation:
+            derivation = "; ".join(cell_line.search_terms_derivation).encode('utf-8')
+        else:
+            derivation = ''
+
+        if cell_line.public_notes:
+            notes = cell_line.public_notes.replace(",", ";").encode('utf-8')
+        else:
+            notes = ''
+
+        cc = cell_line.celllinecultureconditions
+        passage = cc.passage_number_banked
+        culture_conditions = ''
+        medium = cc.culture_medium
+        coat = cc.surface_coating
+        if cc.surface_coating:
+            culture_conditions = cc.surface_coating
+        if cc.culture_medium:
+            if cc.culture_medium == "other" and hasattr(cc, 'culture_medium_other'):
+                if cc.culture_medium_other.base:
+                    culture_conditions += "; " + cc.culture_medium_other.base
+                    if cc.culture_medium_other.protein_source:
+                        culture_conditions += " + " + cc.culture_medium_other.protein_source
+            else:
+                culture_conditions += "; " + cc.culture_medium
+        culture_conditions = culture_conditions.replace("&trade;", u"\u2122").replace("&#8482;", u"\u2122").replace("&reg;", u"\u00ae").encode('utf-8')
+
+        writer.writerow([cell_line.name, cell_line.generator, cell_line.owner, cell_line_alternative_names, cell_line.biosamples_id, cell_line.ecacc_id, donor_depositor_names, donor_biosamples_id, genetics, derivation, passage, culture_conditions, notes])
 
     return response
 
