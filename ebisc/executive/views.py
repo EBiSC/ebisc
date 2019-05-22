@@ -525,7 +525,13 @@ def cell_line_ids(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['hPSCreg name', 'Depositor', 'Owner', 'Alternative names', 'BioSamples Cell line ID', 'ECACC Cat. No', 'Depositor Donor ID', 'BioSamples Donor ID', 'Batches', 'Genetics', 'Derivation', 'Culture Conditions', 'notes'])
+    writer.writerow(['hPSCreg name', 'Depositor', 'Owner',
+                     'Alternative names',
+                     'BioSamples Cell line ID', 'ECACC Cat. No',
+                     'Depositor Donor ID', 'BioSamples Donor ID',
+                     'Sex', 'Age', 'Donor Diseases',
+                     'Batches', 'Line Diseases', 'Genetics',
+                     'Primary Cell Type', 'Derivation', 'Passage', 'Culture Conditions', 'notes'])
 
     for cell_line in Cellline.objects.all():
 
@@ -536,6 +542,7 @@ def cell_line_ids(request):
 
         if cell_line.donor:
             donor_biosamples_id = cell_line.donor.biosamples_id
+            donor_sex = cell_line.donor.gender
 
             if cell_line.donor.provider_donor_ids:
                 donor_depositor_names = '; '.join([str(n) for n in cell_line.donor.provider_donor_ids])
@@ -544,11 +551,27 @@ def cell_line_ids(request):
         else:
             donor_biosamples_id = ''
             donor_depositor_names = ''
+            donor_sex = ''
+
+        if cell_line.donor_diseases:
+            donor_disease_list = "; ".join(cell_line.donor_diseases).encode('utf-8')
+        else:
+            donor_disease_list = ''
+
+        if cell_line.cellline_diseases:
+            line_disease_list = "; ".join(cell_line.cellline_diseases).encode('utf-8')
+        else:
+            line_disease_list = ''
 
         if cell_line.search_terms_genetics:
             genetics = "; ".join(cell_line.search_terms_genetics).encode('utf-8')
         else:
             genetics = ''
+
+        if cell_line.derivation and cell_line.derivation.primary_cell_type:
+            primary_cell_type = cell_line.derivation.primary_cell_type.name
+        else:
+            primary_cell_type = ''
 
         if cell_line.search_terms_derivation:
             derivation = "; ".join(cell_line.search_terms_derivation).encode('utf-8')
@@ -585,7 +608,13 @@ def cell_line_ids(request):
                     batch_ids.append(batch.batch_id)
         batches_list = "; ".join(batch_ids)
 
-        writer.writerow([cell_line.name, cell_line.generator, cell_line.owner, cell_line_alternative_names, cell_line.biosamples_id, cell_line.ecacc_id, donor_depositor_names, donor_biosamples_id, batches_list, genetics, derivation, passage, culture_conditions, notes])
+        writer.writerow([cell_line.name, cell_line.generator, cell_line.owner,
+                         cell_line_alternative_names,
+                         cell_line.biosamples_id, cell_line.ecacc_id,
+                         donor_depositor_names, donor_biosamples_id,
+                         donor_sex, cell_line.donor_age, donor_disease_list,
+                         batches_list, line_disease_list, genetics,
+                         primary_cell_type, derivation, passage, culture_conditions, notes])
 
     return response
 
