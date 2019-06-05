@@ -39,12 +39,27 @@ def search(request):
 # -----------------------------------------------------------------------------
 # FAQ
 
-def faq(request, category):
+def faq(request):
+
+    general = FaqCategory.objects.get(slug="general")
+    customers = FaqCategory.objects.get(slug="customers")
+    depositors = FaqCategory.objects.get(slug="depositors")
+
+    return render(request, 'faq/index.html', {
+        'general_faqs': Faq.objects.filter(published=True, category=general),
+        'customer_category_name': customers.name,
+        'customer_faqs': Faq.objects.filter(published=True, category=customers),
+        'depositor_category_name': depositors.name,
+        'depositor_faqs': Faq.objects.filter(published=True, category=depositors),
+    })
+
+
+def faq_category(request, category):
 
     try:
         category = FaqCategory.objects.get(slug=category)
 
-        return render(request, 'faq/index.html', {
+        return render(request, 'faq/category.html', {
             'category_name': category.name,
             'faqs': Faq.objects.filter(published=True, category=category)
         })
@@ -62,6 +77,7 @@ def get_menu(request):
 
     MENU = [
         (reverse('site:search'), 'Cell Line Catalogue'),
+        ('/faq/', 'FAQ'),
         ('/customer-information/', 'For customers'),
         ('/depositors/', 'For depositors'),
     ]
