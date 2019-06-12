@@ -332,7 +332,7 @@ def parse_cell_line_disease(valuef, source, cell_line):
             list_new = []
 
             for variant in source.get('variants', []):
-                if variant["type"] == modification_type:
+                if "type" in variant and variant["type"] == modification_type:
                     list_new.append(parse_cell_line_disease_variant(variant, cell_line_disease))
 
             list_new_ids = set([v.modification_id for v in list_new if v is not None])
