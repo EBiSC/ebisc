@@ -568,7 +568,7 @@ def cell_line_ids(request):
         else:
             genetics = ''
 
-        if cell_line.derivation and cell_line.derivation.primary_cell_type:
+        if hasattr(cell_line, "derivation") and cell_line.derivation.primary_cell_type:
             primary_cell_type = cell_line.derivation.primary_cell_type.name
         else:
             primary_cell_type = ''
@@ -583,22 +583,26 @@ def cell_line_ids(request):
         else:
             notes = ''
 
-        cc = cell_line.celllinecultureconditions
-        passage = cc.passage_number_banked
         culture_conditions = ''
-        medium = cc.culture_medium
-        coat = cc.surface_coating
-        if cc.surface_coating:
-            culture_conditions = cc.surface_coating
-        if cc.culture_medium:
-            if cc.culture_medium == "other" and hasattr(cc, 'culture_medium_other'):
-                if cc.culture_medium_other.base:
-                    culture_conditions += "; " + cc.culture_medium_other.base
-                    if cc.culture_medium_other.protein_source:
-                        culture_conditions += " + " + cc.culture_medium_other.protein_source
-            else:
-                culture_conditions += "; " + cc.culture_medium
-        culture_conditions = culture_conditions.replace("&trade;", u"\u2122").replace("&#8482;", u"\u2122").replace("&reg;", u"\u00ae").encode('utf-8')
+        if hasattr(cell_line, "celllinecultureconditions"):
+            cc = cell_line.celllinecultureconditions
+            passage = cc.passage_number_banked
+            if cc.surface_coating:
+                culture_conditions = cc.surface_coating
+            if cc.culture_medium:
+                if cc.culture_medium == "other" and hasattr(cc, 'culture_medium_other'):
+                    if cc.culture_medium_other.base:
+                        culture_conditions += "; " + cc.culture_medium_other.base
+                        if cc.culture_medium_other.protein_source:
+                            culture_conditions += " + " + cc.culture_medium_other.protein_source
+                else:
+                    culture_conditions += "; " + cc.culture_medium
+            culture_conditions = culture_conditions.replace("&trade;", u"\u2122")
+            culture_conditions = culture_conditions.replace("&#8482;", u"\u2122")
+            culture_conditions = culture_conditions.replace("&reg;", u"\u00ae")
+            culture_conditions = culture_conditions.encode('utf-8')
+        else:
+            passage = ''
 
         batches = cell_line.batches.all();
         batch_ids = []
