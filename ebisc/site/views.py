@@ -5,6 +5,7 @@ from django.http import Http404
 from django.template import TemplateDoesNotExist
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
 from ebisc.cms.models import Page, Faq, FaqCategory
 from ebisc.celllines.models import Cellline, CelllineCharacterizationMarkerExpression
@@ -45,12 +46,19 @@ def faq(request):
     customers = FaqCategory.objects.get(slug="customers")
     depositors = FaqCategory.objects.get(slug="depositors")
 
+    customer_faqs = Faq.objects.filter(
+                        Q(category=general) | Q(category=customers),
+                        published=True)
+    depositor_faqs = Faq.objects.filter(
+                        Q(category=general) | Q(category=depositors),
+                        published=True)
+
     return render(request, 'faq/index.html', {
-        'general_faqs': Faq.objects.filter(published=True, category=general),
+        'general_faqs': [],
         'customer_category_name': customers.name,
-        'customer_faqs': Faq.objects.filter(published=True, category=customers),
+        'customer_faqs': customer_faqs,
         'depositor_category_name': depositors.name,
-        'depositor_faqs': Faq.objects.filter(published=True, category=depositors),
+        'depositor_faqs': depositor_faqs,
     })
 
 
