@@ -19,6 +19,7 @@
         {% endfor %}
       </tr>
       {% for marker_expression, methods in undiff_marker_expression.items %}
+      {% if marker_expression.expressed is not None %}
       <tr>
         <td><nobr>{{ marker_expression.marker }}</nobr></td>
         <td>{% if marker_expression.expressed == True %}
@@ -44,6 +45,7 @@
         </td>
         {% endfor %}
       </tr>
+      {% endif %}
       {% endfor %}
     </table>
   </td>
