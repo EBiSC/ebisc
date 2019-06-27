@@ -175,6 +175,7 @@ def value_of_file(source_file_link, source_file_name, file_field, current_enc=No
     # Save file for file_field and return its enc_hash
 
     if source_file_link == '':
+        logger.info("deleting file %s" % file_field.url);
         file_field.delete()
         return None
 
@@ -191,7 +192,12 @@ def value_of_file(source_file_link, source_file_name, file_field, current_enc=No
     source_enc = os.path.splitext(os.path.basename(source_file_link))[0]
 
     if source_enc is not None and current_enc is not None and source_enc == current_enc:
-        return current_enc
+        # check if file exists on local disk
+        if file_field:
+            # file exists already
+            return current_enc
+        else:
+            logger.warn('file missing on local disk')
 
     if os.getenv("TOMCAT_URL"):
         server = os.getenv("TOMCAT_URL").split("/")[2].split(":")[0]
