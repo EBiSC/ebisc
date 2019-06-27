@@ -281,6 +281,7 @@ class Cellline(DirtyFieldsMixin, models.Model):
 
         cellline_diseases_genes = []
 
+        # disease modification
         for disease in self.diseases.all():
             genes = []
             variants = []
@@ -323,6 +324,44 @@ class Cellline(DirtyFieldsMixin, models.Model):
                     disease_info = "%s (%s)" % (disease.disease.name, ", ".join(genes))
 
                 cellline_diseases_genes.append(disease_info)
+
+        # non-disease modification
+        genes = []
+        variants = []
+        mods_isogenic = []
+        mods_transgene_expression = []
+        mods_gene_ko = []
+        mods_gene_ki = []
+        gene_info = None
+        mods_gene_ko.extend(self.genetic_modification_cellline_gene_knock_out.all())
+        mods_gene_ki.extend(self.genetic_modification_cellline_gene_knock_in.all())
+        mods_transgene_expression.extend(self.genetic_modification_cellline_transgene_expression.all())
+        mods_isogenic.extend(self.genetic_modification_cellline_isogenic.all())
+        variants.extend(self.genetic_modification_cellline_variants.all())
+
+        for variant in variants:
+            if variant.gene and variant.gene.name:
+                genes.append(variant.gene.name)
+
+        for mod in mods_isogenic:
+            if mod.gene and mod.gene.name:
+                genes.append(mod.gene.name)
+
+        for mod in mods_transgene_expression:
+            if mod.gene and mod.gene.name:
+                genes.append(mod.gene.name)
+
+        for mod in mods_gene_ko:
+            if mod.gene and mod.gene.name:
+                genes.append(mod.gene.name)
+
+        for mod in mods_gene_ki:
+            if mod.target_gene and mod.target_gene.name:
+                genes.append(mod.target_gene.name)
+
+        if genes:
+            cellline_diseases_genes.append(", ".join(genes))
+
 
         return cellline_diseases_genes
 
