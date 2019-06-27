@@ -15,7 +15,11 @@
 
               {% if analysis.genome_analysis_files.all %}
               {% for file in analysis.genome_analysis_files.all %}
+              {% if file.vcf_file %}
                 <br><a href="{{ file.vcf_file.url }}" target="_blank">Data file</a>{% if file.vcf_file_description %} - {{ file.vcf_file_description }}{% endif %}
+              {% else %}
+                <br>{% if file.vcf_file_description %} - {{ file.vcf_file_description }}{% endif %}(file missing)
+              {% endif %}
               {% endfor %}
               {% endif %}
               </p>
@@ -34,7 +38,11 @@
 
               {% if analysis.donor_genome_analysis_files.all %}
               {% for file in analysis.donor_genome_analysis_files.all %}
+              {% if file.vcf_file %}
                 <br><a href="{{ file.vcf_file.url }}" target="_blank">Data file</a>{% if file.vcf_file_description %} - {{ file.vcf_file_description }}{% endif %}
+              {% else %}
+                <br>{% if file.vcf_file_description %} - {{ file.vcf_file_description }}{% endif %}(file missing)
+              {% endif %}
               {% endfor %}
               {% endif %}
               </p>
