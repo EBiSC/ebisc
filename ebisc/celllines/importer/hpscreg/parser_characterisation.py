@@ -85,9 +85,10 @@ def parse_characterization_pluritest(valuef, source, cell_line):
 
         characterization_pluritest_files_new = []
 
-        for f in valuef(['characterisation_pluritest_data']).get('uploads', []):
-            if f.get('is_private') != '1':
-                characterization_pluritest_files_new.append(parse_characterization_pluritest_file(f, cell_line_characterization_pluritest))
+        if valuef(['characterisation_pluritest_data']):
+            for f in valuef(['characterisation_pluritest_data']).get('uploads', []):
+                if f.get('is_private') != '1':
+                    characterization_pluritest_files_new.append(parse_characterization_pluritest_file(f, cell_line_characterization_pluritest))
 
         characterization_pluritest_files_new_encs = set(characterization_pluritest_files_new)
 
@@ -177,9 +178,10 @@ def parse_characterization_epipluriscore(valuef, source, cell_line):
 
         characterization_epipluriscore_files_new = []
 
-        for f in valuef(['characterisation_epipluriscore_data']).get('uploads', []):
-            if f.get('is_private') != '1':
-                characterization_epipluriscore_files_new.append(parse_characterization_epipluriscore_file(f, cell_line_characterization_epipluriscore))
+        if valuef(['characterisation_epipluriscore_data']):
+            for f in valuef(['characterisation_epipluriscore_data']).get('uploads', []):
+                if f.get('is_private') != '1':
+                    characterization_epipluriscore_files_new.append(parse_characterization_epipluriscore_file(f, cell_line_characterization_epipluriscore))
 
         characterization_epipluriscore_files_new_encs = set(characterization_epipluriscore_files_new)
 
@@ -345,9 +347,10 @@ def parse_characterization_hpscscorecard(valuef, source, cell_line):
 
         characterization_hpscscorecard_files_new = []
 
-        for f in valuef(['characterisation_hpsc_scorecard_data']).get('data_analysis_uploads', []):
-            if f.get('is_private') != '1':
-                characterization_hpscscorecard_files_new.append(parse_characterization_hpscscorecard_file(f, cell_line_characterization_hpscscorecard))
+        if valuef(['characterisation_hpsc_scorecard_data']):
+            for f in valuef(['characterisation_hpsc_scorecard_data']).get('data_analysis_uploads', []):
+                if f.get('is_private') != '1':
+                    characterization_hpscscorecard_files_new.append(parse_characterization_hpscscorecard_file(f, cell_line_characterization_hpscscorecard))
 
         characterization_hpscscorecard_files_new_encs = set(characterization_hpscscorecard_files_new)
 
@@ -357,9 +360,10 @@ def parse_characterization_hpscscorecard(valuef, source, cell_line):
 
         characterization_hpscscorecard_cards_new = []
 
-        for f in valuef(['characterisation_hpsc_scorecard_data']).get('scorecard_uploads', []):
-            if f.get('is_private') != '1':
-                characterization_hpscscorecard_cards_new.append(parse_characterization_hpscscorecard_card(f, cell_line_characterization_hpscscorecard))
+        if valuef(['characterisation_hpsc_scorecard_data']):
+            for f in valuef(['characterisation_hpsc_scorecard_data']).get('scorecard_uploads', []):
+                if f.get('is_private') != '1':
+                    characterization_hpscscorecard_cards_new.append(parse_characterization_hpscscorecard_card(f, cell_line_characterization_hpscscorecard))
 
         characterization_hpscscorecard_cards_new_encs = set(characterization_hpscscorecard_cards_new)
 
