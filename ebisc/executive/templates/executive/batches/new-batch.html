@@ -31,9 +31,10 @@
         <td></td>
         <td>
           <p><input type="submit" value="Create batch"></p>
-          <p><span class="helptext">The accession process will take about a minute.</span></p>
+          <p><span class="helptext">The accession process can take up to 5 minutes.</span></p>
           <p><span class="helptext">Please be patient and do not resubmit the data.</span></p>
           <p><span class="helptext">You will receive a message when the process is complete.</span></p>
+          <p><span class="helptext">When you do get a timeout, the batch might be ready anyways <a href="{% url 'executive:cellline' cellline.name %}">here.</a></span></p>
         </td>
     </tr>
     </table>
