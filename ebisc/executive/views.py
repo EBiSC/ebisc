@@ -527,6 +527,7 @@ def cell_line_ids(request):
 
     writer.writerow(['hPSCreg name', 'Depositor', 'Owner',
                      'Alternative names',
+                     'EBiSC status',
                      'BioSamples Cell line ID', 'ECACC Cat. No',
                      'Depositor Donor ID', 'BioSamples Donor ID',
                      'Sex', 'Age', 'Donor Diseases',
@@ -614,6 +615,7 @@ def cell_line_ids(request):
 
         writer.writerow([cell_line.name, cell_line.generator, cell_line.owner,
                          cell_line_alternative_names,
+                         cell_line.current_status.status,
                          cell_line.biosamples_id, cell_line.ecacc_id,
                          donor_depositor_names, donor_biosamples_id,
                          donor_sex, cell_line.donor_age, donor_disease_list,
