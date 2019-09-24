@@ -10,6 +10,10 @@
 
     <h1>{{ cellline.name }}{% if cellline.has_genetic_modification %} <small class="comment">Gene-edited iPSC line</small>{% endif %}</h1>
 
+    {% if user.is_authenticated %}
+        <div style="margin-bottom: 15px;"><a href="{% url 'executive:cellline' cellline.name %}">{{ cellline.name }} in the Executive Dashboard</a></div>
+    {% endif %}
+
     {% if cellline.current_status.status == 'withdrawn' %}
         <div class="availability">
             <div class="status-label withdrawn">

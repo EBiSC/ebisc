@@ -61,7 +61,8 @@
 					<span class="light-gray">hPSCreg name:</span> <a href="{{ cellline.hpscreg_url }}" target="_blank">{{ cellline.name }}</a><br/>
                     <span class="light-gray">Depositor names:</span> {% if cellline.alternative_names %}{{ cellline.alternative_names }}{% else %}/{% endif %}<br/>
 					<span class="light-gray">BioSamples ID:</span> <a href="{{ cellline.biosamples_url }}" target="_blank">{{ cellline.biosamples_id }}</a><br/>
-                    <span class="light-gray">ECACC Cat. No:</span> {% if cellline.ecacc_id %}<a href="{{ cellline.ecacc_url }}" target="_blank">{{ cellline.ecacc_id }}</a>{% else %}/{% endif %}
+                    <span class="light-gray">ECACC Cat. No:</span> {% if cellline.ecacc_id %}<a href="{{ cellline.ecacc_url }}" target="_blank">{{ cellline.ecacc_id }}</a>{% else %}/{% endif %}<br/>
+                    <span class="light-gray">Catalog view:</span> <a href="/{{ cellline.name }}" target="_blank">{{ cellline.name }}</a>
                 </div>
             </div>
         </div>
