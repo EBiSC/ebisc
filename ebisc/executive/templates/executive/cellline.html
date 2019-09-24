@@ -31,6 +31,16 @@
                         {% endif %}
                     </p>
 
+                    <p><span class="light-gray">For Sale (go live flag):</span><br/>
+                        {% if cellline.available_for_sale %}
+                        <i class="glyphicon glyphicon-ok success"></i>
+						Intended for sale (go live)
+                        {% else %}
+                        <i class="glyphicon glyphicon-minus error"></i>
+						Not Intended for sale (don't go live)
+                        {% endif %}
+                    </p>
+
                     <p><span class="light-gray">For Sale (found on ECACC):</span><br/>
                         {% if cellline.available_for_sale_at_ecacc %}
                         <i class="glyphicon glyphicon-ok success"></i>

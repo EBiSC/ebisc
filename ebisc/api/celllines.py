@@ -898,6 +898,8 @@ class CelllineResource(ModelResource):
 
     # ECACC flag for importing lines
     flag_go_live = fields.BooleanField('available_for_sale', null=True, default=False)
+    # (actually) available for sale
+    at_ecacc = fields.BooleanField('available_for_sale_at_ecacc', null=True, default=False)
 
     # Status
     status_log = fields.ToManyField(CelllineStatusResource, 'statuses', null=True, full=True)
