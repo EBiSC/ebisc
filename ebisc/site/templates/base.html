@@ -45,12 +45,11 @@
         </div>
     </header>
 
-    <ul class="messages">
-		<li class="message-info" style="background: rgb(255, 255, 255, 0.7); border: none;">Please take part in the <a href="https://r1.dotmailer-surveys.com/e5gmqc9-213xd5b5" target="_blank" style="color: rgb(0, 159, 238">EBiSC2 User Survey - Summer 2019</a></li>
     {% if not IS_LIVE %}
+    <ul class="messages">
 		<li class="message-warning">This is a test server. The official server is <a href="https://cells.ebisc.org">cells.ebisc.org</a></li>
-    {% endif %}
     </ul>
+    {% endif %}
 
     {% if messages %}
     <ul class="messages">
