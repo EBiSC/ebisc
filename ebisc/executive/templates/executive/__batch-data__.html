@@ -3,7 +3,7 @@
 <h2>Batches</h2>
 
 {% if perms.auth.can_manage_executive_dashboard %}
-<div class="request-bisample-ids"><a href="{% url 'executive:new_batch' cellline.name %}">Create a new batch</a> <small>(request new batch and vial Biosample IDs)</small></div>
+<div class="request-bisample-ids"><a href="{% url 'executive:new_batch' cellline.name %}">Create a new batch</a> <small>(create new batch and vial IDs)</small></div>
 {% endif %}
 
 {% if cellline.batches.all|length %}
@@ -18,7 +18,7 @@
         {% endif %}
 
         <h3>Batch and vial IDs</h3>
-        <div><a href="{% url 'executive:batch_data' cellline.name batch.biosamples_id %}"><i class="glyphicon glyphicon-download-alt"></i>Download vial Biosample IDs file</a></div>
+        <div><a href="{% url 'executive:batch_data' cellline.name batch.biosamples_id %}"><i class="glyphicon glyphicon-download-alt"></i>Download vial ID file</a></div>
 
         <h3>Certificate of Analysis</h3>
         {% if batch.certificate_of_analysis %}

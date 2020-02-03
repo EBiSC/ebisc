@@ -307,104 +307,35 @@ def new_batch(request, name):
             number_of_vials = data['number_of_vials']
             derived_from = data['derived_from']
 
-            biosamples_url = settings.BIOSAMPLES.get('url')
-            biosamples_key = settings.BIOSAMPLES.get('key')
+            full_batch_id = cellline_name + "_" + batch_id
 
+            # Store vial numbers, and full vial IDs
             vials = []
+            for i in list(range(1, number_of_vials + 1)):
+                vial_number = str(i).zfill(4)
+                vials.append((vial_number, full_batch_id + "_" + vial_number))
 
-            try:
-                for i in list(range(1, number_of_vials + 1)):
-                    vial_number = str(i).zfill(4)
+            # Save batch
+            batch = CelllineBatch(
+                cell_line=cellline,
+                biosamples_id=full_batch_id,    # not an actual biosamples ID anymore
+                batch_id=batch_id,
+                batch_type=batch_type,
+            )
+            batch.save()
 
-                    # Request Biosample IDs for vial
-                    url = '%s/sampletab/api/v2/source/EBiSCIMS/sample?apikey=%s' % (biosamples_url, biosamples_key)
-                    headers = {'Accept': 'text/plain', 'Content-Type': 'application/xml'}
-                    xml = '''
-<?xml version="1.0" encoding="UTF-8"?>
-    <BioSample xmlns="http://www.ebi.ac.uk/biosamples/SampleGroupExport/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://wwwdev.ebi.ac.uk/biosamples/assets/xsd/v1.0/BioSDSchema.xsd">
-        <Property class="Sample Name" characteristic="true" comment="false" type="STRING">
-            <QualifiedValue>
-                <Value>%s %s vial %s</Value>
-            </QualifiedValue>
-        </Property>
-        <derivedFrom>%s</derivedFrom>
-    </BioSample>
-                    ''' % (cellline_name, batch_id, vial_number, derived_from)
+            # Save vials
+            for v in vials:
+                CelllineAliquot(
+                    batch=batch,
+                    biosamples_id=v[1], # not an actual biosamples ID anymore
+                    name='%s %s vial %s' % (cellline_name, batch_id, v[0]),
+                    number=v[0],
+                    derived_from=derived_from,
+                ).save()
 
-                    r = requests.post(url, data=xml.strip(), headers=headers)
-
-                    # Store vial number, vial BioSample ID
-                    if r.status_code >= 200 and r.status_code < 300:
-                        vials.append((vial_number, r.text))
-                    else:
-                        request_url = '%s/sampletab/api/v2/source/EBiSCIMS/sample?apikey=' % (biosamples_url,)
-                        raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again. (%s)' % r.status_code), r.status_code, request_url, r.text, xml)
-
-                vial_list = ''.join(['<Id>%s</Id>' % v[1] for v in vials])
-
-                # Request Biosample ID for batch
-                url = '%s/sampletab/api/v2/source/EBiSCIMS/group?apikey=%s' % (biosamples_url, biosamples_key)
-                headers = {'Accept': 'text/plain', 'Content-Type': 'application/xml'}
-                xml = '''
-<?xml version="1.0" encoding="UTF-8"?>
-    <BioSampleGroup xmlns="http://www.ebi.ac.uk/biosamples/SampleGroupExport/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ebi.ac.uk/biosamples/SampleGroupExport/1.0 http://www.ebi.ac.uk/biosamples/assets/xsd/v1.0/BioSDSchema.xsd">
-        <Property class="Group Name" characteristic="true" comment="false" type="STRING">
-            <QualifiedValue>
-                <Value>%s batch %s</Value>
-            </QualifiedValue>
-        </Property>
-        <Property class="origin cell line" characteristic="false" type="STRING" comment="true">
-            <QualifiedValue>
-                <Value>%s</Value>
-            </QualifiedValue>
-        </Property>
-        <Property class="origin donor" characteristic="false" type="STRING" comment="true">
-            <QualifiedValue>
-                <Value>%s</Value>
-            </QualifiedValue>
-        </Property>
-    <SampleIds>%s</SampleIds></BioSampleGroup>''' % (cellline_name, batch_id, cellline_biosample_id, donor_biosamples_id, vial_list)
-
-                r = requests.post(url, data=xml.strip(), headers=headers)
-
-                if r.status_code >= 200 and r.status_code < 300:
-                    batch_biosamples_id = r.text
-                else:
-                    request_url = '%s/sampletab/api/v2/source/EBiSCIMS/group?apikey=' % (biosamples_url,)
-                    raise BiosamplesError(format_html(u'There was a problem requesting the BioSampleID. Please try again. (%s)' % r.status_code), r.status_code, request_url, r.text, xml)
-
-                # Save batch
-                batch = CelllineBatch(
-                    cell_line=cellline,
-                    biosamples_id=batch_biosamples_id,
-                    batch_id=batch_id,
-                    batch_type=batch_type,
-                )
-                batch.save()
-
-                # Save vials
-                for v in vials:
-                    CelllineAliquot(
-                        batch=batch,
-                        biosamples_id=v[1],
-                        name='%s %s vial %s' % (cellline_name, batch_id, v[0]),
-                        number=v[0],
-                        derived_from=derived_from,
-                    ).save()
-
-                messages.success(request, format_html(u'A new batch <code><strong>{0}</strong></code> for cell line <code><strong>{1}</strong></code> has been sucessfully created.', batch_id, cellline_name))
-                return redirect('executive:cellline', cellline_name)
-
-            except BiosamplesError, (message, status_code, url, text, xml):
-                messages.error(request, message)
-                if hasattr(settings, 'BIOSAMPLES_ADMINS'):
-                    send_mail(
-                        'EBiSC Biosamples API error',
-                        'Status code: %s\n\nUrl: %s\n\nMessage: %s\n\nXML:\n%s' % (status_code, url, text, xml),
-                        settings.SERVER_EMAIL,
-                        ['%s <%s>' % (admin[0], admin[1]) for admin in settings.BIOSAMPLES_ADMINS],
-                        fail_silently=False,
-                    )
+            messages.success(request, format_html(u'A new batch <code><strong>{0}</strong></code> for cell line <code><strong>{1}</strong></code> has been sucessfully created.', batch_id, cellline_name))
+            return redirect('executive:cellline', cellline_name)
 
     return render(request, 'executive/batches/new-batch.html', {
         'cellline': cellline,
@@ -501,7 +432,7 @@ def batch_data(request, name, batch_biosample_id):
 
     writer = csv.writer(response)
 
-    writer.writerow(['Cell line alternative names', 'Cell line name', 'ECACC Cat. no.', 'Batch ID', 'Batch Biosample ID', 'Vial number', 'Vial Biosample ID'])
+    writer.writerow(['Cell line alternative names', 'Cell line name', 'ECACC Cat. no.', 'Batch ID', 'Full Batch ID', 'Vial number', 'Vial ID'])
 
     for aliquot in batch.aliquots.all():
 
@@ -635,7 +566,7 @@ def batch_ids(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['Cell line name', 'Cell line BioSamples ID', 'Batch No', 'Batch BioSamples ID', 'Batch type', 'Medium', "Vials Central", "Vials to ECACC", "Vials to FH"])
+    writer.writerow(['Cell line name', 'Cell line BioSamples ID', 'Batch No', 'Full Batch ID', 'Batch type', 'Medium', "Vials Central", "Vials to ECACC", "Vials to FH"])
 
     for batch in CelllineBatch.objects.all().order_by('cell_line__name'):
 
