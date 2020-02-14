@@ -12,12 +12,10 @@
 
 <h2 class="no-margin">Create a new batch</h2>
 
-<p>By submitting the form below, you will create <b>Biosample accessions</b> for a new batch and vials contained in this batch.</p>
+<p>By submitting the form below, you will create identifiers for a new batch and vials contained in this batch.</p>
 
-<p>You can access the created Biosample IDs via:
-  <ul class="bulleted-ul">
-    <li>FTP site where they will be available for import to LIMS (<i>within 24 hours</i>).</li>
-    <li>Printer friendly .csv file accessible alongside cell line batch data in the Executive dashboard.</li>
+<p>You can access the created IDs via a printer friendly .csv file
+accessible alongside cell line batch data in the Executive dashboard.</li>
   </ul>
 </p>
 
@@ -31,10 +29,6 @@
         <td></td>
         <td>
           <p><input type="submit" value="Create batch"></p>
-          <p><span class="helptext">The accession process can take up to 5 minutes.</span></p>
-          <p><span class="helptext">Please be patient and do not resubmit the data.</span></p>
-          <p><span class="helptext">You will receive a message when the process is complete.</span></p>
-          <p><span class="helptext">When you do get a timeout, the batch might be ready anyways <a href="{% url 'executive:cellline' cellline.name %}">here.</a></span></p>
         </td>
     </tr>
     </table>
