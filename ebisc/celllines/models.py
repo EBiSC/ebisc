@@ -665,7 +665,7 @@ class CelllineBatch(models.Model):
     class Meta:
         verbose_name = _(u'Cell line batch')
         verbose_name_plural = _(u'Cell line batches')
-        ordering = ['biosamples_id']
+        ordering = ['id']
         unique_together = (('cell_line', 'batch_id'))
 
     def __unicode__(self):

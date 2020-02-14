@@ -8,8 +8,8 @@
 
 {% if cellline.batches.all|length %}
 <ul class="accordion">
-{% for batch in cellline.batches.all reversed %}
-<li><a href="javascript:void(0)" class="js-accordion-trigger">{% if batch.batch_id == batch.biosamples_id %}{% else %}<b>{{ batch.batch_id }}</b> - {% endif %}{{ batch.biosamples_id }} - {{ batch.aliquots.all.count }} vials - <small>{{ batch.get_batch_type_display }}</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
+{% for batch in cellline.batches.all %}
+<li><a href="javascript:void(0)" class="js-accordion-trigger">{{ batch.id }}: {% if batch.batch_id == batch.biosamples_id %}{% else %}<b>{{ batch.batch_id }}</b> - {% endif %}{{ batch.biosamples_id }} - {{ batch.aliquots.all.count }} vials - <small>{{ batch.get_batch_type_display }}</small> <i class="glyphicon glyphicon-chevron-down"></i></a>
     <div class="content">
     {% if batch.batch_id and batch.batch_id != batch.biosamples_id %}
 
