@@ -88,7 +88,9 @@ def import_cellline(source):
     if cell_line_created:
 
         # ECACC catalogue number assignment for new cell lines
-        ecacc_cat_number = str(int(cell_line.id) + 66540000 - 100)
+        # 66540001 - 66541224   EBiSC1 (based on cell_line.id starting with id 647)
+        # 66770001 -            EBiSC2 (after 2020-03-02)
+        ecacc_cat_number = str(int(cell_line.id) + 66770000 - 1324)
         if ecacc_cat_number <= '66999999':
             cell_line.ecacc_id = ecacc_cat_number
             cell_line.save()
