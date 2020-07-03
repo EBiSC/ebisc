@@ -17,15 +17,24 @@
     {% if cellline.current_status.status == 'withdrawn' %}
         <div class="availability"><div class="status-label withdrawn">
             {{ cellline.current_status.get_status_display }}</div></div>
+        <div class="user-note">
+            There is information available at <a href="{{ cellline.hpscreg_url }}"  target="_blank">hPSCreg</a>.
+        </div>
     {% elif cellline.current_status.status == 'recalled' %}
         <div class="availability"><div class="status-label recalled">
             {{ cellline.current_status.get_status_display }}</div></div>
+        <div class="user-note">
+            There is information available at <a href="{{ cellline.hpscreg_url }}"  target="_blank">hPSCreg</a>.
+        </div>
     {% elif cellline.current_status.status == 'not_available' %}
         <div class="availability"><div class="status-label not-available">
             {{ cellline.current_status.get_status_display }}</div></div>
           <div class="user-note">
               <a href="http://ebisc.org/contact/contact-us.php"  target="_blank">Contact us</a>
               when you are interested in the cell line to find out when the line will be available.
+          </div>
+          <div class="user-note">
+			  There is information available at <a href="{{ cellline.hpscreg_url }}"  target="_blank">hPSCreg</a>.
           </div>
     {% else %}
 
