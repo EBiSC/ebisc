@@ -271,15 +271,6 @@ class NewBatchForm(forms.Form):
                     params={'cellline_name': cellline.name}
                 )
 
-        if cellline_biosample_id and derived_from:
-            existing_vial_ids = set([v.biosamples_id for v in CelllineAliquot.objects.filter(batch__cell_line__biosamples_id=cellline_biosample_id)])
-
-            if derived_from != cellline.biosamples_id and derived_from not in existing_vial_ids:
-                raise forms.ValidationError(
-                    'Derived from Biosamples ID: %(derived_from)s does not match the cell line ID or any vial IDs from this cell line.',
-                    params={'derived_from': derived_from}
-                )
-
 
 @permission_required('auth.can_view_executive_dashboard')
 def new_batch(request, name):
