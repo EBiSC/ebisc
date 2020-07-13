@@ -644,9 +644,9 @@ class CelllineInformationPack(models.Model):
 class CelllineBatch(models.Model):
 
     BATCH_TYPE_CHOICES = (
+        ('depositor', _(u'Depositor Expansion')),
         ('ecacc', _(u'ECACC')),
         ('ibmt', _(u'Fraunhofer IBMT')),
-        ('depositor', _(u'Depositor Expansion')),
         ('central_facility', _(u'Central Facility Expansion (EBiSC1)')),
         ('unknown', _(u'Unknown')),
     )
