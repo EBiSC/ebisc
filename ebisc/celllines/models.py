@@ -647,7 +647,7 @@ class CelllineBatch(models.Model):
         ('ecacc', _(u'ECACC')),
         ('ibmt', _(u'Fraunhofer IBMT')),
         ('depositor', _(u'Depositor Expansion')),
-        ('central_facility', _(u'Central Facility Expansion')),
+        ('central_facility', _(u'Central Facility Expansion (EBiSC1)')),
         ('unknown', _(u'Unknown')),
     )
 
