@@ -4,7 +4,7 @@ DEBUG = True
 
 IS_LIVE = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '.charite.de']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '.charite.de', '*']
 
 INTERNAL_IPS = ['127.0.0.1']
 
