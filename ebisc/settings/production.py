@@ -5,7 +5,7 @@ DEBUG = False
 
 IS_LIVE = True
 
-ALLOWED_HOSTS = ['cells.ebisc.org', 'cell.ebisc.org', 'catalog.ebisc.org', 'catalogue.ebisc.org', 'ebisc-ims.charite.de', 'ebisc-ims.cell-type.org', '127.0.0.1', '141.42.207.1', 'cells-stage.ebisc.org']
+ALLOWED_HOSTS = ['cells.ebisc.org', 'cell.ebisc.org', 'catalog.ebisc.org', 'catalogue.ebisc.org', 'ebisc-ims.charite.de', 'ebisc-ims.cell-type.org', '127.0.0.1', '141.42.207.1', 'cells-stage.ebisc.org', '153.97.176.185']
 
 BIOSAMPLES_ADMINS = ADMINS + (
    ('Biosamples', 'biosamples@ebi.ac.uk'),
