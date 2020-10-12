@@ -17,8 +17,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # Admins
 
 ADMINS = (
-    ('Johannes Dewender', 'johannes.dewender@charite.de'),
-    ('Nils Bultjer', 'nils.bultjer@charite.de'),
+    ('Johannes Dewender', 'johannes.dewender@ibmt.fraunhofer.de'),
+    ('Nils Bultjer', 'nils.bultjer@ibmt.fraunhofer.de'),
 )
 
 # -----------------------------------------------------------------------------
