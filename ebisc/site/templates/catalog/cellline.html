@@ -45,6 +45,12 @@
         </table>
       </div>
 
+      {% if cellline.public_notes %}
+      <div class="card public-notes">
+        <div class="comment">{{ cellline.public_notes }}</div>
+      </div>
+      {% endif %}
+
       {% if cellline.batches.all %}
       {% with cellline.get_latest_batch as batch %}
           {% if batch.images.all|length %}
@@ -127,12 +133,6 @@
           </li>
           {% endif %}
       </ul>
-
-      {% if cellline.public_notes %}
-      <div class="card public-notes">
-        <div class="comment">{{ cellline.public_notes }}</div>
-      </div>
-      {% endif %}
 
       {% if cellline.ecacc_id and cellline.available_for_sale %}
       <div class="buy">
