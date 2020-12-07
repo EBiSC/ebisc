@@ -401,6 +401,14 @@ def parse_cell_line_disease_variant(valuef, source, cell_line_disease):
     elif valuef('isogenic_change_type') is not None:
         isogenic_modificaton_type = valuef('isogenic_change_type')
 
+    if valuef('free_text') is None:
+        free_text = None
+    elif len(valuef('free_text')) >= 1000:
+        logger.warning('Truncating variant free text: %s' % valuef('free_text'))
+        free_text = valuef('free_text')[0:997] + '...'
+    else:
+        free_text = valuef('free_text')
+
     if valuef('type') == 'Variant':
 
         cell_line_disease_variant, created = ModificationVariantDisease.objects.update_or_create(
@@ -416,7 +424,7 @@ def parse_cell_line_disease_variant(valuef, source, cell_line_disease):
                 'dbsnp_id': valuef('dbsnp_id'),
                 'dbvar_id': valuef('dbvar_id'),
                 'publication_pmid': valuef('publication_pmid'),
-                'notes': valuef('free_text'),
+                'notes': free_text,
             }
         )
 
@@ -435,7 +443,7 @@ def parse_cell_line_disease_variant(valuef, source, cell_line_disease):
                 'protein_sequence_hgvs': valuef('protein_sequence_hgvs'),
                 'zygosity_status': valuef('zygosity_status'),
                 'modification_type': isogenic_modificaton_type,
-                'notes': valuef('free_text'),
+                'notes': free_text,
             }
         )
 
@@ -453,7 +461,7 @@ def parse_cell_line_disease_variant(valuef, source, cell_line_disease):
                 'delivery_method': delivery_method,
                 'virus': virus,
                 'transposon': transposon,
-                'notes': valuef('free_text'),
+                'notes': free_text,
             }
         )
 
@@ -471,7 +479,7 @@ def parse_cell_line_disease_variant(valuef, source, cell_line_disease):
                 'delivery_method': delivery_method,
                 'virus': virus,
                 'transposon': transposon,
-                'notes': valuef('free_text'),
+                'notes': free_text,
             }
         )
 
@@ -491,7 +499,7 @@ def parse_cell_line_disease_variant(valuef, source, cell_line_disease):
                 'delivery_method': delivery_method,
                 'virus': virus,
                 'transposon': transposon,
-                'notes': valuef('free_text'),
+                'notes': free_text,
             }
         )
 

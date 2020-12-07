@@ -43,6 +43,12 @@
 {% if variant.notes %}
 <tr>
   <td class="label">Description:</td>
+  {% if variant.notes|length >= 1000 %}
+  <td>{{ variant.notes|slice:":997" }}
+    <a target="_blank" href="{{ cellline.hpscreg_url|add:'#genetic-modification' }}">...</a>
+  </td>
+  {% else %}
   <td>{{ variant.notes }}</td>
+  {% endif %}
 </tr>
 {% endif %}
