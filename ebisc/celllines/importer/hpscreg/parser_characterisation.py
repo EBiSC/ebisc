@@ -720,6 +720,8 @@ def parse_characterization_differentiation_potency(valuef, source, cell_line):
         ('ectoderm', 'characterisation_differentiation_potency_ectoderm_data'),
     )
 
+    dirty = False
+
     for data in germ_layer_data:
         if valuef(data[1]):
             if valuef(data[1]).get('detected_cell_types'):
@@ -749,10 +751,12 @@ def parse_characterization_differentiation_potency(valuef, source, cell_line):
                 d.delete()
 
                 logger.info('Deleted cell line Differentiation potency %s' % (data[0],))
-                return True
+                dirty = True
 
             except CelllineCharacterizationDifferentiationPotency.DoesNotExist:
-                return False
+                pass
+
+    return dirty
 
 
 @inject_valuef
