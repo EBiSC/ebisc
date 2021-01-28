@@ -1,7 +1,11 @@
 <!-- Disease name -->
 
 <tr>
+    {% if disease.disease and disease.disease.name == 'normal' %}
+  <td class="label"><b>Health Status:</b></td>
+    {% else %}
   <td class="label"><b>Disease:</b></td>
+    {% endif %}
   <td>
     {% if disease.disease or disease.disease_not_normalised %}
       {% if disease.disease %}
