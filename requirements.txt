@@ -13,7 +13,7 @@ certifi==2018.04.16
 easydict==1.6
 django-dirtyfields==0.7
 sorl-thumbnail==12.3
-Pillow==6.2.0
+Pillow==8.2.0
 django-debug-toolbar==1.4
 django-markdown-deux==1.0.5
 sqlparse==0.1.19
