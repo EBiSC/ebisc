@@ -336,10 +336,7 @@ Additional fields and endpoints may be created for future exchanges.
                         "name": "LB-34-1 P001 vial 0050",
                         "number": "0050"
                     }
-                ],
-                "vials_at_roslin": 0,
-                "vials_shipped_to_ecacc": 19,
-                "vials_shipped_to_fraunhoffer": 5
+                ]
             }
         ],
         "biosamples_id": "SAMEA2590882",
@@ -1185,10 +1182,7 @@ The four fields described below contain the details of the modification.
                     "name": "LB-34-1 P001 vial 0050",
                     "number": "0050"
                 }
-            ],
-            "vials_at_roslin": 0,
-            "vials_shipped_to_ecacc": 19,
-            "vials_shipped_to_fraunhoffer": 5
+            ]
         }
 
 
