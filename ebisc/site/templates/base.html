@@ -45,24 +45,6 @@
         </div>
     </header>
 
-    <ul class="messages">
-		<li class="message-warning">
-<b>Coronavirus (COVID-19)</b>:
-<br/>EBiSC is open for business - supporting researchers worldwide with distribution of high quality, disease relevant iPSCs!
-EBiSC is accepting orders and dispatch of in stock items has returned to normal.
-Due to the on-going impact of COVID-19, the manufacture of out of stock products has been delayed.
-Please <a href="mailto:CultureCollections@phe.gov.uk">contact ECACC at CultureCollections@phe.gov.uk</a>
-or <a href="https://ebisc.org/contact">contact EBiSC</a> directly
-for specific product enquiries or queries about new or ongoing orders.
-		</li>
-    </ul>
-
-    {% if not IS_LIVE %}
-    <ul class="messages">
-		<li class="message-warning">This is a test server. The official server is <a href="https://cells.ebisc.org">cells.ebisc.org</a></li>
-    </ul>
-    {% endif %}
-
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
